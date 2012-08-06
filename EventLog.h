@@ -12,6 +12,18 @@
 
 + (void)initializeApiKey:(NSString*) apiKey;
 
++ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
+
 + (void)logEvent:(NSString*) eventType;
+
++ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties;
+
++ (void)uploadEvents;
+
++ (void)setGlobalProperties:(NSDictionary*) globalProperties;
+
++ (void)setUserId:(NSString*) userId;
+
+
 
 @end

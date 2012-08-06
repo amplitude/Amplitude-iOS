@@ -10,6 +10,11 @@
 #import "JSONKit.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+#include <sys/socket.h>
+#include <sys/sysctl.h>
+#include <net/if.h>
+#include <net/if_dl.h>
+#import "CommonCrypto/CommonDigest.h"
 
 static NSString *_apiKey;
 static NSString *_userId;
@@ -25,6 +30,7 @@ static NSDictionary *_globalProperties;
 static long long _sessionId = -1;
 
 static bool updateScheduled = NO;
+static bool updatingCurrently = NO;
 
 static NSMutableDictionary *eventsData;
 
@@ -34,7 +40,7 @@ static NSString *eventsDataPath;
 
 + (void)initialize
 {
-    _deviceId = [EventLog getDeviceId];
+    _deviceId = [[EventLog getDeviceId] retain];
     
     _versionName = [[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"] retain];
     
@@ -65,7 +71,8 @@ static NSString *eventsDataPath;
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
 {
     if (apiKey == nil) {
-        //TODO: throw exception, no apiKey
+        [NSException raise:@"apiKey cannot be nil"
+                    format:@"Set apiKey to the application key found at giraffegraph.com"];
     }
     
     [apiKey retain];
@@ -75,6 +82,22 @@ static NSString *eventsDataPath;
     [_userId release];
     _userId = userId;
     
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self
+               selector:@selector(uploadEvents)
+                   name:UIApplicationDidEnterBackgroundNotification
+                 object:nil];
+    
+    [center addObserver:self
+               selector:@selector(uploadEvents)
+                   name:UIApplicationWillTerminateNotification
+                 object:nil];
+    
+    [center addObserver:self
+               selector:@selector(uploadEvents)
+                   name:UIApplicationDidBecomeActiveNotification
+                 object:nil];
 }
 
 + (void)logEvent:(NSString*) eventType
@@ -89,6 +112,11 @@ static NSString *eventsDataPath;
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties: apiProperties
 {
+    if (_apiKey == nil) {
+        [NSException raise:@"apiKey is nil, apiKey must be set before calling logEvent"
+                    format:@"Set apiKey first with initializeApiKey"];
+    }
+    
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
     long long newId = [[eventsData objectForKey:@"max_id"] longValue] + 1;
@@ -105,7 +133,7 @@ static NSString *eventsDataPath;
     
     [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
     
-    if ([[eventsData objectForKey:@"events"] count] >= 3) {
+    if ([[eventsData objectForKey:@"events"] count] >= 10) {
         [EventLog uploadEvents];
     } else {
         [EventLog uploadEventsLater];
@@ -116,7 +144,9 @@ static NSString *eventsDataPath;
 {
     NSNumber *timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     [event setValue:timestamp forKey:@"timestamp"];
-    [event setValue:[EventLog replaceWithJSONNull:_userId] forKey:@"user_id"];
+    [event setValue:(_userId != nil ?
+                     [EventLog replaceWithJSONNull:_userId] :
+                     [EventLog replaceWithJSONNull:_deviceId]) forKey:@"user_id"];
     [event setValue:[EventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
     [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
     [event setValue:[EventLog replaceWithJSONNull:_versionName] forKey:@"version_name"];
@@ -129,17 +159,27 @@ static NSString *eventsDataPath;
 
 + (void)uploadEvents
 {
+    @synchronized ([EventLog class]) {
+        if (updatingCurrently) {
+            return;
+        }
+        updatingCurrently = YES;
+    }
     NSMutableArray *events = [eventsData objectForKey:@"events"];
     long long numEvents = [events count];
+    if (numEvents == 0) {
+        updatingCurrently = NO;
+        return;
+    }
     NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
-    [EventLog constructAndSendRequest:@"http://giraffegraph.com/event/" events:[uploadEvents JSONString] numEvents:numEvents];
+    [EventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:[uploadEvents JSONString] numEvents:numEvents];
 }
 
 + (void)uploadEventsLater
 {
     if(!updateScheduled){
         updateScheduled = YES;
-        [[EventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[EventLog class] afterDelay:3];
+        [[EventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[EventLog class] afterDelay:20];
     }
 }
 
@@ -193,6 +233,8 @@ static NSString *eventsDataPath;
         }
         
         [EventLog saveEventsData];
+        
+        updatingCurrently = NO;
     }];
 }
 
@@ -226,7 +268,6 @@ static NSString *eventsDataPath;
 
 + (void)saveEventsData
 {
-    
     bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
     if (!success) {
         NSLog(@"ERROR: Unable to save eventsData to file");
@@ -235,8 +276,8 @@ static NSString *eventsDataPath;
 
 + (NSString*)getDeviceId
 {
-    //TODO: need to implement unique identifier tracking
-    return nil;
+    // MD5 Hash of the mac address
+    return [EventLog md5HexDigest:[EventLog getMacAddress]];
 }
 
 + (id)replaceWithJSONNull:(id) obj
@@ -247,6 +288,85 @@ static NSString *eventsDataPath;
 + (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
 {
     return dictionary == nil ? [NSDictionary dictionary] : dictionary;
+}
+
+
++ (NSString *)getMacAddress
+{
+    int                 mgmtInfoBase[6];
+    char                *msgBuffer = NULL;
+    size_t              length;
+    unsigned char       macAddress[6];
+    struct if_msghdr    *interfaceMsgStruct;
+    struct sockaddr_dl  *socketStruct;
+    NSString            *errorFlag = NULL;
+    
+    // Setup the management Information Base (mib)
+    mgmtInfoBase[0] = CTL_NET;        // Request network subsystem
+    mgmtInfoBase[1] = AF_ROUTE;       // Routing table info
+    mgmtInfoBase[2] = 0;
+    mgmtInfoBase[3] = AF_LINK;        // Request link layer information
+    mgmtInfoBase[4] = NET_RT_IFLIST;  // Request all configured interfaces
+    
+    // With all configured interfaces requested, get handle index
+    if ((mgmtInfoBase[5] = if_nametoindex("en0")) == 0)
+        errorFlag = @"if_nametoindex failure";
+    else
+    {
+        // Get the size of the data available (store in len)
+        if (sysctl(mgmtInfoBase, 6, NULL, &length, NULL, 0) < 0)
+            errorFlag = @"sysctl mgmtInfoBase failure";
+        else
+        {
+            // Alloc memory based on above call
+            if ((msgBuffer = malloc(length)) == NULL)
+                errorFlag = @"buffer allocation failure";
+            else
+            {
+                // Get system information, store in buffer
+                if (sysctl(mgmtInfoBase, 6, msgBuffer, &length, NULL, 0) < 0)
+                    errorFlag = @"sysctl msgBuffer failure";
+            }
+        }
+    }
+    
+    // Befor going any further...
+    if (errorFlag != NULL)
+    {
+        NSLog(@"Error: %@", errorFlag);
+        return errorFlag;
+    }
+    
+    // Map msgbuffer to interface message structure
+    interfaceMsgStruct = (struct if_msghdr *) msgBuffer;
+    
+    // Map to link-level socket structure
+    socketStruct = (struct sockaddr_dl *) (interfaceMsgStruct + 1);
+    
+    // Copy link layer address data in socket structure to an array
+    memcpy(&macAddress, socketStruct->sdl_data + socketStruct->sdl_nlen, 6);
+    
+    // Read from char array into a string object, into traditional Mac address format
+    NSString *macAddressString = [NSString stringWithFormat:@"%02X%02X%02X%02X%02X%02X",
+                                  macAddress[0], macAddress[1], macAddress[2],
+                                  macAddress[3], macAddress[4], macAddress[5]];
+    
+    // Release the buffer memory
+    free(msgBuffer);
+    
+    return macAddressString;
+}
+
++ (NSString*)md5HexDigest:(NSString*)input {
+    const char* str = [input UTF8String];
+    unsigned char result[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(str, strlen(str), result);
+    
+    NSMutableString *ret = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH*2];
+    for(int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {
+        [ret appendFormat:@"%02x",result[i]];
+    }
+    return ret;
 }
 
 @end
