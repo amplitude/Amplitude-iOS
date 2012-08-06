@@ -7,7 +7,6 @@
 //
 
 #import "EventLog.h"
-#import "DatabaseHelper.h"
 #import "JSONKit.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -23,9 +22,13 @@ static NSString *_phoneCarrier;
 
 static NSDictionary *_globalProperties;
 
-static long _sessionId = -1;
+static long long _sessionId = -1;
 
 static bool updateScheduled = NO;
+
+static NSMutableDictionary *eventsData;
+
+static NSString *databasePath;
 
 @implementation EventLog
 
@@ -33,15 +36,24 @@ static bool updateScheduled = NO;
 {
     _deviceId = [EventLog getDeviceId];
     
-    _versionName = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"];
+    _versionName = [[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"] retain];
     
     _buildVersionRelease = [[[UIDevice currentDevice] systemVersion] retain];
-    _phoneModel = [[UIDevice currentDevice] model];
+    _phoneModel = [[[UIDevice currentDevice] model] retain];
     
     CTTelephonyNetworkInfo *info = [[CTTelephonyNetworkInfo alloc] init];
-    _phoneCarrier = [[info subscriberCellularProvider] carrierName];
+    _phoneCarrier = [[[info subscriberCellularProvider] carrierName] retain];
     [info release];
     
+    NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    databasePath = [[databaseDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
+    
+    eventsData = [NSMutableDictionary dictionaryWithContentsOfFile:databasePath];
+    if (eventsData == nil) {
+        eventsData = [[NSMutableDictionary dictionary] retain];
+        [eventsData setObject:[[NSMutableArray array] retain] forKey:@"events"];
+        [eventsData setObject:[[NSNumber numberWithLongLong:0LL] retain] forKey:@"max_id"];
+    }
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
@@ -78,17 +90,23 @@ static bool updateScheduled = NO;
 {
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
+    [eventsData retain];
+    
+    long long newId = [[eventsData objectForKey:@"max_id"] longValue] + 1;
+    
     [event setValue:[EventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
+    [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
     [event setValue:[EventLog replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
-    [event setValue:[EventLog replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
+    [event setValue:[EventLog replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
     [event setValue:[EventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
     
     [EventLog addBoilerplate:event];
     
-    // TODO: make this run on a separate thread
-    [DatabaseHelper addEvent:[event JSONString]];
+    [[eventsData objectForKey:@"events"] addObject:event];
     
-    if ([DatabaseHelper getNumberRows] >= 1) {
+    [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
+    
+    if ([[eventsData objectForKey:@"events"] count] >= 3) {
         [EventLog updateServer];
     } else {
         [EventLog updateServerLater];
@@ -102,11 +120,11 @@ static bool updateScheduled = NO;
 
 + (void)addBoilerplate:(NSMutableDictionary*) event
 {
-    NSNumber *timestamp = [NSNumber numberWithLong:0]; //TODO: set this
+    NSNumber *timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     [event setValue:timestamp forKey:@"timestamp"];
     [event setValue:[EventLog replaceWithJSONNull:_userId] forKey:@"user_id"];
     [event setValue:[EventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
-    [event setValue:[NSNumber numberWithLong:_sessionId] forKey:@"session_id"];
+    [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
     [event setValue:[EventLog replaceWithJSONNull:_versionName] forKey:@"version_name"];
     [event setValue:[EventLog replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
     [event setValue:[EventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
@@ -117,36 +135,38 @@ static bool updateScheduled = NO;
 
 + (void)updateServer
 {
-    long maxId = 0;
-    NSDictionary *pair = [DatabaseHelper getEvents];
-    NSArray *events = [pair objectForKey:@"events"];
-    maxId = [[pair objectForKey:@"max_id"] longValue];
-    bool success = [EventLog makePostRequest:@"http://analytics.snlt.co/event/" events:[events JSONString] numEvents:[events count]];
+    NSMutableArray *events = [eventsData objectForKey:@"events"];
+    long long numEvents = [events count];
+    NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
+    [EventLog constructAndSendRequest:@"http://giraffegraph.com/event/" events:[uploadEvents JSONString] numEvents:numEvents];
     
-    if (success) {
-        [DatabaseHelper removeEvents:maxId];
-    } else {
-        NSLog(@"ERROR: Upload failed, post request not successful");
-    }
 }
 
 + (void)updateServerLater
 {
     if(!updateScheduled){
         updateScheduled = YES;
-        //TODO:post delayed
+        NSLog(@"scheduling updateServerLaterExecute");
+        [[EventLog class] performSelector:@selector(updateServerLaterExecute) withObject:nil afterDelay:10];
     }
 }
 
-+ (bool)makePostRequest:(NSString*) url events:(NSString*) events numEvents:(long) numEvents
++ (void)updateServerLaterExecute
+{
+    NSLog(@"updateServerLaterExecute called");
+    updateScheduled = NO;
+    [EventLog updateServer];
+}
+
++ (void)constructAndSendRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     
     NSMutableData *postData = [[NSMutableData alloc] init];
-    [postData appendData:[@"e=" dataUsingEncoding:NSUnicodeStringEncoding]];
-    [postData appendData:[[EventLog urlEncodeString:events] dataUsingEncoding:NSUnicodeStringEncoding]];
-    [postData appendData:[@"&client=" dataUsingEncoding:NSUnicodeStringEncoding]];
-    [postData appendData:[_apiKey dataUsingEncoding:NSUnicodeStringEncoding]];
+    [postData appendData:[@"e=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[[EventLog urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
     
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -156,34 +176,36 @@ static bool updateScheduled = NO;
         
     [postData release];
     
-    NSHTTPURLResponse *response = nil;
-    NSError *error = nil;
-    
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:(&error)];
-    
-    if (response != nil) {
-        if ([response statusCode] == 200) {
-            NSString *stringResult = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            // TODO: handle invalid JSON
-            NSDictionary *result = [stringResult objectFromJSONString];
-            if ([[result objectForKey:@"added"] longValue] == numEvents) {
-                NSLog(@"Upload successful!");
-                return YES;
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+    {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        if (response != nil) {
+            if ([httpResponse statusCode] == 200) {
+                NSString *stringResult = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                // TODO: handle invalid JSON
+                NSDictionary *result = [stringResult objectFromJSONString];
+                [stringResult release];
+                if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
+                    [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
+                    [EventLog saveEventsData];
+                } else {
+                    NSLog(@"ERROR: Not all events uploaded");
+                }
             } else {
-                NSLog(@"ERROR: Not all events uploaded");
-                return NO;
+                NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
+                    [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
             }
+        } else if (error != nil) {
+            NSLog(@"ERROR: Connection error:%@", error);
         } else {
-            NSLog(@"ERROR: Connection response received:%d, %@", response.statusCode, data);
-            return NO;
+            NSLog(@"ERROR: response empty, error empty for NSURLConnection");
         }
-    } else if (error != nil) {
-        NSLog(@"ERROR: Connection error:%@", error);
-        return NO;
-    } else {
-        NSLog(@"ERROR: response empty, error empty for NSURLConnection");
-        return NO;
-    }
+    }];
+}
+
++ (void)postRequestCompletetionHandlerResponse:(NSURLResponse*) response data:(NSData *) data error:(NSError *) error
+{
 }
 
 + (NSString*)urlEncodeString:(NSString*) string
@@ -212,6 +234,14 @@ static bool updateScheduled = NO;
     [userId retain];
     [_userId release];
     _userId = userId;
+}
+
++ (void)saveEventsData
+{
+    bool success = [eventsData writeToFile:databasePath atomically:YES];
+    if (!success) {
+        NSLog(@"ERROR: Unable to save eventsData to file");
+    }
 }
 
 + (NSString*)getDeviceId
