@@ -1,15 +1,15 @@
 //
 //  EventLog.m
-//  Hash Helper
+//  Fawkes
 //
 //  Created by Spenser Skates on 7/26/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 GiraffeGraph. All rights reserved.
 //
 
 #import "EventLog.h"
 #import "JSONKit.h"
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
+//#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+//#import <CoreTelephony/CTCarrier.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
 #include <net/if.h>
@@ -47,9 +47,10 @@ static NSString *eventsDataPath;
     _buildVersionRelease = [[[UIDevice currentDevice] systemVersion] retain];
     _phoneModel = [[[UIDevice currentDevice] model] retain];
     
-    CTTelephonyNetworkInfo *info = [[CTTelephonyNetworkInfo alloc] init];
-    _phoneCarrier = [[[info subscriberCellularProvider] carrierName] retain];
-    [info release];
+    // Requires a linked library
+    //CTTelephonyNetworkInfo *info = [[CTTelephonyNetworkInfo alloc] init];
+    //_phoneCarrier = [[[info subscriberCellularProvider] carrierName] retain];
+    //[info release];
     
     NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     eventsDataPath = [[eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
@@ -58,8 +59,8 @@ static NSString *eventsDataPath;
         eventsData = [[NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath] retain];
     } else {
         eventsData = [[NSMutableDictionary dictionary] retain];
-        [eventsData setObject:[[NSMutableArray array] retain] forKey:@"events"];
-        [eventsData setObject:[[NSNumber numberWithLongLong:0LL] retain] forKey:@"max_id"];
+        [eventsData setObject:[NSMutableArray array] forKey:@"events"];
+        [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
     }
 }
 
@@ -192,21 +193,21 @@ static NSString *eventsDataPath;
 + (void)constructAndSendRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    
+
     NSMutableData *postData = [[NSMutableData alloc] init];
     [postData appendData:[@"e=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[[EventLog urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
-    
+
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
-    
+
     [request setHTTPBody:postData];
-        
+
     [postData release];
-    
+
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
     {
@@ -235,6 +236,7 @@ static NSString *eventsDataPath;
         [EventLog saveEventsData];
         
         updatingCurrently = NO;
+        [queue release];
     }];
 }
 
@@ -254,8 +256,8 @@ static NSString *eventsDataPath;
 
 + (void)setGlobalProperties:(NSDictionary*) globalProperties
 {
-    [_globalProperties retain];
-    [globalProperties release];
+    [globalProperties retain];
+    [_globalProperties release];
     _globalProperties = globalProperties;
 }
 
