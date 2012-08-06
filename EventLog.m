@@ -48,7 +48,7 @@ static NSString *databasePath;
     NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     databasePath = [[databaseDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
     
-    eventsData = [NSMutableDictionary dictionaryWithContentsOfFile:databasePath];
+    eventsData = [[NSMutableDictionary dictionaryWithContentsOfFile:databasePath] retain];
     if (eventsData == nil) {
         eventsData = [[NSMutableDictionary dictionary] retain];
         [eventsData setObject:[[NSMutableArray array] retain] forKey:@"events"];
@@ -90,8 +90,6 @@ static NSString *databasePath;
 {
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
-    [eventsData retain];
-    
     long long newId = [[eventsData objectForKey:@"max_id"] longValue] + 1;
     
     [event setValue:[EventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
@@ -107,15 +105,10 @@ static NSString *databasePath;
     [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
     
     if ([[eventsData objectForKey:@"events"] count] >= 3) {
-        [EventLog updateServer];
+        [EventLog uploadEvents];
     } else {
-        [EventLog updateServerLater];
+        [EventLog uploadEventsLater];
     }
-}
-
-+ (void)uploadEvents
-{
-    //TODO: post to runnable
 }
 
 + (void)addBoilerplate:(NSMutableDictionary*) event
@@ -133,29 +126,26 @@ static NSString *databasePath;
     
 }
 
-+ (void)updateServer
++ (void)uploadEvents
 {
     NSMutableArray *events = [eventsData objectForKey:@"events"];
     long long numEvents = [events count];
     NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
     [EventLog constructAndSendRequest:@"http://giraffegraph.com/event/" events:[uploadEvents JSONString] numEvents:numEvents];
-    
 }
 
-+ (void)updateServerLater
++ (void)uploadEventsLater
 {
     if(!updateScheduled){
         updateScheduled = YES;
-        NSLog(@"scheduling updateServerLaterExecute");
-        [[EventLog class] performSelector:@selector(updateServerLaterExecute) withObject:nil afterDelay:10];
+        [[EventLog class] performSelector:@selector(updateServerLaterExecute) withObject:[EventLog class] afterDelay:3];
     }
 }
 
-+ (void)updateServerLaterExecute
++ (void)uploadEventsLaterExecute
 {
-    NSLog(@"updateServerLaterExecute called");
     updateScheduled = NO;
-    [EventLog updateServer];
+    [EventLog uploadEvents];
 }
 
 + (void)constructAndSendRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
@@ -202,10 +192,6 @@ static NSString *databasePath;
             NSLog(@"ERROR: response empty, error empty for NSURLConnection");
         }
     }];
-}
-
-+ (void)postRequestCompletetionHandlerResponse:(NSURLResponse*) response data:(NSData *) data error:(NSError *) error
-{
 }
 
 + (NSString*)urlEncodeString:(NSString*) string
