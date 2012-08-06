@@ -28,7 +28,7 @@ static bool updateScheduled = NO;
 
 static NSMutableDictionary *eventsData;
 
-static NSString *databasePath;
+static NSString *eventsDataPath;
 
 @implementation EventLog
 
@@ -45,11 +45,12 @@ static NSString *databasePath;
     _phoneCarrier = [[[info subscriberCellularProvider] carrierName] retain];
     [info release];
     
-    NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-    databasePath = [[databaseDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
+    NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    eventsDataPath = [[eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
     
-    eventsData = [[NSMutableDictionary dictionaryWithContentsOfFile:databasePath] retain];
-    if (eventsData == nil) {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
+        eventsData = [[NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath] retain];
+    } else {
         eventsData = [[NSMutableDictionary dictionary] retain];
         [eventsData setObject:[[NSMutableArray array] retain] forKey:@"events"];
         [eventsData setObject:[[NSNumber numberWithLongLong:0LL] retain] forKey:@"max_id"];
@@ -138,7 +139,7 @@ static NSString *databasePath;
 {
     if(!updateScheduled){
         updateScheduled = YES;
-        [[EventLog class] performSelector:@selector(updateServerLaterExecute) withObject:[EventLog class] afterDelay:3];
+        [[EventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[EventLog class] afterDelay:3];
     }
 }
 
@@ -178,7 +179,6 @@ static NSString *databasePath;
                 [stringResult release];
                 if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
                     [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
-                    [EventLog saveEventsData];
                 } else {
                     NSLog(@"ERROR: Not all events uploaded");
                 }
@@ -191,6 +191,8 @@ static NSString *databasePath;
         } else {
             NSLog(@"ERROR: response empty, error empty for NSURLConnection");
         }
+        
+        [EventLog saveEventsData];
     }];
 }
 
@@ -224,7 +226,8 @@ static NSString *databasePath;
 
 + (void)saveEventsData
 {
-    bool success = [eventsData writeToFile:databasePath atomically:YES];
+    
+    bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
     if (!success) {
         NSLog(@"ERROR: Unable to save eventsData to file");
     }
