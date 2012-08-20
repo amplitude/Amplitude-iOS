@@ -30,6 +30,7 @@ static NSString *_phoneCarrier;
 static NSDictionary *_globalProperties;
 
 static long long _sessionId = -1;
+static bool sessionStarted = NO;
 
 static bool updateScheduled = NO;
 static bool updatingCurrently = NO;
@@ -117,6 +118,16 @@ static LocationManagerDelegate *locationManagerDelegate;
                selector:@selector(uploadEvents)
                    name:UIApplicationDidBecomeActiveNotification
                  object:nil];
+    
+    [center addObserver:self
+               selector:@selector(startSession)
+                   name:UIApplicationDidBecomeActiveNotification
+                 object:nil];
+    
+    [center addObserver:self
+               selector:@selector(endSession)
+                   name:UIApplicationWillResignActiveNotification
+                 object:nil];
 }
 
 + (void)logEvent:(NSString*) eventType
@@ -182,6 +193,10 @@ static LocationManagerDelegate *locationManagerDelegate;
         [location setValue:[NSNumber numberWithDouble:lastKnownLocation.coordinate.longitude] forKey:@"lng"];
         [apiProperties setValue:location forKey:@"location"];
     }
+    
+    if (sessionStarted) {
+        [EventLog refreshSessionTime];
+    }
 }
 
 + (void)uploadEvents
@@ -204,7 +219,7 @@ static LocationManagerDelegate *locationManagerDelegate;
 
 + (void)uploadEventsLater
 {
-    if(!updateScheduled){
+    if (!updateScheduled) {
         updateScheduled = YES;
         [[EventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[EventLog class] afterDelay:10];
     }
@@ -278,6 +293,60 @@ static LocationManagerDelegate *locationManagerDelegate;
 		return newString;
 	}
 	return @"";
+}
+
++ (void)startSession
+{
+    
+    // Remove turn off session later callback
+    [NSObject cancelPreviousPerformRequestsWithTarget:[EventLog class]
+                                             selector:@selector(turnOffSessionLaterExecute)
+                                               object:[EventLog class]];
+    
+    if (!sessionStarted) {
+        // Session has not been started yet, check overlap with previous session
+        
+        NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+        
+        NSNumber *previousSessionTime = [eventsData objectForKey:@"last_session_time"];
+        
+        if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
+            _sessionId = [[eventsData objectForKey:@"last_session_id"] longLongValue];
+        } else {
+            _sessionId = [now longLongValue];
+            [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"last_session_id"];
+        }
+        
+        sessionStarted = YES;
+    }
+    
+    NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:@"session_start" forKey:@"special"];
+    [EventLog logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
+}
+
++ (void)endSession
+{
+    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:@"session_end" forKey:@"special"];
+    [EventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
+    
+    sessionStarted = NO;
+    
+    [[EventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[EventLog class] afterDelay:10];
+}
+
++ (void)refreshSessionTime
+{
+    NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+    [eventsData setValue:now forKey:@"last_session_time"];
+}
+
++ (void)turnOffSessionLaterExecute
+{
+    if (!sessionStarted) {
+        _sessionId = -1;
+    }
 }
 
 + (void)setGlobalProperties:(NSDictionary*) globalProperties
