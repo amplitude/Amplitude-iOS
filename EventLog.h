@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface EventLog : NSObject
 
@@ -24,6 +25,10 @@
 
 + (void)setUserId:(NSString*) userId;
 
++ (void)setLocation:(CLLocation*) location;
 
++ (void)startListeningForLocation;
+
++ (void)stopListeningForLocation;
 
 @end

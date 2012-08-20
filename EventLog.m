@@ -7,6 +7,7 @@
 //
 
 #import "EventLog.h"
+#import "LocationManagerDelegate.h"
 #import "JSONKit.h"
 //#import <CoreTelephony/CTTelephonyNetworkInfo.h>
 //#import <CoreTelephony/CTCarrier.h>
@@ -15,6 +16,7 @@
 #include <net/if.h>
 #include <net/if_dl.h>
 #import "CommonCrypto/CommonDigest.h"
+#import <CoreLocation/CoreLocation.h>
 
 static NSString *_apiKey;
 static NSString *_userId;
@@ -35,6 +37,11 @@ static bool updatingCurrently = NO;
 static NSMutableDictionary *eventsData;
 
 static NSString *eventsDataPath;
+
+static CLLocationManager *locationManager;
+static bool canTrackLocation;
+static CLLocation *lastKnownLocation;
+static LocationManagerDelegate *locationManagerDelegate;
 
 @implementation EventLog
 
@@ -62,6 +69,17 @@ static NSString *eventsDataPath;
         [eventsData setObject:[NSMutableArray array] forKey:@"events"];
         [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
     }
+    
+    canTrackLocation = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized
+                        && [CLLocationManager significantLocationChangeMonitoringAvailable]);
+    
+    if (canTrackLocation) {
+        locationManager = [[CLLocationManager alloc] init];
+        locationManagerDelegate = [[LocationManagerDelegate alloc] init];
+        locationManager.delegate = locationManagerDelegate;
+        [locationManager startMonitoringSignificantLocationChanges];
+    }
+
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
@@ -106,12 +124,12 @@ static NSString *eventsDataPath;
     [EventLog logEvent:eventType withCustomProperties:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties
++ (void)logEvent:(NSString*) eventType withCustomProperties:(NSMutableDictionary*) customProperties
 {
     [EventLog logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties: apiProperties
++ (void)logEvent:(NSString*) eventType withCustomProperties:(NSMutableDictionary*) customProperties apiProperties: apiProperties
 {
     if (_apiKey == nil) {
         [NSException raise:@"apiKey is nil, apiKey must be set before calling logEvent"
@@ -156,6 +174,14 @@ static NSString *eventsDataPath;
     [event setValue:[EventLog replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
     [event setValue:@"iphone" forKey:@"client"];
     
+    NSMutableDictionary *apiProperties = [event valueForKey:@"properties"];
+    
+    if (lastKnownLocation != nil) {
+        NSMutableDictionary *location = [NSMutableDictionary dictionary];
+        [location setValue:[NSNumber numberWithDouble:lastKnownLocation.coordinate.latitude] forKey:@"lat"];
+        [location setValue:[NSNumber numberWithDouble:lastKnownLocation.coordinate.longitude] forKey:@"lng"];
+        [apiProperties setValue:location forKey:@"location"];
+    }
 }
 
 + (void)uploadEvents
@@ -180,7 +206,7 @@ static NSString *eventsDataPath;
 {
     if(!updateScheduled){
         updateScheduled = YES;
-        [[EventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[EventLog class] afterDelay:20];
+        [[EventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[EventLog class] afterDelay:10];
     }
 }
 
@@ -211,7 +237,7 @@ static NSString *eventsDataPath;
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
     {
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
             if ([httpResponse statusCode] == 200) {
                 NSString *stringResult = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -268,6 +294,23 @@ static NSString *eventsDataPath;
     _userId = userId;
 }
 
++ (void)setLocation:(CLLocation*) location
+{
+    [location retain];
+    [lastKnownLocation release];
+    lastKnownLocation = location;
+}
+
++ (void)startListeningForLocation
+{
+    [locationManager startMonitoringSignificantLocationChanges];
+}
+
++ (void)stopListeningForLocation
+{
+    [locationManager stopMonitoringSignificantLocationChanges];
+}
+
 + (void)saveEventsData
 {
     bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
@@ -289,11 +332,10 @@ static NSString *eventsDataPath;
 
 + (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
 {
-    return dictionary == nil ? [NSDictionary dictionary] : dictionary;
+    return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
 }
 
-
-+ (NSString *)getMacAddress
++ (NSString*)getMacAddress
 {
     int                 mgmtInfoBase[6];
     char                *msgBuffer = NULL;
