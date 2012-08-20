@@ -135,12 +135,12 @@ static LocationManagerDelegate *locationManagerDelegate;
     [EventLog logEvent:eventType withCustomProperties:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSMutableDictionary*) customProperties
++ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties
 {
     [EventLog logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSMutableDictionary*) customProperties apiProperties: apiProperties
++ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties: apiProperties
 {
     if (_apiKey == nil) {
         [NSException raise:@"apiKey is nil, apiKey must be set before calling logEvent"
