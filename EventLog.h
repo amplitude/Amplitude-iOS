@@ -25,10 +25,4 @@
 
 + (void)setUserId:(NSString*) userId;
 
-+ (void)setLocation:(CLLocation*) location;
-
-+ (void)startListeningForLocation;
-
-+ (void)stopListeningForLocation;
-
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "EventLog.h"
-#import "LocationManagerDelegate.h"
 #import "JSONKit.h"
 //#import <CoreTelephony/CTTelephonyNetworkInfo.h>
 //#import <CoreTelephony/CTCarrier.h>
@@ -16,7 +15,6 @@
 #include <net/if.h>
 #include <net/if_dl.h>
 #import "CommonCrypto/CommonDigest.h"
-#import <CoreLocation/CoreLocation.h>
 
 static NSString *_apiKey;
 static NSString *_userId;
@@ -38,11 +36,6 @@ static bool updatingCurrently = NO;
 static NSMutableDictionary *eventsData;
 
 static NSString *eventsDataPath;
-
-static CLLocationManager *locationManager;
-static bool canTrackLocation;
-static CLLocation *lastKnownLocation;
-static LocationManagerDelegate *locationManagerDelegate;
 
 @implementation EventLog
 
@@ -69,16 +62,6 @@ static LocationManagerDelegate *locationManagerDelegate;
         eventsData = [[NSMutableDictionary dictionary] retain];
         [eventsData setObject:[NSMutableArray array] forKey:@"events"];
         [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
-    }
-    
-    canTrackLocation = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized
-                        && [CLLocationManager significantLocationChangeMonitoringAvailable]);
-    
-    if (canTrackLocation) {
-        locationManager = [[CLLocationManager alloc] init];
-        locationManagerDelegate = [[LocationManagerDelegate alloc] init];
-        locationManager.delegate = locationManagerDelegate;
-        [locationManager startMonitoringSignificantLocationChanges];
     }
 
 }
@@ -184,15 +167,6 @@ static LocationManagerDelegate *locationManagerDelegate;
     [event setValue:[EventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
     [event setValue:[EventLog replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
     [event setValue:@"iphone" forKey:@"client"];
-    
-    NSMutableDictionary *apiProperties = [event valueForKey:@"properties"];
-    
-    if (lastKnownLocation != nil) {
-        NSMutableDictionary *location = [NSMutableDictionary dictionary];
-        [location setValue:[NSNumber numberWithDouble:lastKnownLocation.coordinate.latitude] forKey:@"lat"];
-        [location setValue:[NSNumber numberWithDouble:lastKnownLocation.coordinate.longitude] forKey:@"lng"];
-        [apiProperties setValue:location forKey:@"location"];
-    }
     
     if (sessionStarted) {
         [EventLog refreshSessionTime];
@@ -361,23 +335,6 @@ static LocationManagerDelegate *locationManagerDelegate;
     [userId retain];
     [_userId release];
     _userId = userId;
-}
-
-+ (void)setLocation:(CLLocation*) location
-{
-    [location retain];
-    [lastKnownLocation release];
-    lastKnownLocation = location;
-}
-
-+ (void)startListeningForLocation
-{
-    [locationManager startMonitoringSignificantLocationChanges];
-}
-
-+ (void)stopListeningForLocation
-{
-    [locationManager stopMonitoringSignificantLocationChanges];
 }
 
 + (void)saveEventsData
