@@ -8,13 +8,11 @@
 
 #import "EventLog.h"
 #import "JSONKit.h"
-//#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-//#import <CoreTelephony/CTCarrier.h>
-#include <sys/socket.h>
-#include <sys/sysctl.h>
-#include <net/if.h>
-#include <net/if_dl.h>
-#import "CommonCrypto/CommonDigest.h"
+#import <sys/socket.h>
+#import <sys/sysctl.h>
+#import <net/if.h>
+#import <net/if_dl.h>
+#import <CommonCrypto/CommonDigest.h>
 
 static NSString *_apiKey;
 static NSString *_userId;
@@ -49,9 +47,16 @@ static NSString *eventsDataPath;
     _phoneModel = [[[UIDevice currentDevice] model] retain];
     
     // Requires a linked library
-    //CTTelephonyNetworkInfo *info = [[CTTelephonyNetworkInfo alloc] init];
-    //_phoneCarrier = [[[info subscriberCellularProvider] carrierName] retain];
-    //[info release];
+    Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
+    SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
+    SEL carrierName = NSSelectorFromString(@"carrierName");
+    if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
+        NSObject *info = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
+        _phoneCarrier = [[[info performSelector:subscriberCellularProvider] performSelector:carrierName] retain];
+        [info release];
+    }
+    
+    NSLog(@"%@", _phoneCarrier);
     
     NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     eventsDataPath = [[eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
