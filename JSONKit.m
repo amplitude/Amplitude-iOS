@@ -110,6 +110,7 @@
 #include <objc/runtime.h>
 
 #import "JSONKit.h"
+#import "ARCMacros.h"
 
 //#include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFString.h>
@@ -683,7 +684,7 @@ static JKArray *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollec
     if((array = [array init]) == NULL) { return(NULL); }
     array->capacity = count;
     array->count    = count;
-    if(JK_EXPECT_F((array->objects = (id *)malloc(sizeof(id) * array->capacity)) == NULL)) { [array autorelease]; return(NULL); }
+    if(JK_EXPECT_F((array->objects = (id *)malloc(sizeof(id) * array->capacity)) == NULL)) { SAFE_ARC_AUTORELEASE(array); return(NULL); }
     memcpy(array->objects, objects, array->capacity * sizeof(id));
     array->mutations = (mutableCollection == NO) ? 0UL : 1UL;
   }
@@ -693,7 +694,7 @@ static JKArray *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollec
 // Note: The caller is responsible for -retaining the object that is to be added.
 static void _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger objectIndex) {
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count <= array->capacity) && (objectIndex <= array->count) && (newObject != NULL));
-  if(!((array != NULL) && (array->objects != NULL) && (objectIndex <= array->count) && (newObject != NULL))) { [newObject autorelease]; return; }
+  if(!((array != NULL) && (array->objects != NULL) && (objectIndex <= array->count) && (newObject != NULL))) { SAFE_ARC_AUTORELEASE(newObject); return; }
   if((array->count + 1UL) >= array->capacity) {
     id *newObjects = NULL;
     if((newObjects = (id *)realloc(array->objects, sizeof(id) * (array->capacity + 16UL))) == NULL) { [NSException raise:NSMallocException format:@"Unable to resize objects array."]; }
@@ -709,7 +710,7 @@ static void _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger
 // Note: The caller is responsible for -retaining the object that is to be added.
 static void _JKArrayReplaceObjectAtIndexWithObject(JKArray *array, NSUInteger objectIndex, id newObject) {
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count <= array->capacity) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL) && (newObject != NULL));
-  if(!((array != NULL) && (array->objects != NULL) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL) && (newObject != NULL))) { [newObject autorelease]; return; }
+  if(!((array != NULL) && (array->objects != NULL) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL) && (newObject != NULL))) { SAFE_ARC_AUTORELEASE(newObject); return; }
   CFRelease(array->objects[objectIndex]);
   array->objects[objectIndex] = NULL;
   array->objects[objectIndex] = newObject;
@@ -776,9 +777,9 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(objectIndex >  count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), (unsigned long)objectIndex, (unsigned long)(count + 1UL)]; }
 #ifdef __clang_analyzer__
-  [anObject retain]; // Stupid clang analyzer...  Issue #19.
+  SAFE_ARC_RETAIN(anObject); // Stupid clang analyzer...  Issue #19.
 #else
-  anObject = [anObject retain];
+  anObject = SAFE_ARC_RETAIN(anObject);
 #endif
   _JKArrayInsertObjectAtIndex(self, anObject, objectIndex);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
@@ -798,9 +799,9 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), (unsigned long)objectIndex, (unsigned long)count]; }
 #ifdef __clang_analyzer__
-  [anObject retain]; // Stupid clang analyzer...  Issue #19.
+  SAFE_ARC_RETAIN(anObject); // Stupid clang analyzer...  Issue #19.
 #else
-  anObject = [anObject retain];
+  anObject = SAFE_ARC_RETAIN(anObject);
 #endif
   _JKArrayReplaceObjectAtIndexWithObject(self, objectIndex, anObject);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
@@ -809,7 +810,7 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 - (id)copyWithZone:(NSZone *)zone
 {
   NSParameterAssert((objects != NULL) && (count <= capacity));
-  return((mutations == 0UL) ? [self retain] : [(NSArray *)[NSArray allocWithZone:zone] initWithObjects:objects count:count]);
+  return((mutations == 0UL) ? SAFE_ARC_RETAIN(self) : [(NSArray *)[NSArray allocWithZone:zone] initWithObjects:objects count:count]);
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone
@@ -839,7 +840,7 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 {
   NSParameterAssert(initDictionary != NULL);
   if((self = [super init]) == NULL) { return(NULL); }
-  if((collection = (id)CFRetain(initDictionary)) == NULL) { [self autorelease]; return(NULL); }
+  if((collection = (id)CFRetain(initDictionary)) == NULL) { SAFE_ARC_AUTORELEASE(self); return(NULL); }
   return(self);
 }
 
@@ -935,7 +936,7 @@ static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *ob
     dictionary->capacity = _JKDictionaryCapacityForCount(count);
     dictionary->count    = 0UL;
     
-    if(JK_EXPECT_F((dictionary->entry = (JKHashTableEntry *)calloc(1UL, sizeof(JKHashTableEntry) * dictionary->capacity)) == NULL)) { [dictionary autorelease]; return(NULL); }
+    if(JK_EXPECT_F((dictionary->entry = (JKHashTableEntry *)calloc(1UL, sizeof(JKHashTableEntry) * dictionary->capacity)) == NULL)) { SAFE_ARC_AUTORELEASE(dictionary); return(NULL); }
 
     NSUInteger idx = 0UL;
     for(idx = 0UL; idx < count; idx++) { _JKDictionaryAddObject(dictionary, keyHashes[idx], keys[idx], objects[idx]); }
@@ -1065,7 +1066,7 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
 
 - (NSEnumerator *)keyEnumerator
 {
-  return([[[JKDictionaryEnumerator alloc] initWithJKDictionary:self] autorelease]);
+  return(SAFE_ARC_AUTORELEASE([[JKDictionaryEnumerator alloc] initWithJKDictionary:self]));
 }
 
 - (void)setObject:(id)anObject forKey:(id)aKey
@@ -1077,7 +1078,7 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
   _JKDictionaryResizeIfNeccessary(self);
 #ifndef __clang_analyzer__
   aKey     = [aKey     copy];   // Why on earth would clang complain that this -copy "might leak", 
-  anObject = [anObject retain]; // but this -retain doesn't!?
+  anObject = SAFE_ARC_RETAIN(anObject); // but this -retain doesn't!?
 #endif // __clang_analyzer__
   _JKDictionaryAddObject(self, CFHash(aKey), aKey, anObject);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
@@ -1097,7 +1098,7 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
 - (id)copyWithZone:(NSZone *)zone
 {
   NSParameterAssert((entry != NULL) && (count <= capacity));
-  return((mutations == 0UL) ? [self retain] : [[NSDictionary allocWithZone:zone] initWithDictionary:self]);
+  return((mutations == 0UL) ? SAFE_ARC_RETAIN(self) : [[NSDictionary allocWithZone:zone] initWithDictionary:self]);
 }
 
 - (id)mutableCopyWithZone:(NSZone *)zone
@@ -1123,7 +1124,7 @@ static void jk_error(JKParseState *parseState, NSString *format, ...) {
 
   va_list varArgsList;
   va_start(varArgsList, format);
-  NSString *formatString = [[[NSString alloc] initWithFormat:format arguments:varArgsList] autorelease];
+  NSString *formatString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithFormat:format arguments:varArgsList]);
   va_end(varArgsList);
 
 #if 0
@@ -1135,7 +1136,7 @@ static void jk_error(JKParseState *parseState, NSString *format, ...) {
 
   NSString *lineString = @"", *carretString = @"";
   if(lineStart < JK_END_STRING_PTR(parseState)) {
-    lineString   = [[[NSString alloc] initWithBytes:lineStart length:(lineEnd - lineStart) encoding:NSUTF8StringEncoding] autorelease];
+    lineString   = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithBytes:lineStart length:(lineEnd - lineStart) encoding:NSUTF8StringEncoding]);
     carretString = [NSString stringWithFormat:@"%*.*s^", (int)(parseState->atIndex - parseState->lineStartIndex), (int)(parseState->atIndex - parseState->lineStartIndex), " "];
   }
 #endif
@@ -1950,7 +1951,7 @@ static id json_parse_it(JKParseState *parseState) {
     if((JK_EXPECT_T(stopParsing == 0)) && (JK_EXPECT_T((stopParsing = jk_parse_next_token(parseState)) == 0))) {
       switch(parseState->token.type) {
         case JKTokenTypeArrayBegin:
-        case JKTokenTypeObjectBegin: parsedObject = [(id)jk_object_for_token(parseState) autorelease]; stopParsing = 1; break;
+        case JKTokenTypeObjectBegin: parsedObject = SAFE_ARC_AUTORELEASE((id)jk_object_for_token(parseState)); stopParsing = 1; break;
         default:                     jk_error(parseState, @"Expected either '[' or '{'.");             stopParsing = 1; break;
       }
     }
@@ -2086,7 +2087,7 @@ static void *jk_object_for_token(JKParseState *parseState) {
 
 + (id)decoderWithParseOptions:(JKParseOptionFlags)parseOptionFlags
 {
-  return([[[self alloc] initWithParseOptions:parseOptionFlags] autorelease]);
+  return(SAFE_ARC_AUTORELEASE([[self alloc] initWithParseOptions:parseOptionFlags]));
 }
 
 - (id)init
@@ -2098,7 +2099,7 @@ static void *jk_object_for_token(JKParseState *parseState) {
 {
   if((self = [super init]) == NULL) { return(NULL); }
 
-  if(parseOptionFlags & ~JKParseOptionValidFlags) { [self autorelease]; [NSException raise:NSInvalidArgumentException format:@"Invalid parse options."]; }
+  if(parseOptionFlags & ~JKParseOptionValidFlags) { SAFE_ARC_AUTORELEASE(self); [NSException raise:NSInvalidArgumentException format:@"Invalid parse options."]; }
 
   if((parseState = (JKParseState *)calloc(1UL, sizeof(JKParseState))) == NULL) { goto errorExit; }
 
@@ -2118,7 +2119,7 @@ static void *jk_object_for_token(JKParseState *parseState) {
   return(self);
 
  errorExit:
-  if(self) { [self autorelease]; self = NULL; }
+  if(self) { SAFE_ARC_AUTORELEASE(self); self = NULL; }
   return(NULL);
 }
 
@@ -2332,7 +2333,7 @@ static id _NSStringObjectFromJSONString(NSString *jsonString, JKParseOptionFlags
   CFIndex    stringLength     = CFStringGetLength((CFStringRef)jsonString);
   NSUInteger stringUTF8Length = [jsonString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
   
-  if((mutableData = (CFMutableDataRef)[(id)CFDataCreateMutable(NULL, (NSUInteger)stringUTF8Length) autorelease]) != NULL) {
+  if((mutableData = (CFMutableDataRef)SAFE_ARC_AUTORELEASE((id)CFDataCreateMutable(NULL, (NSUInteger)stringUTF8Length))) != NULL) {
     UInt8   *utf8String = CFDataGetMutableBytePtr(mutableData);
     CFIndex  usedBytes  = 0L, convertedCount = 0L;
     
@@ -2432,7 +2433,7 @@ static void jk_encode_error(JKEncodeState *encodeState, NSString *format, ...) {
 
   va_list varArgsList;
   va_start(varArgsList, format);
-  NSString *formatString = [[[NSString alloc] initWithFormat:format arguments:varArgsList] autorelease];
+  NSString *formatString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithFormat:format arguments:varArgsList]);
   va_end(varArgsList);
 
   if(encodeState->error == NULL) {
@@ -2830,7 +2831,7 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
 
 + (id)serializeObject:(id)object options:(JKSerializeOptionFlags)optionFlags encodeOption:(JKEncodeOptionType)encodeOption block:(JKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
-  return([[[[self alloc] init] autorelease] serializeObject:object options:optionFlags encodeOption:encodeOption block:block delegate:delegate selector:selector error:error]);
+  return([SAFE_ARC_AUTORELEASE([[self alloc] init]) serializeObject:object options:optionFlags encodeOption:encodeOption block:block delegate:delegate selector:selector error:error]);
 }
 
 - (id)serializeObject:(id)object options:(JKSerializeOptionFlags)optionFlags encodeOption:(JKEncodeOptionType)encodeOption block:(JKSERIALIZER_BLOCKS_PROTO)block delegate:(id)delegate selector:(SEL)selector error:(NSError **)error
@@ -2883,13 +2884,13 @@ static int jk_encode_add_atom_to_buffer(JKEncodeState *encodeState, void *object
 
     switch((encodeOption & JKEncodeOptionAsTypeMask)) {
       case JKEncodeOptionAsData:
-        if(stackBuffer == YES) { if((returnObject = [(id)CFDataCreate(                 NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex)                                  autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
-        else                   { if((returnObject = [(id)CFDataCreateWithBytesNoCopy(  NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, NULL)                            autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
+        if(stackBuffer == YES) { if((returnObject = SAFE_ARC_AUTORELEASE((id)CFDataCreate(                 NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex)                                 )) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
+        else                   { if((returnObject = SAFE_ARC_AUTORELEASE((id)CFDataCreateWithBytesNoCopy(  NULL,                encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, NULL)                           )) == NULL) { jk_encode_error(encodeState, @"Unable to create NSData object"); } }
         break;
 
       case JKEncodeOptionAsString:
-        if(stackBuffer == YES) { if((returnObject = [(id)CFStringCreateWithBytes(      NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO)       autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
-        else                   { if((returnObject = [(id)CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO, NULL) autorelease]) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
+        if(stackBuffer == YES) { if((returnObject = SAFE_ARC_AUTORELEASE((id)CFStringCreateWithBytes(      NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO)      )) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
+        else                   { if((returnObject = SAFE_ARC_AUTORELEASE((id)CFStringCreateWithBytesNoCopy(NULL, (const UInt8 *)encodeState->stringBuffer.bytes.ptr, (CFIndex)encodeState->atIndex, kCFStringEncodingUTF8, NO, NULL))) == NULL) { jk_encode_error(encodeState, @"Unable to create NSString object"); } }
         break;
 
       default: jk_encode_error(encodeState, @"Unknown encode as type."); break;
