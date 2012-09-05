@@ -638,7 +638,7 @@ static NSNumberInitWithUnsignedLongLongImp _jk_NSNumberInitWithUnsignedLongLongI
 extern void jk_collectionClassLoadTimeInitialization(void) __attribute__ ((constructor));
 
 void jk_collectionClassLoadTimeInitialization(void) {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Though technically not required, the run time environment at load time initialization may be less than ideal.
+  SAFE_ARC_AUTORELEASE_POOL_START(); // Though technically not required, the run time environment at load time initialization may be less than ideal.
   
   _JKArrayClass             = objc_getClass("JKArray");
   _JKArrayInstanceSize      = jk_max(16UL, class_getInstanceSize(_JKArrayClass));
@@ -653,10 +653,14 @@ void jk_collectionClassLoadTimeInitialization(void) {
   // Hacktacular.  Need to do it this way due to the nature of class clusters.
   id temp_NSNumber = [NSNumber alloc];
   _jk_NSNumberInitWithUnsignedLongLongImp = (NSNumberInitWithUnsignedLongLongImp)[temp_NSNumber methodForSelector:@selector(initWithUnsignedLongLong:)];
-  [[temp_NSNumber init] release];
+  SAFE_ARC_RELEASE([temp_NSNumber init]);
   temp_NSNumber = NULL;
   
-  [pool release]; pool = NULL;
+  SAFE_ARC_AUTORELEASE_POOL_END();
+#if __has_feature(objc_arc)
+#else
+  pool = NULL;
+#endif
 }
 
 
@@ -958,7 +962,7 @@ static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *ob
     free(entry); entry = NULL;
   }
 
-  [super dealloc];
+  SAFE_ARC_SUPER_DEALLOC();
 }
 
 static JKHashTableEntry *_JKDictionaryHashEntry(JKDictionary *dictionary) {
@@ -2139,7 +2143,7 @@ static void _JSONDecoderCleanup(JSONDecoder *decoder) {
 - (void)dealloc
 {
   _JSONDecoderCleanup(self);
-  [super dealloc];
+  SAFE_ARC_SUPER_DEALLOC();
 }
 
 - (void)clearCache
