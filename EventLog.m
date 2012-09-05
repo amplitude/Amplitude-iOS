@@ -62,8 +62,6 @@ static LocationManagerDelegate *locationManagerDelegate;
         [info release];
     }
     
-    NSLog(@"%@", _phoneCarrier);
-    
     NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     eventsDataPath = [[eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
     
@@ -75,14 +73,18 @@ static LocationManagerDelegate *locationManagerDelegate;
         [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
     }
     
+    Class CLLocationManager = NSClassFromString(@"CLLocationManager");
+    
     canTrackLocation = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized
                         && [CLLocationManager significantLocationChangeMonitoringAvailable]);
     
     if (canTrackLocation) {
         locationManager = [[CLLocationManager alloc] init];
         locationManagerDelegate = [[LocationManagerDelegate alloc] init];
-        locationManager.delegate = locationManagerDelegate;
-        [locationManager startMonitoringSignificantLocationChanges];
+        SEL setDelegate = NSSelectorFromString(@"setDelegate:");
+        [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
+        SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
+        [locationManager performSelector:startMonitoringSignificantLocationChanges];
     }
 
 }
@@ -193,8 +195,20 @@ static LocationManagerDelegate *locationManagerDelegate;
     
     if (lastKnownLocation != nil) {
         NSMutableDictionary *location = [NSMutableDictionary dictionary];
-        [location setValue:[NSNumber numberWithDouble:lastKnownLocation.coordinate.latitude] forKey:@"lat"];
-        [location setValue:[NSNumber numberWithDouble:lastKnownLocation.coordinate.longitude] forKey:@"lng"];
+        
+        // Need to use NSInvocation because coordinate selector returns a C struct
+        SEL coordinateSelector = NSSelectorFromString(@"coordinate");
+        NSMethodSignature *coordinateMethodSignature = [lastKnownLocation methodSignatureForSelector:coordinateSelector];
+        NSInvocation *coordinateInvocation = [NSInvocation invocationWithMethodSignature:coordinateMethodSignature];
+        [coordinateInvocation setTarget:lastKnownLocation];
+        [coordinateInvocation setSelector:coordinateSelector];
+        [coordinateInvocation invoke];
+        CLLocationCoordinate2D lastKnownLocationCoordinate;
+        [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
+        
+        [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
+        [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
+        
         [apiProperties setValue:location forKey:@"location"];
     }
     
@@ -367,21 +381,26 @@ static LocationManagerDelegate *locationManagerDelegate;
     _userId = userId;
 }
 
-+ (void)setLocation:(CLLocation*) location
++ (void)setLocation:(id) location
 {
-    [location retain];
-    [lastKnownLocation release];
-    lastKnownLocation = location;
+    Class CLLocation = NSClassFromString(@"CLLocation");
+    if (CLLocation && [location isMemberOfClass:CLLocation]) {
+        [location retain];
+        [lastKnownLocation release];
+        lastKnownLocation = location;
+    }
 }
 
 + (void)startListeningForLocation
 {
-    [locationManager startMonitoringSignificantLocationChanges];
+    SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
+    [locationManager performSelector:startMonitoringSignificantLocationChanges];
 }
 
 + (void)stopListeningForLocation
 {
-    [locationManager stopMonitoringSignificantLocationChanges];
+    SEL stopMonitoringSignificantLocationChanges = NSSelectorFromString(@"stopMonitoringSignificantLocationChanges");
+    [locationManager performSelector:stopMonitoringSignificantLocationChanges];
 }
 
 + (void)saveEventsData
