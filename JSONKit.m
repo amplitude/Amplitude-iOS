@@ -2986,7 +2986,7 @@ errorExit:
 - (void)dealloc
 {
   [self releaseState];
-  [super dealloc];
+  SAFE_ARC_SUPER_DEALLOC();
 }
 
 @end
