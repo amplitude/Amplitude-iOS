@@ -3,7 +3,7 @@
 //  Hash Helper
 //
 //  Created by Spenser Skates on 8/19/12.
-//
+//  Copyright (c) 2012 GiraffeGraph. All rights reserved.
 //
 
 #import "LocationManagerDelegate.h"

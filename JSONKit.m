@@ -5,6 +5,8 @@
 //  under the terms of the Apache License, Version 2.0, as specified below.
 //
 
+// Updated for ARC compatibility by Spenser Skates on 9/4/12
+
 /*
  Copyright (c) 2011, John Engelhart
  
