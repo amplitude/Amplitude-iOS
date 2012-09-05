@@ -139,9 +139,10 @@
 #error JSONKit does not support Objective-C Garbage Collection
 #endif
 
-#if __has_feature(objc_arc)
-#error JSONKit does not support Objective-C Automatic Reference Counting (ARC)
-#endif
+//#if __has_feature(objc_arc)
+//#error JSONKit does not support Objective-C Automatic Reference Counting (ARC)
+//#endif
+// Well, it will now :) -Spenser
 
 // The following checks are really nothing more than sanity checks.
 // JSONKit technically has a few problems from a "strictly C99 conforming" standpoint, though they are of the pedantic nitpicking variety.
@@ -449,7 +450,7 @@ struct JKParseState {
   JKObjectStack       objectStack;
   JKTokenCache        cache;
   JKObjCImpCache      objCImpCache;
-  NSError            *error;
+  __unsafe_unretained NSError *error;
   int                 errorIsPrev;
   BOOL                mutableCollections;
 };
@@ -463,7 +464,7 @@ struct JKFastClassLookup {
 };
 
 struct JKEncodeCache {
-  id object;
+  __unsafe_unretained id object;
   size_t offset;
   size_t length;
 };
@@ -477,12 +478,12 @@ struct JKEncodeState {
   JKSerializeOptionFlags  serializeOptionFlags;
   JKEncodeOptionType      encodeOption;
   size_t                  depth;
-  NSError                *error;
-  id                      classFormatterDelegate;
+  __unsafe_unretained NSError *error;
+  __unsafe_unretained id classFormatterDelegate;
   SEL                     classFormatterSelector;
   JKClassFormatterIMP     classFormatterIMP;
 #ifdef __BLOCKS__
-  JKClassFormatterBlock   classFormatterBlock;
+  __unsafe_unretained JKClassFormatterBlock classFormatterBlock;
 #endif
 };
 
@@ -505,7 +506,7 @@ struct JKEncodeState {
 
 struct JKHashTableEntry {
   NSUInteger keyHash;
-  id key, object;
+  __unsafe_unretained id key, object;
 };
 
 
