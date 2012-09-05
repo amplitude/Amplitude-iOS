@@ -9,6 +9,7 @@
 #import "EventLog.h"
 #import "LocationManagerDelegate.h"
 #import "JSONKit.h"
+#import "ARCMacros.h"
 #import <sys/socket.h>
 #import <sys/sysctl.h>
 #import <net/if.h>
