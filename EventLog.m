@@ -105,10 +105,10 @@ static LocationManagerDelegate *locationManagerDelegate;
                     format:@"Set apiKey to the application key found at giraffegraph.com"];
     }
     
-    SAFE_ARC_RETAIN(apiKey);
+    (void) SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
-    SAFE_ARC_RETAIN(userId);
+    (void) SAFE_ARC_RETAIN(userId);
     SAFE_ARC_RELEASE(_userId);
     _userId = userId;
     
@@ -383,14 +383,14 @@ static LocationManagerDelegate *locationManagerDelegate;
 
 + (void)setGlobalProperties:(NSDictionary*) globalProperties
 {
-    SAFE_ARC_RETAIN(globalProperties);
+    (void) SAFE_ARC_RETAIN(globalProperties);
     SAFE_ARC_RELEASE(_globalProperties);
     _globalProperties = globalProperties;
 }
 
 + (void)setUserId:(NSString*) userId
 {
-    SAFE_ARC_RETAIN(userId);
+    (void) SAFE_ARC_RETAIN(userId);
     SAFE_ARC_RELEASE(_userId);
     _userId = userId;
 }
@@ -399,7 +399,7 @@ static LocationManagerDelegate *locationManagerDelegate;
 {
     Class CLLocation = NSClassFromString(@"CLLocation");
     if (CLLocation && [location isMemberOfClass:CLLocation]) {
-        SAFE_ARC_RETAIN(location);
+        (void) SAFE_ARC_RETAIN(location);
         SAFE_ARC_RELEASE(lastKnownLocation);
         lastKnownLocation = location;
     }
