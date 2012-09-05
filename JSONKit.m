@@ -693,8 +693,13 @@ static JKArray *_JKArrayCreate(id objects, NSUInteger count, BOOL mutableCollect
     if((array = [array init]) == NULL) { return(NULL); }
     array->capacity = count;
     array->count    = count;
+#if __has_feature(objc_arc)
+    if(JK_EXPECT_F((array->objects = (__bridge id)malloc(sizeof(id) * array->capacity)) == NULL)) { SAFE_ARC_AUTORELEASE(array); return(NULL); }
+    memcpy((__bridge void *)array->objects, (__bridge const void *)objects, array->capacity * sizeof(id));
+#else
     if(JK_EXPECT_F((array->objects = (id)malloc(sizeof(id) * array->capacity)) == NULL)) { SAFE_ARC_AUTORELEASE(array); return(NULL); }
     memcpy(array->objects, objects, array->capacity * sizeof(id));
+#endif
     array->mutations = (mutableCollection == NO) ? 0UL : 1UL;
   }
   return(array);
@@ -706,7 +711,11 @@ static void _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger
   if(!((array != NULL) && (array->objects != NULL) && (objectIndex <= array->count) && (newObject != NULL))) { SAFE_ARC_AUTORELEASE(newObject); return; }
   if((array->count + 1UL) >= array->capacity) {
     id newObjects = NULL;
+#if __has_feature(objc_arc)
+    if((newObjects = (__bridge id)realloc((__bridge void *)(array->objects), sizeof(id) * (array->capacity + 16UL))) == NULL) { [NSException raise:NSMallocException format:@"Unable to resize objects array."]; }
+#else
     if((newObjects = (id)realloc(array->objects, sizeof(id) * (array->capacity + 16UL))) == NULL) { [NSException raise:NSMallocException format:@"Unable to resize objects array."]; }
+#endif
     array->objects = newObjects;
     array->capacity += 16UL;
     memset(&array->objects[array->count], 0, sizeof(id) * (array->capacity - array->count));
