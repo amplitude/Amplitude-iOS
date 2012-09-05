@@ -318,7 +318,7 @@ static LocationManagerDelegate *locationManagerDelegate;
                                                                           (CFStringRef)string,
                                                                           NULL,
                                                                           CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                                                          CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))));
+                                                                          CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
     SAFE_ARC_AUTORELEASE(newString);
 #endif
 	if (newString) {
