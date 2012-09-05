@@ -552,14 +552,14 @@ static const UTF8  firstByteMark[7]   = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0x
 #define JK_END_STRING_PTR(x) (&((x)->stringBuffer.bytes.ptr[(x)->stringBuffer.bytes.length]))
 
 
-static JKArray          *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollection);
+static JKArray          *_JKArrayCreate(id objects, NSUInteger count, BOOL mutableCollection);
 static void              _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger objectIndex);
 static void              _JKArrayReplaceObjectAtIndexWithObject(JKArray *array, NSUInteger objectIndex, id newObject);
 static void              _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex);
 
 
 static NSUInteger        _JKDictionaryCapacityForCount(NSUInteger count);
-static JKDictionary     *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *objects, NSUInteger count, BOOL mutableCollection);
+static JKDictionary     *_JKDictionaryCreate(id keys, NSUInteger *keyHashes, id objects, NSUInteger count, BOOL mutableCollection);
 static JKHashTableEntry *_JKDictionaryHashEntry(JKDictionary *dictionary);
 static NSUInteger        _JKDictionaryCapacity(JKDictionary *dictionary);
 static void              _JKDictionaryResizeIfNeccessary(JKDictionary *dictionary);
@@ -667,7 +667,7 @@ void jk_collectionClassLoadTimeInitialization(void) {
 
 #pragma mark -
 @interface JKArray : NSMutableArray <NSCopying, NSMutableCopying, NSFastEnumeration> {
-  id         *objects;
+  id         objects;
   NSUInteger  count, capacity, mutations;
 }
 @end
@@ -681,7 +681,7 @@ void jk_collectionClassLoadTimeInitialization(void) {
   return(NULL);
 }
 
-static JKArray *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollection) {
+static JKArray *_JKArrayCreate(id objects, NSUInteger count, BOOL mutableCollection) {
   NSCParameterAssert((objects != NULL) && (_JKArrayClass != NULL) && (_JKArrayInstanceSize > 0UL));
   JKArray *array = NULL;
 #if __has_feature(objc_arc)
@@ -693,7 +693,7 @@ static JKArray *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollec
     if((array = [array init]) == NULL) { return(NULL); }
     array->capacity = count;
     array->count    = count;
-    if(JK_EXPECT_F((array->objects = (id *)malloc(sizeof(id) * array->capacity)) == NULL)) { SAFE_ARC_AUTORELEASE(array); return(NULL); }
+    if(JK_EXPECT_F((array->objects = (id)malloc(sizeof(id) * array->capacity)) == NULL)) { SAFE_ARC_AUTORELEASE(array); return(NULL); }
     memcpy(array->objects, objects, array->capacity * sizeof(id));
     array->mutations = (mutableCollection == NO) ? 0UL : 1UL;
   }
@@ -705,8 +705,8 @@ static void _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count <= array->capacity) && (objectIndex <= array->count) && (newObject != NULL));
   if(!((array != NULL) && (array->objects != NULL) && (objectIndex <= array->count) && (newObject != NULL))) { SAFE_ARC_AUTORELEASE(newObject); return; }
   if((array->count + 1UL) >= array->capacity) {
-    id *newObjects = NULL;
-    if((newObjects = (id *)realloc(array->objects, sizeof(id) * (array->capacity + 16UL))) == NULL) { [NSException raise:NSMallocException format:@"Unable to resize objects array."]; }
+    id newObjects = NULL;
+    if((newObjects = (id)realloc(array->objects, sizeof(id) * (array->capacity + 16UL))) == NULL) { [NSException raise:NSMallocException format:@"Unable to resize objects array."]; }
     array->objects = newObjects;
     array->capacity += 16UL;
     memset(&array->objects[array->count], 0, sizeof(id) * (array->capacity - array->count));
@@ -763,7 +763,7 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
   return(count);
 }
 
-- (void)getObjects:(id *)objectsPtr range:(NSRange)range
+- (void)getObjects:(id)objectsPtr range:(NSRange)range
 {
   NSParameterAssert((objects != NULL) && (count <= capacity));
   if((objectsPtr     == NULL)  && (NSMaxRange(range) > 0UL))   { [NSException raise:NSRangeException format:@"*** -[%@ %@]: pointer to objects array is NULL but range length is %lu", NSStringFromClass([self class]), NSStringFromSelector(_cmd), (unsigned long)NSMaxRange(range)];        }
@@ -780,7 +780,7 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
   return(objects[objectIndex]);
 }
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id)stackbuf count:(NSUInteger)len
 {
   NSParameterAssert((state != NULL) && (stackbuf != NULL) && (len > 0UL) && (objects != NULL) && (count <= capacity));
   if(JK_EXPECT_F(state->state == 0UL))   { state->mutationsPtr = (unsigned long *)&mutations; state->itemsPtr = stackbuf; }
@@ -956,7 +956,7 @@ static void _JKDictionaryResizeIfNeccessary(JKDictionary *dictionary) {
   }
 }
 
-static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *objects, NSUInteger count, BOOL mutableCollection) {
+static JKDictionary *_JKDictionaryCreate(id keys, NSUInteger *keyHashes, id objects, NSUInteger count, BOOL mutableCollection) {
   NSCParameterAssert((keys != NULL) && (keyHashes != NULL) && (objects != NULL) && (_JKDictionaryClass != NULL) && (_JKDictionaryInstanceSize > 0UL));
   JKDictionary *dictionary = NULL;
 #if __has_feature(objc_arc)
@@ -1098,7 +1098,7 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
   return((entryForKey != NULL) ? entryForKey->object : NULL);
 }
 
-- (void)getObjects:(id *)objects andKeys:(id *)keys
+- (void)getObjects:(id)objects andKeys:(id)keys
 {
   NSParameterAssert((entry != NULL) && (count <= capacity));
   NSUInteger atEntry = 0UL; NSUInteger arrayIdx = 0UL;
@@ -1112,7 +1112,7 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
   }
 }
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id)stackbuf count:(NSUInteger)len
 {
   NSParameterAssert((state != NULL) && (stackbuf != NULL) && (len > 0UL) && (entry != NULL) && (count <= capacity));
   if(JK_EXPECT_F(state->state == 0UL))      { state->mutationsPtr = (unsigned long *)&mutations; state->itemsPtr = stackbuf; }
@@ -1920,9 +1920,9 @@ static void *jk_parse_array(JKParseState *parseState) {
           if(JK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL"); stopParsing = 1; break; } else { parseState->objectStack.objects[parseState->objectStack.index++] = object; arrayState = JKParseAcceptCommaOrEnd; }
           break;
 #if __has_feature(objc_arc)
-        case JKTokenTypeArrayEnd: if(JK_EXPECT_T(arrayState & JKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (__bridge void *)_JKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
+        case JKTokenTypeArrayEnd: if(JK_EXPECT_T(arrayState & JKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (__bridge void *)_JKArrayCreate((id)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
 #else
-        case JKTokenTypeArrayEnd: if(JK_EXPECT_T(arrayState & JKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (void *)_JKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
+        case JKTokenTypeArrayEnd: if(JK_EXPECT_T(arrayState & JKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (void *)_JKArrayCreate((id)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
 #endif
         case JKTokenTypeComma:    if(JK_EXPECT_T(arrayState & JKParseAcceptComma)) { arrayState = JKParseAcceptValue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
         default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, arrayState, @"a value", @"a comma", @"a ']'"); stopParsing = 1; break;
@@ -1944,7 +1944,7 @@ static void *jk_create_dictionary(JKParseState *parseState, size_t startingObjec
 
   parseState->objectStack.index--;
 
-  parsedDictionary = _JKDictionaryCreate((id *)&parseState->objectStack.keys[startingObjectIndex], (NSUInteger *)&parseState->objectStack.cfHashes[startingObjectIndex], (id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections);
+  parsedDictionary = _JKDictionaryCreate((id)&parseState->objectStack.keys[startingObjectIndex], (NSUInteger *)&parseState->objectStack.cfHashes[startingObjectIndex], (id)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections);
 
   return(parsedDictionary);
 }
