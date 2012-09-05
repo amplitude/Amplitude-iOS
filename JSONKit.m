@@ -684,7 +684,11 @@ void jk_collectionClassLoadTimeInitialization(void) {
 static JKArray *_JKArrayCreate(id *objects, NSUInteger count, BOOL mutableCollection) {
   NSCParameterAssert((objects != NULL) && (_JKArrayClass != NULL) && (_JKArrayInstanceSize > 0UL));
   JKArray *array = NULL;
+#if __has_feature(objc_arc)
+  if(JK_EXPECT_T((array = (__bridge JKArray *)calloc(1UL, _JKArrayInstanceSize)) != NULL)) { // Directly allocate the JKArray instance via calloc.
+#else
   if(JK_EXPECT_T((array = (JKArray *)calloc(1UL, _JKArrayInstanceSize)) != NULL)) { // Directly allocate the JKArray instance via calloc.
+#endif
     array->isa      = _JKArrayClass;
     if((array = [array init]) == NULL) { return(NULL); }
     array->capacity = count;
@@ -716,7 +720,11 @@ static void _JKArrayInsertObjectAtIndex(JKArray *array, id newObject, NSUInteger
 static void _JKArrayReplaceObjectAtIndexWithObject(JKArray *array, NSUInteger objectIndex, id newObject) {
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count <= array->capacity) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL) && (newObject != NULL));
   if(!((array != NULL) && (array->objects != NULL) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL) && (newObject != NULL))) { SAFE_ARC_AUTORELEASE(newObject); return; }
+#if __has_feature(objc_arc)
+  CFRelease((__bridge CFTypeRef)(array->objects[objectIndex]));
+#else
   CFRelease(array->objects[objectIndex]);
+#endif
   array->objects[objectIndex] = NULL;
   array->objects[objectIndex] = newObject;
 }
@@ -724,7 +732,11 @@ static void _JKArrayReplaceObjectAtIndexWithObject(JKArray *array, NSUInteger ob
 static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) {
   NSCParameterAssert((array != NULL) && (array->objects != NULL) && (array->count > 0UL) && (array->count <= array->capacity) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL));
   if(!((array != NULL) && (array->objects != NULL) && (array->count > 0UL) && (array->count <= array->capacity) && (objectIndex < array->count) && (array->objects[objectIndex] != NULL))) { return; }
+#if __has_feature(objc_arc)
+  CFRelease((__bridge CFTypeRef)(array->objects[objectIndex]));
+#else
   CFRelease(array->objects[objectIndex]);
+#endif
   array->objects[objectIndex] = NULL;
   if((objectIndex + 1UL) < array->count) { memmove(&array->objects[objectIndex], &array->objects[objectIndex + 1UL], sizeof(id) * ((array->count - 1UL) - objectIndex)); array->objects[array->count - 1UL] = NULL; }
   array->count--;
@@ -734,11 +746,15 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 {
   if(JK_EXPECT_T(objects != NULL)) {
     NSUInteger atObject = 0UL;
+#if __has_feature(objc_arc)
+    for(atObject = 0UL; atObject < count; atObject++) { if(JK_EXPECT_T(objects[atObject] != NULL)) { CFRelease((__bridge CFTypeRef)(objects[atObject])); objects[atObject] = NULL; } }
+#else
     for(atObject = 0UL; atObject < count; atObject++) { if(JK_EXPECT_T(objects[atObject] != NULL)) { CFRelease(objects[atObject]); objects[atObject] = NULL; } }
+#endif
     free(objects); objects = NULL;
   }
   
-  [super dealloc];
+  SAFE_ARC_SUPER_DEALLOC();
 }
 
 - (NSUInteger)count
@@ -845,14 +861,22 @@ static void _JKArrayRemoveObjectAtIndex(JKArray *array, NSUInteger objectIndex) 
 {
   NSParameterAssert(initDictionary != NULL);
   if((self = [super init]) == NULL) { return(NULL); }
+#if __has_feature(objc_arc)
+  if((collection = (__bridge id)CFRetain((__bridge CFTypeRef)(initDictionary))) == NULL) { SAFE_ARC_AUTORELEASE(self); return(NULL); }
+#else
   if((collection = (id)CFRetain(initDictionary)) == NULL) { SAFE_ARC_AUTORELEASE(self); return(NULL); }
+#endif
   return(self);
 }
 
 - (void)dealloc
 {
+#if __has_feature(objc_arc)
+  if(collection != NULL) { CFRelease((__bridge CFTypeRef)(collection)); collection = NULL; }
+#else
   if(collection != NULL) { CFRelease(collection); collection = NULL; }
-  [super dealloc];
+#endif
+  SAFE_ARC_SUPER_DEALLOC();
 }
 
 - (NSArray *)allObjects
@@ -935,7 +959,11 @@ static void _JKDictionaryResizeIfNeccessary(JKDictionary *dictionary) {
 static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *objects, NSUInteger count, BOOL mutableCollection) {
   NSCParameterAssert((keys != NULL) && (keyHashes != NULL) && (objects != NULL) && (_JKDictionaryClass != NULL) && (_JKDictionaryInstanceSize > 0UL));
   JKDictionary *dictionary = NULL;
+#if __has_feature(objc_arc)
+  if(JK_EXPECT_T((dictionary = (__bridge JKDictionary *)calloc(1UL, _JKDictionaryInstanceSize)) != NULL)) { // Directly allocate the JKDictionary instance via calloc.
+#else
   if(JK_EXPECT_T((dictionary = (JKDictionary *)calloc(1UL, _JKDictionaryInstanceSize)) != NULL)) { // Directly allocate the JKDictionary instance via calloc.
+#endif
     dictionary->isa      = _JKDictionaryClass;
     if((dictionary = [dictionary init]) == NULL) { return(NULL); }
     dictionary->capacity = _JKDictionaryCapacityForCount(count);
@@ -956,8 +984,13 @@ static JKDictionary *_JKDictionaryCreate(id *keys, NSUInteger *keyHashes, id *ob
   if(JK_EXPECT_T(entry != NULL)) {
     NSUInteger atEntry = 0UL;
     for(atEntry = 0UL; atEntry < capacity; atEntry++) {
+#if __has_feature(objc_arc)
+      if(JK_EXPECT_T(entry[atEntry].key    != NULL)) { CFRelease((__bridge CFTypeRef)(entry[atEntry].key));    entry[atEntry].key    = NULL; }
+      if(JK_EXPECT_T(entry[atEntry].object != NULL)) { CFRelease((__bridge CFTypeRef)(entry[atEntry].object)); entry[atEntry].object = NULL; }
+#else
       if(JK_EXPECT_T(entry[atEntry].key    != NULL)) { CFRelease(entry[atEntry].key);    entry[atEntry].key    = NULL; }
       if(JK_EXPECT_T(entry[atEntry].object != NULL)) { CFRelease(entry[atEntry].object); entry[atEntry].object = NULL; }
+#endif
     }
   
     free(entry); entry = NULL;
@@ -978,8 +1011,13 @@ static NSUInteger _JKDictionaryCapacity(JKDictionary *dictionary) {
 
 static void _JKDictionaryRemoveObjectWithEntry(JKDictionary *dictionary, JKHashTableEntry *entry) {
   NSCParameterAssert((dictionary != NULL) && (entry != NULL) && (entry->key != NULL) && (entry->object != NULL) && (dictionary->count > 0UL) && (dictionary->count <= dictionary->capacity));
+#if __has_feature(objc_arc)
+  CFRelease((__bridge CFTypeRef)(entry->key));    entry->key    = NULL;
+  CFRelease((__bridge CFTypeRef)(entry->object)); entry->object = NULL;
+#else
   CFRelease(entry->key);    entry->key    = NULL;
   CFRelease(entry->object); entry->object = NULL;
+#endif
   entry->keyHash = 0UL;
   dictionary->count--;
   // In order for certain invariants that are used to speed up the search for a particular key, we need to "re-add" all the entries in the hash table following this entry until we hit a NULL entry.
@@ -1009,13 +1047,22 @@ static void _JKDictionaryAddObject(JKDictionary *dictionary, NSUInteger keyHash,
   for(idx = 0UL; idx < dictionary->capacity; idx++) {
     NSUInteger entryIdx = (keyEntry + idx) % dictionary->capacity;
     JKHashTableEntry *atEntry = &dictionary->entry[entryIdx];
+#if __has_feature(objc_arc)
+    if(JK_EXPECT_F(atEntry->keyHash == keyHash) && JK_EXPECT_T(atEntry->key != NULL) && (JK_EXPECT_F(key == atEntry->key) || JK_EXPECT_F(CFEqual((__bridge CFTypeRef)(atEntry->key), (__bridge CFTypeRef)(key))))) { _JKDictionaryRemoveObjectWithEntry(dictionary, atEntry); }
+#else
     if(JK_EXPECT_F(atEntry->keyHash == keyHash) && JK_EXPECT_T(atEntry->key != NULL) && (JK_EXPECT_F(key == atEntry->key) || JK_EXPECT_F(CFEqual(atEntry->key, key)))) { _JKDictionaryRemoveObjectWithEntry(dictionary, atEntry); }
+#endif
     if(JK_EXPECT_T(atEntry->key == NULL)) { NSCParameterAssert((atEntry->keyHash == 0UL) && (atEntry->object == NULL)); atEntry->key = key; atEntry->object = object; atEntry->keyHash = keyHash; dictionary->count++; return; }
   }
 
   // We should never get here.  If we do, we -release the key / object because it's our responsibility.
+#if __has_feature(objc_arc)
+  CFRelease((__bridge CFTypeRef)(key));
+  CFRelease((__bridge CFTypeRef)(object));
+#else
   CFRelease(key);
   CFRelease(object);
+#endif
 }
 
 - (NSUInteger)count
@@ -1026,11 +1073,19 @@ static void _JKDictionaryAddObject(JKDictionary *dictionary, NSUInteger keyHash,
 static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *dictionary, id aKey) {
   NSCParameterAssert((dictionary != NULL) && (dictionary->entry != NULL) && (dictionary->count <= dictionary->capacity));
   if((aKey == NULL) || (dictionary->capacity == 0UL)) { return(NULL); }
+#if __has_feature(objc_arc)
+  NSUInteger        keyHash = CFHash((__bridge CFTypeRef)(aKey)), keyEntry = (keyHash % dictionary->capacity), idx = 0UL;
+#else
   NSUInteger        keyHash = CFHash(aKey), keyEntry = (keyHash % dictionary->capacity), idx = 0UL;
+#endif
   JKHashTableEntry *atEntry = NULL;
   for(idx = 0UL; idx < dictionary->capacity; idx++) {
     atEntry = &dictionary->entry[(keyEntry + idx) % dictionary->capacity];
+#if __has_feature(objc_arc)
+    if(JK_EXPECT_T(atEntry->keyHash == keyHash) && JK_EXPECT_T(atEntry->key != NULL) && ((atEntry->key == aKey) || CFEqual((__bridge CFTypeRef)(atEntry->key), (__bridge CFTypeRef)(aKey)))) { NSCParameterAssert(atEntry->object != NULL); return(atEntry); break; }
+#else
     if(JK_EXPECT_T(atEntry->keyHash == keyHash) && JK_EXPECT_T(atEntry->key != NULL) && ((atEntry->key == aKey) || CFEqual(atEntry->key, aKey))) { NSCParameterAssert(atEntry->object != NULL); return(atEntry); break; }
+#endif
     if(JK_EXPECT_F(atEntry->key == NULL)) { NSCParameterAssert(atEntry->object == NULL); return(NULL); break; } // If the key was in the table, we would have found it by now.
   }
   return(NULL);
@@ -1085,7 +1140,11 @@ static JKHashTableEntry *_JKDictionaryHashTableEntryForKey(JKDictionary *diction
   aKey     = [aKey     copy];   // Why on earth would clang complain that this -copy "might leak", 
   anObject = SAFE_ARC_RETAIN(anObject); // but this -retain doesn't!?
 #endif // __clang_analyzer__
+#if __has_feature(objc_arc)
+  _JKDictionaryAddObject(self, CFHash((__bridge CFTypeRef)(aKey)), aKey, anObject);
+#else
   _JKDictionaryAddObject(self, CFHash(aKey), aKey, anObject);
+#endif
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
 
@@ -1860,7 +1919,11 @@ static void *jk_parse_array(JKParseState *parseState) {
           if(JK_EXPECT_F((arrayState & JKParseAcceptValue)          == 0))    { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected value.");              stopParsing = 1; break; }
           if(JK_EXPECT_F((object = jk_object_for_token(parseState)) == NULL)) {                              jk_error(parseState, @"Internal error: Object == NULL"); stopParsing = 1; break; } else { parseState->objectStack.objects[parseState->objectStack.index++] = object; arrayState = JKParseAcceptCommaOrEnd; }
           break;
+#if __has_feature(objc_arc)
+        case JKTokenTypeArrayEnd: if(JK_EXPECT_T(arrayState & JKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (__bridge void *)_JKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
+#else
         case JKTokenTypeArrayEnd: if(JK_EXPECT_T(arrayState & JKParseAcceptEnd)) { NSCParameterAssert(parseState->objectStack.index >= startingObjectIndex); parsedArray = (void *)_JKArrayCreate((id *)&parseState->objectStack.objects[startingObjectIndex], (parseState->objectStack.index - startingObjectIndex), parseState->mutableCollections); } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ']'."); } stopParsing = 1; break;
+#endif
         case JKTokenTypeComma:    if(JK_EXPECT_T(arrayState & JKParseAcceptComma)) { arrayState = JKParseAcceptValue; } else { parseState->errorIsPrev = 1; jk_error(parseState, @"Unexpected ','."); stopParsing = 1; } break;
         default: parseState->errorIsPrev = 1; jk_error_parse_accept_or3(parseState, arrayState, @"a value", @"a comma", @"a ']'"); stopParsing = 1; break;
       }
