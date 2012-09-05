@@ -46,12 +46,12 @@ static LocationManagerDelegate *locationManagerDelegate;
 
 + (void)initialize
 {
-    _deviceId = [[EventLog getDeviceId] retain];
+    _deviceId = SAFE_ARC_RETAIN([EventLog getDeviceId]);
     
-    _versionName = [[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"] retain];
+    _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
     
-    _buildVersionRelease = [[[UIDevice currentDevice] systemVersion] retain];
-    _phoneModel = [[[UIDevice currentDevice] model] retain];
+    _buildVersionRelease = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
+    _phoneModel = SAFE_ARC_RETAIN([[UIDevice currentDevice] model]);
     
     // Requires a linked library
     Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
@@ -59,17 +59,17 @@ static LocationManagerDelegate *locationManagerDelegate;
     SEL carrierName = NSSelectorFromString(@"carrierName");
     if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
         NSObject *info = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
-        _phoneCarrier = [[[info performSelector:subscriberCellularProvider] performSelector:carrierName] retain];
-        [info release];
+        _phoneCarrier = SAFE_ARC_RETAIN([[info performSelector:subscriberCellularProvider] performSelector:carrierName]);
+        SAFE_ARC_RELEASE(info);
     }
     
     NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-    eventsDataPath = [[eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"] retain];
+    eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
-        eventsData = [[NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath] retain];
+        eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
     } else {
-        eventsData = [[NSMutableDictionary dictionary] retain];
+        eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
         [eventsData setObject:[NSMutableArray array] forKey:@"events"];
         [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
     }
@@ -102,11 +102,11 @@ static LocationManagerDelegate *locationManagerDelegate;
                     format:@"Set apiKey to the application key found at giraffegraph.com"];
     }
     
-    [apiKey retain];
-    [_apiKey release];
+    SAFE_ARC_RETAIN(apiKey);
+    SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
-    [userId retain];
-    [_userId release];
+    SAFE_ARC_RETAIN(userId);
+    SAFE_ARC_RELEASE(_userId);
     _userId = userId;
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -370,15 +370,15 @@ static LocationManagerDelegate *locationManagerDelegate;
 
 + (void)setGlobalProperties:(NSDictionary*) globalProperties
 {
-    [globalProperties retain];
-    [_globalProperties release];
+    SAFE_ARC_RETAIN(globalProperties);
+    SAFE_ARC_RELEASE(_globalProperties);
     _globalProperties = globalProperties;
 }
 
 + (void)setUserId:(NSString*) userId
 {
-    [userId retain];
-    [_userId release];
+    SAFE_ARC_RETAIN(userId);
+    SAFE_ARC_RELEASE(_userId);
     _userId = userId;
 }
 
@@ -386,8 +386,8 @@ static LocationManagerDelegate *locationManagerDelegate;
 {
     Class CLLocation = NSClassFromString(@"CLLocation");
     if (CLLocation && [location isMemberOfClass:CLLocation]) {
-        [location retain];
-        [lastKnownLocation release];
+        SAFE_ARC_RETAIN(location);
+        SAFE_ARC_RELEASE(lastKnownLocation);
         lastKnownLocation = location;
     }
 }
