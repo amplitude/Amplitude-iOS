@@ -44,6 +44,9 @@ static LocationManagerDelegate *locationManagerDelegate;
 
 @implementation EventLog
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+
 + (void)initialize
 {
     _deviceId = SAFE_ARC_RETAIN([EventLog getDeviceId]);
@@ -515,5 +518,7 @@ static LocationManagerDelegate *locationManagerDelegate;
     }
     return ret;
 }
+
+#pragma clang diagnostic pop
 
 @end
