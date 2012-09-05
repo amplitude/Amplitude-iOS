@@ -266,7 +266,7 @@ static LocationManagerDelegate *locationManagerDelegate;
 
     [request setHTTPBody:postData];
 
-    [postData release];
+    SAFE_ARC_RELEASE(postData);
 
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
@@ -277,7 +277,7 @@ static LocationManagerDelegate *locationManagerDelegate;
                 NSString *stringResult = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                 // TODO: handle invalid JSON
                 NSDictionary *result = [stringResult objectFromJSONString];
-                [stringResult release];
+                SAFE_ARC_RELEASE(stringResult);
                 if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
                     [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
                 } else {
@@ -285,7 +285,7 @@ static LocationManagerDelegate *locationManagerDelegate;
                 }
             } else {
                 NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
-                    [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]);
+                    SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
             }
         } else if (error != nil) {
             NSLog(@"ERROR: Connection error:%@", error);
@@ -296,18 +296,28 @@ static LocationManagerDelegate *locationManagerDelegate;
         [EventLog saveEventsData];
         
         updatingCurrently = NO;
-        [queue release];
+        SAFE_ARC_RELEASE(queue);
     }];
 }
 
 + (NSString*)urlEncodeString:(NSString*) string
 {
-    NSString *newString = [NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                                     (CFStringRef)string,
-                                                                                     NULL,
-                                                                                     CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                                                                     CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)))
-                           autorelease];
+    NSString *newString;
+#if __has_feature(objc_arc)
+    newString = (__bridge_transfer NSString*)
+                    CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                                            (__bridge CFStringRef)string,
+                                                            NULL,
+                                                            CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
+                                                            CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
+#else
+    newString = NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                                                          (CFStringRef)string,
+                                                                          NULL,
+                                                                          CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
+                                                                          CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))));
+    SAFE_ARC_AUTORELEASE(newString);
+#endif
 	if (newString) {
 		return newString;
 	}
