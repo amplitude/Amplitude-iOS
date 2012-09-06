@@ -348,7 +348,7 @@ static id kNSNO = NULL;
         }
     else
         {
-        SAFE_ARC_RELEASE(theDictionary release);
+        SAFE_ARC_RELEASE(theDictionary);
         }
 
     return(YES);
@@ -577,7 +577,7 @@ static id kNSNO = NULL;
         else
             {
             *outStringConstant = SAFE_ARC_AUTORELEASE([theString copy]);
-            SAFE_ARC_RELEASE(theString release);
+            SAFE_ARC_RELEASE(theString);
             }
         }
     else
