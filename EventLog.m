@@ -57,7 +57,6 @@ static LocationManagerDelegate *locationManagerDelegate;
     _buildVersionRelease = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
     _phoneModel = SAFE_ARC_RETAIN([[UIDevice currentDevice] model]);
     
-    // Requires a linked library
     Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
     SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
     SEL carrierName = NSSelectorFromString(@"carrierName");
