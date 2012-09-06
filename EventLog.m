@@ -116,8 +116,8 @@ static LocationManagerDelegate *locationManagerDelegate;
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
 {
     if (apiKey == nil) {
-        [NSException raise:@"apiKey cannot be nil"
-                    format:@"Set apiKey to the application key found at giraffegraph.com"];
+        NSLog(@"ERROR: apiKey cannot be nil, set apiKey");
+        return;
     }
     
     (void) SAFE_ARC_RETAIN(apiKey);
@@ -168,8 +168,8 @@ static LocationManagerDelegate *locationManagerDelegate;
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties:(NSDictionary*) apiProperties
 {
     if (_apiKey == nil) {
-        [NSException raise:@"apiKey is nil, apiKey must be set before calling logEvent"
-                    format:@"Set apiKey first with initializeApiKey"];
+        NSLog(@"ERROR: apiKey cannot be nil, set apiKey before calling logEvent with initializeApiKey");
+        return;
     }
     
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
