@@ -26,8 +26,11 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
+//  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
 #import "CDataScanner_Extensions.h"
+
+#import "ARCMacros.h"
 
 #define LF 0x000a // Line Feed
 #define FF 0x000c // Form Feed
@@ -119,8 +122,8 @@ else
 
 
     NSString *theSnippet = [NSString stringWithFormat:@"%@!HERE>!%@",
-        [[[NSString alloc] initWithData:[self.data subdataWithRange:theStartRange] encoding:NSUTF8StringEncoding] autorelease],
-        [[[NSString alloc] initWithData:[self.data subdataWithRange:theEndRange] encoding:NSUTF8StringEncoding] autorelease]
+        SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:[self.data subdataWithRange:theStartRange] encoding:NSUTF8StringEncoding]),
+        SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:[self.data subdataWithRange:theEndRange] encoding:NSUTF8StringEncoding])
         ];
 
     NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:

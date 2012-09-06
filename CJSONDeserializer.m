@@ -26,11 +26,14 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
+//  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
 #import "CJSONDeserializer.h"
 
 #import "CJSONScanner.h"
 #import "CDataScanner.h"
+
+#import "ARCMacros.h"
 
 NSString *const kJSONDeserializerErrorDomain  = @"CJSONDeserializerErrorDomain";
 
@@ -44,7 +47,7 @@ NSString *const kJSONDeserializerErrorDomain  = @"CJSONDeserializerErrorDomain";
 
 + (CJSONDeserializer *)deserializer
     {
-    return([[[self alloc] init] autorelease]);
+    return(SAFE_ARC_AUTORELEASE([[self alloc] init]));
     }
 
 - (id)init
@@ -57,10 +60,10 @@ NSString *const kJSONDeserializerErrorDomain  = @"CJSONDeserializerErrorDomain";
 
 - (void)dealloc
     {
-    [scanner release];
+    SAFE_ARC_RELEASE(scanner);
     scanner = NULL;
     //
-    [super dealloc];
+    SAFE_ARC_SUPER_DEALLOC();
     }
 
 #pragma mark -
