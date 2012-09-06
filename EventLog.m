@@ -8,7 +8,8 @@
 
 #import "EventLog.h"
 #import "LocationManagerDelegate.h"
-#import "JSONKit.h"
+#import "CJSONSerializer.h"
+#import "CJSONDeserializer.h"
 #import "ARCMacros.h"
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -150,7 +151,7 @@ static LocationManagerDelegate *locationManagerDelegate;
     [EventLog logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties: apiProperties
++ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties:(NSDictionary*) apiProperties
 {
     if (_apiKey == nil) {
         [NSException raise:@"apiKey is nil, apiKey must be set before calling logEvent"
@@ -236,7 +237,15 @@ static LocationManagerDelegate *locationManagerDelegate;
         return;
     }
     NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
-    [EventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:[uploadEvents JSONString] numEvents:numEvents];
+    NSError *error = nil;
+    NSData *eventsData = [[CJSONSerializer serializer] serializeArray:uploadEvents error:&error];
+    if (error != nil) {
+        NSLog(@"ERROR: JSONSerializer error: %@", error);
+        updatingCurrently = NO;
+        return;
+    }
+    NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsData encoding:NSUTF8StringEncoding]);
+    [EventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
 }
 
 + (void)uploadEventsLater
@@ -277,11 +286,15 @@ static LocationManagerDelegate *locationManagerDelegate;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
             if ([httpResponse statusCode] == 200) {
-                NSString *stringResult = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                // TODO: handle invalid JSON
-                NSDictionary *result = [stringResult objectFromJSONString];
-                SAFE_ARC_RELEASE(stringResult);
-                if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
+                NSError *error = nil;
+                NSDictionary *result = [[CJSONDeserializer deserializer] deserialize:data error:&error];
+                
+                if (error != nil) {
+                    NSLog(@"ERROR: Deserialization error:%@", error);
+                } else if (![result isKindOfClass:[NSDictionary class]]) {
+                    NSLog(@"ERROR: JSON Dictionary not returned from server, invalid type:%@", [result class]);
+                } else if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
+                    // success, remove existing events from dictionary
                     [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
                 } else {
                     NSLog(@"ERROR: Not all events uploaded");
