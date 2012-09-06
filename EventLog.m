@@ -71,7 +71,21 @@ static LocationManagerDelegate *locationManagerDelegate;
     eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
-        eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
+        @try {
+            eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
+        }
+        @catch (NSException *e) {
+            NSLog(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
+            NSError *error = nil;
+            [[NSFileManager defaultManager] removeItemAtPath:eventsDataPath error:&error];
+            if (error != nil) {
+                // Can't remove, unable to do anything about it
+                NSLog(@"ERROR: Can't remove corrupt file:%@", error);
+            }
+            eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
+            [eventsData setObject:[NSMutableArray array] forKey:@"events"];
+            [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
+        }
     } else {
         eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
         [eventsData setObject:[NSMutableArray array] forKey:@"events"];
