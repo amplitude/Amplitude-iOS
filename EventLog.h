@@ -20,7 +20,7 @@
 
 + (void)uploadEvents;
 
-+ (void)setGlobalProperties:(NSDictionary*) globalProperties;
++ (void)setGlobalUserProperties:(NSDictionary*) globalProperties;
 
 + (void)setUserId:(NSString*) userId;
 

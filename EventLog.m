@@ -394,7 +394,7 @@ static LocationManagerDelegate *locationManagerDelegate;
     }
 }
 
-+ (void)setGlobalProperties:(NSDictionary*) globalProperties
++ (void)setGlobalUserProperties:(NSDictionary*) globalProperties
 {
     (void) SAFE_ARC_RETAIN(globalProperties);
     SAFE_ARC_RELEASE(_globalProperties);
