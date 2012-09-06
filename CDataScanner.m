@@ -26,8 +26,11 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
+//  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
 #import "CDataScanner.h"
+
+#import "ARCMacros.h"
 
 @interface CDataScanner ()
 @end
@@ -70,16 +73,16 @@ static NSCharacterSet *sDoubleCharacters = NULL;
     {
     if (sDoubleCharacters == NULL)
         {
-        sDoubleCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789eE-+."] retain];
+        sDoubleCharacters = SAFE_ARC_RETAIN([NSCharacterSet characterSetWithCharactersInString:@"0123456789eE-+."]);
         }
     }
 
 - (void)dealloc
     {
-    [data release];
+    SAFE_ARC_RELEASE(data);
     data = NULL;
     //
-    [super dealloc];
+    SAFE_ARC_SUPER_DEALLOC();
     }
 
 - (NSUInteger)scanLocation
@@ -101,8 +104,8 @@ static NSCharacterSet *sDoubleCharacters = NULL;
     {
     if (data != inData)
         {
-        [data release];
-        data = [inData retain];
+        SAFE_ARC_RELEASE(data);
+        data = SAFE_ARC_RETAIN(inData);
         }
 
     if (data)
@@ -198,7 +201,7 @@ static NSCharacterSet *sDoubleCharacters = NULL;
 
     if (outValue)
         {
-        *outValue = [[[NSString alloc] initWithBytes:current length:P - current encoding:NSUTF8StringEncoding] autorelease];
+        *outValue = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithBytes:current length:P - current encoding:NSUTF8StringEncoding]);
         }
 
     current = P;
@@ -217,7 +220,7 @@ static NSCharacterSet *sDoubleCharacters = NULL;
 
     if (outValue)
         {
-        *outValue = [[[NSString alloc] initWithBytes:current length:theResult - (char *)current encoding:NSUTF8StringEncoding] autorelease];
+        *outValue = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithBytes:current length:theResult - (char *)current encoding:NSUTF8StringEncoding]);
         }
 
     current = (u_int8_t *)theResult;
@@ -238,7 +241,7 @@ static NSCharacterSet *sDoubleCharacters = NULL;
 
     if (outValue)
         {
-        *outValue = [[[NSString alloc] initWithBytes:current length:P - current encoding:NSUTF8StringEncoding] autorelease];
+        *outValue = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithBytes:current length:P - current encoding:NSUTF8StringEncoding]);
         }
 
     current = P;
@@ -339,7 +342,7 @@ static NSCharacterSet *sDoubleCharacters = NULL;
 - (NSString *)remainingString
     {
     NSData *theRemainingData = [NSData dataWithBytes:current length:end - current];
-    NSString *theString = [[[NSString alloc] initWithData:theRemainingData encoding:NSUTF8StringEncoding] autorelease];
+    NSString *theString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:theRemainingData encoding:NSUTF8StringEncoding]);
     return(theString);
     }
 
