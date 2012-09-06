@@ -26,10 +26,13 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
+//  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
 #import "CJSONScanner.h"
 
 #import "CDataScanner_Extensions.h"
+
+#import "ARCMacros.h"
 
 #if !defined(TREAT_COMMENTS_AS_WHITESPACE)
 #define TREAT_COMMENTS_AS_WHITESPACE 0
@@ -66,7 +69,7 @@ static id kNSNO = NULL;
 
 + (void)initialize
     {
-    NSAutoreleasePool *thePool = [[NSAutoreleasePool alloc] init];
+    SAFE_ARC_AUTORELEASE_POOL_START();
 
     if (kNSYES == NULL)
         {
@@ -78,7 +81,7 @@ static id kNSNO = NULL;
         kNSNO = [NSNumber numberWithBool:NO];
         }
 
-    [thePool release];
+    SAFE_ARC_AUTORELEASE_POOL_END();
     }
 
 - (id)init
@@ -86,17 +89,17 @@ static id kNSNO = NULL;
     if ((self = [super init]) != NULL)
         {
         strictEscapeCodes = NO;
-        nullObject = [[NSNull null] retain];
+        nullObject = SAFE_ARC_RETAIN([NSNull null]);
         }
     return(self);
     }
 
 - (void)dealloc
     {
-    [nullObject release];
+    SAFE_ARC_RELEASE(nullObject);
     nullObject = NULL;
     //
-    [super dealloc];
+    SAFE_ARC_SUPER_DEALLOC();
     }
 
 #pragma mark -
@@ -130,7 +133,7 @@ static id kNSNO = NULL;
             theString = [[NSString alloc] initWithData:theData encoding:self.allowedEncoding];
             }
         theData = [theString dataUsingEncoding:NSUTF8StringEncoding];
-        [theString release];
+        SAFE_ARC_RELEASE(theString);
         }
 
     if (theData)
@@ -259,7 +262,7 @@ static id kNSNO = NULL;
                 {
                 *outError = [self error:kJSONScannerErrorCode_DictionaryKeyScanFailed description:@"Could not scan dictionary. Failed to scan a key."];
                 }
-            [theDictionary release];
+            SAFE_ARC_RELEASE(theDictionary);
             return(NO);
             }
 
@@ -272,7 +275,7 @@ static id kNSNO = NULL;
                 {
                 *outError = [self error:kJSONScannerErrorCode_DictionaryKeyNotTerminated description:@"Could not scan dictionary. Key was not terminated with a ':' character."];
                 }
-            [theDictionary release];
+            SAFE_ARC_RELEASE(theDictionary);
             return(NO);
             }
 
@@ -284,7 +287,7 @@ static id kNSNO = NULL;
                 {
                 *outError = [self error:kJSONScannerErrorCode_DictionaryValueScanFailed description:@"Could not scan dictionary. Failed to scan a value."];
                 }
-            [theDictionary release];
+            SAFE_ARC_RELEASE(theDictionary);
             return(NO);
             }
 
@@ -307,7 +310,7 @@ static id kNSNO = NULL;
                     {
                     *outError = [self error:kJSONScannerErrorCode_DictionaryKeyValuePairNoDelimiter description:@"Could not scan dictionary close delimiter."];
                     }
-                [theDictionary release];
+                SAFE_ARC_RELEASE(theDictionary);
                 return(NO);
                 }
             break;
@@ -327,7 +330,7 @@ static id kNSNO = NULL;
             {
             *outError = [self error:kJSONScannerErrorCode_DictionaryNotTerminated description:@"Could not scan dictionary. Dictionary not terminated by a '}' character."];
             }
-        [theDictionary release];
+        SAFE_ARC_RELEASE(theDictionary);
         return(NO);
         }
 
@@ -335,17 +338,17 @@ static id kNSNO = NULL;
         {
         if (self.options & kJSONScannerOptions_MutableContainers)
             {
-            *outDictionary = [theDictionary autorelease];
+            *outDictionary = SAFE_ARC_AUTORELEASE(theDictionary);
             }
         else
             {
-            *outDictionary = [[theDictionary copy] autorelease];
-            [theDictionary release];
+            *outDictionary = SAFE_ARC_AUTORELEASE([theDictionary copy]);
+            SAFE_ARC_RELEASE(theDictionary);
             }
         }
     else
         {
-        [theDictionary release];
+        SAFE_ARC_RELEASE(theDictionary release);
         }
 
     return(YES);
@@ -384,7 +387,7 @@ static id kNSNO = NULL;
                 [theUserInfo addEntriesFromDictionary:self.userInfoForScanLocation];
                 *outError = [NSError errorWithDomain:kJSONScannerErrorDomain code:kJSONScannerErrorCode_ArrayValueScanFailed userInfo:theUserInfo];
                 }
-            [theArray release];
+            SAFE_ARC_RELEASE(theArray);
             return(NO);
             }
             
@@ -396,7 +399,7 @@ static id kNSNO = NULL;
                     {
                     *outError = [self error:kJSONScannerErrorCode_ArrayValueIsNull description:@"Could not scan array. Value is NULL."];
                     }
-                [theArray release];
+                SAFE_ARC_RELEASE(theArray);
                 return(NO);
                 }
             }
@@ -416,7 +419,7 @@ static id kNSNO = NULL;
                     {
                     *outError = [self error:kJSONScannerErrorCode_ArrayNotTerminated description:@"Could not scan array. Array not terminated by a ']' character."];
                     }
-                [theArray release];
+                SAFE_ARC_RELEASE(theArray);
                 return(NO);
                 }
             
@@ -434,7 +437,7 @@ static id kNSNO = NULL;
             {
             *outError = [self error:kJSONScannerErrorCode_ArrayNotTerminated description:@"Could not scan array. Array not terminated by a ']' character."];
             }
-        [theArray release];
+        SAFE_ARC_RELEASE(theArray);
         return(NO);
         }
 
@@ -442,17 +445,17 @@ static id kNSNO = NULL;
         {
         if (self.options & kJSONScannerOptions_MutableContainers)
             {
-            *outArray = [theArray autorelease];
+            *outArray = SAFE_ARC_AUTORELEASE(theArray);
             }
         else
             {
-            *outArray = [[theArray copy] autorelease];
-            [theArray release];
+            *outArray = SAFE_ARC_AUTORELEASE([theArray copy]);
+            SAFE_ARC_RELEASE(theArray);
             }
         }
     else
         {
-        [theArray release];
+        SAFE_ARC_RELEASE(theArray);
         }
     return(YES);
     }
@@ -472,7 +475,7 @@ static id kNSNO = NULL;
             {
             *outError = [self error:kJSONScannerErrorCode_StringNotStartedWithBackslash description:@"Could not scan string constant. String not started by a '\"' character."];
             }
-        [theString release];
+        SAFE_ARC_RELEASE(theString);
         return(NO);
         }
 
@@ -522,7 +525,7 @@ static id kNSNO = NULL;
                                 {
                                 *outError = [self error:kJSONScannerErrorCode_StringUnicodeNotDecoded description:@"Could not scan string constant. Unicode character could not be decoded."];
                                 }
-                            [theString release];
+                            SAFE_ARC_RELEASE(theString);
                             return(NO);
                             }
                         theCharacter |= (theDigit << theShift);
@@ -538,7 +541,7 @@ static id kNSNO = NULL;
                             {
                             *outError = [self error:kJSONScannerErrorCode_StringUnknownEscapeCode description:@"Could not scan string constant. Unknown escape code."];
                             }
-                        [theString release];
+                        SAFE_ARC_RELEASE(theString);
                         return(NO);
                         }
                     }
@@ -552,7 +555,7 @@ static id kNSNO = NULL;
                 {
                 *outError = [self error:kJSONScannerErrorCode_StringNotTerminated description:@"Could not scan string constant. No terminating double quote character."];
                 }
-            [theString release];
+            SAFE_ARC_RELEASE(theString);
             return(NO);
             }
         }
@@ -561,17 +564,17 @@ static id kNSNO = NULL;
         {
         if (self.options & kJSONScannerOptions_MutableLeaves)
             {
-            *outStringConstant = [theString autorelease];
+            *outStringConstant = SAFE_ARC_AUTORELEASE(theString);
             }
         else
             {
-            *outStringConstant = [[theString copy] autorelease];
-            [theString release];
+            *outStringConstant = SAFE_ARC_AUTORELEASE([theString copy]);
+            SAFE_ARC_RELEASE(theString release);
             }
         }
     else
         {
-        [theString release];
+        SAFE_ARC_RELEASE(theString);
         }
 
     return(YES);
@@ -624,7 +627,7 @@ static id kNSNO = NULL;
 
     if (outValue)
         {
-        *outValue = [[[NSString alloc] initWithBytes:current length:P - current encoding:NSUTF8StringEncoding] autorelease];
+        *outValue = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithBytes:current length:P - current encoding:NSUTF8StringEncoding]);
         }
         
     current = P;
