@@ -26,10 +26,11 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
+//  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
 #import "CJSONSerializer.h"
 
-//#import "JSONRepresentation.h"
+#import "ARCMacros.h"
 
 static NSData *kNULL = NULL;
 static NSData *kFalse = NULL;
@@ -43,7 +44,7 @@ static NSData *kTrue = NULL;
     {
     if (self == [CJSONSerializer class])
         {
-        NSAutoreleasePool *thePool = [[NSAutoreleasePool alloc] init];
+        SAFE_ARC_AUTORELEASE_POOL_START();
 
         if (kNULL == NULL)
             kNULL = [[NSData alloc] initWithBytesNoCopy:(void *)"null" length:4 freeWhenDone:NO];
@@ -52,13 +53,13 @@ static NSData *kTrue = NULL;
         if (kTrue == NULL)
             kTrue = [[NSData alloc] initWithBytesNoCopy:(void *)"true" length:4 freeWhenDone:NO];
 
-        [thePool release];
+        SAFE_ARC_AUTORELEASE_POOL_END();
         }
     }
 
 + (CJSONSerializer *)serializer
     {
-    return([[[self alloc] init] autorelease]);
+    return(SAFE_ARC_AUTORELEASE([[self alloc] init]));
     }
     
 - (BOOL)isValidJSONObject:(id)inObject
@@ -123,12 +124,8 @@ static NSData *kTrue = NULL;
         }
     else if ([inObject isKindOfClass:[NSData class]])
         {
-        NSString *theString = [[[NSString alloc] initWithData:inObject encoding:NSUTF8StringEncoding] autorelease];
+        NSString *theString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:inObject encoding:NSUTF8StringEncoding]);
         theResult = [self serializeString:theString error:outError];
-        }
-    else if ([inObject respondsToSelector:@selector(JSONDataRepresentation)])
-        {
-        theResult = [inObject JSONDataRepresentation];
         }
     else
         {
@@ -165,7 +162,11 @@ static NSData *kTrue = NULL;
     {
     #pragma unused (outError)
     NSData *theResult = NULL;
+#if __has_feature(objc_arc)
+    switch (CFNumberGetType((__bridge CFNumberRef)inNumber))
+#else
     switch (CFNumberGetType((CFNumberRef)inNumber))
+#endif
         {
         case kCFNumberCharType:
             {
