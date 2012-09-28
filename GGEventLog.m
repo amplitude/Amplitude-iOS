@@ -526,6 +526,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     struct if_msghdr    *interfaceMsgStruct;
     struct sockaddr_dl  *socketStruct;
     NSString            *errorFlag = NULL;
+    bool                msgBufferAllocated = false;
     
     // Setup the management Information Base (mib)
     mgmtInfoBase[0] = CTL_NET;        // Request network subsystem
@@ -549,6 +550,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                 errorFlag = @"buffer allocation failure";
             else
             {
+                msgBufferAllocated = true;
                 // Get system information, store in buffer
                 if (sysctl(mgmtInfoBase, 6, msgBuffer, &length, NULL, 0) < 0)
                     errorFlag = @"sysctl msgBuffer failure";
@@ -560,6 +562,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     if (errorFlag != NULL)
     {
         NSLog(@"Error: %@", errorFlag);
+        if (msgBufferAllocated) {
+            free(msgBuffer);
+        }
         return errorFlag;
     }
     
