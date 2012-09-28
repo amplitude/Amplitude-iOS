@@ -278,6 +278,7 @@ static LocationManagerDelegate *locationManagerDelegate;
 + (void)constructAndSendRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setTimeoutInterval:60.0];
 
     NSMutableData *postData = [[NSMutableData alloc] init];
     [postData appendData:[@"e=" dataUsingEncoding:NSUTF8StringEncoding]];
