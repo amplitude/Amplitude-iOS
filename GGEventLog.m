@@ -347,7 +347,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                     SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
             }
         } else if (error != nil) {
-            NSLog(@"ERROR: Connection error:%@", error);
+            if ([error code] != -1009) {
+                NSLog(@"ERROR: Connection error:%@", error);
+            }
         } else {
             NSLog(@"ERROR: response empty, error empty for NSURLConnection");
         }
