@@ -113,6 +113,14 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initializeApiKey:(NSString*) apiKey
 {
+    if (apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil, set apiKey");
+        return;
+    }
+    
+    if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
+        return;
+    }
     [GGEventLog initializeApiKey:apiKey userId:nil];
 }
 
@@ -123,12 +131,21 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+    if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:userId:"]) {
+        return;
+    }
+    if (userId != nil && ![GGEventLog isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:userId:"]) {
+        return;
+    }
+    
     (void) SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
-    (void) SAFE_ARC_RETAIN(userId);
-    SAFE_ARC_RELEASE(_userId);
-    _userId = userId;
+    if (userId != nil) {
+        (void) SAFE_ARC_RETAIN(userId);
+        SAFE_ARC_RELEASE(_userId);
+        _userId = userId;
+    }
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
@@ -160,11 +177,20 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)logEvent:(NSString*) eventType
 {
+    if (![GGEventLog isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
+        return;
+    }
     [GGEventLog logEvent:eventType withCustomProperties:nil];
 }
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties
 {
+    if (![GGEventLog isArgument:eventType validType:[NSString class] methodName:@"logEvent:withCustomProperties:"]) {
+        return;
+    }
+    if (customProperties != nil && ![GGEventLog isArgument:customProperties validType:[NSDictionary class] methodName:@"logEvent:withCustomProperties:"]) {
+        return;
+    }
     [GGEventLog logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
 }
 
@@ -412,6 +438,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)setGlobalUserProperties:(NSDictionary*) globalProperties
 {
+    if (![GGEventLog isArgument:globalProperties validType:[NSDictionary class] methodName:@"setGlobalUserProperties:"]) {
+        return;
+    }
     (void) SAFE_ARC_RETAIN(globalProperties);
     SAFE_ARC_RELEASE(_globalProperties);
     _globalProperties = globalProperties;
@@ -419,6 +448,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)setUserId:(NSString*) userId
 {
+    if (![GGEventLog isArgument:userId validType:[NSString class] methodName:@"setUserId:"]) {
+        return;
+    }
     (void) SAFE_ARC_RETAIN(userId);
     SAFE_ARC_RELEASE(_userId);
     _userId = userId;
@@ -427,6 +459,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)setLocation:(id) location
 {
     Class CLLocation = NSClassFromString(@"CLLocation");
+    if (![GGEventLog isArgument:location validType:CLLocation methodName:@"setLocation:"]) {
+        return;
+    }
     if (CLLocation && [location isMemberOfClass:CLLocation]) {
         (void) SAFE_ARC_RETAIN(location);
         SAFE_ARC_RELEASE(lastKnownLocation);
@@ -468,6 +503,16 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
 {
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
+}
+
++ (bool)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName
+{
+    if ([argument isKindOfClass:class]) {
+        return YES;
+    } else {
+        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, recieved %@, ", methodName, class, [argument class]);
+        return NO;
+    }
 }
 
 + (NSString*)getMacAddress
