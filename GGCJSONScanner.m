@@ -28,11 +28,11 @@
 //
 //  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
-#import "CJSONScanner.h"
+#import "GGCJSONScanner.h"
 
-#import "CDataScanner_Extensions.h"
+#import "GGCDataScanner_Extensions.h"
 
-#import "ARCMacros.h"
+#import "GGARCMacros.h"
 
 #if !defined(TREAT_COMMENTS_AS_WHITESPACE)
 #define TREAT_COMMENTS_AS_WHITESPACE 0
@@ -52,7 +52,7 @@ inline static int HexToInt(char inCharacter)
 static id kNSYES = NULL;
 static id kNSNO = NULL;
 
-@interface CJSONScanner ()
+@interface GGCJSONScanner ()
 - (BOOL)scanNotQuoteCharactersIntoString:(NSString **)outValue;
 
 - (NSError *)error:(NSInteger)inCode description:(NSString *)inDescription;
@@ -60,7 +60,7 @@ static id kNSNO = NULL;
 
 #pragma mark -
 
-@implementation CJSONScanner
+@implementation GGCJSONScanner
 
 @synthesize strictEscapeCodes;
 @synthesize nullObject;

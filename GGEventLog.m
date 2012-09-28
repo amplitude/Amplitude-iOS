@@ -1,16 +1,16 @@
 //
-//  EventLog.m
+//  GGEventLog.m
 //  Fawkes
 //
 //  Created by Spenser Skates on 7/26/12.
 //  Copyright (c) 2012 GiraffeGraph. All rights reserved.
 //
 
-#import "EventLog.h"
-#import "LocationManagerDelegate.h"
-#import "CJSONSerializer.h"
-#import "CJSONDeserializer.h"
-#import "ARCMacros.h"
+#import "GGEventLog.h"
+#import "GGLocationManagerDelegate.h"
+#import "GGCJSONSerializer.h"
+#import "GGCJSONDeserializer.h"
+#import "GGARCMacros.h"
 #import <sys/socket.h>
 #import <sys/sysctl.h>
 #import <net/if.h>
@@ -41,16 +41,16 @@ static NSString *eventsDataPath;
 static CLLocationManager *locationManager;
 static bool canTrackLocation;
 static CLLocation *lastKnownLocation;
-static LocationManagerDelegate *locationManagerDelegate;
+static GGLocationManagerDelegate *locationManagerDelegate;
 
-@implementation EventLog
+@implementation GGEventLog
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
 + (void)initialize
 {
-    _deviceId = SAFE_ARC_RETAIN([EventLog getDeviceId]);
+    _deviceId = SAFE_ARC_RETAIN([GGEventLog getDeviceId]);
     
     _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
     
@@ -98,7 +98,7 @@ static LocationManagerDelegate *locationManagerDelegate;
     
     if (canTrackLocation) {
         locationManager = [[CLLocationManager alloc] init];
-        locationManagerDelegate = [[LocationManagerDelegate alloc] init];
+        locationManagerDelegate = [[GGLocationManagerDelegate alloc] init];
         SEL setDelegate = NSSelectorFromString(@"setDelegate:");
         [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
         SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
@@ -109,7 +109,7 @@ static LocationManagerDelegate *locationManagerDelegate;
 
 + (void)initializeApiKey:(NSString*) apiKey
 {
-    [EventLog initializeApiKey:apiKey userId:nil];
+    [GGEventLog initializeApiKey:apiKey userId:nil];
 }
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
@@ -156,12 +156,12 @@ static LocationManagerDelegate *locationManagerDelegate;
 
 + (void)logEvent:(NSString*) eventType
 {
-    [EventLog logEvent:eventType withCustomProperties:nil];
+    [GGEventLog logEvent:eventType withCustomProperties:nil];
 }
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties
 {
-    [EventLog logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
+    [GGEventLog logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
 }
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties:(NSDictionary*) apiProperties
@@ -175,22 +175,22 @@ static LocationManagerDelegate *locationManagerDelegate;
     
     long long newId = [[eventsData objectForKey:@"max_id"] longValue] + 1;
     
-    [event setValue:[EventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
+    [event setValue:[GGEventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
     [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
-    [event setValue:[EventLog replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
-    [event setValue:[EventLog replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
-    [event setValue:[EventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
+    [event setValue:[GGEventLog replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
+    [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
+    [event setValue:[GGEventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
     
-    [EventLog addBoilerplate:event];
+    [GGEventLog addBoilerplate:event];
     
     [[eventsData objectForKey:@"events"] addObject:event];
     
     [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
     
     if ([[eventsData objectForKey:@"events"] count] >= 10) {
-        [EventLog uploadEvents];
+        [GGEventLog uploadEvents];
     } else {
-        [EventLog uploadEventsLater];
+        [GGEventLog uploadEventsLater];
     }
 }
 
@@ -199,14 +199,14 @@ static LocationManagerDelegate *locationManagerDelegate;
     NSNumber *timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     [event setValue:timestamp forKey:@"timestamp"];
     [event setValue:(_userId != nil ?
-                     [EventLog replaceWithJSONNull:_userId] :
-                     [EventLog replaceWithJSONNull:_deviceId]) forKey:@"user_id"];
-    [event setValue:[EventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
+                     [GGEventLog replaceWithJSONNull:_userId] :
+                     [GGEventLog replaceWithJSONNull:_deviceId]) forKey:@"user_id"];
+    [event setValue:[GGEventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
     [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
-    [event setValue:[EventLog replaceWithJSONNull:_versionName] forKey:@"version_name"];
-    [event setValue:[EventLog replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
-    [event setValue:[EventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
-    [event setValue:[EventLog replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
+    [event setValue:[GGEventLog replaceWithJSONNull:_versionName] forKey:@"version_name"];
+    [event setValue:[GGEventLog replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
+    [event setValue:[GGEventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
+    [event setValue:[GGEventLog replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
     [event setValue:@"iphone" forKey:@"client"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"properties"];
@@ -231,13 +231,13 @@ static LocationManagerDelegate *locationManagerDelegate;
     }
     
     if (sessionStarted) {
-        [EventLog refreshSessionTime];
+        [GGEventLog refreshSessionTime];
     }
 }
 
 + (void)uploadEvents
 {
-    @synchronized ([EventLog class]) {
+    @synchronized ([GGEventLog class]) {
         if (updatingCurrently) {
             return;
         }
@@ -251,28 +251,28 @@ static LocationManagerDelegate *locationManagerDelegate;
     }
     NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
     NSError *error = nil;
-    NSData *eventsData = [[CJSONSerializer serializer] serializeArray:uploadEvents error:&error];
+    NSData *eventsData = [[GGCJSONSerializer serializer] serializeArray:uploadEvents error:&error];
     if (error != nil) {
         NSLog(@"ERROR: JSONSerializer error: %@", error);
         updatingCurrently = NO;
         return;
     }
     NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsData encoding:NSUTF8StringEncoding]);
-    [EventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
+    [GGEventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
 }
 
 + (void)uploadEventsLater
 {
     if (!updateScheduled) {
         updateScheduled = YES;
-        [[EventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[EventLog class] afterDelay:10];
+        [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:10];
     }
 }
 
 + (void)uploadEventsLaterExecute
 {
     updateScheduled = NO;
-    [EventLog uploadEvents];
+    [GGEventLog uploadEvents];
 }
 
 + (void)constructAndSendRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
@@ -282,7 +282,7 @@ static LocationManagerDelegate *locationManagerDelegate;
 
     NSMutableData *postData = [[NSMutableData alloc] init];
     [postData appendData:[@"e=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[[EventLog urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[[GGEventLog urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -301,7 +301,7 @@ static LocationManagerDelegate *locationManagerDelegate;
         if (response != nil) {
             if ([httpResponse statusCode] == 200) {
                 NSError *error = nil;
-                NSDictionary *result = [[CJSONDeserializer deserializer] deserialize:data error:&error];
+                NSDictionary *result = [[GGCJSONDeserializer deserializer] deserialize:data error:&error];
                 
                 if (error != nil) {
                     NSLog(@"ERROR: Deserialization error:%@", error);
@@ -323,7 +323,7 @@ static LocationManagerDelegate *locationManagerDelegate;
             NSLog(@"ERROR: response empty, error empty for NSURLConnection");
         }
         
-        [EventLog saveEventsData];
+        [GGEventLog saveEventsData];
         
         updatingCurrently = NO;
         SAFE_ARC_RELEASE(queue);
@@ -358,9 +358,9 @@ static LocationManagerDelegate *locationManagerDelegate;
 {
     
     // Remove turn off session later callback
-    [NSObject cancelPreviousPerformRequestsWithTarget:[EventLog class]
+    [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
                                              selector:@selector(turnOffSessionLaterExecute)
-                                               object:[EventLog class]];
+                                               object:[GGEventLog class]];
     
     if (!sessionStarted) {
         // Session has not been started yet, check overlap with previous session
@@ -381,18 +381,18 @@ static LocationManagerDelegate *locationManagerDelegate;
     
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_start" forKey:@"special"];
-    [EventLog logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
+    [GGEventLog logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
 }
 
 + (void)endSession
 {
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_end" forKey:@"special"];
-    [EventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
+    [GGEventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
     
     sessionStarted = NO;
     
-    [[EventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[EventLog class] afterDelay:10];
+    [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
 }
 
 + (void)refreshSessionTime
@@ -455,7 +455,7 @@ static LocationManagerDelegate *locationManagerDelegate;
 + (NSString*)getDeviceId
 {
     // MD5 Hash of the mac address
-    return [EventLog md5HexDigest:[EventLog getMacAddress]];
+    return [GGEventLog md5HexDigest:[GGEventLog getMacAddress]];
 }
 
 + (id)replaceWithJSONNull:(id) obj

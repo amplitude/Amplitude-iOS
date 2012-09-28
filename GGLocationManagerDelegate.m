@@ -1,27 +1,27 @@
 //
-//  LocationManagerDelegate.m
-//  Hash Helper
+//  GGLocationManagerDelegate.m
+//  Fawkes
 //
 //  Created by Spenser Skates on 8/19/12.
 //  Copyright (c) 2012 GiraffeGraph. All rights reserved.
 //
 
-#import "LocationManagerDelegate.h"
-#import "EventLog.h"
+#import "GGLocationManagerDelegate.h"
+#import "GGEventLog.h"
 
-@implementation LocationManagerDelegate
+@implementation GGLocationManagerDelegate
 
 
 - (void)locationManager:(CLLocationManager*) manager didFailWithError:(NSError*) error
 {
     if ([error code] == kCLErrorDenied) {
-        [EventLog stopListeningForLocation];
+        [GGEventLog stopListeningForLocation];
     }
 }
 
 - (void)locationManager:(CLLocationManager*) manager didUpdateToLocation:(CLLocation*) newLocation fromLocation:(CLLocation*) oldLocation
 {
-    [EventLog setLocation:newLocation];
+    [GGEventLog setLocation:newLocation];
 }
 
 - (void)locationManager:(CLLocationManager*) manager didChangeAuthorizationStatus:(CLAuthorizationStatus) status

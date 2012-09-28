@@ -28,21 +28,21 @@
 //
 //  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
-#import "CJSONSerializer.h"
+#import "GGCJSONSerializer.h"
 
-#import "ARCMacros.h"
+#import "GGARCMacros.h"
 
 static NSData *kNULL = NULL;
 static NSData *kFalse = NULL;
 static NSData *kTrue = NULL;
 
-@implementation CJSONSerializer
+@implementation GGCJSONSerializer
 
 @synthesize options;
 
 + (void)initialize
     {
-    if (self == [CJSONSerializer class])
+    if (self == [GGCJSONSerializer class])
         {
         SAFE_ARC_AUTORELEASE_POOL_START();
 
@@ -57,7 +57,7 @@ static NSData *kTrue = NULL;
         }
     }
 
-+ (CJSONSerializer *)serializer
++ (GGCJSONSerializer *)serializer
     {
     return(SAFE_ARC_AUTORELEASE([[self alloc] init]));
     }

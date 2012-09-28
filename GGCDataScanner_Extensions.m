@@ -28,9 +28,9 @@
 //
 //  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
-#import "CDataScanner_Extensions.h"
+#import "GGCDataScanner_Extensions.h"
 
-#import "ARCMacros.h"
+#import "GGARCMacros.h"
 
 #define LF 0x000a // Line Feed
 #define FF 0x000c // Form Feed
@@ -39,7 +39,7 @@
 #define LS 0x2028 // Line Separator
 #define PS 0x2029 // Paragraph Separator
 
-@implementation CDataScanner (CDataScanner_Extensions)
+@implementation GGCDataScanner (GGCDataScanner_Extensions)
 
 - (BOOL)scanCStyleComment:(NSString **)outComment
 {

@@ -27,7 +27,7 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "CDataScanner.h"
+#import "GGCDataScanner.h"
 
 enum {
     kJSONScannerOptions_MutableContainers = 0x1,
@@ -36,7 +36,7 @@ enum {
 typedef NSUInteger EJSONScannerOptions;
 
 /// CDataScanner subclass that understands JSON syntax natively. You should generally use CJSONDeserializer instead of this class. (TODO - this could have been a category?)
-@interface CJSONScanner : CDataScanner {
+@interface GGCJSONScanner : GGCDataScanner {
 	BOOL strictEscapeCodes;
     id nullObject;
 	NSStringEncoding allowedEncoding;

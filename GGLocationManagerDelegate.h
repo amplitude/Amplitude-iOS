@@ -1,6 +1,6 @@
 //
-//  LocationManagerDelegate.h
-//  Hash Helper
+//  GGLocationManagerDelegate.h
+//  Fawkes
 //
 //  Created by Spenser Skates on 8/19/12.
 //
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface LocationManagerDelegate : NSObject <CLLocationManagerDelegate>
+@interface GGLocationManagerDelegate : NSObject <CLLocationManagerDelegate>
 
 - (void)locationManager:(CLLocationManager*) manager didFailWithError:(NSError*) error;
 

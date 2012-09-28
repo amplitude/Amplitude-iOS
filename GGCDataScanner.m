@@ -28,11 +28,11 @@
 //
 //  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
-#import "CDataScanner.h"
+#import "GGCDataScanner.h"
 
-#import "ARCMacros.h"
+#import "GGARCMacros.h"
 
-@interface CDataScanner ()
+@interface GGCDataScanner ()
 @end
 
 #pragma mark -
@@ -50,7 +50,7 @@ inline static unichar CharacterAtPointer(void *start)
 
 static NSCharacterSet *sDoubleCharacters = NULL;
 
-@implementation CDataScanner
+@implementation GGCDataScanner
 
 - (id)init
     {

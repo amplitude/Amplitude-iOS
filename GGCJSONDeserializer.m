@@ -28,24 +28,24 @@
 //
 //  Updated for ARC compatibility by Spenser Skates on 9/5/12
 
-#import "CJSONDeserializer.h"
+#import "GGCJSONDeserializer.h"
 
-#import "CJSONScanner.h"
-#import "CDataScanner.h"
+#import "GGCJSONScanner.h"
+#import "GGCDataScanner.h"
 
-#import "ARCMacros.h"
+#import "GGARCMacros.h"
 
 NSString *const kJSONDeserializerErrorDomain  = @"CJSONDeserializerErrorDomain";
 
-@interface CJSONDeserializer ()
+@interface GGCJSONDeserializer ()
 @end
 
-@implementation CJSONDeserializer
+@implementation GGCJSONDeserializer
 
 @synthesize scanner;
 @synthesize options;
 
-+ (CJSONDeserializer *)deserializer
++ (GGCJSONDeserializer *)deserializer
     {
     return(SAFE_ARC_AUTORELEASE([[self alloc] init]));
     }
@@ -68,11 +68,11 @@ NSString *const kJSONDeserializerErrorDomain  = @"CJSONDeserializerErrorDomain";
 
 #pragma mark -
 
-- (CJSONScanner *)scanner
+- (GGCJSONScanner *)scanner
     {
     if (scanner == NULL)
         {
-        scanner = [[CJSONScanner alloc] init];
+        scanner = [[GGCJSONScanner alloc] init];
         }
     return(scanner);
     }
