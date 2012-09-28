@@ -38,6 +38,8 @@ static NSMutableDictionary *eventsData;
 
 static NSString *eventsDataPath;
 
+static NSOperationQueue *operationQueue;
+
 static CLLocationManager *locationManager;
 static bool canTrackLocation;
 static CLLocation *lastKnownLocation;
@@ -68,6 +70,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
+    
+    operationQueue = [[NSOperationQueue alloc] init];
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
         @try {
@@ -294,8 +298,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
     SAFE_ARC_RELEASE(postData);
 
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+    [NSURLConnection sendAsynchronousRequest:request queue:operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
     {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -326,7 +329,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         [GGEventLog saveEventsData];
         
         updatingCurrently = NO;
-        SAFE_ARC_RELEASE(queue);
     }];
 }
 
