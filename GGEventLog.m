@@ -347,7 +347,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                     SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
             }
         } else if (error != nil) {
-            if ([error code] != -1009) {
+            if ([error code] == -1009) {
+                //NSLog(@"No internet connection found, unable to upload events");
+            } else {
                 NSLog(@"ERROR: Connection error:%@", error);
             }
         } else {
