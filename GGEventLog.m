@@ -78,26 +78,28 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     operationQueue = [[NSOperationQueue alloc] init];
     
-    if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
-        @try {
-            eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
-        }
-        @catch (NSException *e) {
-            NSLog(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
-            NSError *error = nil;
-            [[NSFileManager defaultManager] removeItemAtPath:eventsDataPath error:&error];
-            if (error != nil) {
-                // Can't remove, unable to do anything about it
-                NSLog(@"ERROR: Can't remove corrupt file:%@", error);
+    @synchronized (eventsData) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
+            @try {
+                eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
             }
+            @catch (NSException *e) {
+                NSLog(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
+                NSError *error = nil;
+                [[NSFileManager defaultManager] removeItemAtPath:eventsDataPath error:&error];
+                if (error != nil) {
+                    // Can't remove, unable to do anything about it
+                    NSLog(@"ERROR: Can't remove corrupt file:%@", error);
+                }
+                eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
+                [eventsData setObject:[NSMutableArray array] forKey:@"events"];
+                [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
+            }
+        } else {
             eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
             [eventsData setObject:[NSMutableArray array] forKey:@"events"];
             [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
         }
-    } else {
-        eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
-        [eventsData setObject:[NSMutableArray array] forKey:@"events"];
-        [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
     }
     
     Class CLLocationManager = NSClassFromString(@"CLLocationManager");
@@ -158,13 +160,15 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
     
-    if (userId != nil) {
-        (void) SAFE_ARC_RETAIN(userId);
-        SAFE_ARC_RELEASE(_userId);
-        _userId = userId;
-        [eventsData setObject:_userId forKey:@"user_id"];
-    } else {
-        _userId = SAFE_ARC_RETAIN([eventsData objectForKey:@"user_id"]);
+    @synchronized (eventsData) {
+        if (userId != nil) {
+            (void) SAFE_ARC_RETAIN(userId);
+            SAFE_ARC_RELEASE(_userId);
+            _userId = userId;
+            [eventsData setObject:_userId forKey:@"user_id"];
+        } else {
+            _userId = SAFE_ARC_RETAIN([eventsData objectForKey:@"user_id"]);
+        }
     }
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -233,25 +237,27 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
-    long long newId = [[eventsData objectForKey:@"max_id"] longValue] + 1;
-    
-    [event setValue:[GGEventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
-    [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
-    [event setValue:[GGEventLog replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
-    [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
-    [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-    [event setValue:[GGEventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
-    
-    [GGEventLog addBoilerplate:event];
-    
-    [[eventsData objectForKey:@"events"] addObject:event];
-    
-    [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
-    
-    if ([[eventsData objectForKey:@"events"] count] >= 10) {
-        [GGEventLog uploadEvents];
-    } else {
-        [GGEventLog uploadEventsLater];
+    @synchronized (eventsData) {
+        long long newId = [[eventsData objectForKey:@"max_id"] longValue] + 1;
+        
+        [event setValue:[GGEventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
+        [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
+        [event setValue:[GGEventLog replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
+        [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
+        [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
+        [event setValue:[GGEventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
+        
+        [GGEventLog addBoilerplate:event];
+        
+        [[eventsData objectForKey:@"events"] addObject:event];
+        
+        [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
+        
+        if ([[eventsData objectForKey:@"events"] count] >= 10) {
+            [GGEventLog uploadEvents];
+        } else {
+            [GGEventLog uploadEventsLater];
+        }
     }
 }
 
@@ -321,22 +327,25 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         }
         updatingCurrently = YES;
     }
-    NSMutableArray *events = [eventsData objectForKey:@"events"];
-    long long numEvents = [events count];
-    if (numEvents == 0) {
-        updatingCurrently = NO;
-        return;
+    
+    @synchronized (eventsData) {
+        NSMutableArray *events = [eventsData objectForKey:@"events"];
+        long long numEvents = [events count];
+        if (numEvents == 0) {
+            updatingCurrently = NO;
+            return;
+        }
+        NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
+        NSError *error = nil;
+        NSData *eventsDataLocal = [[GGCJSONSerializer serializer] serializeArray:uploadEvents error:&error];
+        if (error != nil) {
+            NSLog(@"ERROR: JSONSerializer error: %@", error);
+            updatingCurrently = NO;
+            return;
+        }
+        NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
+        [GGEventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
     }
-    NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
-    NSError *error = nil;
-    NSData *eventsData = [[GGCJSONSerializer serializer] serializeArray:uploadEvents error:&error];
-    if (error != nil) {
-        NSLog(@"ERROR: JSONSerializer error: %@", error);
-        updatingCurrently = NO;
-        return;
-    }
-    NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsData encoding:NSUTF8StringEncoding]);
-    [GGEventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
 }
 
 + (void)uploadEventsLater
@@ -389,7 +398,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                     NSLog(@"ERROR: JSON Dictionary not returned from server, invalid type:%@", [result class]);
                 } else if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
                     // success, remove existing events from dictionary
-                    [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
+                    @synchronized (eventsData) {
+                        [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
+                    }
                 } else {
                     NSLog(@"ERROR: Not all events uploaded");
                 }
@@ -448,15 +459,17 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     if (!sessionStarted) {
         // Session has not been started yet, check overlap with previous session
         
-        NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
-        
-        NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
-        
-        if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
-            _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
-        } else {
-            _sessionId = [now longLongValue];
-            [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
+        @synchronized (eventsData) {
+            NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+            
+            NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
+            
+            if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
+                _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
+            } else {
+                _sessionId = [now longLongValue];
+                [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
+            }
         }
         
         sessionStarted = YES;
@@ -481,7 +494,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)refreshSessionTime
 {
     NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
-    [eventsData setValue:now forKey:@"previous_session_time"];
+    @synchronized (eventsData) {
+        [eventsData setValue:now forKey:@"previous_session_time"];
+    }
 }
 
 + (void)turnOffSessionLaterExecute
@@ -509,7 +524,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     (void) SAFE_ARC_RETAIN(userId);
     SAFE_ARC_RELEASE(_userId);
     _userId = userId;
-    [eventsData setObject:_userId forKey:@"user_id"];
+    @synchronized (eventsData) {
+        [eventsData setObject:_userId forKey:@"user_id"];
+    }
 }
 
 + (void)setLocation:(id) location
@@ -539,9 +556,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)saveEventsData
 {
-    bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
-    if (!success) {
-        NSLog(@"ERROR: Unable to save eventsData to file");
+    @synchronized (eventsData) {
+        bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
+        if (!success) {
+            NSLog(@"ERROR: Unable to save eventsData to file");
+        }
     }
 }
 
