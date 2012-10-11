@@ -14,6 +14,8 @@
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
 
++ (void)trackCampaignSource;
+
 + (void)logEvent:(NSString*) eventType;
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties;

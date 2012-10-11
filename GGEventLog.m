@@ -157,10 +157,14 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     (void) SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
+    
     if (userId != nil) {
         (void) SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
+        [eventsData setObject:_userId forKey:@"user_id"];
+    } else {
+        _userId = SAFE_ARC_RETAIN([eventsData objectForKey:@"user_id"]);
     }
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -177,7 +181,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     [center addObserver:self
                selector:@selector(uploadEvents)
-                   name:UIApplicationDidBecomeActiveNotification
+                   name:UIApplicationWillEnterForegroundNotification
                  object:nil];
     
     [center addObserver:self
@@ -189,6 +193,16 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                selector:@selector(endSession)
                    name:UIApplicationWillResignActiveNotification
                  object:nil];
+}
+
++ (void)trackCampaignSource
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling trackCampaignSource");
+        return;
+    }
+    
+    
 }
 
 + (void)logEvent:(NSString*) eventType
@@ -298,6 +312,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
     }
+    
+    [GGEventLog saveEventsData];
     
     @synchronized ([GGEventLog class]) {
         if (updatingCurrently) {
@@ -434,13 +450,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         
         NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
         
-        NSNumber *previousSessionTime = [eventsData objectForKey:@"last_session_time"];
+        NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
         
         if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
-            _sessionId = [[eventsData objectForKey:@"last_session_id"] longLongValue];
+            _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
         } else {
             _sessionId = [now longLongValue];
-            [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"last_session_id"];
+            [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
         }
         
         sessionStarted = YES;
@@ -465,7 +481,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)refreshSessionTime
 {
     NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
-    [eventsData setValue:now forKey:@"last_session_time"];
+    [eventsData setValue:now forKey:@"previous_session_time"];
 }
 
 + (void)turnOffSessionLaterExecute
@@ -493,6 +509,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     (void) SAFE_ARC_RETAIN(userId);
     SAFE_ARC_RELEASE(_userId);
     _userId = userId;
+    [eventsData setObject:_userId forKey:@"user_id"];
 }
 
 + (void)setLocation:(id) location
