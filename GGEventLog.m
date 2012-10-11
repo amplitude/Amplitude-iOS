@@ -225,6 +225,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
     [event setValue:[GGEventLog replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
     [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
+    [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
     [event setValue:[GGEventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
     
     [GGEventLog addBoilerplate:event];
@@ -257,10 +258,12 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
     [event setValue:@"iphone" forKey:@"client"];
     
-    NSMutableDictionary *apiProperties = [event valueForKey:@"properties"];
+    NSMutableDictionary *properties = [event valueForKey:@"properties"];
+    NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
     if (lastKnownLocation != nil) {
         NSMutableDictionary *location = [NSMutableDictionary dictionary];
+        NSMutableDictionary *apiLocation = [NSMutableDictionary dictionary];
         
         // Need to use NSInvocation because coordinate selector returns a C struct
         SEL coordinateSelector = NSSelectorFromString(@"coordinate");
@@ -275,7 +278,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
         [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
         
-        [apiProperties setValue:location forKey:@"location"];
+        [properties setValue:location forKey:@"location"];
+        
+        [apiLocation setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
+        [apiLocation setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
+        
+        [apiProperties setValue:apiLocation forKey:@"location"];
+
     }
     
     if (sessionStarted) {
