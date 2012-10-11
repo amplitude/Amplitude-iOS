@@ -30,6 +30,8 @@ static NSString *_language;
 
 static NSDictionary *_globalProperties;
 
+static NSString *_campaignInformation;
+
 static long long _sessionId = -1;
 static bool sessionStarted = NO;
 
@@ -94,12 +96,15 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                 eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
                 [eventsData setObject:[NSMutableArray array] forKey:@"events"];
                 [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
+                [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
             }
         } else {
             eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
             [eventsData setObject:[NSMutableArray array] forKey:@"events"];
             [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
+            [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
         }
+        _campaignInformation = SAFE_ARC_RETAIN([eventsData objectForKey:@"campaign_information"]);
     }
     
     Class CLLocationManager = NSClassFromString(@"CLLocationManager");
@@ -206,7 +211,106 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+    NSNumber *hasTrackedCampaign = [NSNumber numberWithBool:NO];
+    @synchronized (eventsData) {
+        hasTrackedCampaign = [eventsData objectForKey:@"has_tracked_campaign"];
+    }
     
+    if (![hasTrackedCampaign boolValue]) {
+        
+        NSMutableDictionary *fingerprint = [NSMutableDictionary dictionary];
+        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
+        [fingerprint setObject:@"ios" forKey:@"client"];
+        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_country] forKey:@"country"];
+        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
+        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
+        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
+        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_phoneCarrier] forKey:@"carrier"];
+        
+        NSError *error = nil;
+        NSData *fingerprintData = [[GGCJSONSerializer serializer] serializeDictionary:fingerprint error:&error];
+        if (error != nil) {
+            NSLog(@"ERROR: JSONSerializer error: %@", error);
+            return;
+        }
+        NSString *fingerprintString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:fingerprintData encoding:NSUTF8StringEncoding]);
+        [GGEventLog makeCampaignTrackingPostRequest:@"http://ref.giraffegraph.com/install" fingerprint:fingerprintString];        
+    }
+}
+
++ (void)makeCampaignTrackingPostRequest:(NSString*) url fingerprint:(NSString*) fingerprintString
+{
+    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setTimeoutInterval:60.0];
+    
+    NSMutableData *postData = [[NSMutableData alloc] init];
+    [postData appendData:[@"key=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[@"&fingerprint=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[[GGEventLog urlEncodeString:fingerprintString] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [request setHTTPMethod:@"POST"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
+    
+    [request setHTTPBody:postData];
+    
+    SAFE_ARC_RELEASE(postData);
+    
+    [NSURLConnection sendAsynchronousRequest:request queue:operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
+         if (response != nil) {
+             if ([httpResponse statusCode] == 200) {
+                 NSError *error = nil;
+                 NSDictionary *result = [[GGCJSONDeserializer deserializer] deserialize:data error:&error];
+                 
+                 if (error != nil) {
+                     NSLog(@"ERROR: Deserialization error:%@", error);
+                 } else if (![result isKindOfClass:[NSDictionary class]]) {
+                     NSLog(@"ERROR: JSON Dictionary not returned from server, invalid type:%@", [result class]);
+                 } else {
+                     
+                     // success, save successful campaign tracking
+                     NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                     @synchronized (eventsData) {
+                         [eventsData setObject:[NSNumber numberWithBool:YES] forKey:@"has_tracked_campaign"];
+                         [eventsData setObject:jsonString forKey:@"campaign_information"];
+                     }
+                     _campaignInformation = jsonString;
+                     
+                 }
+             } else {
+                 NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
+                       SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
+             }
+         } else if (error != nil) {
+             if ([error code] == -1009) {
+                 //NSLog(@"No internet connection found, unable to track campaign");
+             } else {
+                 NSLog(@"ERROR: Connection error:%@", error);
+             }
+         } else {
+             NSLog(@"ERROR: response empty, error empty for NSURLConnection");
+         }
+     }];
+}
+
++ (NSDictionary*)getCampaignInformation
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling getCampaignInformation");
+        return nil;
+    }
+    
+    NSError *error = nil;
+    NSDictionary *result = [[GGCJSONDeserializer deserializer] deserialize:[_campaignInformation dataUsingEncoding:NSUTF8StringEncoding] error:&error];
+    if (error != nil) {
+        NSLog(@"ERROR: Deserialization error:%@", error);
+    } else if (![result isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"ERROR: JSON Dictionary not stored locally, invalid type:%@", [result class]);
+    }
+    return result;
 }
 
 + (void)logEvent:(NSString*) eventType
@@ -276,7 +380,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[GGEventLog replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
     [event setValue:[GGEventLog replaceWithJSONNull:_country] forKey:@"country"];
     [event setValue:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
-    [event setValue:@"iphone" forKey:@"client"];
+    [event setValue:@"ios" forKey:@"client"];
     
     NSMutableDictionary *properties = [event valueForKey:@"properties"];
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
@@ -344,7 +448,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             return;
         }
         NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
-        [GGEventLog constructAndSendRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
+        [GGEventLog makeEventUploadPostRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
     }
 }
 
@@ -362,7 +466,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [GGEventLog uploadEvents];
 }
 
-+ (void)constructAndSendRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
++ (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];

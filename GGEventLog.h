@@ -16,6 +16,8 @@
 
 + (void)trackCampaignSource;
 
++ (NSDictionary*)getCampaignInformation;
+
 + (void)logEvent:(NSString*) eventType;
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties;
