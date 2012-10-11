@@ -114,20 +114,26 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)initializeApiKey:(NSString*) apiKey
 {
     if (apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil, set apiKey");
+        NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
     }
     
     if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
+    
+    if ([apiKey length] == 0) {
+        NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:");
+        return;
+    }
+    
     [GGEventLog initializeApiKey:apiKey userId:nil];
 }
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
 {
     if (apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil, set apiKey");
+        NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:userId:");
         return;
     }
     
@@ -135,6 +141,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     if (userId != nil && ![GGEventLog isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:userId:"]) {
+        return;
+    }
+    
+    if ([apiKey length] == 0) {
+        NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:userId");
         return;
     }
     
@@ -197,7 +208,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties:(NSDictionary*) apiProperties
 {
     if (_apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil, set apiKey before calling logEvent with initializeApiKey");
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent:");
         return;
     }
     
@@ -267,6 +278,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)uploadEvents
 {
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
+        return;
+    }
+    
     @synchronized ([GGEventLog class]) {
         if (updatingCurrently) {
             return;
