@@ -25,6 +25,8 @@ static NSString *_versionName;
 static NSString *_buildVersionRelease;
 static NSString *_phoneModel;
 static NSString *_phoneCarrier;
+static NSString *_country;
+static NSString *_language;
 
 static NSDictionary *_globalProperties;
 
@@ -67,6 +69,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         _phoneCarrier = SAFE_ARC_RETAIN([[info performSelector:subscriberCellularProvider] performSelector:carrierName]);
         SAFE_ARC_RELEASE(info);
     }
+    NSLocale *developerLanguage = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+    _country = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleCountryCode value:[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]]);
+    _language = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleLanguageCode value:[[NSLocale preferredLanguages] objectAtIndex:0]]);
     
     NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
@@ -248,6 +253,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[GGEventLog replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
     [event setValue:[GGEventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
     [event setValue:[GGEventLog replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
+    [event setValue:[GGEventLog replaceWithJSONNull:_country] forKey:@"country"];
+    [event setValue:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
     [event setValue:@"iphone" forKey:@"client"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"properties"];
