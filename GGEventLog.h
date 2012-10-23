@@ -18,6 +18,8 @@
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource;
 
++ (void)enableCampaignTrackingApiKey:(NSString*) apiKey;
+
 + (NSDictionary*)getCampaignInformation;
 
 + (void)logEvent:(NSString*) eventType;
