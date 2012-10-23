@@ -307,7 +307,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling getCampaignInformation");
-        return nil;
+        return [NSDictionary dictionary];
     }
     
     NSError *error = nil;
@@ -316,6 +316,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSLog(@"ERROR: Deserialization error:%@", error);
     } else if (![result isKindOfClass:[NSDictionary class]]) {
         NSLog(@"ERROR: JSON Dictionary not stored locally, invalid type:%@", [result class]);
+        return [NSDictionary dictionary];
     }
     return result;
 }
