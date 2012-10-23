@@ -1,8 +1,8 @@
 # Setup #
 1. If you haven't already, go to http://giraffegraph.com and register for an account. You will receive an API Key.
-2. [Download the source code](http://giraffegraph.com/static/downloads/giraffegraph-ios.zip) and extract the zip file.
+2. [Download the source code](https://dl.dropbox.com/s/cyxyqj26jkf6d47/GiraffeGraph-iOS.zip?dl=1) and extract the zip file.
 3. Copy the GiraffeGraph-iOS folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".
-4. In every file that uses analytics, you will need to place the following at the top:
+4. In every file that uses analytics, you will need to import GGEventLog.h at the top:
 
         #import "GGEventLog.h"
 
@@ -18,7 +18,7 @@
 
 # Tracking Events #
 
-It's important to think about what types of events you care about as a developer. You should aim to track at least 5 and no more than 50 types of events within your app. Common event types are different screens within the app, actions the user initiates (such as pressing a button), and events you want the user to complete (such as filling out a form, completing a level, or making a payment). Shoot me an email if you want assistance determining what would be best for you to track.
+It's important to think about what types of events you care about as a developer. You should aim to track between 5 and 50 types of events within your app. Common event types are different screens within the app, actions the user initiates (such as pressing a button), and events you want the user to complete (such as filling out a form, completing a level, or making a payment). Shoot me an email if you want assistance determining what would be best for you to track.
 
 # Tracking Sessions #
 
@@ -26,15 +26,33 @@ A session is a period of time that a user has the app in the foreground. Session
 
 # Settings Custom User IDs #
 
-If your app has its own login system that you want to track users with, you can call the following at any time:
+If your app has its own login system that you want to track users with, you can call setUserId: at any time:
 
     [GGEventLog setUserId:@"USER_ID_HERE"];
 
-You can also add the user ID as an argument to the initialize call:
+A user's data will be merged on the backend so that any events up to that point on the same device will be tracked under the same user.
+
+You can also add the user ID as an argument to the initializeApiKey: call:
     
     [GGEventLog initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
 
-Users data will be merged on the backend so that any events up to that point on the same device will be tracked under the same user.
+# Campaign Tracking #
+
+Set up links for each of your campaigns on the campaigns tab at http://giraffegraph.com.
+
+To track installs from each campaign source in your app, call initializeApiKey:trackCampaignSource: with an extra boolean argument to turn on campaign tracking:
+
+    [GGEventLog initializeApiKey:@"YOUR_API_KEY_HERE" trackCampaignSource:YES];
+
+If you are not using analytics, and only want campaign tracking, call enableCampaignTrackingApiKey: instead of initializeApiKey:trackCampaignSource: in the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file
+
+    [GGEventLog enableCampaignTrackingApiKey:@"YOUR_API_KEY_HERE"];
+
+You can retrieve the campaign information associated with a user by calling getCampaignInformation after you've called initializeApiKey:trackCampaignSource: or enableCampaignTrackingApiKey::
+
+    [GGEventLog getCampaignInformation];
+
+If the SDK has successfully pinged the server and saved the result, the @"tracked" key in the returned NSDictionary will be set to YES. You can then get the details of the campaign from in the the fields of the NSDictionary.
 
 # Setting Custom Properties #
 
