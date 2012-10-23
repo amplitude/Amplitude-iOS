@@ -31,6 +31,7 @@ static NSString *_language;
 static NSDictionary *_globalProperties;
 
 static NSString *_campaignInformation;
+static bool isCurrentlyTrackingCampaign = NO;
 
 static long long _sessionId = -1;
 static bool sessionStarted = NO;
@@ -216,7 +217,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         hasTrackedCampaign = [eventsData objectForKey:@"has_tracked_campaign"];
     }
     
-    if (![hasTrackedCampaign boolValue]) {
+    if (![hasTrackedCampaign boolValue] && !isCurrentlyTrackingCampaign) {
+        
+        isCurrentlyTrackingCampaign = YES;
         
         NSMutableDictionary *fingerprint = [NSMutableDictionary dictionary];
         [fingerprint setObject:[GGEventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
@@ -231,6 +234,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSData *fingerprintData = [[GGCJSONSerializer serializer] serializeDictionary:fingerprint error:&error];
         if (error != nil) {
             NSLog(@"ERROR: JSONSerializer error: %@", error);
+            isCurrentlyTrackingCampaign = NO;
             return;
         }
         NSString *fingerprintString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:fingerprintData encoding:NSUTF8StringEncoding]);
@@ -293,6 +297,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
          } else {
              NSLog(@"ERROR: response empty, error empty for NSURLConnection");
          }
+         
+         isCurrentlyTrackingCampaign = NO;
+         
      }];
 }
 
