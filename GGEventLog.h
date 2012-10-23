@@ -14,7 +14,9 @@
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
 
-+ (void)trackCampaignSource;
++ (void)initializeApiKey:(NSString*) apiKey trackCampaignSource:(bool) trackCampaignSource;
+
++ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource;
 
 + (NSDictionary*)getCampaignInformation;
 

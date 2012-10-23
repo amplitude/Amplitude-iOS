@@ -126,6 +126,21 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initializeApiKey:(NSString*) apiKey
 {
+    [GGEventLog initializeApiKey:apiKey userId:nil];
+}
+
++ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
+{
+    [GGEventLog initializeApiKey:apiKey userId:userId trackCampaignSource:NO];
+}
+
++ (void)initializeApiKey:(NSString*) apiKey trackCampaignSource:(bool) trackCampaignSource
+{
+    [GGEventLog initializeApiKey:apiKey userId:nil trackCampaignSource:trackCampaignSource];
+}
+
++ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource
+{
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
@@ -134,31 +149,12 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
+    if (userId != nil && ![GGEventLog isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:"]) {
+        return;
+    }
     
     if ([apiKey length] == 0) {
         NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:");
-        return;
-    }
-    
-    [GGEventLog initializeApiKey:apiKey userId:nil];
-}
-
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
-{
-    if (apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:userId:");
-        return;
-    }
-    
-    if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:userId:"]) {
-        return;
-    }
-    if (userId != nil && ![GGEventLog isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:userId:"]) {
-        return;
-    }
-    
-    if ([apiKey length] == 0) {
-        NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:userId");
         return;
     }
     
@@ -203,14 +199,38 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                selector:@selector(endSession)
                    name:UIApplicationWillResignActiveNotification
                  object:nil];
+    
+    if (trackCampaignSource) {
+        [GGEventLog trackCampaignSource];
+    }
+    
+}
+
++ (void)enableCampaignTrackingApiKey:(NSString*) apiKey
+{
+    if (apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil in enableCampaignTrackingApiKey:");
+        return;
+    }
+    
+    if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"enableCampaignTrackingApiKey:"]) {
+        return;
+    }
+    
+    if ([apiKey length] == 0) {
+        NSLog(@"ERROR: apiKey cannot be blank in enableCampaignTrackingApiKey:");
+        return;
+    }
+    
+    (void) SAFE_ARC_RETAIN(apiKey);
+    SAFE_ARC_RELEASE(_apiKey);
+    _apiKey = apiKey;
+    
+    [GGEventLog trackCampaignSource];
 }
 
 + (void)trackCampaignSource
 {
-    if (_apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling trackCampaignSource");
-        return;
-    }
     
     NSNumber *hasTrackedCampaign = [NSNumber numberWithBool:NO];
     @synchronized (eventsData) {
