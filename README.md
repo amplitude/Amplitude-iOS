@@ -2,11 +2,11 @@
 1. If you haven't already, go to http://giraffegraph.com and register for an account. You will receive an API Key.
 2. [Download the source code](https://dl.dropbox.com/s/cyxyqj26jkf6d47/GiraffeGraph-iOS.zip?dl=1) and extract the zip file.
 3. Copy the GiraffeGraph-iOS folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".
-4. In every file that uses analytics, you will need to import GGEventLog.h at the top:
+4. In every file that uses analytics, import GGEventLog.h at the top:
 
         #import "GGEventLog.h"
 
-5. In the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file you need to initialize the SDK:
+5. In the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file, initialize the SDK:
 
         [GGEventLog initializeApiKey:@"YOUR_API_KEY_HERE"];
 
@@ -44,15 +44,15 @@ To track installs from each campaign source in your app, call initializeApiKey:t
 
     [GGEventLog initializeApiKey:@"YOUR_API_KEY_HERE" trackCampaignSource:YES];
 
-If you are not using analytics, and only want campaign tracking, call enableCampaignTrackingApiKey: instead of initializeApiKey:trackCampaignSource: in the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file
+If you are not using analytics, and only want campaign tracking, call enableCampaignTrackingApiKey: instead of initializeApiKey:trackCampaignSource: in the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file:
 
     [GGEventLog enableCampaignTrackingApiKey:@"YOUR_API_KEY_HERE"];
 
-You can retrieve the campaign information associated with a user by calling getCampaignInformation after you've called initializeApiKey:trackCampaignSource: or enableCampaignTrackingApiKey::
+You can retrieve the campaign information associated with a user by calling getCampaignInformation after you've called initializeApiKey:trackCampaignSource: or enableCampaignTrackingApiKey:
 
     [GGEventLog getCampaignInformation];
 
-If the SDK has successfully pinged the server and saved the result, the @"tracked" key in the returned NSDictionary will be set to YES. You can then get the details of the campaign from in the the fields of the NSDictionary.
+If the SDK has successfully pinged the server and saved the result, the @"tracked" key in the returned NSDictionary will be set to YES. You can then get the details of the campaign from the fields of the returned NSDictionary.
 
 # Setting Custom Properties #
 
