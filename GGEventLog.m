@@ -385,7 +385,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         
         [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
         
-        if ([[eventsData objectForKey:@"events"] count] >= 10) {
+        if ([[eventsData objectForKey:@"events"] count] >= 30) {
             [GGEventLog uploadEvents];
         } else {
             [GGEventLog uploadEventsLater];
@@ -484,7 +484,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 {
     if (!updateScheduled) {
         updateScheduled = YES;
-        [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:10];
+        [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:30];
     }
 }
 
