@@ -14,7 +14,7 @@
 
         [GGEventLog logEvent:@"EVENT_IDENTIFIER_HERE"];
 
-7. Events are saved locally. Uploads are batched to occur every 10 events and every 10 seconds. After calling logEvent in your app, you will immediately see data appear on Giraffe Graph.
+7. Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds. After calling logEvent in your app, you will immediately see data appear on Giraffe Graph.
 
 # Tracking Events #
 
