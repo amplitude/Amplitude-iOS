@@ -258,7 +258,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             return;
         }
         NSString *fingerprintString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:fingerprintData encoding:NSUTF8StringEncoding]);
-        [GGEventLog makeCampaignTrackingPostRequest:@"http://ref.giraffegraph.com/install" fingerprint:fingerprintString];        
+        [GGEventLog makeCampaignTrackingPostRequest:@"https://ref.amplitude.com/install" fingerprint:fingerprintString];
     }
 }
 
@@ -476,7 +476,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             return;
         }
         NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
-        [GGEventLog makeEventUploadPostRequest:@"http://api.giraffegraph.com/" events:eventsString numEvents:numEvents];
+        [GGEventLog makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString numEvents:numEvents];
     }
 }
 
