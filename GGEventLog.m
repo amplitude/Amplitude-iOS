@@ -16,6 +16,7 @@
 #import <net/if.h>
 #import <net/if_dl.h>
 #import <CommonCrypto/CommonDigest.h>
+#import <UIKit/UIKit.h>
 
 static NSString *_apiKey;
 static NSString *_userId;
