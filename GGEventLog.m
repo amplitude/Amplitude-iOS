@@ -324,6 +324,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                  //NSLog(@"No internet connection (not connected to internet), unable to track campaign");
              } else if ([error code] == -1003) {
                  //NSLog(@"No internet connection (hostname not found), unable to track campaign");
+             } else if ([error code] == -1001) {
+                 //NSLog(@"No internet connection (request timed out), unable to track campaign");
              } else {
                  NSLog(@"ERROR: Connection error:%@", error);
              }
@@ -566,6 +568,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                 //NSLog(@"No internet connection (not connected to internet), unable to upload events");
             } else if ([error code] == -1003) {
                 //NSLog(@"No internet connection (hostname not found), unable to upload events");
+            } else if ([error code] == -1001) {
+                //NSLog(@"No internet connection (request timed out), unable to upload events");
             } else {
                 NSLog(@"ERROR: Connection error:%@", error);
             }
