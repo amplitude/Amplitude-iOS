@@ -58,8 +58,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initialize
 {
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    
     _deviceId = SAFE_ARC_RETAIN([GGEventLog getDeviceId]);
     
     _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
@@ -124,8 +122,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
         [locationManager performSelector:startMonitoringSignificantLocationChanges];
     }
-
-//    });
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
@@ -145,8 +141,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource
 {
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
@@ -209,14 +203,10 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     if (trackCampaignSource) {
         [GGEventLog trackCampaignSource];
     }
-    
-//    });
 }
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey
 {
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in enableCampaignTrackingApiKey:");
         return;
@@ -236,8 +226,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     _apiKey = apiKey;
     
     [GGEventLog trackCampaignSource];
-    
-//    });
 }
 
 + (void)trackCampaignSource
@@ -382,8 +370,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
     @synchronized (eventsData) {
@@ -408,8 +394,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [GGEventLog uploadEventsLater];
         }
     }
-    
-//    });
 }
 
 + (void)addBoilerplate:(NSMutableDictionary*) event
@@ -470,8 +454,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    
     [GGEventLog saveEventsData];
     
     @synchronized ([GGEventLog class]) {
@@ -499,8 +481,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
         [GGEventLog makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString numEvents:numEvents];
     }
-    
-//    });
 }
 
 + (void)uploadEventsLater
@@ -681,16 +661,12 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    
     (void) SAFE_ARC_RETAIN(userId);
     SAFE_ARC_RELEASE(_userId);
     _userId = userId;
     @synchronized (eventsData) {
         [eventsData setObject:_userId forKey:@"user_id"];
     }
-    
-//    });
 }
 
 + (void)setLocation:(id) location
