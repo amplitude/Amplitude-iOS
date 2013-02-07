@@ -58,6 +58,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initialize
 {
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
     _deviceId = SAFE_ARC_RETAIN([GGEventLog getDeviceId]);
     
     _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
@@ -123,6 +125,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         [locationManager performSelector:startMonitoringSignificantLocationChanges];
     }
 
+//    });
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
@@ -142,6 +145,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource
 {
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
@@ -205,10 +210,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         [GGEventLog trackCampaignSource];
     }
     
+//    });
 }
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey
 {
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in enableCampaignTrackingApiKey:");
         return;
@@ -228,6 +236,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     _apiKey = apiKey;
     
     [GGEventLog trackCampaignSource];
+    
+//    });
 }
 
 + (void)trackCampaignSource
@@ -311,7 +321,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
              }
          } else if (error != nil) {
              if ([error code] == -1009) {
-                 //NSLog(@"No internet connection found, unable to track campaign");
+                 //NSLog(@"No internet connection (not connected to internet), unable to track campaign");
+             } else if ([error code] == -1003) {
+                 //NSLog(@"No internet connection (hostname not found), unable to track campaign");
              } else {
                  NSLog(@"ERROR: Connection error:%@", error);
              }
@@ -368,6 +380,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
     @synchronized (eventsData) {
@@ -392,6 +406,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [GGEventLog uploadEventsLater];
         }
     }
+    
+//    });
 }
 
 + (void)addBoilerplate:(NSMutableDictionary*) event
@@ -452,6 +468,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
     [GGEventLog saveEventsData];
     
     @synchronized ([GGEventLog class]) {
@@ -479,6 +497,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
         [GGEventLog makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString numEvents:numEvents];
     }
+    
+//    });
 }
 
 + (void)uploadEventsLater
@@ -543,7 +563,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             }
         } else if (error != nil) {
             if ([error code] == -1009) {
-                //NSLog(@"No internet connection found, unable to upload events");
+                //NSLog(@"No internet connection (not connected to internet), unable to upload events");
+            } else if ([error code] == -1003) {
+                //NSLog(@"No internet connection (hostname not found), unable to upload events");
             } else {
                 NSLog(@"ERROR: Connection error:%@", error);
             }
@@ -654,12 +676,17 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     if (![GGEventLog isArgument:userId validType:[NSString class] methodName:@"setUserId:"]) {
         return;
     }
+    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
     (void) SAFE_ARC_RETAIN(userId);
     SAFE_ARC_RELEASE(_userId);
     _userId = userId;
     @synchronized (eventsData) {
         [eventsData setObject:_userId forKey:@"user_id"];
     }
+    
+//    });
 }
 
 + (void)setLocation:(id) location
