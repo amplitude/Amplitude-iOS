@@ -44,7 +44,9 @@ static NSMutableDictionary *eventsData;
 
 static NSString *eventsDataPath;
 
-static NSOperationQueue *operationQueue;
+static NSOperationQueue *mainQueue;
+static NSOperationQueue *backgroundQueue;
+static UIBackgroundTaskIdentifier uploadTaskID;
 
 static CLLocationManager *locationManager;
 static bool canTrackLocation;
@@ -80,7 +82,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
     
-    operationQueue = [[NSOperationQueue alloc] init];
+    mainQueue = [NSOperationQueue mainQueue];
+    backgroundQueue = [[NSOperationQueue alloc] init];
+    uploadTaskID = UIBackgroundTaskInvalid;
     
     @synchronized (eventsData) {
         if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
@@ -176,7 +180,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
     [center addObserver:self
-               selector:@selector(uploadEvents)
+               selector:@selector(uploadEventsBeforeClose)
                    name:UIApplicationDidEnterBackgroundNotification
                  object:nil];
     
@@ -280,7 +284,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     SAFE_ARC_RELEASE(postData);
     
-    [NSURLConnection sendAsynchronousRequest:request queue:operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+    [NSURLConnection sendAsynchronousRequest:request queue:backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
          if (response != nil) {
@@ -447,8 +451,23 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }
 }
 
++ (void)uploadEventsBeforeClose
+{
+    NSLog(@"starting background task");
+    uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        //Took too long, manually stop
+        NSLog(@"ending background task (took too long)");
+        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+        uploadTaskID = UIBackgroundTaskInvalid;
+    }];
+    
+    [GGEventLog uploadEvents];
+}
+
 + (void)uploadEvents
 {
+    NSLog(@"uploadEvents");
+    
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
@@ -519,7 +538,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
     SAFE_ARC_RELEASE(postData);
 
-    [NSURLConnection sendAsynchronousRequest:request queue:operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+    NSLog(@"sending request");
+    [NSURLConnection sendAsynchronousRequest:request queue:backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
     {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -534,6 +554,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                 } else if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
                     // success, remove existing events from dictionary
                     @synchronized (eventsData) {
+                        NSLog(@"uploaded");
                         [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
                     }
                 } else {
@@ -544,6 +565,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                     SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
             }
         } else if (error != nil) {
+            NSLog(@"failed to upload");
             if ([error code] == -1009) {
                 //NSLog(@"No internet connection (not connected to internet), unable to upload events");
             } else if ([error code] == -1003) {
@@ -560,6 +582,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         [GGEventLog saveEventsData];
         
         updatingCurrently = NO;
+        
+        // Upload finished, allow background task to be ended
+        if (uploadTaskID != UIBackgroundTaskInvalid) {
+            NSLog(@"ending background task");
+            [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+            uploadTaskID = UIBackgroundTaskInvalid;
+        }
     }];
 }
 
