@@ -60,6 +60,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initialize
 {
+    backgroundQueue = [[NSOperationQueue alloc] init];
+    [backgroundQueue setMaxConcurrentOperationCount:1];
+    
+    [backgroundQueue addOperationWithBlock:^{
+    
     _deviceId = SAFE_ARC_RETAIN([GGEventLog getDeviceId]);
     
     _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
@@ -83,7 +88,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
     
     mainQueue = [NSOperationQueue mainQueue];
-    backgroundQueue = [[NSOperationQueue alloc] init];
     uploadTaskID = UIBackgroundTaskInvalid;
     
     @synchronized (eventsData) {
@@ -126,6 +130,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
         [locationManager performSelector:startMonitoringSignificantLocationChanges];
     }
+    
+    }];
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
@@ -161,6 +167,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:");
         return;
     }
+    
+    [backgroundQueue addOperationWithBlock:^{
     
     (void) SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
@@ -207,6 +215,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     if (trackCampaignSource) {
         [GGEventLog trackCampaignSource];
     }
+    
+    }];
 }
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey
@@ -225,11 +235,15 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+    [backgroundQueue addOperationWithBlock:^{
+
     (void) SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
     
     [GGEventLog trackCampaignSource];
+    
+    }];
 }
 
 + (void)trackCampaignSource
@@ -374,6 +388,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+    [backgroundQueue addOperationWithBlock:^{
+
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
     @synchronized (eventsData) {
@@ -398,6 +414,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [GGEventLog uploadEventsLater];
         }
     }
+    
+    }];
 }
 
 + (void)addBoilerplate:(NSMutableDictionary*) event
@@ -473,6 +491,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+    [backgroundQueue addOperationWithBlock:^{
+    
     [GGEventLog saveEventsData];
     
     @synchronized ([GGEventLog class]) {
@@ -500,6 +520,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
         [GGEventLog makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString numEvents:numEvents];
     }
+    
+    }];
 }
 
 + (void)uploadEventsLater
@@ -618,6 +640,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)startSession
 {
+    [backgroundQueue addOperationWithBlock:^{
     
     // Remove turn off session later callback
     [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
@@ -646,10 +669,14 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_start" forKey:@"special"];
     [GGEventLog logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
+    
+    }];
 }
 
 + (void)endSession
 {
+    [backgroundQueue addOperationWithBlock:^{
+    
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_end" forKey:@"special"];
     [GGEventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
@@ -657,6 +684,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     sessionStarted = NO;
     
     [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
+    
+    }];
 }
 
 + (void)refreshSessionTime
