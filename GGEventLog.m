@@ -46,6 +46,7 @@ static NSString *eventsDataPath;
 
 static NSOperationQueue *mainQueue;
 static NSOperationQueue *backgroundQueue;
+static __weak NSOperationQueue *backgroundQueueWeak;
 static UIBackgroundTaskIdentifier uploadTaskID;
 
 static CLLocationManager *locationManager;
@@ -61,7 +62,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)initialize
 {
     backgroundQueue = [[NSOperationQueue alloc] init];
-    [backgroundQueue setMaxConcurrentOperationCount:1];
+    backgroundQueueWeak = backgroundQueue;
     
     [backgroundQueue addOperationWithBlock:^{
     
@@ -389,7 +390,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }
     
     [backgroundQueue addOperationWithBlock:^{
-
+    
     NSMutableDictionary *event = [NSMutableDictionary dictionary];
     
     @synchronized (eventsData) {
@@ -471,29 +472,24 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)uploadEventsBeforeClose
 {
-    NSLog(@"starting background task");
     uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
-        NSLog(@"ending background task (took too long)");
+        [GGEventLog saveEventsData];
         [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
         uploadTaskID = UIBackgroundTaskInvalid;
     }];
     
+    [GGEventLog saveEventsData];
     [GGEventLog uploadEvents];
 }
 
 + (void)uploadEvents
 {
-    NSLog(@"uploadEvents");
     
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
     }
-    
-    [backgroundQueue addOperationWithBlock:^{
-    
-    [GGEventLog saveEventsData];
     
     @synchronized ([GGEventLog class]) {
         if (updatingCurrently) {
@@ -501,6 +497,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         }
         updatingCurrently = YES;
     }
+    
+    [backgroundQueue addOperationWithBlock:^{
     
     @synchronized (eventsData) {
         NSMutableArray *events = [eventsData objectForKey:@"events"];
@@ -560,7 +558,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
     SAFE_ARC_RELEASE(postData);
 
-    NSLog(@"sending request");
     [NSURLConnection sendAsynchronousRequest:request queue:backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
     {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
@@ -576,7 +573,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                 } else if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
                     // success, remove existing events from dictionary
                     @synchronized (eventsData) {
-                        NSLog(@"uploaded");
                         [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
                     }
                 } else {
@@ -607,7 +603,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         
         // Upload finished, allow background task to be ended
         if (uploadTaskID != UIBackgroundTaskInvalid) {
-            NSLog(@"ending background task");
             [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
             uploadTaskID = UIBackgroundTaskInvalid;
         }
