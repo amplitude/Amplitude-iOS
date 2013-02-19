@@ -46,7 +46,6 @@ static NSString *eventsDataPath;
 
 static NSOperationQueue *mainQueue;
 static NSOperationQueue *backgroundQueue;
-static __weak NSOperationQueue *backgroundQueueWeak;
 static UIBackgroundTaskIdentifier uploadTaskID;
 
 static CLLocationManager *locationManager;
@@ -62,7 +61,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)initialize
 {
     backgroundQueue = [[NSOperationQueue alloc] init];
-    backgroundQueueWeak = backgroundQueue;
     
     [backgroundQueue addOperationWithBlock:^{
         
