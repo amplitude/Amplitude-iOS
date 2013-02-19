@@ -470,6 +470,20 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }
 }
 
++ (void)uploadEventsLater
+{
+    if (!updateScheduled) {
+        updateScheduled = YES;
+        [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:30];
+    }
+}
+
++ (void)uploadEventsLaterExecute
+{
+    updateScheduled = NO;
+    [GGEventLog uploadEvents];
+}
+
 + (void)uploadEventsBeforeClose
 {
     uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
@@ -520,20 +534,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         }
         
     }];
-}
-
-+ (void)uploadEventsLater
-{
-    if (!updateScheduled) {
-        updateScheduled = YES;
-        [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:30];
-    }
-}
-
-+ (void)uploadEventsLaterExecute
-{
-    updateScheduled = NO;
-    [GGEventLog uploadEvents];
 }
 
 + (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
