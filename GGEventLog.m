@@ -187,34 +187,20 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         
         [center addObserver:self
-                   selector:@selector(uploadEventsBeforeClose)
-                       name:UIApplicationDidEnterBackgroundNotification
-                     object:nil];
-        
-        [center addObserver:self
-                   selector:@selector(uploadEvents)
-                       name:UIApplicationWillTerminateNotification
-                     object:nil];
-        
-        [center addObserver:self
-                   selector:@selector(uploadEvents)
+                   selector:@selector(enterForeground)
                        name:UIApplicationWillEnterForegroundNotification
                      object:nil];
         
         [center addObserver:self
-                   selector:@selector(startSession)
-                       name:UIApplicationDidBecomeActiveNotification
-                     object:nil];
-        
-        [center addObserver:self
-                   selector:@selector(endSession)
-                       name:UIApplicationWillResignActiveNotification
+                   selector:@selector(enterBackground)
+                       name:UIApplicationDidEnterBackgroundNotification
                      object:nil];
         
         if (trackCampaignSource) {
             [GGEventLog trackCampaignSource];
         }
         
+        [GGEventLog enterForeground];
     }];
 }
 
@@ -482,19 +468,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [GGEventLog uploadEvents];
 }
 
-+ (void)uploadEventsBeforeClose
-{
-    uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        //Took too long, manually stop
-        [GGEventLog saveEventsData];
-        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
-        uploadTaskID = UIBackgroundTaskInvalid;
-    }];
-    
-    [GGEventLog saveEventsData];
-    [GGEventLog uploadEvents];
-}
-
 + (void)uploadEvents
 {
     
@@ -572,6 +545,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                      // success, remove existing events from dictionary
                      @synchronized (eventsData) {
                          [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
+                         [GGEventLog saveEventsData];
                      }
                  } else {
                      NSLog(@"ERROR: Not all events uploaded");
@@ -593,8 +567,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
          } else {
              NSLog(@"ERROR: response empty, error empty for NSURLConnection");
          }
-         
-         [GGEventLog saveEventsData];
          
          updatingCurrently = NO;
          
@@ -630,54 +602,69 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 	return @"";
 }
 
-+ (void)startSession
++ (void)enterForeground
 {
     [backgroundQueue addOperationWithBlock:^{
+        [GGEventLog startSession];
+        [GGEventLog uploadEvents];
+    }];
+}
+
++ (void)enterBackground
+{
+    uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        //Took too long, manually stop
+        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+        uploadTaskID = UIBackgroundTaskInvalid;
+    }];
+    
+    [backgroundQueue addOperationWithBlock:^{
+        [GGEventLog endSession];
+        [GGEventLog saveEventsData];
+        [GGEventLog uploadEvents];
+    }];
+}
+
++ (void)startSession
+{
+    // Remove turn off session later callback
+    [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
+                                             selector:@selector(turnOffSessionLaterExecute)
+                                               object:[GGEventLog class]];
+    
+    if (!sessionStarted) {
+        // Session has not been started yet, check overlap with previous session
         
-        // Remove turn off session later callback
-        [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
-                                                 selector:@selector(turnOffSessionLaterExecute)
-                                                   object:[GGEventLog class]];
-        
-        if (!sessionStarted) {
-            // Session has not been started yet, check overlap with previous session
+        @synchronized (eventsData) {
+            NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
             
-            @synchronized (eventsData) {
-                NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
-                
-                NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
-                
-                if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
-                    _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
-                } else {
-                    _sessionId = [now longLongValue];
-                    [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
-                }
+            NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
+            
+            if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
+                _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
+            } else {
+                _sessionId = [now longLongValue];
+                [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
             }
-            
-            sessionStarted = YES;
         }
         
-        NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
-        [apiProperties setValue:@"session_start" forKey:@"special"];
-        [GGEventLog logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
-        
-    }];
+        sessionStarted = YES;
+    }
+    
+    NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:@"session_start" forKey:@"special"];
+    [GGEventLog logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
 }
 
 + (void)endSession
 {
-    [backgroundQueue addOperationWithBlock:^{
-        
-        NSDictionary *apiProperties = [NSMutableDictionary dictionary];
-        [apiProperties setValue:@"session_end" forKey:@"special"];
-        [GGEventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
-        
-        sessionStarted = NO;
-        
-        [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
-        
-    }];
+    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:@"session_end" forKey:@"special"];
+    [GGEventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
+    
+    sessionStarted = NO;
+    
+    [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
 }
 
 + (void)refreshSessionTime
