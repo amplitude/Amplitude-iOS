@@ -45,6 +45,7 @@ static NSMutableDictionary *eventsData;
 static NSString *eventsDataPath;
 
 static NSOperationQueue *mainQueue;
+static NSOperationQueue *initializerQueue;
 static NSOperationQueue *backgroundQueue;
 static UIBackgroundTaskIdentifier uploadTaskID;
 
@@ -60,9 +61,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)initialize
 {
+    initializerQueue = [[NSOperationQueue alloc] init];
     backgroundQueue = [[NSOperationQueue alloc] init];
+    [backgroundQueue setSuspended:YES];
     
-    [backgroundQueue addOperationWithBlock:^{
+    [initializerQueue addOperationWithBlock:^{
         
         _deviceId = SAFE_ARC_RETAIN([GGEventLog getDeviceId]);
         
@@ -89,32 +92,30 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         mainQueue = [NSOperationQueue mainQueue];
         uploadTaskID = UIBackgroundTaskInvalid;
         
-        @synchronized (eventsData) {
-            if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
-                @try {
-                    eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
+        if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
+            @try {
+                eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
+            }
+            @catch (NSException *e) {
+                NSLog(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
+                NSError *error = nil;
+                [[NSFileManager defaultManager] removeItemAtPath:eventsDataPath error:&error];
+                if (error != nil) {
+                    // Can't remove, unable to do anything about it
+                    NSLog(@"ERROR: Can't remove corrupt file:%@", error);
                 }
-                @catch (NSException *e) {
-                    NSLog(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
-                    NSError *error = nil;
-                    [[NSFileManager defaultManager] removeItemAtPath:eventsDataPath error:&error];
-                    if (error != nil) {
-                        // Can't remove, unable to do anything about it
-                        NSLog(@"ERROR: Can't remove corrupt file:%@", error);
-                    }
-                    eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
-                    [eventsData setObject:[NSMutableArray array] forKey:@"events"];
-                    [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
-                    [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
-                }
-            } else {
                 eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
                 [eventsData setObject:[NSMutableArray array] forKey:@"events"];
                 [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
                 [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
             }
-            _campaignInformation = SAFE_ARC_RETAIN([eventsData objectForKey:@"campaign_information"]);
+        } else {
+            eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
+            [eventsData setObject:[NSMutableArray array] forKey:@"events"];
+            [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
+            [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
         }
+        _campaignInformation = SAFE_ARC_RETAIN([eventsData objectForKey:@"campaign_information"]);
         
         Class CLLocationManager = NSClassFromString(@"CLLocationManager");
         
@@ -130,6 +131,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [locationManager performSelector:startMonitoringSignificantLocationChanges];
         }
         
+        [backgroundQueue setSuspended:NO];
     }];
 }
 
@@ -458,7 +460,10 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 {
     if (!updateScheduled) {
         updateScheduled = YES;
-        [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:30];
+        
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:30];
+        }];
     }
 }
 
@@ -470,7 +475,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)uploadEvents
 {
-    
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
@@ -627,10 +631,12 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)startSession
 {
-    // Remove turn off session later callback
-    [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
-                                             selector:@selector(turnOffSessionLaterExecute)
-                                               object:[GGEventLog class]];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        // Remove turn off session later callback
+        [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
+                                                 selector:@selector(turnOffSessionLaterExecute)
+                                                   object:[GGEventLog class]];
+    }];
     
     if (!sessionStarted) {
         // Session has not been started yet, check overlap with previous session
@@ -664,7 +670,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     sessionStarted = NO;
     
-    [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
+    }];
 }
 
 + (void)refreshSessionTime
@@ -698,12 +706,14 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-    (void) SAFE_ARC_RETAIN(userId);
-    SAFE_ARC_RELEASE(_userId);
-    _userId = userId;
-    @synchronized (eventsData) {
-        [eventsData setObject:_userId forKey:@"user_id"];
-    }
+    [backgroundQueue addOperationWithBlock:^{
+        (void) SAFE_ARC_RETAIN(userId);
+        SAFE_ARC_RELEASE(_userId);
+        _userId = userId;
+        @synchronized (eventsData) {
+            [eventsData setObject:_userId forKey:@"user_id"];
+        }
+    }];
 }
 
 + (void)setLocation:(id) location
