@@ -398,6 +398,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
             
             if ([[eventsData objectForKey:@"events"] count] >= 30) {
+                // Delete old events if list starting to become too large to comfortably work with in memory
+                if ([[eventsData objectForKey:@"events"] count] >= 1050) {
+                    [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 50)];
+                    [GGEventLog saveEventsData];
+                }
                 [GGEventLog uploadEvents];
             } else {
                 [GGEventLog uploadEventsLater];
