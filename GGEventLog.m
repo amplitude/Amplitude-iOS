@@ -18,6 +18,8 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <UIKit/UIKit.h>
 
+static int apiVersion = 2;
+
 static NSString *_apiKey;
 static NSString *_userId;
 static NSString *_deviceId;
@@ -516,14 +518,26 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
     
+    NSString *apiVersionString = [[NSNumber numberWithInt:apiVersion] stringValue];
+    
     NSMutableData *postData = [[NSMutableData alloc] init];
-    [postData appendData:[@"e=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[[GGEventLog urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[@"v=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[[GGEventLog urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // Add timestamp of upload
     [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSNumber *timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
-    [postData appendData:[[timestamp stringValue] dataUsingEncoding:NSUTF8StringEncoding]];
+    NSString *timestampString = [[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000] stringValue];
+    [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // Add checksum
+    [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
+    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
+    NSString *checksum = [GGEventLog md5HexDigest: checksumData];
+    [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
     
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -538,22 +552,23 @@ static GGLocationManagerDelegate *locationManagerDelegate;
          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
          if (response != nil) {
              if ([httpResponse statusCode] == 200) {
-                 NSError *error = nil;
-                 NSDictionary *result = [[GGCJSONDeserializer deserializer] deserialize:data error:&error];
-                 
-                 if (error != nil) {
-                     NSLog(@"ERROR: Deserialization error:%@", error);
-                 } else if (![result isKindOfClass:[NSDictionary class]]) {
-                     NSLog(@"ERROR: JSON Dictionary not returned from server, invalid type:%@", [result class]);
-                 } else if ([[result objectForKey:@"added"] longLongValue] == numEvents) {
+                 NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                 if ([result isEqualToString:@"success"]) {
                      // success, remove existing events from dictionary
                      @synchronized (eventsData) {
                          [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
                          [GGEventLog saveEventsData];
                      }
+                 } else if ([result isEqualToString:@"invalid_api_key"]) {
+                     NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
+                 } else if ([result isEqualToString:@"bad_checksum"]) {
+                     NSLog(@"ERROR: Bad checksum, post request was mangled in transit, will attempt to reupload later");
+                 } else if ([result isEqualToString:@"request_db_write_failed"]) {
+                     NSLog(@"ERROR: Couldn't write to request database on server, will attempt to reupload later");
                  } else {
-                     NSLog(@"ERROR: Not all events uploaded");
+                     NSLog(@"ERROR: %@, will attempt to reupload later", result);
                  }
+                 SAFE_ARC_RELEASE(result);
              } else {
                  NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
                        SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
@@ -858,6 +873,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         [ret appendFormat:@"%02x",result[i]];
     }
     return ret;
+}
+
++ (void)printEventsCount
+{
+    NSLog(@"Events count:%ld", (long) [[eventsData objectForKey:@"events"] count]);
 }
 
 #pragma clang diagnostic pop

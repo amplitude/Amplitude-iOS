@@ -38,4 +38,6 @@
 
 + (void)stopListeningForLocation;
 
++ (void)printEventsCount;
+
 @end
