@@ -11,6 +11,7 @@
 #import "GGCJSONSerializer.h"
 #import "GGCJSONDeserializer.h"
 #import "GGARCMacros.h"
+#import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
 #import <net/if.h>
@@ -397,16 +398,20 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             
             [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
             
-            if ([[eventsData objectForKey:@"events"] count] >= 30) {
+            if ([[eventsData objectForKey:@"events"] count] >= 1050) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
-                if ([[eventsData objectForKey:@"events"] count] >= 1050) {
-                    [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 50)];
-                    [GGEventLog saveEventsData];
-                }
+                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 50)];
+                [GGEventLog saveEventsData];
+            } else if ([[eventsData objectForKey:@"events"] count] >= 20 && [[eventsData objectForKey:@"events"] count] % 20 == 0) {
+                [GGEventLog saveEventsData];
+            }
+            
+            if ([[eventsData objectForKey:@"events"] count] >= 30) {
                 [GGEventLog uploadEvents];
             } else {
                 [GGEventLog uploadEventsLater];
             }
+            
         }
         
     }];
@@ -482,6 +487,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)uploadEvents
 {
+    [GGEventLog uploadEventsLimit:YES];
+}
+
++ (void)uploadEventsLimit:(bool) limit
+{
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
@@ -498,7 +508,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         
         @synchronized (eventsData) {
             NSMutableArray *events = [eventsData objectForKey:@"events"];
-            long long numEvents = [events count];
+            int numEvents = limit ? fminl([events count], 100) : [events count];
             if (numEvents == 0) {
                 updatingCurrently = NO;
                 return;
@@ -554,13 +564,16 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     [NSURLConnection sendAsynchronousRequest:request queue:backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
+         bool uploadSuccessful = NO;
          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
          if (response != nil) {
              if ([httpResponse statusCode] == 200) {
                  NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                  if ([result isEqualToString:@"success"]) {
                      // success, remove existing events from dictionary
+                     uploadSuccessful = YES;
                      @synchronized (eventsData) {
+                         NSLog(@"upload successful for %llu events", numEvents);
                          [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
                          [GGEventLog saveEventsData];
                      }
@@ -594,8 +607,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
          
          updatingCurrently = NO;
          
-         // Upload finished, allow background task to be ended
-         if (uploadTaskID != UIBackgroundTaskInvalid) {
+         if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > 0) {
+             NSLog(@"uploading rest of events");
+             [GGEventLog uploadEventsLimit:NO];
+         } else if (uploadTaskID != UIBackgroundTaskInvalid) {
+             // Upload finished, allow background task to be ended
              [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
              uploadTaskID = UIBackgroundTaskInvalid;
          }
@@ -645,7 +661,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [backgroundQueue addOperationWithBlock:^{
         [GGEventLog endSession];
         [GGEventLog saveEventsData];
-        [GGEventLog uploadEvents];
+        [GGEventLog uploadEventsLimit:NO];
     }];
 }
 
@@ -763,6 +779,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)saveEventsData
 {
+    NSLog(@"save events data");
     @synchronized (eventsData) {
         bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
         if (!success) {
