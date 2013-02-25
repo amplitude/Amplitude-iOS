@@ -573,7 +573,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                      // success, remove existing events from dictionary
                      uploadSuccessful = YES;
                      @synchronized (eventsData) {
-                         NSLog(@"upload successful for %llu events", numEvents);
                          [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
                          [GGEventLog saveEventsData];
                      }
@@ -608,7 +607,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
          updatingCurrently = NO;
          
          if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > 0) {
-             NSLog(@"uploading rest of events");
              [GGEventLog uploadEventsLimit:NO];
          } else if (uploadTaskID != UIBackgroundTaskInvalid) {
              // Upload finished, allow background task to be ended
@@ -779,7 +777,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)saveEventsData
 {
-    NSLog(@"save events data");
     @synchronized (eventsData) {
         bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
         if (!success) {
