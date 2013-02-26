@@ -26,6 +26,8 @@
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties;
 
++ (void)logPurchase:(NSNumber*) price;
+
 + (void)uploadEvents;
 
 + (void)setGlobalUserProperties:(NSDictionary*) globalProperties;

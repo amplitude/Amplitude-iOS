@@ -721,6 +721,21 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
++ (void)logPurchase:(NSNumber*) price
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logPurchase:");
+        return;
+    }
+    if (![GGEventLog isArgument:price validType:[NSNumber class] methodName:@"logPurchase:"]) {
+        return;
+    }
+    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:@"purchase" forKey:@"special"];
+    [apiProperties setValue:price forKey:@"purchase"];
+    [GGEventLog logEvent:@"purchase" withCustomProperties:nil apiProperties:apiProperties];
+}
+
 + (void)refreshSessionTime:(NSNumber*) timestamp
 {
     @synchronized (eventsData) {
