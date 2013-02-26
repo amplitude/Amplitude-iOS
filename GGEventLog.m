@@ -403,9 +403,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             
             [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
             
-            if ([[eventsData objectForKey:@"events"] count] >= 1050) {
+            if ([[eventsData objectForKey:@"events"] count] >= 1020) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
-                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 50)];
+                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
                 [GGEventLog saveEventsData];
             } else if ([[eventsData objectForKey:@"events"] count] >= 20 && [[eventsData objectForKey:@"events"] count] % 20 == 0) {
                 [GGEventLog saveEventsData];
