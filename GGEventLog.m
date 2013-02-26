@@ -66,6 +66,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 {
     initializerQueue = [[NSOperationQueue alloc] init];
     backgroundQueue = [[NSOperationQueue alloc] init];
+    // Force method calls to happen in FIFO order by only allowing 1 concurrent operation
+    [backgroundQueue setMaxConcurrentOperationCount:1];
+    // Ensure initialize finishes running asynchronously before other calls are run
     [backgroundQueue setSuspended:YES];
     
     [initializerQueue addOperationWithBlock:^{
@@ -172,11 +175,11 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
+    (void) SAFE_ARC_RETAIN(apiKey);
+    SAFE_ARC_RELEASE(_apiKey);
+    _apiKey = apiKey;
+    
     [backgroundQueue addOperationWithBlock:^{
-        
-        (void) SAFE_ARC_RETAIN(apiKey);
-        SAFE_ARC_RELEASE(_apiKey);
-        _apiKey = apiKey;
         
         @synchronized (eventsData) {
             if (userId != nil) {
@@ -205,8 +208,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [GGEventLog trackCampaignSource];
         }
         
-        [GGEventLog enterForeground];
     }];
+    
+    [GGEventLog enterForeground];
 }
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey
@@ -377,6 +381,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent:");
         return;
     }
+    NSNumber *timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     
     [backgroundQueue addOperationWithBlock:^{
         
@@ -392,7 +397,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[GGEventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
             
-            [GGEventLog addBoilerplate:event];
+            [GGEventLog addBoilerplate:event timestamp:timestamp];
             
             [[eventsData objectForKey:@"events"] addObject:event];
             
@@ -417,9 +422,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
-+ (void)addBoilerplate:(NSMutableDictionary*) event
++ (void)addBoilerplate:(NSMutableDictionary*) event timestamp:(NSNumber*) timestamp
 {
-    NSNumber *timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     [event setValue:timestamp forKey:@"timestamp"];
     [event setValue:(_userId != nil ?
                      [GGEventLog replaceWithJSONNull:_userId] :
@@ -464,7 +468,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }
     
     if (sessionStarted) {
-        [GGEventLog refreshSessionTime];
+        [GGEventLog refreshSessionTime:timestamp];
     }
 }
 
@@ -482,7 +486,10 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)uploadEventsLaterExecute
 {
     updateScheduled = NO;
-    [GGEventLog uploadEvents];
+    
+    [backgroundQueue addOperationWithBlock:^{
+        [GGEventLog uploadEvents];
+    }];
 }
 
 + (void)uploadEvents
@@ -642,8 +649,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)enterForeground
 {
+    [GGEventLog startSession];
     [backgroundQueue addOperationWithBlock:^{
-        [GGEventLog startSession];
         [GGEventLog uploadEvents];
     }];
 }
@@ -656,8 +663,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         uploadTaskID = UIBackgroundTaskInvalid;
     }];
     
+    [GGEventLog endSession];
     [backgroundQueue addOperationWithBlock:^{
-        [GGEventLog endSession];
         [GGEventLog saveEventsData];
         [GGEventLog uploadEventsLimit:NO];
     }];
@@ -665,6 +672,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)startSession
 {
+    NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+    
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         // Remove turn off session later callback
         [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
@@ -673,22 +682,23 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
     
     if (!sessionStarted) {
-        // Session has not been started yet, check overlap with previous session
-        
-        @synchronized (eventsData) {
-            NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+        [backgroundQueue addOperationWithBlock:^{
             
-            NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
-            
-            if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
-                _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
-            } else {
-                _sessionId = [now longLongValue];
-                [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
+            @synchronized (eventsData) {
+                
+                // Session has not been started yet, check overlap with previous session
+                NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
+                
+                if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
+                    _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
+                } else {
+                    _sessionId = [now longLongValue];
+                    [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
+                }
             }
-        }
-        
-        sessionStarted = YES;
+            
+            sessionStarted = YES;
+        }];
     }
     
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
@@ -702,18 +712,19 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [apiProperties setValue:@"session_end" forKey:@"special"];
     [GGEventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
     
-    sessionStarted = NO;
+    [backgroundQueue addOperationWithBlock:^{
+        sessionStarted = NO;
+    }];
     
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
     }];
 }
 
-+ (void)refreshSessionTime
++ (void)refreshSessionTime:(NSNumber*) timestamp
 {
-    NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     @synchronized (eventsData) {
-        [eventsData setValue:now forKey:@"previous_session_time"];
+        [eventsData setValue:timestamp forKey:@"previous_session_time"];
     }
 }
 
