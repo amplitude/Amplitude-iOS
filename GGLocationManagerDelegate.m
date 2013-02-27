@@ -15,18 +15,30 @@
 - (void)locationManager:(CLLocationManager*) manager didFailWithError:(NSError*) error
 {
     if ([error code] == kCLErrorDenied) {
-        [GGEventLog stopListeningForLocation];
+        SEL stopListeningForLocation = NSSelectorFromString(@"stopListeningForLocation");
+        [GGEventLog performSelector:stopListeningForLocation];
     }
 }
 
 - (void)locationManager:(CLLocationManager*) manager didUpdateToLocation:(CLLocation*) newLocation fromLocation:(CLLocation*) oldLocation
 {
-    [GGEventLog setLocation:newLocation];
+    NSLog(@"didUpdateToLocation:%@", newLocation);
+    SEL setLocation = NSSelectorFromString(@"setLocation:");
+    [GGEventLog performSelector:setLocation withObject:newLocation];
+    SEL stopListeningForLocation = NSSelectorFromString(@"stopListeningForLocation");
+    [GGEventLog performSelector:stopListeningForLocation];
 }
 
 - (void)locationManager:(CLLocationManager*) manager didChangeAuthorizationStatus:(CLAuthorizationStatus) status
 {
-
+    NSLog(@"Did change authorization status:%d", status);
+    if (status == kCLAuthorizationStatusAuthorized) {
+        SEL startListeningForLocationIfAvailable = NSSelectorFromString(@"startListeningForLocationIfAvailable");
+        [GGEventLog performSelector:startListeningForLocationIfAvailable];
+    } else {
+        SEL stopListeningForLocation = NSSelectorFromString(@"stopListeningForLocation");
+        [GGEventLog performSelector:stopListeningForLocation];
+    }
 }
 
 @end

@@ -52,8 +52,8 @@ static NSOperationQueue *initializerQueue;
 static NSOperationQueue *backgroundQueue;
 static UIBackgroundTaskIdentifier uploadTaskID;
 
+static bool locationListeningEnabled = YES;
 static CLLocationManager *locationManager;
-static bool canTrackLocation;
 static CLLocation *lastKnownLocation;
 static GGLocationManagerDelegate *locationManagerDelegate;
 
@@ -123,22 +123,16 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         }
         _campaignInformation = SAFE_ARC_RETAIN([eventsData objectForKey:@"campaign_information"]);
         
-        Class CLLocationManager = NSClassFromString(@"CLLocationManager");
-        
-        canTrackLocation = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized
-                            && [CLLocationManager significantLocationChangeMonitoringAvailable]);
-        
-        if (canTrackLocation) {
-            locationManager = [[CLLocationManager alloc] init];
-            locationManagerDelegate = [[GGLocationManagerDelegate alloc] init];
-            SEL setDelegate = NSSelectorFromString(@"setDelegate:");
-            [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
-            SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
-            [locationManager performSelector:startMonitoringSignificantLocationChanges];
-        }
-        
         [backgroundQueue setSuspended:NO];
     }];
+    
+    // Location manager callbacks must be fired on a thread with a run loop (eg the main thread)
+    Class CLLocationManager = NSClassFromString(@"CLLocationManager");
+    locationManager = [[CLLocationManager alloc] init];
+    locationManagerDelegate = [[GGLocationManagerDelegate alloc] init];
+    SEL setDelegate = NSSelectorFromString(@"setDelegate:");
+    [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
+    NSLog(@"init: %@", [locationManager location]);
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
@@ -477,7 +471,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     if (!updateScheduled) {
         updateScheduled = YES;
         
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [mainQueue addOperationWithBlock:^{
             [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:30];
         }];
     }
@@ -649,6 +643,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)enterForeground
 {
+    [GGEventLog startListeningForLocationIfAvailable];
     [GGEventLog startSession];
     [backgroundQueue addOperationWithBlock:^{
         [GGEventLog uploadEvents];
@@ -664,6 +659,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
     
     [GGEventLog endSession];
+    [GGEventLog stopListeningForLocation];
     [backgroundQueue addOperationWithBlock:^{
         [GGEventLog saveEventsData];
         [GGEventLog uploadEventsLimit:NO];
@@ -674,7 +670,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 {
     NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+    [mainQueue addOperationWithBlock:^{
         // Remove turn off session later callback
         [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
                                                  selector:@selector(turnOffSessionLaterExecute)
@@ -716,7 +712,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         sessionStarted = NO;
     }];
     
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+    [mainQueue addOperationWithBlock:^{
         [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
     }];
 }
@@ -789,14 +785,34 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }
 }
 
-+ (void)startListeningForLocation
++ (void)enableLocationListening
 {
-    SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
-    [locationManager performSelector:startMonitoringSignificantLocationChanges];
+    locationListeningEnabled = YES;
+    [GGEventLog startListeningForLocationIfAvailable];
+}
+
++ (void)disableLocationListening
+{
+    locationListeningEnabled = NO;
+    [GGEventLog stopListeningForLocation];
+}
+
++ (void)startListeningForLocationIfAvailable
+{
+    NSLog(@"startListeningForLocation called");
+    NSLog(@"%@", [locationManager location]);
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized
+        && [CLLocationManager significantLocationChangeMonitoringAvailable]
+        && locationListeningEnabled) {
+        NSLog(@"startListeningForLocation success");
+        SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
+        [locationManager performSelector:startMonitoringSignificantLocationChanges];
+    }
 }
 
 + (void)stopListeningForLocation
 {
+    NSLog(@"stopListeningForLocation");
     SEL stopMonitoringSignificantLocationChanges = NSSelectorFromString(@"stopMonitoringSignificantLocationChanges");
     [locationManager performSelector:stopMonitoringSignificantLocationChanges];
 }

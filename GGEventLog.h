@@ -34,11 +34,9 @@
 
 + (void)setUserId:(NSString*) userId;
 
-+ (void)setLocation:(id) location;
++ (void)enableLocationListening;
 
-+ (void)startListeningForLocation;
-
-+ (void)stopListeningForLocation;
++ (void)disableLocationListening;
 
 + (void)printEventsCount;
 
