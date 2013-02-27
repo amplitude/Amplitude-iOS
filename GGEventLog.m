@@ -132,7 +132,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     locationManagerDelegate = [[GGLocationManagerDelegate alloc] init];
     SEL setDelegate = NSSelectorFromString(@"setDelegate:");
     [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
-    NSLog(@"init: %@", [locationManager location]);
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
@@ -643,7 +642,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)enterForeground
 {
-    [GGEventLog startListeningForLocationIfAvailable];
+    [GGEventLog updateLocation];
     [GGEventLog startSession];
     [backgroundQueue addOperationWithBlock:^{
         [GGEventLog uploadEvents];
@@ -659,7 +658,6 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
     
     [GGEventLog endSession];
-    [GGEventLog stopListeningForLocation];
     [backgroundQueue addOperationWithBlock:^{
         [GGEventLog saveEventsData];
         [GGEventLog uploadEventsLimit:NO];
@@ -772,49 +770,27 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
-+ (void)setLocation:(id) location
++ (void)updateLocation
 {
-    Class CLLocation = NSClassFromString(@"CLLocation");
-    if (![GGEventLog isArgument:location validType:CLLocation methodName:@"setLocation:"]) {
-        return;
-    }
-    if (CLLocation && [location isMemberOfClass:CLLocation]) {
-        (void) SAFE_ARC_RETAIN(location);
-        SAFE_ARC_RELEASE(lastKnownLocation);
-        lastKnownLocation = location;
+    if (locationListeningEnabled) {
+        CLLocation *location = [locationManager location];
+        if (location != nil) {
+            (void) SAFE_ARC_RETAIN(location);
+            SAFE_ARC_RELEASE(lastKnownLocation);
+            lastKnownLocation = location;
+        }
     }
 }
 
 + (void)enableLocationListening
 {
     locationListeningEnabled = YES;
-    [GGEventLog startListeningForLocationIfAvailable];
+    [GGEventLog updateLocation];
 }
 
 + (void)disableLocationListening
 {
     locationListeningEnabled = NO;
-    [GGEventLog stopListeningForLocation];
-}
-
-+ (void)startListeningForLocationIfAvailable
-{
-    NSLog(@"startListeningForLocation called");
-    NSLog(@"%@", [locationManager location]);
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized
-        && [CLLocationManager significantLocationChangeMonitoringAvailable]
-        && locationListeningEnabled) {
-        NSLog(@"startListeningForLocation success");
-        SEL startMonitoringSignificantLocationChanges = NSSelectorFromString(@"startMonitoringSignificantLocationChanges");
-        [locationManager performSelector:startMonitoringSignificantLocationChanges];
-    }
-}
-
-+ (void)stopListeningForLocation
-{
-    NSLog(@"stopListeningForLocation");
-    SEL stopMonitoringSignificantLocationChanges = NSSelectorFromString(@"stopMonitoringSignificantLocationChanges");
-    [locationManager performSelector:stopMonitoringSignificantLocationChanges];
 }
 
 + (void)saveEventsData
