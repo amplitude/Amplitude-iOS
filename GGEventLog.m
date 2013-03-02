@@ -43,8 +43,9 @@ static bool sessionStarted = NO;
 static bool updateScheduled = NO;
 static bool updatingCurrently = NO;
 
+static NSMutableDictionary *propertyList;
+static NSString *propertyListPath;
 static NSMutableDictionary *eventsData;
-
 static NSString *eventsDataPath;
 
 static NSOperationQueue *mainQueue;
@@ -91,36 +92,90 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSLocale *developerLanguage = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
         _country = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleCountryCode value:[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]]);
         _language = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleLanguageCode value:[[NSLocale preferredLanguages] objectAtIndex:0]]);
+        SAFE_ARC_RELEASE(developerLanguage);
         
-        NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-        eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
-        
-        mainQueue = [NSOperationQueue mainQueue];
+        mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
         uploadTaskID = UIBackgroundTaskInvalid;
         
+        NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+        
+        // Load propertyList object
+        propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.plist"]);
+        bool successfullyLoadedPropertyList = NO;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:propertyListPath]) {
+            NSData *propertyListData = [[NSFileManager defaultManager] contentsAtPath:propertyListPath];
+            if (propertyListData != nil) {
+                NSError *error = nil;
+                propertyList = SAFE_ARC_RETAIN((NSMutableDictionary *)[NSPropertyListSerialization
+                                                                       propertyListWithData:propertyListData
+                                                                       options:NSPropertyListMutableContainersAndLeaves
+                                                                       format:NULL error:&error]);
+                if (error == nil) {
+                    if (propertyList != nil) {
+                        successfullyLoadedPropertyList = YES;
+                    }
+                } else {
+                    NSLog(@"ERROR: propertyList deserialization error:%@", error);
+                    error = nil;
+                    [[NSFileManager defaultManager] removeItemAtPath:eventsDataPath error:&error];
+                    if (error != nil) {
+                        NSLog(@"ERROR: Can't remove corrupt propertyList file:%@", error);
+                    }
+                }
+            }
+        }
+        if (!successfullyLoadedPropertyList) {
+            propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
+            [propertyList setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
+            NSError *error = nil;
+            NSData *propertyListData = [NSPropertyListSerialization
+                                        dataWithPropertyList:propertyList
+                                        format:NSPropertyListXMLFormat_v1_0
+                                        options:0 error:&error];
+            if (error == nil) {
+                if (propertyListData != nil) {
+                    bool success = [propertyListData writeToFile:propertyListPath atomically:YES];
+                    if (!success) {
+                        NSLog(@"ERROR: Unable to save propertyList to file on initialization");
+                    }
+                } else {
+                    NSLog(@"ERROR: propertyListData is nil on initialization");
+                }
+            } else {
+                NSLog(@"ERROR: Unable to serialize propertyList on initialization:%@", error);
+            }
+        }
+        
+        // Load eventData object
+        eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
+        bool successfullyLoadedEventsData = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
             @try {
                 eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
+                if (eventsData != nil) {
+                    successfullyLoadedEventsData = YES;
+                }
             }
             @catch (NSException *e) {
                 NSLog(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
                 NSError *error = nil;
                 [[NSFileManager defaultManager] removeItemAtPath:eventsDataPath error:&error];
                 if (error != nil) {
-                    // Can't remove, unable to do anything about it
-                    NSLog(@"ERROR: Can't remove corrupt file:%@", error);
+                    NSLog(@"ERROR: Can't remove corrupt archiveDict file:%@", error);
                 }
-                eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
-                [eventsData setObject:[NSMutableArray array] forKey:@"events"];
-                [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
-                [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
             }
-        } else {
+        }
+        if (!successfullyLoadedEventsData) {
             eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
             [eventsData setObject:[NSMutableArray array] forKey:@"events"];
             [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
             [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
+            bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
+            if (!success) {
+                NSLog(@"ERROR: Unable to save eventsData to file on initialization");
+            }
         }
+        
         _campaignInformation = SAFE_ARC_RETAIN([eventsData objectForKey:@"campaign_information"]);
         
         [backgroundQueue setSuspended:NO];
@@ -381,7 +436,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
         
         @synchronized (eventsData) {
-            long long newId = [[eventsData objectForKey:@"max_id"] longValue] + 1;
+            // Increment propertyList max_id and save immediately
+            NSNumber *propertyListMaxId = [NSNumber numberWithLongLong:[[propertyList objectForKey:@"max_id"] longLongValue] + 1];
+            [propertyList setObject: propertyListMaxId forKey:@"max_id"];
+            [GGEventLog savePropertyList];
+            
+            // Increment eventsData max_id
+            long long newId = [[eventsData objectForKey:@"max_id"] longLongValue] + 1;
             
             [event setValue:[GGEventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
@@ -390,7 +451,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[GGEventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
             
-            [GGEventLog addBoilerplate:event timestamp:timestamp];
+            [GGEventLog addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
             
             [[eventsData objectForKey:@"events"] addObject:event];
             
@@ -398,7 +459,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             
             if ([[eventsData objectForKey:@"events"] count] >= 1020) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
-                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
+                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)]; //TODO what happens if removed in the middle of an upload?
                 [GGEventLog saveEventsData];
             } else if ([[eventsData objectForKey:@"events"] count] >= 20 && [[eventsData objectForKey:@"events"] count] % 20 == 0) {
                 [GGEventLog saveEventsData];
@@ -415,7 +476,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
-+ (void)addBoilerplate:(NSMutableDictionary*) event timestamp:(NSNumber*) timestamp
++ (void)addBoilerplate:(NSMutableDictionary*) event timestamp:(NSNumber*) timestamp maxIdCheck:(NSNumber*) propertyListMaxId
 {
     [event setValue:timestamp forKey:@"timestamp"];
     [event setValue:(_userId != nil ?
@@ -431,8 +492,10 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
     [event setValue:@"ios" forKey:@"client"];
     
-    NSMutableDictionary *properties = [event valueForKey:@"properties"];
+    NSMutableDictionary *properties = [event valueForKey:@"properties"];//TODO remove properties
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
+    
+    [apiProperties setValue:[GGEventLog replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
     
     if (lastKnownLocation != nil) {
         NSMutableDictionary *location = [NSMutableDictionary dictionary];
@@ -448,8 +511,8 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         CLLocationCoordinate2D lastKnownLocationCoordinate;
         [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
         
-        [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
-        [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
+        [location setValue:[GGEventLog replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
+        [location setValue:[GGEventLog replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
         
         [properties setValue:location forKey:@"location"];
         
@@ -725,7 +788,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:@"purchase" forKey:@"special"];
+    [apiProperties setValue:@"purchase" forKey:@"special"]; //TODO name field to avoid collisions
     [apiProperties setValue:price forKey:@"purchase"];
     [GGEventLog logEvent:@"purchase" withCustomProperties:nil apiProperties:apiProperties];
 }
@@ -791,6 +854,30 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)disableLocationListening
 {
     locationListeningEnabled = NO;
+}
+
+
++ (void)savePropertyList
+{
+    @synchronized (propertyList) {
+        NSError *error = nil;
+        NSData *propertyListData = [NSPropertyListSerialization
+                                    dataWithPropertyList:propertyList
+                                    format:NSPropertyListXMLFormat_v1_0
+                                    options:0 error:&error];
+        if (error == nil) {
+            if (propertyListData != nil) {
+                bool success = [propertyListData writeToFile:propertyListPath atomically:YES];
+                if (!success) {
+                    NSLog(@"ERROR: Unable to save propertyList to file");
+                }
+            } else {
+                NSLog(@"ERROR: propertyListData is nil");
+            }
+        } else {
+            NSLog(@"ERROR: Unable to serialize propertyList:%@", error);
+        }
+    }
 }
 
 + (void)saveEventsData
