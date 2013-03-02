@@ -492,14 +492,12 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
     [event setValue:@"ios" forKey:@"client"];
     
-    NSMutableDictionary *properties = [event valueForKey:@"properties"];//TODO remove properties
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
     [apiProperties setValue:[GGEventLog replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
     
     if (lastKnownLocation != nil) {
         NSMutableDictionary *location = [NSMutableDictionary dictionary];
-        NSMutableDictionary *apiLocation = [NSMutableDictionary dictionary];
         
         // Need to use NSInvocation because coordinate selector returns a C struct
         SEL coordinateSelector = NSSelectorFromString(@"coordinate");
@@ -514,12 +512,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         [location setValue:[GGEventLog replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
         [location setValue:[GGEventLog replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
         
-        [properties setValue:location forKey:@"location"];
-        
-        [apiLocation setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
-        [apiLocation setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
-        
-        [apiProperties setValue:apiLocation forKey:@"location"];
+        [apiProperties setValue:location forKey:@"location"];
         
     }
     
