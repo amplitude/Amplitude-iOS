@@ -459,7 +459,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             
             if ([[eventsData objectForKey:@"events"] count] >= 1020) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
-                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)]; //TODO what happens if removed in the middle of an upload?
+                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
                 [GGEventLog saveEventsData];
             } else if ([[eventsData objectForKey:@"events"] count] >= 20 && [[eventsData objectForKey:@"events"] count] % 20 == 0) {
                 [GGEventLog saveEventsData];
@@ -564,12 +564,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         
         @synchronized (eventsData) {
             NSMutableArray *events = [eventsData objectForKey:@"events"];
-            int numEvents = limit ? fminl([events count], 100) : [events count];
+            long long numEvents = limit ? fminl([events count], 100) : [events count];
             if (numEvents == 0) {
                 updatingCurrently = NO;
                 return;
             }
             NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
+            long long lastEventIDUploaded = [[[uploadEvents lastObject] objectForKey:@"event_id"] longLongValue];
             NSError *error = nil;
             NSData *eventsDataLocal = [[GGCJSONSerializer serializer] serializeArray:uploadEvents error:&error];
             if (error != nil) {
@@ -578,13 +579,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                 return;
             }
             NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
-            [GGEventLog makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString numEvents:numEvents];
+            [GGEventLog makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString lastEventIDUploaded:lastEventIDUploaded];
         }
         
     }];
 }
 
-+ (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events numEvents:(long long) numEvents
++ (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events lastEventIDUploaded:(long long) lastEventIDUploaded
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
@@ -629,7 +630,16 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                      // success, remove existing events from dictionary
                      uploadSuccessful = YES;
                      @synchronized (eventsData) {
-                         [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numEvents)];
+                         long long numberToRemove = 0;
+                         long long i = 0;
+                         for (id event in [eventsData objectForKey:@"events"]) {
+                             i++;
+                             if ([[event objectForKey:@"event_id"] longLongValue] == lastEventIDUploaded) {
+                                 numberToRemove = i;
+                                 break;
+                             }
+                         }
+                         [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numberToRemove)];
                          [GGEventLog saveEventsData];
                      }
                  } else if ([result isEqualToString:@"invalid_api_key"]) {
