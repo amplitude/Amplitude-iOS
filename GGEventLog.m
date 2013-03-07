@@ -771,19 +771,22 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
-+ (void)logPurchase:(NSNumber*) price
+// amount is a double in units of dollars
+// ex. $3.99 would be passed as [NSNumber numberWithDouble:3.99]
++ (void)logRevenue:(NSNumber*) amount
 {
+    [NSNumber numberWithFloat:2.0];
     if (_apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logPurchase:");
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
         return;
     }
-    if (![GGEventLog isArgument:price validType:[NSNumber class] methodName:@"logPurchase:"]) {
+    if (![GGEventLog isArgument:amount validType:[NSNumber class] methodName:@"logRevenue:"]) {
         return;
     }
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:@"purchase" forKey:@"special"]; //TODO name field to avoid collisions
-    [apiProperties setValue:price forKey:@"purchase"];
-    [GGEventLog logEvent:@"purchase" withCustomProperties:nil apiProperties:apiProperties];
+    [apiProperties setValue:@"revenue_amount" forKey:@"special"];
+    [apiProperties setValue:amount forKey:@"revenue"];
+    [GGEventLog logEvent:@"revenue_amount" withCustomProperties:nil apiProperties:apiProperties];
 }
 
 + (void)refreshSessionTime:(NSNumber*) timestamp

@@ -26,7 +26,7 @@
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties;
 
-+ (void)logPurchase:(NSNumber*) price;
++ (void)logRevenue:(NSNumber*) amount;
 
 + (void)uploadEvents;
 
