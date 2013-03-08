@@ -1,14 +1,14 @@
 //
-//  GGEventLog.h
+//  Amplitude.h
 //  Fawkes
 //
 //  Created by Spenser Skates on 7/26/12.
-//  Copyright (c) 2012 GiraffeGraph. All rights reserved.
+//  Copyright (c) 2012 Sonalight, Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface GGEventLog : NSObject
+@interface Amplitude : NSObject
 
 + (void)initializeApiKey:(NSString*) apiKey;
 

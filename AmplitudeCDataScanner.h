@@ -31,7 +31,7 @@
 
 // NSScanner
 
-@interface GGCDataScanner : NSObject {
+@interface AmplitudeCDataScanner : NSObject {
 	NSData *data;
 
 	u_int8_t *start;

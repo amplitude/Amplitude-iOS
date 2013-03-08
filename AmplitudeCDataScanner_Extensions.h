@@ -27,9 +27,9 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "GGCDataScanner.h"
+#import "AmplitudeCDataScanner.h"
 
-@interface GGCDataScanner (GGCDataScanner_Extensions)
+@interface AmplitudeCDataScanner (AmplitudeCDataScanner_Extensions)
 
 - (BOOL)scanCStyleComment:(NSString **)outComment;
 - (BOOL)scanCPlusPlusStyleComment:(NSString **)outComment;

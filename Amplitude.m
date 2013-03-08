@@ -1,16 +1,16 @@
 //
-//  GGEventLog.m
+//  Amplitude.m
 //  Fawkes
 //
 //  Created by Spenser Skates on 7/26/12.
-//  Copyright (c) 2012 GiraffeGraph. All rights reserved.
+//  Copyright (c) 2012 Sonalight, Inc. All rights reserved.
 //
 
-#import "GGEventLog.h"
-#import "GGLocationManagerDelegate.h"
-#import "GGCJSONSerializer.h"
-#import "GGCJSONDeserializer.h"
-#import "GGARCMacros.h"
+#import "Amplitude.h"
+#import "AmplitudeLocationManagerDelegate.h"
+#import "AmplitudeCJSONSerializer.h"
+#import "AmplitudeCJSONDeserializer.h"
+#import "AmplitudeARCMacros.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -56,9 +56,9 @@ static UIBackgroundTaskIdentifier uploadTaskID;
 static bool locationListeningEnabled = YES;
 static CLLocationManager *locationManager;
 static CLLocation *lastKnownLocation;
-static GGLocationManagerDelegate *locationManagerDelegate;
+static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
-@implementation GGEventLog
+@implementation Amplitude
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -74,7 +74,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     [initializerQueue addOperationWithBlock:^{
         
-        _deviceId = SAFE_ARC_RETAIN([GGEventLog getDeviceId]);
+        _deviceId = SAFE_ARC_RETAIN([Amplitude getDeviceId]);
         
         _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
         
@@ -184,24 +184,24 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     // Location manager callbacks must be fired on a thread with a run loop (eg the main thread)
     Class CLLocationManager = NSClassFromString(@"CLLocationManager");
     locationManager = [[CLLocationManager alloc] init];
-    locationManagerDelegate = [[GGLocationManagerDelegate alloc] init];
+    locationManagerDelegate = [[AmplitudeLocationManagerDelegate alloc] init];
     SEL setDelegate = NSSelectorFromString(@"setDelegate:");
     [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
 {
-    [GGEventLog initializeApiKey:apiKey userId:nil];
+    [Amplitude initializeApiKey:apiKey userId:nil];
 }
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
 {
-    [GGEventLog initializeApiKey:apiKey userId:userId trackCampaignSource:NO];
+    [Amplitude initializeApiKey:apiKey userId:userId trackCampaignSource:NO];
 }
 
 + (void)initializeApiKey:(NSString*) apiKey trackCampaignSource:(bool) trackCampaignSource
 {
-    [GGEventLog initializeApiKey:apiKey userId:nil trackCampaignSource:trackCampaignSource];
+    [Amplitude initializeApiKey:apiKey userId:nil trackCampaignSource:trackCampaignSource];
 }
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource
@@ -211,10 +211,10 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-    if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
+    if (![Amplitude isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
-    if (userId != nil && ![GGEventLog isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:"]) {
+    if (userId != nil && ![Amplitude isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
     
@@ -253,12 +253,12 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                      object:nil];
         
         if (trackCampaignSource) {
-            [GGEventLog trackCampaignSource];
+            [Amplitude trackCampaignSource];
         }
         
     }];
     
-    [GGEventLog enterForeground];
+    [Amplitude enterForeground];
 }
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey
@@ -268,7 +268,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-    if (![GGEventLog isArgument:apiKey validType:[NSString class] methodName:@"enableCampaignTrackingApiKey:"]) {
+    if (![Amplitude isArgument:apiKey validType:[NSString class] methodName:@"enableCampaignTrackingApiKey:"]) {
         return;
     }
     
@@ -283,7 +283,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         SAFE_ARC_RELEASE(_apiKey);
         _apiKey = apiKey;
         
-        [GGEventLog trackCampaignSource];
+        [Amplitude trackCampaignSource];
         
     }];
 }
@@ -301,23 +301,23 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         isCurrentlyTrackingCampaign = YES;
         
         NSMutableDictionary *fingerprint = [NSMutableDictionary dictionary];
-        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
+        [fingerprint setObject:[Amplitude replaceWithJSONNull:_deviceId] forKey:@"device_id"];
         [fingerprint setObject:@"ios" forKey:@"client"];
-        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_country] forKey:@"country"];
-        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
-        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
-        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
-        [fingerprint setObject:[GGEventLog replaceWithJSONNull:_phoneCarrier] forKey:@"carrier"];
+        [fingerprint setObject:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
+        [fingerprint setObject:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
+        [fingerprint setObject:[Amplitude replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
+        [fingerprint setObject:[Amplitude replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
+        [fingerprint setObject:[Amplitude replaceWithJSONNull:_phoneCarrier] forKey:@"carrier"];
         
         NSError *error = nil;
-        NSData *fingerprintData = [[GGCJSONSerializer serializer] serializeDictionary:fingerprint error:&error];
+        NSData *fingerprintData = [[AmplitudeCJSONSerializer serializer] serializeDictionary:fingerprint error:&error];
         if (error != nil) {
             NSLog(@"ERROR: JSONSerializer error: %@", error);
             isCurrentlyTrackingCampaign = NO;
             return;
         }
         NSString *fingerprintString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:fingerprintData encoding:NSUTF8StringEncoding]);
-        [GGEventLog makeCampaignTrackingPostRequest:@"https://ref.amplitude.com/install" fingerprint:fingerprintString];
+        [Amplitude makeCampaignTrackingPostRequest:@"https://ref.amplitude.com/install" fingerprint:fingerprintString];
     }
 }
 
@@ -330,7 +330,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [postData appendData:[@"key=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&fingerprint=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[[GGEventLog urlEncodeString:fingerprintString] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[[Amplitude urlEncodeString:fingerprintString] dataUsingEncoding:NSUTF8StringEncoding]];
     
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -346,7 +346,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
          if (response != nil) {
              if ([httpResponse statusCode] == 200) {
                  NSError *error = nil;
-                 NSDictionary *result = [[GGCJSONDeserializer deserializer] deserialize:data error:&error];
+                 NSDictionary *result = [[AmplitudeCJSONDeserializer deserializer] deserialize:data error:&error];
                  
                  if (error != nil) {
                      NSLog(@"ERROR: Deserialization error:%@", error);
@@ -394,7 +394,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     }
     
     NSError *error = nil;
-    NSDictionary *result = [[GGCJSONDeserializer deserializer] deserialize:[_campaignInformation dataUsingEncoding:NSUTF8StringEncoding] error:&error];
+    NSDictionary *result = [[AmplitudeCJSONDeserializer deserializer] deserialize:[_campaignInformation dataUsingEncoding:NSUTF8StringEncoding] error:&error];
     if (error != nil) {
         NSLog(@"ERROR: Deserialization error:%@", error);
     } else if (![result isKindOfClass:[NSDictionary class]]) {
@@ -406,21 +406,21 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)logEvent:(NSString*) eventType
 {
-    if (![GGEventLog isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
+    if (![Amplitude isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
         return;
     }
-    [GGEventLog logEvent:eventType withCustomProperties:nil];
+    [Amplitude logEvent:eventType withCustomProperties:nil];
 }
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties
 {
-    if (![GGEventLog isArgument:eventType validType:[NSString class] methodName:@"logEvent:withCustomProperties:"]) {
+    if (![Amplitude isArgument:eventType validType:[NSString class] methodName:@"logEvent:withCustomProperties:"]) {
         return;
     }
-    if (customProperties != nil && ![GGEventLog isArgument:customProperties validType:[NSDictionary class] methodName:@"logEvent:withCustomProperties:"]) {
+    if (customProperties != nil && ![Amplitude isArgument:customProperties validType:[NSDictionary class] methodName:@"logEvent:withCustomProperties:"]) {
         return;
     }
-    [GGEventLog logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
+    [Amplitude logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
 }
 
 + (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties:(NSDictionary*) apiProperties
@@ -439,19 +439,19 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             // Increment propertyList max_id and save immediately
             NSNumber *propertyListMaxId = [NSNumber numberWithLongLong:[[propertyList objectForKey:@"max_id"] longLongValue] + 1];
             [propertyList setObject: propertyListMaxId forKey:@"max_id"];
-            [GGEventLog savePropertyList];
+            [Amplitude savePropertyList];
             
             // Increment eventsData max_id
             long long newId = [[eventsData objectForKey:@"max_id"] longLongValue] + 1;
             
-            [event setValue:[GGEventLog replaceWithJSONNull:eventType] forKey:@"event_type"];
+            [event setValue:[Amplitude replaceWithJSONNull:eventType] forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
-            [event setValue:[GGEventLog replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
-            [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
-            [event setValue:[GGEventLog replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-            [event setValue:[GGEventLog replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
             
-            [GGEventLog addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
+            [Amplitude addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
             
             [[eventsData objectForKey:@"events"] addObject:event];
             
@@ -460,15 +460,15 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             if ([[eventsData objectForKey:@"events"] count] >= 1020) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
                 [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
-                [GGEventLog saveEventsData];
+                [Amplitude saveEventsData];
             } else if ([[eventsData objectForKey:@"events"] count] >= 20 && [[eventsData objectForKey:@"events"] count] % 20 == 0) {
-                [GGEventLog saveEventsData];
+                [Amplitude saveEventsData];
             }
             
             if ([[eventsData objectForKey:@"events"] count] >= 30) {
-                [GGEventLog uploadEvents];
+                [Amplitude uploadEvents];
             } else {
-                [GGEventLog uploadEventsLater];
+                [Amplitude uploadEventsLater];
             }
             
         }
@@ -480,21 +480,21 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 {
     [event setValue:timestamp forKey:@"timestamp"];
     [event setValue:(_userId != nil ?
-                     [GGEventLog replaceWithJSONNull:_userId] :
-                     [GGEventLog replaceWithJSONNull:_deviceId]) forKey:@"user_id"];
-    [event setValue:[GGEventLog replaceWithJSONNull:_deviceId] forKey:@"device_id"];
+                     [Amplitude replaceWithJSONNull:_userId] :
+                     [Amplitude replaceWithJSONNull:_deviceId]) forKey:@"user_id"];
+    [event setValue:[Amplitude replaceWithJSONNull:_deviceId] forKey:@"device_id"];
     [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
-    [event setValue:[GGEventLog replaceWithJSONNull:_versionName] forKey:@"version_name"];
-    [event setValue:[GGEventLog replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
-    [event setValue:[GGEventLog replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
-    [event setValue:[GGEventLog replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
-    [event setValue:[GGEventLog replaceWithJSONNull:_country] forKey:@"country"];
-    [event setValue:[GGEventLog replaceWithJSONNull:_language] forKey:@"language"];
+    [event setValue:[Amplitude replaceWithJSONNull:_versionName] forKey:@"version_name"];
+    [event setValue:[Amplitude replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
+    [event setValue:[Amplitude replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
+    [event setValue:[Amplitude replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
+    [event setValue:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
+    [event setValue:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
     [event setValue:@"ios" forKey:@"client"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
-    [apiProperties setValue:[GGEventLog replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
+    [apiProperties setValue:[Amplitude replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
     
     if (lastKnownLocation != nil) {
         NSMutableDictionary *location = [NSMutableDictionary dictionary];
@@ -509,15 +509,15 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         CLLocationCoordinate2D lastKnownLocationCoordinate;
         [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
         
-        [location setValue:[GGEventLog replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
-        [location setValue:[GGEventLog replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
+        [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
+        [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
         
         [apiProperties setValue:location forKey:@"location"];
         
     }
     
     if (sessionStarted) {
-        [GGEventLog refreshSessionTime:timestamp];
+        [Amplitude refreshSessionTime:timestamp];
     }
 }
 
@@ -527,7 +527,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         updateScheduled = YES;
         
         [mainQueue addOperationWithBlock:^{
-            [[GGEventLog class] performSelector:@selector(uploadEventsLaterExecute) withObject:[GGEventLog class] afterDelay:30];
+            [[Amplitude class] performSelector:@selector(uploadEventsLaterExecute) withObject:[Amplitude class] afterDelay:30];
         }];
     }
 }
@@ -537,13 +537,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     updateScheduled = NO;
     
     [backgroundQueue addOperationWithBlock:^{
-        [GGEventLog uploadEvents];
+        [Amplitude uploadEvents];
     }];
 }
 
 + (void)uploadEvents
 {
-    [GGEventLog uploadEventsLimit:YES];
+    [Amplitude uploadEventsLimit:YES];
 }
 
 + (void)uploadEventsLimit:(bool) limit
@@ -553,7 +553,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-    @synchronized ([GGEventLog class]) {
+    @synchronized ([Amplitude class]) {
         if (updatingCurrently) {
             return;
         }
@@ -572,14 +572,14 @@ static GGLocationManagerDelegate *locationManagerDelegate;
             NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
             long long lastEventIDUploaded = [[[uploadEvents lastObject] objectForKey:@"event_id"] longLongValue];
             NSError *error = nil;
-            NSData *eventsDataLocal = [[GGCJSONSerializer serializer] serializeArray:uploadEvents error:&error];
+            NSData *eventsDataLocal = [[AmplitudeCJSONSerializer serializer] serializeArray:uploadEvents error:&error];
             if (error != nil) {
                 NSLog(@"ERROR: JSONSerializer error: %@", error);
                 updatingCurrently = NO;
                 return;
             }
             NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
-            [GGEventLog makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString lastEventIDUploaded:lastEventIDUploaded];
+            [Amplitude makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString lastEventIDUploaded:lastEventIDUploaded];
         }
         
     }];
@@ -598,7 +598,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[[GGEventLog urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[[Amplitude urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
     
     // Add timestamp of upload
     [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -608,7 +608,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     // Add checksum
     [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
     NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
-    NSString *checksum = [GGEventLog md5HexDigest: checksumData];
+    NSString *checksum = [Amplitude md5HexDigest: checksumData];
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
     
     [request setHTTPMethod:@"POST"];
@@ -640,7 +640,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
                              }
                          }
                          [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numberToRemove)];
-                         [GGEventLog saveEventsData];
+                         [Amplitude saveEventsData];
                      }
                  } else if ([result isEqualToString:@"invalid_api_key"]) {
                      NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
@@ -673,7 +673,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
          updatingCurrently = NO;
          
          if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > 0) {
-             [GGEventLog uploadEventsLimit:NO];
+             [Amplitude uploadEventsLimit:NO];
          } else if (uploadTaskID != UIBackgroundTaskInvalid) {
              // Upload finished, allow background task to be ended
              [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
@@ -708,10 +708,10 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)enterForeground
 {
-    [GGEventLog updateLocation];
-    [GGEventLog startSession];
+    [Amplitude updateLocation];
+    [Amplitude startSession];
     [backgroundQueue addOperationWithBlock:^{
-        [GGEventLog uploadEvents];
+        [Amplitude uploadEvents];
     }];
 }
 
@@ -723,10 +723,10 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         uploadTaskID = UIBackgroundTaskInvalid;
     }];
     
-    [GGEventLog endSession];
+    [Amplitude endSession];
     [backgroundQueue addOperationWithBlock:^{
-        [GGEventLog saveEventsData];
-        [GGEventLog uploadEventsLimit:NO];
+        [Amplitude saveEventsData];
+        [Amplitude uploadEventsLimit:NO];
     }];
 }
 
@@ -736,9 +736,9 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     [mainQueue addOperationWithBlock:^{
         // Remove turn off session later callback
-        [NSObject cancelPreviousPerformRequestsWithTarget:[GGEventLog class]
+        [NSObject cancelPreviousPerformRequestsWithTarget:[Amplitude class]
                                                  selector:@selector(turnOffSessionLaterExecute)
-                                                   object:[GGEventLog class]];
+                                                   object:[Amplitude class]];
     }];
     
     if (!sessionStarted) {
@@ -763,21 +763,21 @@ static GGLocationManagerDelegate *locationManagerDelegate;
     
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_start" forKey:@"special"];
-    [GGEventLog logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
 }
 
 + (void)endSession
 {
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_end" forKey:@"special"];
-    [GGEventLog logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
     
     [backgroundQueue addOperationWithBlock:^{
         sessionStarted = NO;
     }];
     
     [mainQueue addOperationWithBlock:^{
-        [[GGEventLog class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[GGEventLog class] afterDelay:10];
+        [[Amplitude class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[Amplitude class] afterDelay:10];
     }];
 }
 
@@ -790,13 +790,13 @@ static GGLocationManagerDelegate *locationManagerDelegate;
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
         return;
     }
-    if (![GGEventLog isArgument:amount validType:[NSNumber class] methodName:@"logRevenue:"]) {
+    if (![Amplitude isArgument:amount validType:[NSNumber class] methodName:@"logRevenue:"]) {
         return;
     }
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"revenue_amount" forKey:@"special"];
     [apiProperties setValue:amount forKey:@"revenue"];
-    [GGEventLog logEvent:@"revenue_amount" withCustomProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"revenue_amount" withCustomProperties:nil apiProperties:apiProperties];
 }
 
 + (void)refreshSessionTime:(NSNumber*) timestamp
@@ -815,7 +815,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)setGlobalUserProperties:(NSDictionary*) globalProperties
 {
-    if (![GGEventLog isArgument:globalProperties validType:[NSDictionary class] methodName:@"setGlobalUserProperties:"]) {
+    if (![Amplitude isArgument:globalProperties validType:[NSDictionary class] methodName:@"setGlobalUserProperties:"]) {
         return;
     }
     (void) SAFE_ARC_RETAIN(globalProperties);
@@ -825,7 +825,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 
 + (void)setUserId:(NSString*) userId
 {
-    if (![GGEventLog isArgument:userId validType:[NSString class] methodName:@"setUserId:"]) {
+    if (![Amplitude isArgument:userId validType:[NSString class] methodName:@"setUserId:"]) {
         return;
     }
     
@@ -854,7 +854,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (void)enableLocationListening
 {
     locationListeningEnabled = YES;
-    [GGEventLog updateLocation];
+    [Amplitude updateLocation];
 }
 
 + (void)disableLocationListening
@@ -899,7 +899,7 @@ static GGLocationManagerDelegate *locationManagerDelegate;
 + (NSString*)getDeviceId
 {
     // MD5 Hash of the mac address
-    return [GGEventLog md5HexDigest:[GGEventLog getMacAddress]];
+    return [Amplitude md5HexDigest:[Amplitude getMacAddress]];
 }
 
 + (id)replaceWithJSONNull:(id) obj

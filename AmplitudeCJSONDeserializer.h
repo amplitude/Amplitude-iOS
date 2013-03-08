@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "GGCJSONScanner.h"
+#import "AmplitudeCJSONScanner.h"
 
 extern NSString *const kJSONDeserializerErrorDomain /* = @"CJSONDeserializerErrorDomain" */;
 
@@ -39,21 +39,21 @@ enum {
 };
 typedef NSUInteger EJSONDeserializationOptions;
 
-@class GGCJSONScanner;
+@class AmplitudeCJSONScanner;
 
-@interface GGCJSONDeserializer : NSObject {
-    GGCJSONScanner *scanner;
+@interface AmplitudeCJSONDeserializer : NSObject {
+    AmplitudeCJSONScanner *scanner;
     EJSONDeserializationOptions options;
 }
 
-@property (readwrite, nonatomic, retain) GGCJSONScanner *scanner;
+@property (readwrite, nonatomic, retain) AmplitudeCJSONScanner *scanner;
 /// Object to return instead when a null encountered in the JSON. Defaults to NSNull. Setting to null causes the scanner to skip null values.
 @property (readwrite, nonatomic, retain) id nullObject;
 /// JSON must be encoded in Unicode (UTF-8, UTF-16 or UTF-32). Use this if you expect to get the JSON in another encoding.
 @property (readwrite, nonatomic, assign) NSStringEncoding allowedEncoding;
 @property (readwrite, nonatomic, assign) EJSONDeserializationOptions options;
 
-+ (GGCJSONDeserializer *)deserializer;
++ (AmplitudeCJSONDeserializer *)deserializer;
 
 - (id)deserialize:(NSData *)inData error:(NSError **)outError;
 
