@@ -100,7 +100,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         
         // Load propertyList object
-        propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.plist"]);
+        propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
         bool successfullyLoadedPropertyList = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:propertyListPath]) {
             NSData *propertyListData = [[NSFileManager defaultManager] contentsAtPath:propertyListPath];
@@ -147,7 +147,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         }
         
         // Load eventData object
-        eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.girraffegraph.archiveDict"]);
+        eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
         bool successfullyLoadedEventsData = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
             @try {
