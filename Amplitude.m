@@ -18,6 +18,8 @@
 #import <net/if_dl.h>
 #import <CommonCrypto/CommonDigest.h>
 #import <UIKit/UIKit.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
 
 static int apiVersion = 2;
 
@@ -27,6 +29,7 @@ static NSString *_deviceId;
 
 static NSString *_versionName;
 static NSString *_buildVersionRelease;
+static NSString *_platformString;
 static NSString *_phoneModel;
 static NSString *_phoneCarrier;
 static NSString *_country;
@@ -79,7 +82,9 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
         
         _buildVersionRelease = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
-        _phoneModel = SAFE_ARC_RETAIN([[UIDevice currentDevice] model]);
+        
+        _platformString = SAFE_ARC_RETAIN([self getPlatformString]);
+        _phoneModel = SAFE_ARC_RETAIN([self getPhoneModel]);
         
         Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
@@ -486,6 +491,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
     [event setValue:[Amplitude replaceWithJSONNull:_versionName] forKey:@"version_name"];
     [event setValue:[Amplitude replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
+    [event setValue:[Amplitude replaceWithJSONNull:_platformString] forKey:@"platform_string"];
     [event setValue:[Amplitude replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
     [event setValue:[Amplitude replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
     [event setValue:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
@@ -785,7 +791,6 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 // ex. $3.99 would be passed as [NSNumber numberWithDouble:3.99]
 + (void)logRevenue:(NSNumber*) amount
 {
-    [NSNumber numberWithFloat:2.0];
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
         return;
@@ -993,7 +998,54 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     return macAddressString;
 }
 
-+ (NSString*)md5HexDigest:(NSString*)input {
+// Taken from http://stackoverflow.com/a/3950748/340520
++ (NSString *)getPlatformString
+{
+    size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char *machine = malloc(size);
+    sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    NSString *platform = [NSString stringWithUTF8String:machine];
+    free(machine);
+    return platform;
+}
+
++ (NSString *)getPhoneModel{
+    NSString *platform = [self getPlatformString];
+    if ([platform isEqualToString:@"iPhone1,1"])    return @"iPhone 1G";
+    if ([platform isEqualToString:@"iPhone1,2"])    return @"iPhone 3G";
+    if ([platform isEqualToString:@"iPhone2,1"])    return @"iPhone 3GS";
+    if ([platform isEqualToString:@"iPhone3,1"])    return @"iPhone 4";
+    if ([platform isEqualToString:@"iPhone3,3"])    return @"iPhone 4";
+    if ([platform isEqualToString:@"iPhone4,1"])    return @"iPhone 4S";
+    if ([platform isEqualToString:@"iPhone5,1"])    return @"iPhone 5";
+    if ([platform isEqualToString:@"iPhone5,2"])    return @"iPhone 5";
+    if ([platform isEqualToString:@"iPod1,1"])      return @"iPod Touch 1G";
+    if ([platform isEqualToString:@"iPod2,1"])      return @"iPod Touch 2G";
+    if ([platform isEqualToString:@"iPod3,1"])      return @"iPod Touch 3G";
+    if ([platform isEqualToString:@"iPod4,1"])      return @"iPod Touch 4G";
+    if ([platform isEqualToString:@"iPod5,1"])      return @"iPod Touch 5G";
+    if ([platform isEqualToString:@"iPad1,1"])      return @"iPad";
+    if ([platform isEqualToString:@"iPad2,1"])      return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,2"])      return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,3"])      return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,4"])      return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,5"])      return @"iPad Mini";
+    if ([platform isEqualToString:@"iPad2,6"])      return @"iPad Mini";
+    if ([platform isEqualToString:@"iPad2,7"])      return @"iPad Mini";
+    if ([platform isEqualToString:@"iPad3,1"])      return @"iPad 3";
+    if ([platform isEqualToString:@"iPad3,2"])      return @"iPad 3";
+    if ([platform isEqualToString:@"iPad3,3"])      return @"iPad 3";
+    if ([platform isEqualToString:@"iPad3,4"])      return @"iPad 4";
+    if ([platform isEqualToString:@"iPad3,5"])      return @"iPad 4";
+    if ([platform isEqualToString:@"iPad3,6"])      return @"iPad 4";
+    if ([platform isEqualToString:@"i386"])         return @"Simulator";
+    if ([platform isEqualToString:@"x86_64"])       return @"Simulator";
+    return platform;
+}
+
++ (NSString*)md5HexDigest:(NSString*)input
+{
     const char* str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
     CC_MD5(str, strlen(str), result);
