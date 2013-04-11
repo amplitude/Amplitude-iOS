@@ -1012,7 +1012,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 + (NSString *)getPhoneModel{
     NSString *platform = [self getPlatformString];
-    if ([platform isEqualToString:@"iPhone1,1"])    return @"iPhone 1G";
+    if ([platform isEqualToString:@"iPhone1,1"])    return @"iPhone 1";
     if ([platform isEqualToString:@"iPhone1,2"])    return @"iPhone 3G";
     if ([platform isEqualToString:@"iPhone2,1"])    return @"iPhone 3GS";
     if ([platform isEqualToString:@"iPhone3,1"])    return @"iPhone 4";
@@ -1025,7 +1025,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     if ([platform isEqualToString:@"iPod3,1"])      return @"iPod Touch 3G";
     if ([platform isEqualToString:@"iPod4,1"])      return @"iPod Touch 4G";
     if ([platform isEqualToString:@"iPod5,1"])      return @"iPod Touch 5G";
-    if ([platform isEqualToString:@"iPad1,1"])      return @"iPad";
+    if ([platform isEqualToString:@"iPad1,1"])      return @"iPad 1";
     if ([platform isEqualToString:@"iPad2,1"])      return @"iPad 2";
     if ([platform isEqualToString:@"iPad2,2"])      return @"iPad 2";
     if ([platform isEqualToString:@"iPad2,3"])      return @"iPad 2";
