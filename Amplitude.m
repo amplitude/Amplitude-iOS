@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Sonalight, Inc. All rights reserved.
 //
 
+#import <TargetConditionals.h>
 #import "Amplitude.h"
 #import "AmplitudeLocationManagerDelegate.h"
 #import "AmplitudeCJSONSerializer.h"
@@ -17,7 +18,11 @@
 #import <net/if.h>
 #import <net/if_dl.h>
 #import <CommonCrypto/CommonDigest.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif // TARGET_OS_IPHONE
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
@@ -54,7 +59,9 @@ static NSString *eventsDataPath;
 static NSOperationQueue *mainQueue;
 static NSOperationQueue *initializerQueue;
 static NSOperationQueue *backgroundQueue;
+#if TARGET_OS_IPHONE
 static UIBackgroundTaskIdentifier uploadTaskID;
+#endif // TARGET_OS_IPHONE
 
 static bool locationListeningEnabled = YES;
 static CLLocationManager *locationManager;
@@ -80,8 +87,12 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         _deviceId = SAFE_ARC_RETAIN([Amplitude getDeviceId]);
         
         _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
-        
+#if TARGET_OS_IPHONE        
         _buildVersionRelease = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
+#else
+        _buildVersionRelease = SAFE_ARC_RETAIN([[NSProcessInfo processInfo] operatingSystemVersionString]);
+#endif // TARGET_OS_IPHONE
+
         
         _platformString = SAFE_ARC_RETAIN([self getPlatformString]);
         _phoneModel = SAFE_ARC_RETAIN([self getPhoneModel]);
@@ -100,7 +111,9 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         SAFE_ARC_RELEASE(developerLanguage);
         
         mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
+#if TARGET_OS_IPHONE
         uploadTaskID = UIBackgroundTaskInvalid;
+#endif // TARGET_OS_IPHONE
         
         NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         
@@ -246,15 +259,24 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         }
         
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if TARGET_OS_IPHONE
+		NSString *activateNotification = UIApplicationWillEnterForegroundNotification;
+		NSString *deactivateNotification = UIApplicationDidEnterBackgroundNotification;
+#else
+		NSString *activateNotification = NSApplicationDidFinishLaunchingNotification;
+		NSString *deactivateNotification = NSApplicationWillTerminateNotification;
+#endif // TARGET_OS_IPHONE
+
+
         
         [center addObserver:self
                    selector:@selector(enterForeground)
-                       name:UIApplicationWillEnterForegroundNotification
+                       name:activateNotification
                      object:nil];
         
         [center addObserver:self
                    selector:@selector(enterBackground)
-                       name:UIApplicationDidEnterBackgroundNotification
+                       name:deactivateNotification
                      object:nil];
         
         if (trackCampaignSource) {
@@ -339,7 +361,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%ld", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
     
     [request setHTTPBody:postData];
     
@@ -369,7 +391,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                      
                  }
              } else {
-                 NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
+                 NSLog(@"ERROR: Connection response received:%ld, %@", (long)[httpResponse statusCode],
                        SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
              }
          } else if (error != nil) {
@@ -619,7 +641,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%ld", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
     
     [request setHTTPBody:postData];
     
@@ -659,7 +681,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                  }
                  SAFE_ARC_RELEASE(result);
              } else {
-                 NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
+                 NSLog(@"ERROR: Connection response received:%ld, %@", (long)[httpResponse statusCode],
                        SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
              }
          } else if (error != nil) {
@@ -680,11 +702,14 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
          
          if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > 0) {
              [Amplitude uploadEventsLimit:NO];
-         } else if (uploadTaskID != UIBackgroundTaskInvalid) {
+         }
+#if TARGET_OS_IPHONE
+		 else if (uploadTaskID != UIBackgroundTaskInvalid) {
              // Upload finished, allow background task to be ended
              [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
              uploadTaskID = UIBackgroundTaskInvalid;
          }
+#endif // TARGET_OS_IPHONE
      }];
 }
 
@@ -723,11 +748,13 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 + (void)enterBackground
 {
+#if TARGET_OS_IPHONE
     uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
         uploadTaskID = UIBackgroundTaskInvalid;
     }];
+#endif // TARGET_OS_IPHONE
     
     [Amplitude endSession];
     [backgroundQueue addOperationWithBlock:^{
@@ -1001,10 +1028,16 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 // Taken from http://stackoverflow.com/a/3950748/340520
 + (NSString *)getPlatformString
 {
+#if TARGET_OS_IPHONE
+	const char *sysctl_name = "hw.machine";
+#else
+	const char *sysctl_name = "hw.model";
+#endif // TARGET_OS_IPHONE
+
     size_t size;
-    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    sysctlbyname(sysctl_name, NULL, &size, NULL, 0);
     char *machine = malloc(size);
-    sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    sysctlbyname(sysctl_name, machine, &size, NULL, 0);
     NSString *platform = [NSString stringWithUTF8String:machine];
     free(machine);
     return platform;
@@ -1041,6 +1074,13 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     if ([platform isEqualToString:@"iPad3,6"])      return @"iPad 4";
     if ([platform isEqualToString:@"i386"])         return @"Simulator";
     if ([platform isEqualToString:@"x86_64"])       return @"Simulator";
+    if ([platform hasPrefix:@"MacBookAir"])         return @"MacBook Air";
+    if ([platform hasPrefix:@"MacBookPro"])         return @"MacBook Pro";
+    if ([platform hasPrefix:@"MacBook"])            return @"MacBook";
+    if ([platform hasPrefix:@"MacPro"])             return @"Mac Pro";
+    if ([platform hasPrefix:@"Macmini"])            return @"Mac Mini";
+    if ([platform hasPrefix:@"iMac"])               return @"iMac";
+    if ([platform hasPrefix:@"Xserve"])             return @"Xserve";
     return platform;
 }
 
@@ -1048,7 +1088,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 {
     const char* str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(str, strlen(str), result);
+    CC_MD5(str, (unsigned int)strlen(str), result);
     
     NSMutableString *ret = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH*2];
     for(int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {

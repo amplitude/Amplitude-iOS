@@ -40,4 +40,30 @@
 
 + (void)printEventsCount;
 
++ (void)enterForeground;
+
++ (id)replaceWithJSONNull:(id) obj;
+
++ (NSString*)urlEncodeString:(NSString*) string;
+
++ (void)savePropertyList;
+
++ (NSString*)getDeviceId;
+
++ (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary;
+
++ (bool)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName;
+
++ (NSString*)getMacAddress;
+
++ (NSString *)getPlatformString;
+
++ (NSString *)getPhoneModel;
+
++ (void)saveEventsData;
+
++ (void)refreshSessionTime:(NSNumber*) timestamp;
+
++ (NSString*)md5HexDigest:(NSString*)input;
+
 @end
