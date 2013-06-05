@@ -1,7 +1,7 @@
 # Setup #
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
 2. [Download the source code](https://dl.dropbox.com/s/lkevdzghs245ai6/Amplitude-iOS.zip?dl=1) and extract the zip file. Alternatively, you can pull directly from GitHub.
-3. Copy the Amplitude-iOS folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".
+3. Copy the Amplitude-iOS folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".  The iOS version will compile and work on MacOSX as well.
 4. In every file that uses analytics, import Amplitude.h at the top:
 
         #import "Amplitude.h"
