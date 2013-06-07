@@ -847,11 +847,15 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 + (void)updateLocation
 {
     if (locationListeningEnabled) {
-        CLLocation *location = [locationManager location];
+        __block CLLocation *location = [locationManager location];
         if (location != nil) {
-            (void) SAFE_ARC_RETAIN(location);
-            SAFE_ARC_RELEASE(lastKnownLocation);
-            lastKnownLocation = location;
+            [backgroundQueue addOperationWithBlock:^{
+                @synchronized (eventsData) {
+                    (void) SAFE_ARC_RETAIN(location);
+                    SAFE_ARC_RELEASE(lastKnownLocation);
+                    lastKnownLocation = location;
+                }
+            }];
         }
     }
 }
