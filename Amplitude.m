@@ -329,7 +329,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         
         NSMutableDictionary *fingerprint = [NSMutableDictionary dictionary];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_deviceId] forKey:@"device_id"];
-        [fingerprint setObject:@"ios" forKey:@"client"];
+        [fingerprint setObject:@"mac" forKey:@"client"];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
@@ -518,7 +518,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[Amplitude replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
     [event setValue:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
     [event setValue:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
-    [event setValue:@"ios" forKey:@"client"];
+    [event setValue:@"mac" forKey:@"client"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
