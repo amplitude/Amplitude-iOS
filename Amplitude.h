@@ -40,4 +40,6 @@
 
 + (void)printEventsCount;
 
++ (void)setUploadDelay:(NSUInteger)seconds;
+
 @end

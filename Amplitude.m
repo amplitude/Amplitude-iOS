@@ -55,6 +55,7 @@ static NSOperationQueue *mainQueue;
 static NSOperationQueue *initializerQueue;
 static NSOperationQueue *backgroundQueue;
 static UIBackgroundTaskIdentifier uploadTaskID;
+static NSUInteger uploadDelay = 0;
 
 static bool locationListeningEnabled = YES;
 static CLLocationManager *locationManager;
@@ -328,6 +329,14 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 + (void)makeCampaignTrackingPostRequest:(NSString*) url fingerprint:(NSString*) fingerprintString
 {
+    NSUInteger localUploadDelay = 0;
+    @synchronized ([Amplitude class]) {
+        localUploadDelay = uploadDelay;
+    }
+    if (localUploadDelay) {
+        [NSThread sleepForTimeInterval:localUploadDelay];
+    }
+
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
     
@@ -593,6 +602,14 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 + (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events lastEventIDUploaded:(long long) lastEventIDUploaded
 {
+    NSUInteger localUploadDelay = 0;
+    @synchronized ([Amplitude class]) {
+        localUploadDelay = uploadDelay;
+    }
+    if (localUploadDelay) {
+        [NSThread sleepForTimeInterval:localUploadDelay];
+    }
+    
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
     
@@ -1064,6 +1081,13 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 + (void)printEventsCount
 {
     NSLog(@"Events count:%ld", (long) [[eventsData objectForKey:@"events"] count]);
+}
+
++ (void)setUploadDelay:(NSUInteger)seconds
+{
+    @synchronized ([Amplitude class]) {
+        uploadDelay = seconds;
+    }
 }
 
 #pragma clang diagnostic pop
