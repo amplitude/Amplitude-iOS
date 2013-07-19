@@ -29,6 +29,9 @@ static int apiVersion = 2;
 static NSString *_apiKey;
 static NSString *_userId;
 static NSString *_deviceId;
+#ifdef CLIENT_API_KEY
+static NSString *_clientApiKey;
+#endif
 
 static NSString *_versionName;
 static NSString *_buildVersionRelease;
@@ -285,6 +288,15 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     [Amplitude enterForeground];
 }
+
+#ifdef CLIENT_API_KEY
++ (void)initializeApiKey:(NSString*) apiKey clientApiKey:(NSString*) clientApiKey
+{
+	[Amplitude setClientApiKey:clientApiKey];
+	[Amplitude initializeApiKey:apiKey userId:nil trackCampaignSource:NO];
+}
+#endif // CLIENT_API_KEY
+
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey
 {
@@ -623,6 +635,8 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[@"&client_api_key=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[_clientApiKey dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[[Amplitude urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -633,7 +647,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     // Add checksum
     [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
+    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@%@", apiVersionString, _apiKey, _clientApiKey, events, timestampString];
     NSString *checksum = [Amplitude md5HexDigest: checksumData];
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -670,7 +684,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                      }
                  } else if ([result isEqualToString:@"invalid_api_key"]) {
                      NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
-                 } else if ([result isEqualToString:@"bad_checksum"]) {
+                 } else if ([result isEqualToString:@"baxd_checksum"]) {
                      NSLog(@"ERROR: Bad checksum, post request was mangled in transit, will attempt to reupload later");
                  } else if ([result isEqualToString:@"request_db_write_failed"]) {
                      NSLog(@"ERROR: Couldn't write to request database on server, will attempt to reupload later");
@@ -690,7 +704,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
              } else if ([error code] == -1001) {
                  //NSLog(@"No internet connection (request timed out), unable to upload events");
              } else {
-                 NSLog(@"ERROR: Connection error:%@", error);
+                 NSLog(@"ERROR: Connection error: %@", error);
              }
          } else {
              NSLog(@"ERROR: response empty, error empty for NSURLConnection");
@@ -869,6 +883,22 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
++ (void)setClientApiKey:(NSString*) clientApiKey
+{
+    if (![Amplitude isArgument:clientApiKey validType:[NSString class] methodName:@"setClientApiKey:"]) {
+        return;
+    }
+    
+    [backgroundQueue addOperationWithBlock:^{
+        (void) SAFE_ARC_RETAIN(clientApiKey);
+        SAFE_ARC_RELEASE(_clientApiKey);
+        _clientApiKey = clientApiKey;
+        @synchronized (eventsData) {
+            [eventsData setObject:_clientApiKey forKey:@"client_api_key"];
+        }
+    }];
+}
+
 + (void)updateLocation
 {
     if (locationListeningEnabled) {
@@ -947,7 +977,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     if ([argument isKindOfClass:class]) {
         return YES;
     } else {
-        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, recieved %@, ", methodName, class, [argument class]);
+        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, received %@, ", methodName, class, [argument class]);
         return NO;
     }
 }

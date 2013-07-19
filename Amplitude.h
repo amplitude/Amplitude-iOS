@@ -18,6 +18,10 @@
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource;
 
+#ifdef CLIENT_API_KEY
++ (void)initializeApiKey:(NSString*) apiKey clientApiKey:(NSString*) clientApiKey;
+#endif // CLIENT_API_KEY
+
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey;
 
 + (NSDictionary*)getCampaignInformation;
