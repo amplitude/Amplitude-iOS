@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Sonalight, Inc. All rights reserved.
 //
 
+#import <TargetConditionals.h>
 #import "Amplitude.h"
 #import "AmplitudeLocationManagerDelegate.h"
 #import "AmplitudeARCMacros.h"
@@ -15,7 +16,11 @@
 #import <net/if.h>
 #import <net/if_dl.h>
 #import <CommonCrypto/CommonDigest.h>
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif // TARGET_OS_IPHONE
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
@@ -24,6 +29,9 @@ static int apiVersion = 2;
 static NSString *_apiKey;
 static NSString *_userId;
 static NSString *_deviceId;
+#ifdef CLIENT_API_KEY
+static NSString *_clientApiKey;
+#endif
 
 static NSString *_versionName;
 static NSString *_buildVersionRelease;
@@ -52,7 +60,9 @@ static NSString *eventsDataPath;
 static NSOperationQueue *mainQueue;
 static NSOperationQueue *initializerQueue;
 static NSOperationQueue *backgroundQueue;
+#if TARGET_OS_IPHONE
 static UIBackgroundTaskIdentifier uploadTaskID;
+#endif // TARGET_OS_IPHONE
 
 static bool locationListeningEnabled = YES;
 static CLLocationManager *locationManager;
@@ -78,8 +88,12 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         _deviceId = SAFE_ARC_RETAIN([Amplitude getDeviceId]);
         
         _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
-        
+#if TARGET_OS_IPHONE        
         _buildVersionRelease = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
+#else
+        _buildVersionRelease = SAFE_ARC_RETAIN([[NSProcessInfo processInfo] operatingSystemVersionString]);
+#endif // TARGET_OS_IPHONE
+
         
         _platformString = SAFE_ARC_RETAIN([self getPlatformString]);
         _phoneModel = SAFE_ARC_RETAIN([self getPhoneModel]);
@@ -98,7 +112,9 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         SAFE_ARC_RELEASE(developerLanguage);
         
         mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
+#if TARGET_OS_IPHONE
         uploadTaskID = UIBackgroundTaskInvalid;
+#endif // TARGET_OS_IPHONE
         
         NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         
@@ -244,15 +260,24 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         }
         
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if TARGET_OS_IPHONE
+		NSString *activateNotification = UIApplicationWillEnterForegroundNotification;
+		NSString *deactivateNotification = UIApplicationDidEnterBackgroundNotification;
+#else
+		NSString *activateNotification = NSApplicationDidFinishLaunchingNotification;
+		NSString *deactivateNotification = NSApplicationWillTerminateNotification;
+#endif // TARGET_OS_IPHONE
+
+
         
         [center addObserver:self
                    selector:@selector(enterForeground)
-                       name:UIApplicationWillEnterForegroundNotification
+                       name:activateNotification
                      object:nil];
         
         [center addObserver:self
                    selector:@selector(enterBackground)
-                       name:UIApplicationDidEnterBackgroundNotification
+                       name:deactivateNotification
                      object:nil];
         
         if (trackCampaignSource) {
@@ -263,6 +288,15 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     [Amplitude enterForeground];
 }
+
+#ifdef CLIENT_API_KEY
++ (void)initializeApiKey:(NSString*) apiKey clientApiKey:(NSString*) clientApiKey
+{
+	[Amplitude setClientApiKey:clientApiKey];
+	[Amplitude initializeApiKey:apiKey userId:nil trackCampaignSource:NO];
+}
+#endif // CLIENT_API_KEY
+
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey
 {
@@ -305,7 +339,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         
         NSMutableDictionary *fingerprint = [NSMutableDictionary dictionary];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_deviceId] forKey:@"device_id"];
-        [fingerprint setObject:@"ios" forKey:@"client"];
+        [fingerprint setObject:@"mac" forKey:@"client"];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
         [fingerprint setObject:[Amplitude replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
@@ -337,7 +371,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%ld", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
     
     [request setHTTPBody:postData];
     
@@ -367,7 +401,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                      
                  }
              } else {
-                 NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
+                 NSLog(@"ERROR: Connection response received:%ld, %@", (long)[httpResponse statusCode],
                        SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
              }
          } else if (error != nil) {
@@ -494,7 +528,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [event setValue:[Amplitude replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
     [event setValue:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
     [event setValue:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
-    [event setValue:@"ios" forKey:@"client"];
+    [event setValue:@"mac" forKey:@"client"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
@@ -601,6 +635,8 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[@"&client_api_key=" dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[_clientApiKey dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[[Amplitude urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -611,13 +647,13 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     // Add checksum
     [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
+    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@%@", apiVersionString, _apiKey, _clientApiKey, events, timestampString];
     NSString *checksum = [Amplitude md5HexDigest: checksumData];
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
     
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%ld", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
     
     [request setHTTPBody:postData];
     
@@ -648,7 +684,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                      }
                  } else if ([result isEqualToString:@"invalid_api_key"]) {
                      NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
-                 } else if ([result isEqualToString:@"bad_checksum"]) {
+                 } else if ([result isEqualToString:@"baxd_checksum"]) {
                      NSLog(@"ERROR: Bad checksum, post request was mangled in transit, will attempt to reupload later");
                  } else if ([result isEqualToString:@"request_db_write_failed"]) {
                      NSLog(@"ERROR: Couldn't write to request database on server, will attempt to reupload later");
@@ -657,7 +693,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                  }
                  SAFE_ARC_RELEASE(result);
              } else {
-                 NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
+                 NSLog(@"ERROR: Connection response received:%ld, %@", (long)[httpResponse statusCode],
                        SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
              }
          } else if (error != nil) {
@@ -668,7 +704,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
              } else if ([error code] == -1001) {
                  //NSLog(@"No internet connection (request timed out), unable to upload events");
              } else {
-                 NSLog(@"ERROR: Connection error:%@", error);
+                 NSLog(@"ERROR: Connection error: %@", error);
              }
          } else {
              NSLog(@"ERROR: response empty, error empty for NSURLConnection");
@@ -678,11 +714,14 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
          
          if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > 0) {
              [Amplitude uploadEventsLimit:NO];
-         } else if (uploadTaskID != UIBackgroundTaskInvalid) {
+         }
+#if TARGET_OS_IPHONE
+		 else if (uploadTaskID != UIBackgroundTaskInvalid) {
              // Upload finished, allow background task to be ended
              [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
              uploadTaskID = UIBackgroundTaskInvalid;
          }
+#endif // TARGET_OS_IPHONE
      }];
 }
 
@@ -721,11 +760,13 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 + (void)enterBackground
 {
+#if TARGET_OS_IPHONE
     uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
         uploadTaskID = UIBackgroundTaskInvalid;
     }];
+#endif // TARGET_OS_IPHONE
     
     [Amplitude endSession];
     [backgroundQueue addOperationWithBlock:^{
@@ -842,6 +883,22 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
++ (void)setClientApiKey:(NSString*) clientApiKey
+{
+    if (![Amplitude isArgument:clientApiKey validType:[NSString class] methodName:@"setClientApiKey:"]) {
+        return;
+    }
+    
+    [backgroundQueue addOperationWithBlock:^{
+        (void) SAFE_ARC_RETAIN(clientApiKey);
+        SAFE_ARC_RELEASE(_clientApiKey);
+        _clientApiKey = clientApiKey;
+        @synchronized (eventsData) {
+            [eventsData setObject:_clientApiKey forKey:@"client_api_key"];
+        }
+    }];
+}
+
 + (void)updateLocation
 {
     if (locationListeningEnabled) {
@@ -920,7 +977,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     if ([argument isKindOfClass:class]) {
         return YES;
     } else {
-        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, recieved %@, ", methodName, class, [argument class]);
+        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, received %@, ", methodName, class, [argument class]);
         return NO;
     }
 }
@@ -999,10 +1056,16 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 // Taken from http://stackoverflow.com/a/3950748/340520
 + (NSString *)getPlatformString
 {
+#if TARGET_OS_IPHONE
+	const char *sysctl_name = "hw.machine";
+#else
+	const char *sysctl_name = "hw.model";
+#endif // TARGET_OS_IPHONE
+
     size_t size;
-    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    sysctlbyname(sysctl_name, NULL, &size, NULL, 0);
     char *machine = malloc(size);
-    sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    sysctlbyname(sysctl_name, machine, &size, NULL, 0);
     NSString *platform = [NSString stringWithUTF8String:machine];
     free(machine);
     return platform;
@@ -1039,6 +1102,13 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     if ([platform isEqualToString:@"iPad3,6"])      return @"iPad 4";
     if ([platform isEqualToString:@"i386"])         return @"Simulator";
     if ([platform isEqualToString:@"x86_64"])       return @"Simulator";
+    if ([platform hasPrefix:@"MacBookAir"])         return @"MacBook Air";
+    if ([platform hasPrefix:@"MacBookPro"])         return @"MacBook Pro";
+    if ([platform hasPrefix:@"MacBook"])            return @"MacBook";
+    if ([platform hasPrefix:@"MacPro"])             return @"Mac Pro";
+    if ([platform hasPrefix:@"Macmini"])            return @"Mac Mini";
+    if ([platform hasPrefix:@"iMac"])               return @"iMac";
+    if ([platform hasPrefix:@"Xserve"])             return @"Xserve";
     return platform;
 }
 
@@ -1046,7 +1116,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 {
     const char* str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
-    CC_MD5(str, strlen(str), result);
+    CC_MD5(str, (unsigned int)strlen(str), result);
     
     NSMutableString *ret = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH*2];
     for(int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {
