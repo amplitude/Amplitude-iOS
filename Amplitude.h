@@ -20,6 +20,7 @@
 
 #ifdef CLIENT_API_KEY
 + (void)initializeApiKey:(NSString*) apiKey clientApiKey:(NSString*) clientApiKey;
++ (void)setClientApiKey:(NSString*) clientApiKey;
 #endif // CLIENT_API_KEY
 
 + (void)enableCampaignTrackingApiKey:(NSString*) apiKey;
@@ -56,7 +57,7 @@
 
 + (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary;
 
-+ (bool)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName;
++ (bool)isArgument:(id) argument validType:(Class) classIdentifier methodName:(NSString*) methodName;
 
 + (NSString*)getMacAddress;
 

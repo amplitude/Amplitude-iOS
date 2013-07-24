@@ -119,7 +119,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         
         // Load propertyList object
-        propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
+		propertyListPath = SAFE_ARC_RETAIN(([eventsDataDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"com.amplitude-%@.plist", _apiKey]]));
         bool successfullyLoadedPropertyList = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:propertyListPath]) {
             NSData *propertyListData = [[NSFileManager defaultManager] contentsAtPath:propertyListPath];
@@ -166,7 +166,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         }
         
         // Load eventData object
-        eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
+        eventsDataPath = SAFE_ARC_RETAIN(([eventsDataDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"com.amplitude-%@.archiveDict", _apiKey]]));
         bool successfullyLoadedEventsData = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
             @try {
@@ -635,8 +635,10 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
+#ifdef CLIENT_API_KEY
     [postData appendData:[@"&client_api_key=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[_clientApiKey dataUsingEncoding:NSUTF8StringEncoding]];
+#endif
     [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[[Amplitude urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -647,7 +649,11 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     // Add checksum
     [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
+#ifdef CLIENT_API_KEY
     NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@%@", apiVersionString, _apiKey, _clientApiKey, events, timestampString];
+#else
+    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
+#endif // CLIENT_API_KEY
     NSString *checksum = [Amplitude md5HexDigest: checksumData];
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
     
@@ -883,6 +889,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
+#ifdef CLIENT_API_KEY
 + (void)setClientApiKey:(NSString*) clientApiKey
 {
     if (![Amplitude isArgument:clientApiKey validType:[NSString class] methodName:@"setClientApiKey:"]) {
@@ -898,6 +905,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         }
     }];
 }
+#endif // CLIENT_API_KEY
 
 + (void)updateLocation
 {
@@ -972,12 +980,12 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
 }
 
-+ (bool)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName
++ (bool)isArgument:(id) argument validType:(Class) classIdentifier methodName:(NSString*) methodName
 {
-    if ([argument isKindOfClass:class]) {
+    if ([argument isKindOfClass:classIdentifier]) {
         return YES;
     } else {
-        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, received %@, ", methodName, class, [argument class]);
+        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, received %@, ", methodName, classIdentifier, [argument class]);
         return NO;
     }
 }
