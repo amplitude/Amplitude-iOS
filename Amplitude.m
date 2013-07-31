@@ -286,7 +286,9 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         
     }];
     
+#if TARGET_OS_IPHONE
     [Amplitude enterForeground];
+#endif // TARGET_OS_IPHONE
 }
 
 #ifdef CLIENT_API_KEY
@@ -779,6 +781,11 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         [Amplitude saveEventsData];
         [Amplitude uploadEventsLimit:NO];
     }];
+
+#if ! TARGET_OS_IPHONE
+	// Allow tasks to complete on exit
+	[backgroundQueue waitUntilAllOperationsAreFinished];
+#endif // ! TARGET_OS_IPHONE
 }
 
 + (void)startSession
