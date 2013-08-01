@@ -501,23 +501,24 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [apiProperties setValue:[Amplitude replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
     
     if (lastKnownLocation != nil) {
-        NSMutableDictionary *location = [NSMutableDictionary dictionary];
-        
-        // Need to use NSInvocation because coordinate selector returns a C struct
-        SEL coordinateSelector = NSSelectorFromString(@"coordinate");
-        NSMethodSignature *coordinateMethodSignature = [lastKnownLocation methodSignatureForSelector:coordinateSelector];
-        NSInvocation *coordinateInvocation = [NSInvocation invocationWithMethodSignature:coordinateMethodSignature];
-        [coordinateInvocation setTarget:lastKnownLocation];
-        [coordinateInvocation setSelector:coordinateSelector];
-        [coordinateInvocation invoke];
-        CLLocationCoordinate2D lastKnownLocationCoordinate;
-        [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
-        
-        [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
-        [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
-        
-        [apiProperties setValue:location forKey:@"location"];
-        
+        @synchronized (locationManager) {
+            NSMutableDictionary *location = [NSMutableDictionary dictionary];
+            
+            // Need to use NSInvocation because coordinate selector returns a C struct
+            SEL coordinateSelector = NSSelectorFromString(@"coordinate");
+            NSMethodSignature *coordinateMethodSignature = [lastKnownLocation methodSignatureForSelector:coordinateSelector];
+            NSInvocation *coordinateInvocation = [NSInvocation invocationWithMethodSignature:coordinateMethodSignature];
+            [coordinateInvocation setTarget:lastKnownLocation];
+            [coordinateInvocation setSelector:coordinateSelector];
+            [coordinateInvocation invoke];
+            CLLocationCoordinate2D lastKnownLocationCoordinate;
+            [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
+            
+            [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
+            [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
+            
+            [apiProperties setValue:location forKey:@"location"];
+        }
     }
     
     if (sessionStarted) {
@@ -846,10 +847,12 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 {
     if (locationListeningEnabled) {
         CLLocation *location = [locationManager location];
-        if (location != nil) {
-            (void) SAFE_ARC_RETAIN(location);
-            SAFE_ARC_RELEASE(lastKnownLocation);
-            lastKnownLocation = location;
+        @synchronized (locationManager) {
+            if (location != nil) {
+                (void) SAFE_ARC_RETAIN(location);
+                SAFE_ARC_RELEASE(lastKnownLocation);
+                lastKnownLocation = location;
+            }
         }
     }
 }
