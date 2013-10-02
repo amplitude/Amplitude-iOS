@@ -580,7 +580,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                 updatingCurrently = NO;
                 return;
             }
-            NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, numEvents)];
+            NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, (int) numEvents)];
             long long lastEventIDUploaded = [[[uploadEvents lastObject] objectForKey:@"event_id"] longLongValue];
             NSError *error = nil;
             NSData *eventsDataLocal = [NSJSONSerialization dataWithJSONObject:uploadEvents options:0 error:&error];
@@ -650,7 +650,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                                  break;
                              }
                          }
-                         [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, numberToRemove)];
+                         [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, (int) numberToRemove)];
                          [Amplitude saveEventsData];
                      }
                  } else if ([result isEqualToString:@"invalid_api_key"]) {
