@@ -182,12 +182,14 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         [backgroundQueue setSuspended:NO];
     }];
     
-    // Location manager callbacks must be fired on a thread with a run loop (eg the main thread)
-    Class CLLocationManager = NSClassFromString(@"CLLocationManager");
-    locationManager = [[CLLocationManager alloc] init];
-    locationManagerDelegate = [[AmplitudeLocationManagerDelegate alloc] init];
-    SEL setDelegate = NSSelectorFromString(@"setDelegate:");
-    [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
+    // CLLocationManager must be created on the main thread
+    dispatch_async(dispatch_get_main_queue(), ^{
+        Class CLLocationManager = NSClassFromString(@"CLLocationManager");
+        locationManager = [[CLLocationManager alloc] init];
+        locationManagerDelegate = [[AmplitudeLocationManagerDelegate alloc] init];
+        SEL setDelegate = NSSelectorFromString(@"setDelegate:");
+        [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
+    });
 }
 
 + (void)initializeApiKey:(NSString*) apiKey
