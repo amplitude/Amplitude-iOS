@@ -723,6 +723,10 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 {
     [Amplitude updateLocation];
     [Amplitude startSession];
+    if (uploadTaskID != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+        uploadTaskID = UIBackgroundTaskInvalid;
+    }
     [backgroundQueue addOperationWithBlock:^{
         [Amplitude uploadEvents];
     }];
@@ -730,6 +734,9 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 + (void)enterBackground
 {
+    if (uploadTaskID != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+    }
     uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
