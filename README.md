@@ -24,7 +24,7 @@ It's important to think about what types of events you care about as a developer
 
 A session is a period of time that a user has the app in the foreground. Sessions within 10 seconds of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically.
 
-# Settings Custom User IDs #
+# Setting Custom User IDs #
 
 If your app has its own login system that you want to track users with, you can call setUserId: at any time:
 
