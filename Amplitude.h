@@ -54,7 +54,7 @@
  </pre>
  
  For me details on the setup and usage, be sure to check out the docs here:
- https://amplitude.com/docs
+ https://github.com/amplitude/Amplitude-iOS#setup
  */
 @interface Amplitude : NSObject
 
