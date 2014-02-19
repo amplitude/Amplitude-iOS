@@ -103,7 +103,7 @@
  After calling logEvent in your app, you will immediately see data appear on the Amplitude Website.
  
  It's important to think about what types of events you care about as a developer. You should aim to track 
- between 5 and 50 types of events within your app. Common event types are different screens within the app,
+ between 10 and 100 types of events within your app. Common event types are different screens within the app,
  actions the user initiates (such as pressing a button), and events you want the user to complete 
  (such as filling out a form, completing a level, or making a payment). 
  Contact us if you want assistance determining what would be best for you to track. (contact@amplitude.com)
@@ -202,8 +202,7 @@
  Prints the number of events in the queue.
  
  @discussion
- If the user has granted your app location permissions, the SDK will also grab the location of the user.
- Amplitude will never prompt the user for location permissions itself, this must be done by your app.
+ Debugging method to find out how many events are being stored locally on the device.
  */
 + (void)printEventsCount;
 
