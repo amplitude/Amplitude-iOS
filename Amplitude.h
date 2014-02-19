@@ -69,7 +69,6 @@
  
  @param apiKey                 Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
  @param userId                 If your app has its own login system that you want to track users with, you can set the userId.
- @param trackCampaignSource    Set up links for each of your campaigns on the campaigns tab at https://amplitude.com
  
  @discussion
  We recommend you first initialize your class within your "didFinishLaunchingWithOptions" method inside your app delegate.
@@ -86,41 +85,6 @@
  */
 + (void)initializeApiKey:(NSString*) apiKey;
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
-+ (void)initializeApiKey:(NSString*) apiKey trackCampaignSource:(BOOL) trackCampaignSource;
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(BOOL) trackCampaignSource;
-
-/*!
- @method
- 
- @abstract
- Enables campaign only tracking.
- 
- @param apiKey                 Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
- 
- @discussion
- If you are not using analytics, and only want campaign tracking, call enableCampaignTrackingApiKey: 
- instead of initializeApiKey:trackCampaignSource: in the application:didFinishLaunchingWithOptions: 
- method of your YourAppNameAppDelegate.m file.
- 
- [Amplitude enableCampaignTrackingApiKey:@"YOUR_API_KEY_HERE"];
- 
- Set up links for each of your campaigns on the campaigns tab at https://amplitude.com
- 
- */
-+ (void)enableCampaignTrackingApiKey:(NSString*) apiKey;
-
-/*!
- @method
- 
- @abstract
- Returns the campaign information asosciated with a user.
- 
- @discussion
- You can retrieve the campaign information associated with a user by calling getCampaignInformation
- after you've called initializeApiKey:trackCampaignSource: or enableCampaignTrackingApiKey:
-
- */
-+ (NSDictionary*)getCampaignInformation;
 
 // Step 2: Track an event
 // -------------------------------------
@@ -183,14 +147,14 @@
  @method
  
  @abstract
- Adds properties that are tracked in every event.
+ Adds properties that are tracked on the user level.
  
- @param globalProperties         An NSDictionary containing any additional data to be tracked.
+ @param userProperties         An NSDictionary containing any additional data to be tracked.
  
  @discussion
  Property keys must be <code>NSString</code> objects and values must be serializable.
  */
-+ (void)setGlobalUserProperties:(NSDictionary*) globalProperties;
++ (void)setUserProperties:(NSDictionary*) userProperties;
 
 /*!
  @method

@@ -65,10 +65,7 @@ static NSString *_phoneCarrier;
 static NSString *_country;
 static NSString *_language;
 
-static NSDictionary *_globalProperties;
-
-static NSString *_campaignInformation;
-static BOOL isCurrentlyTrackingCampaign = NO;
+static NSDictionary *_userProperties;
 
 static long long _sessionId = -1;
 static BOOL sessionStarted = NO;
@@ -202,14 +199,11 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
             eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
             [eventsData setObject:[NSMutableArray array] forKey:@"events"];
             [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
-            [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
             BOOL success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
             if (!success) {
                 NSLog(@"ERROR: Unable to save eventsData to file on initialization");
             }
         }
-        
-        _campaignInformation = SAFE_ARC_RETAIN([eventsData objectForKey:@"campaign_information"]);
         
         [backgroundQueue setSuspended:NO];
     }];
@@ -230,16 +224,6 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 }
 
 + (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
-{
-    [Amplitude initializeApiKey:apiKey userId:userId trackCampaignSource:NO];
-}
-
-+ (void)initializeApiKey:(NSString*) apiKey trackCampaignSource:(BOOL) trackCampaignSource
-{
-    [Amplitude initializeApiKey:apiKey userId:nil trackCampaignSource:trackCampaignSource];
-}
-
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(BOOL) trackCampaignSource
 {
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
@@ -295,156 +279,9 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                        name:UIApplicationDidEnterBackgroundNotification
                      object:nil];
         
-        if (trackCampaignSource) {
-            [Amplitude trackCampaignSource];
-        }
-        
     }];
     
     [Amplitude enterForeground];
-}
-
-+ (void)enableCampaignTrackingApiKey:(NSString*) apiKey
-{
-    if (apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil in enableCampaignTrackingApiKey:");
-        return;
-    }
-    
-    if (![Amplitude isArgument:apiKey validType:[NSString class] methodName:@"enableCampaignTrackingApiKey:"]) {
-        return;
-    }
-    
-    if ([apiKey length] == 0) {
-        NSLog(@"ERROR: apiKey cannot be blank in enableCampaignTrackingApiKey:");
-        return;
-    }
-    
-    [backgroundQueue addOperationWithBlock:^{
-        
-        (void) SAFE_ARC_RETAIN(apiKey);
-        SAFE_ARC_RELEASE(_apiKey);
-        _apiKey = apiKey;
-        
-        [Amplitude trackCampaignSource];
-        
-    }];
-}
-
-+ (void)trackCampaignSource
-{
-    
-    NSNumber *hasTrackedCampaign = [NSNumber numberWithBool:NO];
-    @synchronized (eventsData) {
-        hasTrackedCampaign = [eventsData objectForKey:@"has_tracked_campaign"];
-    }
-    
-    if (![hasTrackedCampaign boolValue] && !isCurrentlyTrackingCampaign) {
-        
-        isCurrentlyTrackingCampaign = YES;
-        
-        NSMutableDictionary *fingerprint = [NSMutableDictionary dictionary];
-        [fingerprint setObject:[Amplitude replaceWithJSONNull:_deviceId] forKey:@"device_id"];
-        [fingerprint setObject:@"ios" forKey:@"client"];
-        [fingerprint setObject:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
-        [fingerprint setObject:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
-        [fingerprint setObject:[Amplitude replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
-        [fingerprint setObject:[Amplitude replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
-        [fingerprint setObject:[Amplitude replaceWithJSONNull:_phoneCarrier] forKey:@"carrier"];
-        
-        NSError *error = nil;
-        NSData *fingerprintData = [NSJSONSerialization dataWithJSONObject:fingerprint options:0 error:&error];
-        if (error != nil) {
-            NSLog(@"ERROR: NSJSONSerialization error: %@", error);
-            isCurrentlyTrackingCampaign = NO;
-            return;
-        }
-        NSString *fingerprintString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:fingerprintData encoding:NSUTF8StringEncoding]);
-        [Amplitude makeCampaignTrackingPostRequest:@"https://ref.amplitude.com/install" fingerprint:fingerprintString];
-    }
-}
-
-+ (void)makeCampaignTrackingPostRequest:(NSString*) url fingerprint:(NSString*) fingerprintString
-{
-    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [request setTimeoutInterval:60.0];
-    
-    NSMutableData *postData = [[NSMutableData alloc] init];
-    [postData appendData:[@"key=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[@"&fingerprint=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[[Amplitude urlEncodeString:fingerprintString] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
-    
-    [request setHTTPBody:postData];
-    
-    SAFE_ARC_RELEASE(postData);
-    
-    [NSURLConnection sendAsynchronousRequest:request queue:backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-     {
-         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
-         if (response != nil) {
-             if ([httpResponse statusCode] == 200) {
-                 NSError *error = nil;
-                 NSDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-                 
-                 if (error != nil) {
-                     NSLog(@"ERROR: Deserialization error:%@", error);
-                 } else if (![result isKindOfClass:[NSDictionary class]]) {
-                     NSLog(@"ERROR: JSON Dictionary not returned from server, invalid type:%@", [result class]);
-                 } else {
-                     
-                     // success, save successful campaign tracking
-                     NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                     @synchronized (eventsData) {
-                         [eventsData setObject:[NSNumber numberWithBool:YES] forKey:@"has_tracked_campaign"];
-                         [eventsData setObject:jsonString forKey:@"campaign_information"];
-                     }
-                     _campaignInformation = jsonString;
-                     
-                 }
-             } else {
-                 NSLog(@"ERROR: Connection response received:%d, %@", [httpResponse statusCode],
-                       SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
-             }
-         } else if (error != nil) {
-             if ([error code] == -1009) {
-                 AMPLITUDE_LOG(@"No internet connection (not connected to internet), unable to track campaign");
-             } else if ([error code] == -1003) {
-                 AMPLITUDE_LOG(@"No internet connection (hostname not found), unable to track campaign");
-             } else if ([error code] == -1001) {
-                 AMPLITUDE_LOG(@"No internet connection (request timed out), unable to track campaign");
-             } else {
-                 NSLog(@"ERROR: Connection error:%@", error);
-             }
-         } else {
-             NSLog(@"ERROR: response empty, error empty for NSURLConnection");
-         }
-         
-         isCurrentlyTrackingCampaign = NO;
-         
-     }];
-}
-
-+ (NSDictionary*)getCampaignInformation
-{
-    if (_apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling getCampaignInformation");
-        return [NSDictionary dictionary];
-    }
-    
-    NSError *error = nil;
-    NSDictionary *result = [NSJSONSerialization JSONObjectWithData:[_campaignInformation dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
-    if (error != nil) {
-        NSLog(@"ERROR: Deserialization error:%@", error);
-    } else if (![result isKindOfClass:[NSDictionary class]]) {
-        NSLog(@"ERROR: JSON Dictionary not stored locally, invalid type:%@", [result class]);
-        return [NSDictionary dictionary];
-    }
-    return result;
 }
 
 + (void)logEvent:(NSString*) eventType
@@ -492,7 +329,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
             [event setValue:[Amplitude replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-            [event setValue:[Amplitude replaceWithEmptyJSON:_globalProperties] forKey:@"global_properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:_userProperties] forKey:@"global_properties"];
             
             [Amplitude addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
             
@@ -878,14 +715,14 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 #pragma mark - configurations
 
-+ (void)setGlobalUserProperties:(NSDictionary*) globalProperties
++ (void)setUserProperties:(NSDictionary*) userProperties
 {
-    if (![Amplitude isArgument:globalProperties validType:[NSDictionary class] methodName:@"setGlobalUserProperties:"]) {
+    if (![Amplitude isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"]) {
         return;
     }
-    (void) SAFE_ARC_RETAIN(globalProperties);
-    SAFE_ARC_RELEASE(_globalProperties);
-    _globalProperties = globalProperties;
+    (void) SAFE_ARC_RETAIN(userProperties);
+    SAFE_ARC_RELEASE(_userProperties);
+    _userProperties = userProperties;
 }
 
 + (void)setUserId:(NSString*) userId
@@ -1198,16 +1035,10 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 +(NSString*)language {
     return _language;
 }
-+(NSDictionary*)globalProperties {
-    return _globalProperties;
++(NSDictionary*)userProperties {
+    return _userProperties;
 }
 
-+(NSString*)campaignInformation {
-    return _campaignInformation;
-}
-+(BOOL)isCurrentlyTrackingCampaign {
-    return isCurrentlyTrackingCampaign;
-}
 +(long long)sessionId {
     return _sessionId;
 }
