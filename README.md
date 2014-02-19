@@ -18,7 +18,7 @@
 
 # Tracking Events #
 
-It's important to think about what types of events you care about as a developer. You should aim to track between 5 and 50 types of events within your app. Common event types are different screens within the app, actions the user initiates (such as pressing a button), and events you want the user to complete (such as filling out a form, completing a level, or making a payment). Contact us if you want assistance determining what would be best for you to track.
+It's important to think about what types of events you care about as a developer. You should aim to track between 10 and 100 types of events within your app. Common event types are different screens within the app, actions the user initiates (such as pressing a button), and events you want the user to complete (such as filling out a form, completing a level, or making a payment). Contact us if you want assistance determining what would be best for you to track.
 
 # Tracking Sessions #
 
@@ -36,37 +36,21 @@ You can also add the user ID as an argument to the initializeApiKey: call:
     
     [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
 
-# Campaign Tracking #
+# Setting Event Properties #
 
-Set up links for each of your campaigns on the campaigns tab at https://amplitude.com.
+You can attach additional data to any event by passing a NSDictionary object as the second argument to logEvent:withEventProperties:
 
-To track installs from each campaign source in your app, call initializeApiKey:trackCampaignSource: with an extra boolean argument to turn on campaign tracking:
+    NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+    [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+    [Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
 
-    [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE" trackCampaignSource:YES];
+# Setting User Properties
 
-If you are not using analytics, and only want campaign tracking, call enableCampaignTrackingApiKey: instead of initializeApiKey:trackCampaignSource: in the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file:
+To add properties that are associated with a user, you can set user properties:
 
-    [Amplitude enableCampaignTrackingApiKey:@"YOUR_API_KEY_HERE"];
-
-You can retrieve the campaign information associated with a user by calling getCampaignInformation after you've called initializeApiKey:trackCampaignSource: or enableCampaignTrackingApiKey:
-
-    [Amplitude getCampaignInformation];
-
-If the SDK has successfully contacted our servers and saved the result, the @"tracked" key in the returned NSDictionary will be set to YES. You can then get the details of the campaign from the fields of the returned NSDictionary. If the SDK has not contacted our servers yet, all fields will be empty and @"tracked" will be set to NO. Only fields set in links you create will be set in the returned NSDictionary. For example, if you set "campaign" in the link, but do not set "source", "medium", "term", or "content", only the @"campaign" field will be present in the returned NSDictionary.
-
-# Setting Custom Properties #
-
-You can attach additional data to any event by passing a NSDictionary object as the second argument to logEvent:withCustomProperties:
-
-    NSMutableDictionary *customProperties = [NSMutableDictionary dictionary];
-    [customProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-    [Amplitude logEvent:@"Compute Hash" withCustomProperties:customProperties];
-
-To add properties that are tracked in every event, you can set global properties for a user:
-
-    NSMutableDictionary *globalProperties = [NSMutableDictionary dictionary];
-    [globalProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-    [Amplitude setGlobalUserProperties:globalProperties];
+    NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
+    [userProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+    [Amplitude setUserProperties:userProperties];
 
 # Tracking Revenue #
 
