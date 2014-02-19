@@ -553,7 +553,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
          
          updatingCurrently = NO;
          
-         if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > 0) {
+         if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > MAX_EVENTS_BEFORE_UPLOAD) {
              [Amplitude uploadEventsLimit:NO];
          } else if (uploadTaskID != UIBackgroundTaskInvalid) {
              // Upload finished, allow background task to be ended
