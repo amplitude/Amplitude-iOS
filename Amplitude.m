@@ -793,42 +793,17 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 #pragma mark - Getters for device data
 + (NSString*)getDeviceId
 {
-    // On iOS 7+, return advertiser ID
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 7.0) {
-        NSString *advertiserId = [Amplitude getAdvertiserID:0];
-        if (advertiserId != nil && ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-            return advertiserId;
+    // On iOS 6+, return identifierForVendor
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
+        NSString *identifierForVendor = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+        if (identifierForVendor != nil && ![identifierForVendor isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+            return identifierForVendor;
         }
     }
     
-    // On iOS 6 and below, md5 hash of the mac address
-    NSString *macAddress = [Amplitude getMacAddress];
-    if (macAddress != nil && ![macAddress isEqualToString:@"020000000000"]) {
-        return [Amplitude md5HexDigest:macAddress];
-    }
-    
+    // Otherwise generate random ID
     NSString *randomId = [Amplitude generateRandomId];
     return randomId;
-}
-
-+ (NSString*)getAdvertiserID:(int) timesCalled
-{
-    Class ASIdentifierManager = NSClassFromString(@"ASIdentifierManager");
-    SEL sharedManager = NSSelectorFromString(@"sharedManager");
-    SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
-    SEL UUIDString = NSSelectorFromString(@"UUIDString");
-    if (ASIdentifierManager && sharedManager && advertisingIdentifier && UUIDString) {
-        NSString *identifier = [[[ASIdentifierManager performSelector: sharedManager] performSelector: advertisingIdentifier] performSelector: UUIDString];
-        if (identifier == nil && timesCalled < 5) {
-            // Try again every 5 seconds
-            [NSThread sleepForTimeInterval:5.0];
-            return [Amplitude getAdvertiserID:timesCalled + 1];
-        } else {
-            return identifier;
-        }
-    } else {
-        return nil;
-    }
 }
 
 + (NSString*)generateRandomId
@@ -862,77 +837,6 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         NSLog(@"ERROR: Invalid type argument to method %@, expected %@, recieved %@, ", methodName, class, [argument class]);
         return NO;
     }
-}
-
-+ (NSString*)getMacAddress
-{
-    int                 mgmtInfoBase[6];
-    char                *msgBuffer = NULL;
-    size_t              length;
-    unsigned char       macAddress[6];
-    struct if_msghdr    *interfaceMsgStruct;
-    struct sockaddr_dl  *socketStruct;
-    NSString            *errorFlag = NULL;
-    BOOL                msgBufferAllocated = false;
-    
-    // Setup the management Information Base (mib)
-    mgmtInfoBase[0] = CTL_NET;        // Request network subsystem
-    mgmtInfoBase[1] = AF_ROUTE;       // Routing table info
-    mgmtInfoBase[2] = 0;
-    mgmtInfoBase[3] = AF_LINK;        // Request link layer information
-    mgmtInfoBase[4] = NET_RT_IFLIST;  // Request all configured interfaces
-    
-    // With all configured interfaces requested, get handle index
-    if ((mgmtInfoBase[5] = if_nametoindex("en0")) == 0)
-        errorFlag = @"if_nametoindex failure";
-    else
-    {
-        // Get the size of the data available (store in len)
-        if (sysctl(mgmtInfoBase, 6, NULL, &length, NULL, 0) < 0)
-            errorFlag = @"sysctl mgmtInfoBase failure";
-        else
-        {
-            // Alloc memory based on above call
-            if ((msgBuffer = malloc(length)) == NULL)
-                errorFlag = @"buffer allocation failure";
-            else
-            {
-                msgBufferAllocated = true;
-                // Get system information, store in buffer
-                if (sysctl(mgmtInfoBase, 6, msgBuffer, &length, NULL, 0) < 0)
-                    errorFlag = @"sysctl msgBuffer failure";
-            }
-        }
-    }
-    
-    // Befor going any further...
-    if (errorFlag != NULL)
-    {
-        NSLog(@"Error: %@", errorFlag);
-        if (msgBufferAllocated) {
-            free(msgBuffer);
-        }
-        return errorFlag;
-    }
-    
-    // Map msgbuffer to interface message structure
-    interfaceMsgStruct = (struct if_msghdr *) msgBuffer;
-    
-    // Map to link-level socket structure
-    socketStruct = (struct sockaddr_dl *) (interfaceMsgStruct + 1);
-    
-    // Copy link layer address data in socket structure to an array
-    memcpy(&macAddress, socketStruct->sdl_data + socketStruct->sdl_nlen, 6);
-    
-    // Read from char array into a string object, into traditional Mac address format
-    NSString *macAddressString = [NSString stringWithFormat:@"%02X%02X%02X%02X%02X%02X",
-                                  macAddress[0], macAddress[1], macAddress[2],
-                                  macAddress[3], macAddress[4], macAddress[5]];
-    
-    // Release the buffer memory
-    free(msgBuffer);
-    
-    return macAddressString;
 }
 
 // Taken from http://stackoverflow.com/a/3950748/340520
