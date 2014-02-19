@@ -48,9 +48,9 @@
  [Amplitude logEvent:@"EVENT_IDENTIFIER_HERE"];
  
  // You can attach additional data to any event by passing a NSDictionary object
- NSMutableDictionary *customProperties = [NSMutableDictionary dictionary];
- [customProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
- [Amplitude logEvent:@"Compute Hash" withCustomProperties:customProperties];
+ NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+ [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+ [Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
  </pre>
  
  For me details on the setup and usage, be sure to check out the docs here:
@@ -96,7 +96,7 @@
  Tracks an event
  
  @param eventType                The name of the event you wish to track.
- @param customProperties         You can attach additional data to any event by passing a NSDictionary object.
+ @param eventProperties         You can attach additional data to any event by passing a NSDictionary object.
 
  @discussion
  Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close. 
@@ -109,7 +109,7 @@
  Contact us if you want assistance determining what would be best for you to track. (contact@amplitude.com)
  */
 + (void)logEvent:(NSString*) eventType;
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties;
++ (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
 
 /*!
  @method
@@ -140,7 +140,7 @@
  */
 + (void)uploadEvents;
 
-// Step 3: Set custom properties (optional)
+// Step 3: Set event properties (optional)
 // -------------------------------------
 
 /*!

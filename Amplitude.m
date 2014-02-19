@@ -289,21 +289,21 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     if (![Amplitude isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
         return;
     }
-    [Amplitude logEvent:eventType withCustomProperties:nil];
+    [Amplitude logEvent:eventType withEventProperties:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties
++ (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties
 {
-    if (![Amplitude isArgument:eventType validType:[NSString class] methodName:@"logEvent:withCustomProperties:"]) {
+    if (![Amplitude isArgument:eventType validType:[NSString class] methodName:@"logEvent:withEventProperties:"]) {
         return;
     }
-    if (customProperties != nil && ![Amplitude isArgument:customProperties validType:[NSDictionary class] methodName:@"logEvent:withCustomProperties:"]) {
+    if (eventProperties != nil && ![Amplitude isArgument:eventProperties validType:[NSDictionary class] methodName:@"logEvent:withEventProperties:"]) {
         return;
     }
-    [Amplitude logEvent:eventType withCustomProperties:customProperties apiProperties:nil];
+    [Amplitude logEvent:eventType withEventProperties:eventProperties apiProperties:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withCustomProperties:(NSDictionary*) customProperties apiProperties:(NSDictionary*) apiProperties
++ (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties apiProperties:(NSDictionary*) apiProperties
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent:");
@@ -326,8 +326,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
             
             [event setValue:[Amplitude replaceWithJSONNull:eventType] forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
-            [event setValue:[Amplitude replaceWithEmptyJSON:customProperties] forKey:@"custom_properties"];
-            [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:eventProperties] forKey:@"custom_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:_userProperties] forKey:@"global_properties"];
             
@@ -593,7 +592,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"revenue_amount" forKey:@"special"];
     [apiProperties setValue:amount forKey:@"revenue"];
-    [Amplitude logEvent:@"revenue_amount" withCustomProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties];
 }
 
 
@@ -681,14 +680,14 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_start" forKey:@"special"];
-    [Amplitude logEvent:@"session_start" withCustomProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties];
 }
 
 + (void)endSession
 {
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_end" forKey:@"special"];
-    [Amplitude logEvent:@"session_end" withCustomProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"session_end" withEventProperties:nil apiProperties:apiProperties];
     
     [backgroundQueue addOperationWithBlock:^{
         sessionStarted = NO;
