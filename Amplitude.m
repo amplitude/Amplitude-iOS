@@ -1,10 +1,42 @@
 //
-//  Amplitude.m
-//  Fawkes
+// Amplitude.m
+// Amplitude
 //
-//  Created by Spenser Skates on 7/26/12.
-//  Copyright (c) 2012 Sonalight, Inc. All rights reserved.
+// The MIT License (MIT)
 //
+// Copyright (c) 2014 Amplitude
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+#ifndef AMPLITUDE_DEBUG
+#define AMPLITUDE_DEBUG 0
+#endif
+
+#if AMPLITUDE_DEBUG
+#   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#else
+#   define AMPLITUDE_LOG(...)
+#endif
+
+#define MAX_EVENTS_BEFORE_UPLOAD 30
+#define MAX_EVENTS_BEFORE_DELETION 1020
+#define SECONDS_BEFORE_UPLOAD 30
 
 #import "Amplitude.h"
 #import "AmplitudeLocationManagerDelegate.h"
@@ -36,13 +68,13 @@ static NSString *_language;
 static NSDictionary *_globalProperties;
 
 static NSString *_campaignInformation;
-static bool isCurrentlyTrackingCampaign = NO;
+static BOOL isCurrentlyTrackingCampaign = NO;
 
 static long long _sessionId = -1;
-static bool sessionStarted = NO;
+static BOOL sessionStarted = NO;
 
-static bool updateScheduled = NO;
-static bool updatingCurrently = NO;
+static BOOL updateScheduled = NO;
+static BOOL updatingCurrently = NO;
 
 static NSMutableDictionary *propertyList;
 static NSString *propertyListPath;
@@ -54,7 +86,7 @@ static NSOperationQueue *initializerQueue;
 static NSOperationQueue *backgroundQueue;
 static UIBackgroundTaskIdentifier uploadTaskID;
 
-static bool locationListeningEnabled = YES;
+static BOOL locationListeningEnabled = YES;
 static CLLocationManager *locationManager;
 static CLLocation *lastKnownLocation;
 static AmplitudeLocationManagerDelegate *locationManagerDelegate;
@@ -63,7 +95,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-
+#pragma mark - Main class methods
 + (void)initialize
 {
     initializerQueue = [[NSOperationQueue alloc] init];
@@ -102,7 +134,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         
         // Load propertyList object
         propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
-        bool successfullyLoadedPropertyList = NO;
+        BOOL successfullyLoadedPropertyList = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:propertyListPath]) {
             NSData *propertyListData = [[NSFileManager defaultManager] contentsAtPath:propertyListPath];
             if (propertyListData != nil) {
@@ -135,7 +167,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                                         options:0 error:&error];
             if (error == nil) {
                 if (propertyListData != nil) {
-                    bool success = [propertyListData writeToFile:propertyListPath atomically:YES];
+                    BOOL success = [propertyListData writeToFile:propertyListPath atomically:YES];
                     if (!success) {
                         NSLog(@"ERROR: Unable to save propertyList to file on initialization");
                     }
@@ -149,7 +181,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         
         // Load eventData object
         eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
-        bool successfullyLoadedEventsData = NO;
+        BOOL successfullyLoadedEventsData = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
             @try {
                 eventsData = SAFE_ARC_RETAIN([NSKeyedUnarchiver unarchiveObjectWithFile:eventsDataPath]);
@@ -171,7 +203,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
             [eventsData setObject:[NSMutableArray array] forKey:@"events"];
             [eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
             [eventsData setObject:@"{\"tracked\": false}" forKey:@"campaign_information"];
-            bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
+            BOOL success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
             if (!success) {
                 NSLog(@"ERROR: Unable to save eventsData to file on initialization");
             }
@@ -202,12 +234,12 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [Amplitude initializeApiKey:apiKey userId:userId trackCampaignSource:NO];
 }
 
-+ (void)initializeApiKey:(NSString*) apiKey trackCampaignSource:(bool) trackCampaignSource
++ (void)initializeApiKey:(NSString*) apiKey trackCampaignSource:(BOOL) trackCampaignSource
 {
     [Amplitude initializeApiKey:apiKey userId:nil trackCampaignSource:trackCampaignSource];
 }
 
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(bool) trackCampaignSource
++ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId trackCampaignSource:(BOOL) trackCampaignSource
 {
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
@@ -380,11 +412,11 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
              }
          } else if (error != nil) {
              if ([error code] == -1009) {
-                 //NSLog(@"No internet connection (not connected to internet), unable to track campaign");
+                 AMPLITUDE_LOG(@"No internet connection (not connected to internet), unable to track campaign");
              } else if ([error code] == -1003) {
-                 //NSLog(@"No internet connection (hostname not found), unable to track campaign");
+                 AMPLITUDE_LOG(@"No internet connection (hostname not found), unable to track campaign");
              } else if ([error code] == -1001) {
-                 //NSLog(@"No internet connection (request timed out), unable to track campaign");
+                 AMPLITUDE_LOG(@"No internet connection (request timed out), unable to track campaign");
              } else {
                  NSLog(@"ERROR: Connection error:%@", error);
              }
@@ -468,7 +500,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
             
             [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
             
-            if ([[eventsData objectForKey:@"events"] count] >= 1020) {
+            if ([[eventsData objectForKey:@"events"] count] >= MAX_EVENTS_BEFORE_DELETION) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
                 [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
                 [Amplitude saveEventsData];
@@ -476,12 +508,12 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                 [Amplitude saveEventsData];
             }
             
-            if ([[eventsData objectForKey:@"events"] count] >= 30) {
+            if ([[eventsData objectForKey:@"events"] count] >= MAX_EVENTS_BEFORE_UPLOAD) {
                 [Amplitude uploadEvents];
             } else {
                 [Amplitude uploadEventsLater];
             }
-            
+
         }
         
     }];
@@ -540,7 +572,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         updateScheduled = YES;
         
         [mainQueue addOperationWithBlock:^{
-            [[Amplitude class] performSelector:@selector(uploadEventsLaterExecute) withObject:[Amplitude class] afterDelay:30];
+            [[Amplitude class] performSelector:@selector(uploadEventsLaterExecute) withObject:[Amplitude class] afterDelay:SECONDS_BEFORE_UPLOAD];
         }];
     }
 }
@@ -559,7 +591,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     [Amplitude uploadEventsLimit:YES];
 }
 
-+ (void)uploadEventsLimit:(bool) limit
++ (void)uploadEventsLimit:(BOOL) limit
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
@@ -634,7 +666,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     
     [NSURLConnection sendAsynchronousRequest:request queue:backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-         bool uploadSuccessful = NO;
+         BOOL uploadSuccessful = NO;
          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
          if (response != nil) {
              if ([httpResponse statusCode] == 200) {
@@ -671,11 +703,11 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
              }
          } else if (error != nil) {
              if ([error code] == -1009) {
-                 //NSLog(@"No internet connection (not connected to internet), unable to upload events");
+                 AMPLITUDE_LOG(@"No internet connection (not connected to internet), unable to upload events");
              } else if ([error code] == -1003) {
-                 //NSLog(@"No internet connection (hostname not found), unable to upload events");
+                 AMPLITUDE_LOG(@"No internet connection (hostname not found), unable to upload events");
              } else if ([error code] == -1001) {
-                 //NSLog(@"No internet connection (request timed out), unable to upload events");
+                 AMPLITUDE_LOG(@"No internet connection (request timed out), unable to upload events");
              } else {
                  NSLog(@"ERROR: Connection error:%@", error);
              }
@@ -695,6 +727,40 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
      }];
 }
 
++ (void)printEventsCount
+{
+    NSLog(@"Events count:%ld", (long) [[eventsData objectForKey:@"events"] count]);
+}
+
++ (void)saveEventsData
+{
+    @synchronized (eventsData) {
+        BOOL success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
+        if (!success) {
+            NSLog(@"ERROR: Unable to save eventsData to file");
+        }
+    }
+}
+
+// amount is a double in units of dollars
+// ex. $3.99 would be passed as [NSNumber numberWithDouble:3.99]
++ (void)logRevenue:(NSNumber*) amount
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
+        return;
+    }
+    if (![Amplitude isArgument:amount validType:[NSNumber class] methodName:@"logRevenue:"]) {
+        return;
+    }
+    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:@"revenue_amount" forKey:@"special"];
+    [apiProperties setValue:amount forKey:@"revenue"];
+    [Amplitude logEvent:@"revenue_amount" withCustomProperties:nil apiProperties:apiProperties];
+}
+
+
+
 + (NSString*)urlEncodeString:(NSString*) string
 {
     NSString *newString;
@@ -713,11 +779,13 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
                                                                           CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
     SAFE_ARC_AUTORELEASE(newString);
 #endif
-	if (newString) {
-		return newString;
-	}
-	return @"";
+    if (newString) {
+        return newString;
+    }
+    return @"";
 }
+
+#pragma mark - application lifecycle methods
 
 + (void)enterForeground
 {
@@ -794,23 +862,6 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
-// amount is a double in units of dollars
-// ex. $3.99 would be passed as [NSNumber numberWithDouble:3.99]
-+ (void)logRevenue:(NSNumber*) amount
-{
-    if (_apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
-        return;
-    }
-    if (![Amplitude isArgument:amount validType:[NSNumber class] methodName:@"logRevenue:"]) {
-        return;
-    }
-    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:@"revenue_amount" forKey:@"special"];
-    [apiProperties setValue:amount forKey:@"revenue"];
-    [Amplitude logEvent:@"revenue_amount" withCustomProperties:nil apiProperties:apiProperties];
-}
-
 + (void)refreshSessionTime:(NSNumber*) timestamp
 {
     @synchronized (eventsData) {
@@ -824,6 +875,8 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
         _sessionId = -1;
     }
 }
+
+#pragma mark - configurations
 
 + (void)setGlobalUserProperties:(NSDictionary*) globalProperties
 {
@@ -851,6 +904,31 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
++ (void)savePropertyList
+{
+    @synchronized (propertyList) {
+        NSError *error = nil;
+        NSData *propertyListData = [NSPropertyListSerialization
+                                    dataWithPropertyList:propertyList
+                                    format:NSPropertyListXMLFormat_v1_0
+                                    options:0 error:&error];
+        if (error == nil) {
+            if (propertyListData != nil) {
+                BOOL success = [propertyListData writeToFile:propertyListPath atomically:YES];
+                if (!success) {
+                    NSLog(@"ERROR: Unable to save propertyList to file");
+                }
+            } else {
+                NSLog(@"ERROR: propertyListData is nil");
+            }
+        } else {
+            NSLog(@"ERROR: Unable to serialize propertyList:%@", error);
+        }
+    }
+}
+
+#pragma mark - location methods
+
 + (void)updateLocation
 {
     if (locationListeningEnabled) {
@@ -876,40 +954,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     locationListeningEnabled = NO;
 }
 
-
-+ (void)savePropertyList
-{
-    @synchronized (propertyList) {
-        NSError *error = nil;
-        NSData *propertyListData = [NSPropertyListSerialization
-                                    dataWithPropertyList:propertyList
-                                    format:NSPropertyListXMLFormat_v1_0
-                                    options:0 error:&error];
-        if (error == nil) {
-            if (propertyListData != nil) {
-                bool success = [propertyListData writeToFile:propertyListPath atomically:YES];
-                if (!success) {
-                    NSLog(@"ERROR: Unable to save propertyList to file");
-                }
-            } else {
-                NSLog(@"ERROR: propertyListData is nil");
-            }
-        } else {
-            NSLog(@"ERROR: Unable to serialize propertyList:%@", error);
-        }
-    }
-}
-
-+ (void)saveEventsData
-{
-    @synchronized (eventsData) {
-        bool success = [NSKeyedArchiver archiveRootObject:eventsData toFile:eventsDataPath];
-        if (!success) {
-            NSLog(@"ERROR: Unable to save eventsData to file");
-        }
-    }
-}
-
+#pragma mark - Getters for device data
 + (NSString*)getDeviceId
 {
     // On iOS 7+, return advertiser ID
@@ -973,7 +1018,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
 }
 
-+ (bool)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName
++ (BOOL)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName
 {
     if ([argument isKindOfClass:class]) {
         return YES;
@@ -992,7 +1037,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     struct if_msghdr    *interfaceMsgStruct;
     struct sockaddr_dl  *socketStruct;
     NSString            *errorFlag = NULL;
-    bool                msgBufferAllocated = false;
+    BOOL                msgBufferAllocated = false;
     
     // Setup the management Information Base (mib)
     mgmtInfoBase[0] = CTL_NET;        // Request network subsystem
@@ -1113,11 +1158,102 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     return ret;
 }
 
-+ (void)printEventsCount
-{
-    NSLog(@"Events count:%ld", (long) [[eventsData objectForKey:@"events"] count]);
-}
-
 #pragma clang diagnostic pop
 
+#pragma mark - Getters for testing
+
++(void)flushQueue {
+    [eventsData setObject:nil forKey:@"events"];
+}
++(int)apiVersion {
+    return apiVersion;
+}
++(NSString*)apiKey {
+    return _apiKey;
+}
++(NSString*)userId {
+    return _userId;
+}
++(NSString*)deviceId{
+    return _deviceId;
+}
++(NSString*)versionName {
+    return _versionName;
+}
++(NSString*)buildVersionRelease {
+    return _buildVersionRelease;
+}
++(NSString*)platformString {
+    return _platformString;
+}
++(NSString*)phoneModel {
+    return _phoneModel;
+}
++(NSString*)phoneCarrier {
+    return _phoneCarrier;
+}
++(NSString*)country {
+    return _country;
+}
++(NSString*)language {
+    return _language;
+}
++(NSDictionary*)globalProperties {
+    return _globalProperties;
+}
+
++(NSString*)campaignInformation {
+    return _campaignInformation;
+}
++(BOOL)isCurrentlyTrackingCampaign {
+    return isCurrentlyTrackingCampaign;
+}
++(long long)sessionId {
+    return _sessionId;
+}
++(BOOL)sessionStarted {
+    return sessionStarted;
+}
++(BOOL)updateScheduled {
+    return updateScheduled;
+}
++(BOOL)updatingCurrently {
+    return updatingCurrently;
+}
++(NSMutableDictionary*)propertyList {
+    return propertyList;
+}
++(NSString*)propertyListPath {
+    return propertyListPath;
+}
++(NSMutableDictionary*)eventsData {
+    return eventsData;
+}
++(NSString*)eventsDataPath {
+    return eventsDataPath;
+}
++(NSOperationQueue*)mainQueue {
+    return mainQueue;
+}
++(NSOperationQueue*)initializerQueue {
+    return initializerQueue;
+}
++(NSOperationQueue*)backgroundQueue {
+    return backgroundQueue;
+}
++(UIBackgroundTaskIdentifier)uploadTaskID {
+    return uploadTaskID;
+}
++(BOOL)locationListeningEnabled {
+    return locationListeningEnabled;
+}
++(CLLocationManager*)locationManager {
+    return locationManager;
+}
++(CLLocation*)lastKnownLocation {
+    return lastKnownLocation;
+}
++(AmplitudeLocationManagerDelegate*)locationManagerDelegate {
+    return locationManagerDelegate;
+}
 @end
