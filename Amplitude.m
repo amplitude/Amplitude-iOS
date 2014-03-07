@@ -253,7 +253,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         @synchronized (eventsData) {
             if (_deviceId == nil) {
                 _deviceId = SAFE_ARC_RETAIN([eventsData objectForKey:@"device_id"]);
-                if (_deviceId == nil) {
+                if (_deviceId == nil ||
+                    [_deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
+                    [_deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
                     _deviceId = SAFE_ARC_RETAIN([Amplitude getDeviceId]);
                     [eventsData setObject:_deviceId forKey:@"device_id"];
                 }
@@ -801,7 +803,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 + (NSString*)getDeviceId
 {
     if (useAdvertisingIdForDeviceId) {
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 7.0) {
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
             NSString *advertiserId = [Amplitude getAdvertiserID:0];
             if (advertiserId != nil && ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
                 return advertiserId;
