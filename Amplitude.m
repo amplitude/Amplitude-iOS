@@ -88,6 +88,8 @@ static CLLocationManager *locationManager;
 static CLLocation *lastKnownLocation;
 static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 
+static BOOL useAdvertisingIdForDeviceId = NO;
+
 @implementation Amplitude
 
 #pragma clang diagnostic push
@@ -790,12 +792,26 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     locationListeningEnabled = NO;
 }
 
++ (void)useAdvertisingIdForDeviceId
+{
+    useAdvertisingIdForDeviceId = YES;
+}
+
 #pragma mark - Getters for device data
 + (NSString*)getDeviceId
 {
+    if (useAdvertisingIdForDeviceId) {
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 7.0) {
+            NSString *advertiserId = [Amplitude getAdvertiserID:0];
+            if (advertiserId != nil && ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+                return advertiserId;
+            }
+        }
+    }
+
     // On iOS 6+, return identifierForVendor
     if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
-        NSString *identifierForVendor = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+        NSString *identifierForVendor = [Amplitude getVendorID:0];
         if (identifierForVendor != nil && ![identifierForVendor isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
             return identifierForVendor;
         }
@@ -804,6 +820,38 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
     // Otherwise generate random ID
     NSString *randomId = [Amplitude generateRandomId];
     return randomId;
+}
+
++ (NSString*)getAdvertiserID:(int) timesCalled
+{
+    Class ASIdentifierManager = NSClassFromString(@"ASIdentifierManager");
+    SEL sharedManager = NSSelectorFromString(@"sharedManager");
+    SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
+    SEL UUIDString = NSSelectorFromString(@"UUIDString");
+    if (ASIdentifierManager && sharedManager && advertisingIdentifier && UUIDString) {
+        NSString *identifier = [[[ASIdentifierManager performSelector: sharedManager] performSelector: advertisingIdentifier] performSelector: UUIDString];
+        if (identifier == nil && timesCalled < 5) {
+            // Try again every 5 seconds
+            [NSThread sleepForTimeInterval:5.0];
+            return [Amplitude getAdvertiserID:timesCalled + 1];
+        } else {
+            return identifier;
+        }
+    } else {
+        return nil;
+    }
+}
+
++ (NSString*)getVendorID:(int) timesCalled
+{
+    NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    if (identifier == nil && timesCalled < 5) {
+        // Try again every 5 seconds
+        [NSThread sleepForTimeInterval:5.0];
+        return [Amplitude getVendorID:timesCalled + 1];
+    } else {
+        return identifier;
+    }
 }
 
 + (NSString*)generateRandomId

@@ -199,6 +199,17 @@
  @method
  
  @abstract
+ Uses advertisingIdentifier instead of identifierForVendor as the device ID
+ 
+ @discussion
+ Apple prohibits the use of advertisingIdentifier if your app does not have advertising. Useful for tying together data from advertising campaigns to anlaytics data. Must be called before initializeApiKey: is called to function.
+ */
++ (void)useAdvertisingIdForDeviceId;
+
+/*!
+ @method
+ 
+ @abstract
  Prints the number of events in the queue.
  
  @discussion
