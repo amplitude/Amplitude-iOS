@@ -304,16 +304,18 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     if (eventProperties != nil && ![Amplitude isArgument:eventProperties validType:[NSDictionary class] methodName:@"logEvent:withEventProperties:"]) {
         return;
     }
-    [Amplitude logEvent:eventType withEventProperties:eventProperties apiProperties:nil];
+    [Amplitude logEvent:eventType withEventProperties:eventProperties apiProperties:nil withTimestamp:nil];
 }
 
-+ (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties apiProperties:(NSDictionary*) apiProperties
++ (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties apiProperties:(NSDictionary*) apiProperties withTimestamp:(NSNumber*) timestamp
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent:");
         return;
     }
-    NSNumber *timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+    if (timestamp == nil) {
+        timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+    }
     
     [backgroundQueue addOperationWithBlock:^{
         
@@ -596,7 +598,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"revenue_amount" forKey:@"special"];
     [apiProperties setValue:amount forKey:@"revenue"];
-    [Amplitude logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
 }
 
 
@@ -684,14 +686,14 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_start" forKey:@"special"];
-    [Amplitude logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties withTimestamp:now];
 }
 
 + (void)endSession
 {
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_end" forKey:@"special"];
-    [Amplitude logEvent:@"session_end" withEventProperties:nil apiProperties:apiProperties];
+    [Amplitude logEvent:@"session_end" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
     
     [backgroundQueue addOperationWithBlock:^{
         sessionStarted = NO;
