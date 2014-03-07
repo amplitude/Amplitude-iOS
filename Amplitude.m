@@ -903,7 +903,7 @@ static AmplitudeLocationManagerDelegate *locationManagerDelegate;
 #pragma mark - Getters for testing
 
 +(void)flushQueue {
-    [eventsData setObject:nil forKey:@"events"];
+    [eventsData setObject:[NSMutableArray array] forKey:@"events"];
 }
 +(int)apiVersion {
     return apiVersion;
