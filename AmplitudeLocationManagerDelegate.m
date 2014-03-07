@@ -1,10 +1,5 @@
 //
 //  AmplitudeLocationManagerDelegate.m
-//  Fawkes
-//
-//  Created by Spenser Skates on 8/19/12.
-//  Copyright (c) 2012 Sonalight, Inc. All rights reserved.
-//
 
 #import "AmplitudeLocationManagerDelegate.h"
 #import "Amplitude.h"
