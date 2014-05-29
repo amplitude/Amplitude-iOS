@@ -610,6 +610,10 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 {
     [Amplitude updateLocation];
     [Amplitude startSession];
+    if (uploadTaskID != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+        uploadTaskID = UIBackgroundTaskInvalid;
+    }
     [backgroundQueue addOperationWithBlock:^{
         [Amplitude uploadEvents];
     }];
@@ -617,6 +621,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 
 + (void)enterBackground
 {
+    if (uploadTaskID != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+    }
     uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
