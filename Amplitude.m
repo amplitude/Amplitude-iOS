@@ -626,8 +626,10 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     }
     uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
-        [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
-        uploadTaskID = UIBackgroundTaskInvalid;
+        if (uploadTaskID != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
+            uploadTaskID = UIBackgroundTaskInvalid;
+        }
     }];
     
     [Amplitude endSession];
