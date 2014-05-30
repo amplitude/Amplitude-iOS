@@ -565,16 +565,31 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 // ex. $3.99 would be passed as [NSNumber numberWithDouble:3.99]
 + (void)logRevenue:(NSNumber*) amount
 {
+    [Amplitude logRevenue:nil quantity:1 price:amount];
+}
+
+
++ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price
+{
+    [Amplitude logRevenue:productIdentifier quantity:quantity price:price receipt:nil];
+}
+
+
++ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt
+{
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
         return;
     }
-    if (![Amplitude isArgument:amount validType:[NSNumber class] methodName:@"logRevenue:"]) {
+    if (![Amplitude isArgument:price validType:[NSNumber class] methodName:@"logRevenue:"]) {
         return;
     }
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"revenue_amount" forKey:@"special"];
-    [apiProperties setValue:amount forKey:@"revenue"];
+    [apiProperties setValue:[Amplitude replaceWithJSONNull:productIdentifier] forKey:@"productId"];
+    [apiProperties setValue:[NSNumber numberWithInteger:quantity] forKey:@"quantity"];
+    [apiProperties setValue:price forKey:@"price"];
+    [apiProperties setValue:[Amplitude replaceWithJSONNull: [receipt base64Encoding]] forKey:@"receipt"];
     [Amplitude logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
 }
 

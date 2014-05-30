@@ -68,10 +68,10 @@
 
 /*!
  @method
- 
+
  @abstract
  Tracks an event
- 
+
  @param eventType                The name of the event you wish to track.
  @param eventProperties         You can attach additional data to any event by passing a NSDictionary object.
 
@@ -101,8 +101,13 @@
  logRevenue: takes in an NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display 
  data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, 
  lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
+ 
+ For validating revenue, use [Amplitude logRevenue:@"com.company.app.productId" quantity:1 price:[NSNumber numberWithDouble:3.99] receipt:transactionReceipt]
  */
 + (void)logRevenue:(NSNumber*) amount;
++ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price;
++ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt;
+
 
 
 /*!
@@ -194,4 +199,14 @@
  */
 + (void)printEventsCount;
 
+/*!
+ @method
+
+ @abstract
+ Returns deviceId
+
+ @discussion
+ The deviceId is an identifier used by Amplitude to determine unique users when no userId has been set.
+ */
++ (NSString*)getDeviceId;
 @end
