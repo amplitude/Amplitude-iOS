@@ -226,18 +226,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     _apiKey = apiKey;
     
     [backgroundQueue addOperationWithBlock:^{
-        
+
         @synchronized (eventsData) {
-            if (_deviceId == nil) {
-                _deviceId = SAFE_ARC_RETAIN([eventsData objectForKey:@"device_id"]);
-                if (_deviceId == nil ||
-                    [_deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
-                    [_deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
-                    _deviceId = SAFE_ARC_RETAIN([Amplitude getDeviceId]);
-                    [eventsData setObject:_deviceId forKey:@"device_id"];
-                }
-            }
-            
+            _deviceId = [Amplitude getDeviceId];
             if (userId != nil) {
                 (void) SAFE_ARC_RETAIN(userId);
                 SAFE_ARC_RELEASE(_userId);
@@ -804,6 +795,22 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 
 #pragma mark - Getters for device data
 + (NSString*)getDeviceId
+{
+    @synchronized (eventsData) {
+        if (_deviceId == nil) {
+            _deviceId = SAFE_ARC_RETAIN([eventsData objectForKey:@"device_id"]);
+            if (_deviceId == nil ||
+                [_deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
+                [_deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
+                _deviceId = SAFE_ARC_RETAIN([Amplitude _getDeviceId]);
+                [eventsData setObject:_deviceId forKey:@"device_id"];
+            }
+        }
+    }
+    return _deviceId;
+}
+
++ (NSString*)_getDeviceId
 {
     if (useAdvertisingIdForDeviceId) {
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
