@@ -2,17 +2,21 @@
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
 2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file. Alternatively, you can pull directly from GitHub. If you use Cocoapods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 1.0'`
 3. Copy the Amplitude-iOS folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".
-4. In every file that uses analytics, import Amplitude.h at the top:
 
-        #import "Amplitude.h"
+4. In every file that uses analytics, import Amplitude.h at the top:
+    ``` objective-c
+    #import "Amplitude.h"
+    ```
 
 5. In the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file, initialize the SDK:
-
-        [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE"];
+    ``` objective-c
+    [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE"];
+    ```
 
 6. To track an event anywhere in the app, call:
-
-        [Amplitude logEvent:@"EVENT_IDENTIFIER_HERE"];
+    ``` objective-c
+    [Amplitude logEvent:@"EVENT_IDENTIFIER_HERE"];
+    ```
 
 7. Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close. After calling logEvent in your app, you will immediately see data appear on the Amplitude Website.
 
@@ -26,37 +30,57 @@ A session is a period of time that a user has the app in the foreground. Session
 
 # Setting Custom User IDs #
 
-If your app has its own login system that you want to track users with, you can call setUserId: at any time:
+If your app has its own login system that you want to track users with, you can call `setUserId:` at any time:
 
-    [Amplitude setUserId:@"USER_ID_HERE"];
+``` objective-c
+[Amplitude setUserId:@"USER_ID_HERE"];
+```
 
 A user's data will be merged on the backend so that any events up to that point on the same device will be tracked under the same user.
 
-You can also add the user ID as an argument to the initializeApiKey: call:
-    
-    [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
+You can also add the user ID as an argument to the `initializeApiKey:` call:
+
+``` objective-c
+[Amplitude initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
+```
 
 # Setting Event Properties #
 
 You can attach additional data to any event by passing a NSDictionary object as the second argument to logEvent:withEventProperties:
 
-    NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
-    [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-    [Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
+``` objective-c
+NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+[eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+[Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
+```
 
 # Setting User Properties
 
 To add properties that are associated with a user, you can set user properties:
 
-    NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
-    [userProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-    [Amplitude setUserProperties:userProperties];
+``` objective-c
+NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
+[userProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+[Amplitude setUserProperties:userProperties];
+```
 
 # Tracking Revenue #
 
-To track revenue from a user, call `[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]` after a successful purchase transaction. `logRevenue:` takes a string to identify the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`). `quantity:` takes an integer with the quantity of product purchased. `price:` takes a NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
+To track revenue from a user, call
 
-To enable revenue verification, copy your iTunes Connect In App Purchase Shared Secret into the manage section of your app on Amplitude. Then call `[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]` after a successful purchase transaction. `receipt:` takes the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
+``` objective-c
+[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]
+```
+
+after a successful purchase transaction. `logRevenue:` takes a string to identify the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`). `quantity:` takes an integer with the quantity of product purchased. `price:` takes a NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
+
+To enable revenue verification, copy your iTunes Connect In App Purchase Shared Secret into the manage section of your app on Amplitude. Then call
+
+``` objective-c
+[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]
+```
+
+after a successful purchase transaction. `receipt:` takes the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
 
 # Advanced #
 
