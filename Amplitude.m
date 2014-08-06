@@ -427,14 +427,24 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, (int) numEvents)];
             long long lastEventIDUploaded = [[[uploadEvents lastObject] objectForKey:@"event_id"] longLongValue];
             NSError *error = nil;
-            NSData *eventsDataLocal = [NSJSONSerialization dataWithJSONObject:uploadEvents options:0 error:&error];
+            NSData *eventsDataLocal = nil;
+            @try {
+                eventsDataLocal = [NSJSONSerialization dataWithJSONObject:[Amplitude makeJSONSerializable:uploadEvents] options:0 error:&error];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"ERROR: NSJSONSerialization error: %@", exception.reason);
+                updatingCurrently = NO;
+                return;
+            }
             if (error != nil) {
                 NSLog(@"ERROR: NSJSONSerialization error: %@", error);
                 updatingCurrently = NO;
                 return;
             }
-            NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
-            [Amplitude makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString lastEventIDUploaded:lastEventIDUploaded];
+            if (eventsDataLocal) {
+                NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
+                [Amplitude makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString lastEventIDUploaded:lastEventIDUploaded];
+            }
         }
         
     }];
@@ -889,12 +899,55 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
 }
 
++ (id) makeJSONSerializable:(id) obj
+{
+    if (obj == nil) {
+        return [NSNull null];
+    }
+    if ([obj isKindOfClass:[NSString class]] ||
+        [obj isKindOfClass:[NSNull class]]) {
+        return obj;
+    }
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        if (!isfinite([obj floatValue])) {
+            return [NSNull null];
+        } else {
+            return obj;
+        }
+    }
+    if ([obj isKindOfClass:[NSArray class]]) {
+        NSMutableArray *arr = [NSMutableArray array];
+        for (id i in obj) {
+            [arr addObject:[Amplitude makeJSONSerializable:i]];
+        }
+        return [NSArray arrayWithArray:arr];
+    }
+    if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        for (id key in obj) {
+            NSString *coercedKey;
+            if (![key isKindOfClass:[NSString class]]) {
+                coercedKey = [key description];
+                NSLog(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
+            } else {
+                coercedKey = key;
+            }
+            dict[coercedKey] = [Amplitude makeJSONSerializable:obj[key]];
+        }
+        return [NSDictionary dictionaryWithDictionary:dict];
+    }
+    NSString *str = [obj description];
+    NSLog(@"WARNING: Invalid property value type, received %@, coercing to %@", [obj class], str);
+    return str;
+}
+
+
 + (BOOL)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName
 {
     if ([argument isKindOfClass:class]) {
         return YES;
     } else {
-        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, recieved %@, ", methodName, class, [argument class]);
+        NSLog(@"ERROR: Invalid type argument to method %@, expected %@, received %@, ", methodName, class, [argument class]);
         return NO;
     }
 }
