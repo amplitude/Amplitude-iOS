@@ -106,10 +106,20 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
         uploadTaskID = UIBackgroundTaskInvalid;
         
-        NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+        NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         
-        // Load propertyList object
         propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
+        eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
+
+
+        // Copy any old data files to new file paths
+        NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+        NSString *oldPropertyListPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
+        NSString *oldEventsDataPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
+        [Amplitude moveFileIfNotExists:oldPropertyListPath to:propertyListPath];
+        [Amplitude moveFileIfNotExists:oldEventsDataPath to:eventsDataPath];
+
+        // Load propertyList object
         BOOL successfullyLoadedPropertyList = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:propertyListPath]) {
             NSData *propertyListData = [[NSFileManager defaultManager] contentsAtPath:propertyListPath];
@@ -154,9 +164,8 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                 NSLog(@"ERROR: Unable to serialize propertyList on initialization:%@", error);
             }
         }
-        
+
         // Load eventData object
-        eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
         BOOL successfullyLoadedEventsData = NO;
         if ([[NSFileManager defaultManager] fileExistsAtPath:eventsDataPath]) {
             @try {
@@ -1009,6 +1018,21 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         [ret appendFormat:@"%02x",result[i]];
     }
     return ret;
+}
+
++ (void)moveFileIfNotExists:(NSString*)from to:(NSString*)to
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    if (![fileManager fileExistsAtPath:to] &&
+        [fileManager fileExistsAtPath:from]) {
+        if ([fileManager copyItemAtPath:from toPath:to error:&error]) {
+            //NSLog(@"INFO: copied %@ to %@", from, to);
+            [fileManager removeItemAtPath:from error:NULL];
+        } else {
+            NSLog(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
+        }
+    }
 }
 
 #pragma clang diagnostic pop
