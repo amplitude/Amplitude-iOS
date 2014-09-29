@@ -11,13 +11,12 @@
 #   define AMPLITUDE_LOG(...)
 #endif
 
-#define MAX_EVENTS_BEFORE_UPLOAD 30
-#define MAX_EVENTS_BEFORE_DELETION 1000
-#define SECONDS_BEFORE_UPLOAD 30
 
 #import "Amplitude.h"
 #import "AmplitudeLocationManagerDelegate.h"
 #import "AmplitudeARCMacros.h"
+#import "Constants.h"
+#import "DeviceInfo.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -28,19 +27,12 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
-static int apiVersion = 2;
 
 static NSString *_apiKey;
 static NSString *_userId;
 static NSString *_deviceId;
 
-static NSString *_versionName;
-static NSString *_buildVersionRelease;
-static NSString *_platformString;
-static NSString *_phoneModel;
-static NSString *_phoneCarrier;
-static NSString *_country;
-static NSString *_language;
+static DeviceInfo *_deviceInfo;
 
 static NSDictionary *_userProperties;
 
@@ -83,26 +75,8 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     
     [initializerQueue addOperationWithBlock:^{
         
-        _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
-        
-        _buildVersionRelease = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
-        
-        _platformString = SAFE_ARC_RETAIN([self getPlatformString]);
-        _phoneModel = SAFE_ARC_RETAIN([self getPhoneModel]);
-        
-        Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
-        SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
-        SEL carrierName = NSSelectorFromString(@"carrierName");
-        if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
-            NSObject *info = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
-            _phoneCarrier = SAFE_ARC_RETAIN([[info performSelector:subscriberCellularProvider] performSelector:carrierName]);
-            SAFE_ARC_RELEASE(info);
-        }
-        NSLocale *developerLanguage = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
-        _country = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleCountryCode value:[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]]);
-        _language = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleLanguageCode value:[[NSLocale preferredLanguages] objectAtIndex:0]]);
-        SAFE_ARC_RELEASE(developerLanguage);
-        
+        _deviceInfo = SAFE_ARC_RETAIN([[DeviceInfo alloc] init]);
+
         mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
         uploadTaskID = UIBackgroundTaskInvalid;
         
@@ -193,6 +167,8 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             }
         }
         
+        [Amplitude initializeDeviceId];
+        
         [backgroundQueue setSuspended:NO];
     }];
     
@@ -237,7 +213,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [backgroundQueue addOperationWithBlock:^{
 
         @synchronized (eventsData) {
-            _deviceId = [Amplitude getDeviceId];
+            _deviceId = SAFE_ARC_RETAIN([Amplitude getDeviceId]);
             if (userId != nil) {
                 (void) SAFE_ARC_RETAIN(userId);
                 SAFE_ARC_RELEASE(_userId);
@@ -319,7 +295,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             
             [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
             
-            if ([[eventsData objectForKey:@"events"] count] >= MAX_EVENTS_BEFORE_DELETION) {
+            if ([[eventsData objectForKey:@"events"] count] >= kAMPEventMaxCount) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
                 [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
                 [Amplitude saveEventsData];
@@ -327,7 +303,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                 [Amplitude saveEventsData];
             }
             
-            if ([[eventsData objectForKey:@"events"] count] >= MAX_EVENTS_BEFORE_UPLOAD) {
+            if ([[eventsData objectForKey:@"events"] count] >= kAMPEventUploadThreshold) {
                 [Amplitude uploadEvents];
             } else {
                 [Amplitude uploadEventsLater];
@@ -346,13 +322,12 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                      [Amplitude replaceWithJSONNull:_deviceId]) forKey:@"user_id"];
     [event setValue:[Amplitude replaceWithJSONNull:_deviceId] forKey:@"device_id"];
     [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
-    [event setValue:[Amplitude replaceWithJSONNull:_versionName] forKey:@"version_name"];
-    [event setValue:[Amplitude replaceWithJSONNull:_buildVersionRelease] forKey:@"build_version_release"];
-    [event setValue:[Amplitude replaceWithJSONNull:_platformString] forKey:@"platform_string"];
-    [event setValue:[Amplitude replaceWithJSONNull:_phoneModel] forKey:@"phone_model"];
-    [event setValue:[Amplitude replaceWithJSONNull:_phoneCarrier] forKey:@"phone_carrier"];
-    [event setValue:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
-    [event setValue:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
+    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.versionName] forKey:@"version_name"];
+    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.buildVersionRelease] forKey:@"build_version_release"];
+    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.phoneModel] forKey:@"phone_model"];
+    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.phoneCarrier] forKey:@"phone_carrier"];
+    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.country] forKey:@"country"];
+    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.language] forKey:@"language"];
     [event setValue:@"ios" forKey:@"client"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
@@ -380,9 +355,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         }
     }
     
-    if (sessionStarted) {
-        [Amplitude refreshSessionTime:timestamp];
-    }
+    [Amplitude refreshSessionTime:timestamp];
 }
 
 + (void)uploadEventsLater
@@ -391,7 +364,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         updateScheduled = YES;
         
         [mainQueue addOperationWithBlock:^{
-            [[Amplitude class] performSelector:@selector(uploadEventsLaterExecute) withObject:[Amplitude class] afterDelay:SECONDS_BEFORE_UPLOAD];
+            [[Amplitude class] performSelector:@selector(uploadEventsLaterExecute) withObject:[Amplitude class] afterDelay:kAMPEventUploadPeriodSeconds];
         }];
     }
 }
@@ -428,7 +401,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         
         @synchronized (eventsData) {
             NSMutableArray *events = [eventsData objectForKey:@"events"];
-            long long numEvents = limit ? fminl([events count], 100) : [events count];
+            long long numEvents = limit ? fminl([events count], kAMPEventUploadMaxBatchSize) : [events count];
             if (numEvents == 0) {
                 updatingCurrently = NO;
                 return;
@@ -452,8 +425,8 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             }
             if (eventsDataLocal) {
                 NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
-                [Amplitude makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString lastEventIDUploaded:lastEventIDUploaded];
-            }
+                [Amplitude makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString lastEventIDUploaded:lastEventIDUploaded];
+           }
         }
         
     }];
@@ -464,7 +437,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
     
-    NSString *apiVersionString = [[NSNumber numberWithInt:apiVersion] stringValue];
+    NSString *apiVersionString = [[NSNumber numberWithInt:kAMPApiVersion] stringValue];
     
     NSMutableData *postData = [[NSMutableData alloc] init];
     [postData appendData:[@"v=" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -546,7 +519,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
          
          updatingCurrently = NO;
          
-         if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > MAX_EVENTS_BEFORE_UPLOAD) {
+         if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > kAMPEventUploadThreshold) {
              [Amplitude uploadEventsLimit:NO];
          } else if (uploadTaskID != UIBackgroundTaskInvalid) {
              // Upload finished, allow background task to be ended
@@ -675,26 +648,34 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                                                    object:[Amplitude class]];
     }];
     
-    if (!sessionStarted) {
-        [backgroundQueue addOperationWithBlock:^{
+    [backgroundQueue addOperationWithBlock:^{
+        
+        @synchronized (eventsData) {
             
-            @synchronized (eventsData) {
-                
-                // Session has not been started yet, check overlap with previous session
-                NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
-                
-                if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
+            // Session has not been started yet, check overlap with previous session
+            NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
+            long timeDelta = [now longLongValue] - [previousSessionTime longLongValue];
+            
+            if (!sessionStarted) {
+                if (timeDelta < kAMPMinTimeBetweenSessionsMillis) {
                     _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
                 } else {
                     _sessionId = [now longLongValue];
                     [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
                 }
+            } else {
+                if (timeDelta > kAMPSessionTimeoutMillis) {
+                    // Session has expired
+                    _sessionId = [now longLongValue];
+                    [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
+                }
+                // else _sessionId = previous session id
             }
-            
-            sessionStarted = YES;
-        }];
-    }
-    
+        }
+        
+        sessionStarted = YES;
+    }];
+
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_start" forKey:@"special"];
     [Amplitude logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties withTimestamp:now];
@@ -711,7 +692,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     }];
     
     [mainQueue addOperationWithBlock:^{
-        [[Amplitude class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[Amplitude class] afterDelay:10];
+        [[Amplitude class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[Amplitude class] afterDelay:kAMPMinTimeBetweenSessionsMillis];
     }];
 }
 
@@ -813,15 +794,20 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 }
 
 #pragma mark - Getters for device data
-+ (NSString*)getDeviceId
++ (NSString*) getDeviceId
+{
+    return _deviceId;
+}
+
++ (NSString*) initializeDeviceId
 {
     @synchronized (eventsData) {
         if (_deviceId == nil) {
-            _deviceId = SAFE_ARC_RETAIN([eventsData objectForKey:@"device_id"]);
+            _deviceId = [eventsData objectForKey:@"device_id"];
             if (_deviceId == nil ||
                 [_deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
                 [_deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
-                _deviceId = SAFE_ARC_RETAIN([Amplitude _getDeviceId]);
+                _deviceId = [Amplitude _getDeviceId];
                 [eventsData setObject:_deviceId forKey:@"device_id"];
             }
         }
@@ -831,71 +817,21 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 
 + (NSString*)_getDeviceId
 {
+    NSString *deviceId;
     if (useAdvertisingIdForDeviceId) {
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
-            NSString *advertiserId = [Amplitude getAdvertiserID:0];
-            if (advertiserId != nil && ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-                return advertiserId;
-            }
-        }
+        deviceId = _deviceInfo.advertiserID;
     }
 
-    // On iOS 6+, return identifierForVendor
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
-        NSString *identifierForVendor = [Amplitude getVendorID:0];
-        if (identifierForVendor != nil && ![identifierForVendor isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-            return identifierForVendor;
-        }
+    // return identifierForVendor
+    if (!deviceId) {
+        deviceId = _deviceInfo.vendorID;
     }
     
-    // Otherwise generate random ID
-    NSString *randomId = [Amplitude generateRandomId];
-    return randomId;
-}
-
-+ (NSString*)getAdvertiserID:(int) timesCalled
-{
-    Class ASIdentifierManager = NSClassFromString(@"ASIdentifierManager");
-    SEL sharedManager = NSSelectorFromString(@"sharedManager");
-    SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
-    SEL UUIDString = NSSelectorFromString(@"UUIDString");
-    if (ASIdentifierManager && sharedManager && advertisingIdentifier && UUIDString) {
-        NSString *identifier = [[[ASIdentifierManager performSelector: sharedManager] performSelector: advertisingIdentifier] performSelector: UUIDString];
-        if (identifier == nil && timesCalled < 5) {
-            // Try again every 5 seconds
-            [NSThread sleepForTimeInterval:5.0];
-            return [Amplitude getAdvertiserID:timesCalled + 1];
-        } else {
-            return identifier;
-        }
-    } else {
-        return nil;
+    if (!deviceId) {
+        // Otherwise generate random ID
+        deviceId = _deviceInfo.generateUUID;
     }
-}
-
-+ (NSString*)getVendorID:(int) timesCalled
-{
-    NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-    if (identifier == nil && timesCalled < 5) {
-        // Try again every 5 seconds
-        [NSThread sleepForTimeInterval:5.0];
-        return [Amplitude getVendorID:timesCalled + 1];
-    } else {
-        return identifier;
-    }
-}
-
-+ (NSString*)generateRandomId
-{
-    CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
-#if __has_feature(objc_arc)
-    NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
-#else
-    NSString *uuidStr = (NSString *) CFUUIDCreateString(kCFAllocatorDefault, uuid);
-#endif
-    CFRelease(uuid);
-    // Add "R" at the end of the ID to distinguish it from advertiserId
-    return [uuidStr stringByAppendingString:@"R"];
+    return deviceId;
 }
 
 + (id)replaceWithJSONNull:(id) obj
@@ -1030,7 +966,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             //NSLog(@"INFO: copied %@ to %@", from, to);
             [fileManager removeItemAtPath:from error:NULL];
         } else {
-            NSLog(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
+            AMPLITUDE_LOG(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
         }
     }
 }
@@ -1043,7 +979,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [eventsData setObject:[NSMutableArray array] forKey:@"events"];
 }
 +(int)apiVersion {
-    return apiVersion;
+    return kAMPApiVersion;
 }
 +(NSString*)apiKey {
     return _apiKey;
@@ -1053,27 +989,6 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 }
 +(NSString*)deviceId{
     return _deviceId;
-}
-+(NSString*)versionName {
-    return _versionName;
-}
-+(NSString*)buildVersionRelease {
-    return _buildVersionRelease;
-}
-+(NSString*)platformString {
-    return _platformString;
-}
-+(NSString*)phoneModel {
-    return _phoneModel;
-}
-+(NSString*)phoneCarrier {
-    return _phoneCarrier;
-}
-+(NSString*)country {
-    return _country;
-}
-+(NSString*)language {
-    return _language;
 }
 +(NSDictionary*)userProperties {
     return _userProperties;
