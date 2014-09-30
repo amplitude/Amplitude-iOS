@@ -333,6 +333,14 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
     [apiProperties setValue:[Amplitude replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
+    NSString* advertiserID = _deviceInfo.advertiserID;
+    if (advertiserID) {
+        [apiProperties setValue:[Amplitude replaceWithJSONNull:advertiserID] forKey:@"ios_idfa"];
+    }
+    NSString* vendorID = _deviceInfo.vendorID;
+    if (vendorID) {
+        [apiProperties setValue:[Amplitude replaceWithJSONNull:vendorID] forKey:@"ios_idfv"];
+    }
     
     if (lastKnownLocation != nil) {
         @synchronized (locationManager) {
@@ -463,6 +471,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
     
     [request setHTTPBody:postData];
+    NSLog(@"Events data: %@", events);
     
     SAFE_ARC_RELEASE(postData);
     
@@ -487,7 +496,6 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                              }
                          }
                          [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, (int) numberToRemove)];
-                         [Amplitude saveEventsData];
                      }
                  } else if ([result isEqualToString:@"invalid_api_key"]) {
                      NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
@@ -516,6 +524,8 @@ static BOOL useAdvertisingIdForDeviceId = NO;
          } else {
              NSLog(@"ERROR: response empty, error empty for NSURLConnection");
          }
+         
+         [Amplitude saveEventsData];
          
          updatingCurrently = NO;
          
