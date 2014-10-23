@@ -1,8 +1,8 @@
 //
 //  Constants.h
 
-const NSString* kAMPVersion = @"2.2.0";
-const NSString* kAMPEventLogUrl = @"https://api.amplitude.com/";
+NSString *const kAMPVersion = @"2.2.0";
+NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
 const int kAMPApiVersion = 2;
 const int kAMPEventUploadThreshold = 30;
 const int kAMPEventUploadMaxBatchSize = 100;

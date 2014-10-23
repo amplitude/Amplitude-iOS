@@ -39,7 +39,11 @@ CLLocation *lastKnownLocation;
             locationManager = [[CLLocationManager alloc] init];
             locationManagerDelegate = [[AmplitudeLocationManagerDelegate alloc] init];
             SEL setDelegate = NSSelectorFromString(@"setDelegate:");
-            [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
+            void (*imp)(id, SEL, AmplitudeLocationManagerDelegate*) =
+                (void (*)(id, SEL, AmplitudeLocationManagerDelegate*))[locationManager methodForSelector:setDelegate];
+            if (imp) {
+                imp(locationManager, setDelegate, locationManagerDelegate);
+            }
         });
     }
     return self;
@@ -77,7 +81,15 @@ CLLocation *lastKnownLocation;
         SEL carrierName = NSSelectorFromString(@"carrierName");
         if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
             NSObject *info = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
-            _phoneCarrier = [[info performSelector:subscriberCellularProvider] performSelector:carrierName];
+            id (*imp1)(id, SEL) = (id (*)(id, SEL))[info methodForSelector:subscriberCellularProvider];
+            id carrier;
+            if (imp1) {
+                carrier = imp1(info, subscriberCellularProvider);
+            }
+            NSString* (*imp2)(id, SEL) = (NSString* (*)(id, SEL))[carrier methodForSelector:carrierName];
+            if (imp2) {
+                _phoneCarrier = imp2(carrier, carrierName);
+            }
             SAFE_ARC_RELEASE(info);
         }
     }
@@ -134,7 +146,21 @@ CLLocation *lastKnownLocation;
     SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
     SEL UUIDString = NSSelectorFromString(@"UUIDString");
     if (ASIdentifierManager && sharedManager && advertisingIdentifier && UUIDString) {
-        NSString *identifier = [[[ASIdentifierManager performSelector: sharedManager] performSelector: advertisingIdentifier] performSelector: UUIDString];
+        id (*imp1)(id, SEL) = (id (*)(id, SEL))[ASIdentifierManager methodForSelector:sharedManager];
+        id manager;
+        id adid;
+        NSString* identifier;
+        if (imp1) {
+            manager = imp1(ASIdentifierManager, sharedManager);
+        }
+        id (*imp2)(id, SEL) = (id (*)(id, SEL))[manager methodForSelector:advertisingIdentifier];
+        if (imp2) {
+            adid = imp2(manager, advertisingIdentifier);
+        }
+        NSString* (*imp3)(id, SEL) = (NSString* (*)(id, SEL))[adid methodForSelector:UUIDString];
+        if (imp3) {
+            identifier = imp3(adid, UUIDString);
+        }
         if (identifier == nil && maxAttempts > 0) {
             // Try again every 5 seconds
             [NSThread sleepForTimeInterval:5.0];
