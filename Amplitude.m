@@ -80,16 +80,16 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [backgroundQueue setMaxConcurrentOperationCount:1];
     // Ensure initialize finishes running asynchronously before other calls are run
     [backgroundQueue setSuspended:YES];
-    
+
     [initializerQueue addOperationWithBlock:^{
-        
+
         _versionName = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
-        
+
         _buildVersionRelease = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
-        
+
         _platformString = SAFE_ARC_RETAIN([self getPlatformString]);
         _phoneModel = SAFE_ARC_RETAIN([self getPhoneModel]);
-        
+
         Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
         SEL carrierName = NSSelectorFromString(@"carrierName");
@@ -102,12 +102,12 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         _country = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleCountryCode value:[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]]);
         _language = SAFE_ARC_RETAIN([developerLanguage displayNameForKey:NSLocaleLanguageCode value:[[NSLocale preferredLanguages] objectAtIndex:0]]);
         SAFE_ARC_RELEASE(developerLanguage);
-        
+
         mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
         uploadTaskID = UIBackgroundTaskInvalid;
-        
+
         NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-        
+
         // Load propertyList object
         propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
         BOOL successfullyLoadedPropertyList = NO;
@@ -154,7 +154,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                 NSLog(@"ERROR: Unable to serialize propertyList on initialization:%@", error);
             }
         }
-        
+
         // Load eventData object
         eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
         BOOL successfullyLoadedEventsData = NO;
@@ -183,10 +183,10 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                 NSLog(@"ERROR: Unable to save eventsData to file on initialization");
             }
         }
-        
+
         [backgroundQueue setSuspended:NO];
     }];
-    
+
     // CLLocationManager must be created on the main thread
     dispatch_async(dispatch_get_main_queue(), ^{
         Class CLLocationManager = NSClassFromString(@"CLLocationManager");
@@ -208,23 +208,23 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
     }
-    
+
     if (![Amplitude isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
     if (userId != nil && ![Amplitude isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
-    
+
     if ([apiKey length] == 0) {
         NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:");
         return;
     }
-    
+
     (void) SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
-    
+
     [backgroundQueue addOperationWithBlock:^{
 
         @synchronized (eventsData) {
@@ -238,21 +238,21 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                 _userId = SAFE_ARC_RETAIN([eventsData objectForKey:@"user_id"]);
             }
         }
-        
+
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        
+
         [center addObserver:self
                    selector:@selector(enterForeground)
                        name:UIApplicationWillEnterForegroundNotification
                      object:nil];
-        
+
         [center addObserver:self
                    selector:@selector(enterBackground)
                        name:UIApplicationDidEnterBackgroundNotification
                      object:nil];
-        
+
     }];
-    
+
     [Amplitude enterForeground];
 }
 
@@ -284,32 +284,32 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     if (timestamp == nil) {
         timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     }
-    
+
     [backgroundQueue addOperationWithBlock:^{
-        
+
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
-        
+
         @synchronized (eventsData) {
             // Increment propertyList max_id and save immediately
             NSNumber *propertyListMaxId = [NSNumber numberWithLongLong:[[propertyList objectForKey:@"max_id"] longLongValue] + 1];
             [propertyList setObject: propertyListMaxId forKey:@"max_id"];
             [Amplitude savePropertyList];
-            
+
             // Increment eventsData max_id
             long long newId = [[eventsData objectForKey:@"max_id"] longLongValue] + 1;
-            
+
             [event setValue:[Amplitude replaceWithJSONNull:eventType] forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
             [event setValue:[Amplitude replaceWithEmptyJSON:eventProperties] forKey:@"custom_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:_userProperties] forKey:@"global_properties"];
-            
+
             [Amplitude addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
-            
+
             [[eventsData objectForKey:@"events"] addObject:event];
-            
+
             [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
-            
+
             if ([[eventsData objectForKey:@"events"] count] >= MAX_EVENTS_BEFORE_DELETION) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
                 [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
@@ -317,7 +317,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             } else if ([[eventsData objectForKey:@"events"] count] >= 20 && [[eventsData objectForKey:@"events"] count] % 20 == 0) {
                 [Amplitude saveEventsData];
             }
-            
+
             if ([[eventsData objectForKey:@"events"] count] >= MAX_EVENTS_BEFORE_UPLOAD) {
                 [Amplitude uploadEvents];
             } else {
@@ -325,7 +325,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             }
 
         }
-        
+
     }];
 }
 
@@ -345,15 +345,15 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [event setValue:[Amplitude replaceWithJSONNull:_country] forKey:@"country"];
     [event setValue:[Amplitude replaceWithJSONNull:_language] forKey:@"language"];
     [event setValue:@"ios" forKey:@"client"];
-    
+
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
-    
+
     [apiProperties setValue:[Amplitude replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
-    
+
     if (lastKnownLocation != nil) {
         @synchronized (locationManager) {
             NSMutableDictionary *location = [NSMutableDictionary dictionary];
-            
+
             // Need to use NSInvocation because coordinate selector returns a C struct
             SEL coordinateSelector = NSSelectorFromString(@"coordinate");
             NSMethodSignature *coordinateMethodSignature = [lastKnownLocation methodSignatureForSelector:coordinateSelector];
@@ -363,14 +363,14 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             [coordinateInvocation invoke];
             CLLocationCoordinate2D lastKnownLocationCoordinate;
             [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
-            
+
             [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
             [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
-            
+
             [apiProperties setValue:location forKey:@"location"];
         }
     }
-    
+
     if (sessionStarted) {
         [Amplitude refreshSessionTime:timestamp];
     }
@@ -380,7 +380,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 {
     if (!updateScheduled) {
         updateScheduled = YES;
-        
+
         [mainQueue addOperationWithBlock:^{
             [[Amplitude class] performSelector:@selector(uploadEventsLaterExecute) withObject:[Amplitude class] afterDelay:SECONDS_BEFORE_UPLOAD];
         }];
@@ -390,7 +390,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 + (void)uploadEventsLaterExecute
 {
     updateScheduled = NO;
-    
+
     [backgroundQueue addOperationWithBlock:^{
         [Amplitude uploadEvents];
     }];
@@ -407,16 +407,16 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
     }
-    
+
     @synchronized ([Amplitude class]) {
         if (updatingCurrently) {
             return;
         }
         updatingCurrently = YES;
     }
-    
+
     [backgroundQueue addOperationWithBlock:^{
-        
+
         @synchronized (eventsData) {
             NSMutableArray *events = [eventsData objectForKey:@"events"];
             long long numEvents = limit ? fminl([events count], 100) : [events count];
@@ -446,7 +446,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                 [Amplitude makeEventUploadPostRequest:@"https://api.amplitude.com/" events:eventsString lastEventIDUploaded:lastEventIDUploaded];
             }
         }
-        
+
     }];
 }
 
@@ -454,9 +454,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
-    
+
     NSString *apiVersionString = [[NSNumber numberWithInt:apiVersion] stringValue];
-    
+
     NSMutableData *postData = [[NSMutableData alloc] init];
     [postData appendData:[@"v=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
@@ -464,26 +464,26 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[[Amplitude urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
-    
+
     // Add timestamp of upload
     [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
     NSString *timestampString = [[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000] stringValue];
     [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
-    
+
     // Add checksum
     [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
     NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
     NSString *checksum = [Amplitude md5HexDigest: checksumData];
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
-    
+
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
-    
+
     [request setHTTPBody:postData];
-    
+
     SAFE_ARC_RELEASE(postData);
-    
+
     [NSURLConnection sendAsynchronousRequest:request queue:backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          BOOL uploadSuccessful = NO;
@@ -534,9 +534,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
          } else {
              NSLog(@"ERROR: response empty, error empty for NSURLConnection");
          }
-         
+
          updatingCurrently = NO;
-         
+
          if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > MAX_EVENTS_BEFORE_UPLOAD) {
              [Amplitude uploadEventsLimit:NO];
          } else if (uploadTaskID != UIBackgroundTaskInvalid) {
@@ -647,7 +647,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             uploadTaskID = UIBackgroundTaskInvalid;
         }
     }];
-    
+
     [Amplitude endSession];
     [backgroundQueue addOperationWithBlock:^{
         [Amplitude saveEventsData];
@@ -658,22 +658,22 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 + (void)startSession
 {
     NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
-    
+
     [mainQueue addOperationWithBlock:^{
         // Remove turn off session later callback
         [NSObject cancelPreviousPerformRequestsWithTarget:[Amplitude class]
                                                  selector:@selector(turnOffSessionLaterExecute)
                                                    object:[Amplitude class]];
     }];
-    
+
     if (!sessionStarted) {
         [backgroundQueue addOperationWithBlock:^{
-            
+
             @synchronized (eventsData) {
-                
+
                 // Session has not been started yet, check overlap with previous session
                 NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
-                
+
                 if ([now longLongValue] - [previousSessionTime longLongValue] < 10000) {
                     _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
                 } else {
@@ -681,11 +681,11 @@ static BOOL useAdvertisingIdForDeviceId = NO;
                     [eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
                 }
             }
-            
+
             sessionStarted = YES;
         }];
     }
-    
+
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_start" forKey:@"special"];
     [Amplitude logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties withTimestamp:now];
@@ -696,11 +696,11 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"session_end" forKey:@"special"];
     [Amplitude logEvent:@"session_end" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
-    
+
     [backgroundQueue addOperationWithBlock:^{
         sessionStarted = NO;
     }];
-    
+
     [mainQueue addOperationWithBlock:^{
         [[Amplitude class] performSelector:@selector(turnOffSessionLaterExecute) withObject:[Amplitude class] afterDelay:10];
     }];
@@ -737,7 +737,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     if (![Amplitude isArgument:userId validType:[NSString class] methodName:@"setUserId:"]) {
         return;
     }
-    
+
     [backgroundQueue addOperationWithBlock:^{
         (void) SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
@@ -838,7 +838,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             return identifierForVendor;
         }
     }
-    
+
     // Otherwise generate random ID
     NSString *randomId = [Amplitude generateRandomId];
     return randomId;
@@ -882,11 +882,15 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 #if __has_feature(objc_arc)
     NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
 #else
-    NSString *uuidStr = (NSString *) CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    NSString *uuidStr = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
 #endif
     CFRelease(uuid);
     // Add "R" at the end of the ID to distinguish it from advertiserId
-    return [uuidStr stringByAppendingString:@"R"];
+    NSString *result = [uuidStr stringByAppendingString:@"R"];
+#if !__has_feature(objc_arc)
+    [uuidStr release];
+#endif
+    return result;
 }
 
 + (id)replaceWithJSONNull:(id) obj
@@ -1003,7 +1007,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     const char* str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
     CC_MD5(str, strlen(str), result);
-    
+
     NSMutableString *ret = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH*2];
     for(int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {
         [ret appendFormat:@"%02x",result[i]];
