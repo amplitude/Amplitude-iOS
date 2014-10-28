@@ -471,7 +471,6 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
     
     [request setHTTPBody:postData];
-    NSLog(@"Events data: %@", events);
     
     SAFE_ARC_RELEASE(postData);
     
