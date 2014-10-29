@@ -3,7 +3,6 @@
 
 #import <Foundation/Foundation.h>
 #import "AmplitudeARCMacros.h"
-#import "AmplitudeLocationManagerDelegate.h"
 #import <UIKit/UIKit.h>
 #import "DeviceInfo.h"
 #import <sys/sysctl.h>
@@ -12,10 +11,6 @@
 
 @interface DeviceInfo ()
 @end
-
-AmplitudeLocationManagerDelegate *locationManagerDelegate;
-CLLocationManager *locationManager;
-CLLocation *lastKnownLocation;
 
 @implementation DeviceInfo
 
@@ -32,20 +27,6 @@ CLLocation *lastKnownLocation;
 
 -(id) init {
     self = [super init];
-    if (self) {
-        // CLLocationManager must be created on the main thread
-        dispatch_async(dispatch_get_main_queue(), ^{
-            Class CLLocationManager = NSClassFromString(@"CLLocationManager");
-            locationManager = [[CLLocationManager alloc] init];
-            locationManagerDelegate = [[AmplitudeLocationManagerDelegate alloc] init];
-            SEL setDelegate = NSSelectorFromString(@"setDelegate:");
-            void (*imp)(id, SEL, AmplitudeLocationManagerDelegate*) =
-                (void (*)(id, SEL, AmplitudeLocationManagerDelegate*))[locationManager methodForSelector:setDelegate];
-            if (imp) {
-                imp(locationManager, setDelegate, locationManagerDelegate);
-            }
-        });
-    }
     return self;
 }
 
@@ -198,22 +179,6 @@ CLLocation *lastKnownLocation;
     NSString *result = [uuidStr stringByAppendingString:@"R"];
     SAFE_ARC_RELEASE(uuidStr);
     return result;
-}
-
--(CLLocation*) mostRecentLocation {
-    return lastKnownLocation;
-}
-
-+ (void)updateLocation
-{
-    CLLocation *location = [locationManager location];
-    @synchronized (locationManager) {
-        if (location != nil) {
-            (void) SAFE_ARC_RETAIN(location);
-            SAFE_ARC_RELEASE(lastKnownLocation);
-            lastKnownLocation = location;
-        }
-    }
 }
 
 + (NSString *)getPlatformString

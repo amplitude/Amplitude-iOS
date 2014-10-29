@@ -15,7 +15,6 @@
 @property (readonly) NSString *language;
 @property (readonly) NSString *advertiserID;
 @property (readonly) NSString *vendorID;
-@property (readonly) NSString *mostRecentLocation;
 
 -(NSString*) generateUUID;
 
