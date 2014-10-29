@@ -64,7 +64,7 @@
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
         SEL carrierName = NSSelectorFromString(@"carrierName");
         if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
-            networkInfo = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
+            networkInfo = SAFE_ARC_RETAIN([[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init]);
             id carrier = nil;
             id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
             if (imp1) {
