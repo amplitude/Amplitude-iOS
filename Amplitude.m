@@ -283,16 +283,16 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             // Increment eventsData max_id
             long long newId = [[eventsData objectForKey:@"max_id"] longLongValue] + 1;
             
-            [event setValue:[Amplitude replaceWithJSONNull:eventType] forKey:@"event_type"];
+            [event setValue:eventType forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
             [event setValue:[Amplitude replaceWithEmptyJSON:eventProperties] forKey:@"custom_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:_userProperties] forKey:@"global_properties"];
             
             [Amplitude addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
+            [Amplitude refreshSessionTime:timestamp];
             
             [[eventsData objectForKey:@"events"] addObject:event];
-            
             [eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
             
             if ([[eventsData objectForKey:@"events"] count] >= kAMPEventMaxCount) {
@@ -317,29 +317,27 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 + (void)addBoilerplate:(NSMutableDictionary*) event timestamp:(NSNumber*) timestamp maxIdCheck:(NSNumber*) propertyListMaxId
 {
     [event setValue:timestamp forKey:@"timestamp"];
-    [event setValue:(_userId != nil ?
-                     [Amplitude replaceWithJSONNull:_userId] :
-                     [Amplitude replaceWithJSONNull:_deviceId]) forKey:@"user_id"];
-    [event setValue:[Amplitude replaceWithJSONNull:_deviceId] forKey:@"device_id"];
+    [event setValue:_userId forKey:@"user_id"];
+    [event setValue:_deviceId forKey:@"device_id"];
     [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
-    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.versionName] forKey:@"version_name"];
-    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.buildVersionRelease] forKey:@"build_version_release"];
-    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.phoneModel] forKey:@"phone_model"];
-    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.phoneCarrier] forKey:@"phone_carrier"];
-    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.country] forKey:@"country"];
-    [event setValue:[Amplitude replaceWithJSONNull:_deviceInfo.language] forKey:@"language"];
+    [event setValue:_deviceInfo.versionName forKey:@"version_name"];
+    [event setValue:_deviceInfo.buildVersionRelease forKey:@"build_version_release"];
+    [event setValue:_deviceInfo.phoneModel forKey:@"phone_model"];
+    [event setValue:_deviceInfo.phoneCarrier forKey:@"phone_carrier"];
+    [event setValue:_deviceInfo.country forKey:@"country"];
+    [event setValue:_deviceInfo.language forKey:@"language"];
     [event setValue:@"ios" forKey:@"client"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
-    [apiProperties setValue:[Amplitude replaceWithJSONNull:propertyListMaxId] forKey:@"max_id"];
+    [apiProperties setValue:propertyListMaxId forKey:@"max_id"];
     NSString* advertiserID = _deviceInfo.advertiserID;
     if (advertiserID) {
-        [apiProperties setValue:[Amplitude replaceWithJSONNull:advertiserID] forKey:@"ios_idfa"];
+        [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
     }
     NSString* vendorID = _deviceInfo.vendorID;
     if (vendorID) {
-        [apiProperties setValue:[Amplitude replaceWithJSONNull:vendorID] forKey:@"ios_idfv"];
+        [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
     
     if (lastKnownLocation != nil) {
@@ -356,14 +354,12 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             CLLocationCoordinate2D lastKnownLocationCoordinate;
             [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
             
-            [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude]] forKey:@"lat"];
-            [location setValue:[Amplitude replaceWithJSONNull:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude]] forKey:@"lng"];
+            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
+            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
             
             [apiProperties setValue:location forKey:@"location"];
         }
     }
-    
-    [Amplitude refreshSessionTime:timestamp];
 }
 
 + (void)uploadEventsLater
@@ -471,6 +467,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
     
     [request setHTTPBody:postData];
+    AMPLITUDE_LOG(@"Events: %@", events)
     
     SAFE_ARC_RELEASE(postData);
     
@@ -578,10 +575,10 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     }
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:@"revenue_amount" forKey:@"special"];
-    [apiProperties setValue:[Amplitude replaceWithJSONNull:productIdentifier] forKey:@"productId"];
+    [apiProperties setValue:productIdentifier forKey:@"productId"];
     [apiProperties setValue:[NSNumber numberWithInteger:quantity] forKey:@"quantity"];
     [apiProperties setValue:price forKey:@"price"];
-    [apiProperties setValue:[Amplitude replaceWithJSONNull: [receipt base64Encoding]] forKey:@"receipt"];
+    [apiProperties setValue:[receipt base64Encoding] forKey:@"receipt"];
     [Amplitude logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
 }
 
@@ -665,7 +662,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
             long timeDelta = [now longLongValue] - [previousSessionTime longLongValue];
             
-            if (!sessionStarted) {
+            if (!sessionStarted || _sessionId < 0) {
                 if (timeDelta < kAMPMinTimeBetweenSessionsMillis) {
                     _sessionId = [[eventsData objectForKey:@"previous_session_id"] longLongValue];
                 } else {
@@ -843,11 +840,6 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         deviceId = _deviceInfo.generateUUID;
     }
     return deviceId;
-}
-
-+ (id)replaceWithJSONNull:(id) obj
-{
-    return obj == nil ? [NSNull null] : obj;
 }
 
 + (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
