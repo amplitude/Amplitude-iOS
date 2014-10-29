@@ -297,9 +297,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             
             if ([[eventsData objectForKey:@"events"] count] >= kAMPEventMaxCount) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
-                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, 20)];
+                [[eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, kAMPEventRemoveBatchSize)];
                 [Amplitude saveEventsData];
-            } else if ([[eventsData objectForKey:@"events"] count] >= 20 && [[eventsData objectForKey:@"events"] count] % 20 == 0) {
+            } else if ([[eventsData objectForKey:@"events"] count] >= kAMPEventRemoveBatchSize && [[eventsData objectForKey:@"events"] count] % kAMPEventRemoveBatchSize == 0) {
                 [Amplitude saveEventsData];
             }
             
