@@ -714,9 +714,11 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 
 + (void)turnOffSessionLaterExecute
 {
-    if (!sessionStarted) {
-        _sessionId = -1;
-    }
+    [backgroundQueue addOperationWithBlock:^{
+        if (!sessionStarted) {
+            _sessionId = -1;
+        }
+    }];
 }
 
 #pragma mark - configurations
