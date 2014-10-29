@@ -306,7 +306,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             if ([[eventsData objectForKey:@"events"] count] >= kAMPEventUploadThreshold) {
                 [Amplitude uploadEvents];
             } else {
-                [Amplitude uploadEventsLater];
+                [Amplitude uploadEventsWithDelay:kAMPEventUploadPeriodSeconds];
             }
 
         }
@@ -362,18 +362,18 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     }
 }
 
-+ (void)uploadEventsLater
++ (void)uploadEventsWithDelay:(int) delay
 {
     if (!updateScheduled) {
         updateScheduled = YES;
         
         [mainQueue addOperationWithBlock:^{
-            [[Amplitude class] performSelector:@selector(uploadEventsLaterExecute) withObject:[Amplitude class] afterDelay:kAMPEventUploadPeriodSeconds];
+            [[Amplitude class] performSelector:@selector(uploadEventsExecute) withObject:[Amplitude class] afterDelay:delay];
         }];
     }
 }
 
-+ (void)uploadEventsLaterExecute
++ (void)uploadEventsExecute
 {
     updateScheduled = NO;
     
@@ -384,10 +384,10 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 
 + (void)uploadEvents
 {
-    [Amplitude uploadEventsLimit:YES];
+    [Amplitude uploadEventsWithLimit:kAMPEventUploadMaxBatchSize];
 }
 
-+ (void)uploadEventsLimit:(BOOL) limit
++ (void)uploadEventsWithLimit:(int) limit
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
@@ -405,7 +405,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
         
         @synchronized (eventsData) {
             NSMutableArray *events = [eventsData objectForKey:@"events"];
-            long long numEvents = limit ? fminl([events count], kAMPEventUploadMaxBatchSize) : [events count];
+            long long numEvents = limit ? fminl([events count], limit) : [events count];
             if (numEvents == 0) {
                 updatingCurrently = NO;
                 return;
@@ -526,7 +526,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
          updatingCurrently = NO;
          
          if (uploadSuccessful && [[eventsData objectForKey:@"events"] count] > kAMPEventUploadThreshold) {
-             [Amplitude uploadEventsLimit:NO];
+             [Amplitude uploadEventsWithLimit:0];
          } else if (uploadTaskID != UIBackgroundTaskInvalid) {
              // Upload finished, allow background task to be ended
              [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
@@ -639,7 +639,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [Amplitude endSession];
     [backgroundQueue addOperationWithBlock:^{
         [Amplitude saveEventsData];
-        [Amplitude uploadEventsLimit:NO];
+        [Amplitude uploadEventsWithLimit:0];
     }];
 }
 
