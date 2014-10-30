@@ -660,7 +660,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             
             // Session has not been started yet, check overlap with previous session
             NSNumber *previousSessionTime = [eventsData objectForKey:@"previous_session_time"];
-            long timeDelta = [now longLongValue] - [previousSessionTime longLongValue];
+            long long timeDelta = [now longLongValue] - [previousSessionTime longLongValue];
             
             if (!sessionStarted || _sessionId < 0) {
                 if (timeDelta < kAMPMinTimeBetweenSessionsMillis) {
