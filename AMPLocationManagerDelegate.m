@@ -1,10 +1,10 @@
 //
-//  AmplitudeLocationManagerDelegate.m
+//  AMPLocationManagerDelegate.m
 
-#import "AmplitudeLocationManagerDelegate.h"
+#import "AMPLocationManagerDelegate.h"
 #import "Amplitude.h"
 
-@implementation AmplitudeLocationManagerDelegate
+@implementation AMPLocationManagerDelegate
 
 
 - (void)locationManager:(CLLocationManager*) manager didFailWithError:(NSError*) error

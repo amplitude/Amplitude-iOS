@@ -1,18 +1,18 @@
 //
-//  DeviceInfo.m
+//  AMPDeviceInfo.m
 
 #import <Foundation/Foundation.h>
-#import "AmplitudeARCMacros.h"
+#import "AMPARCMacros.h"
 #import <UIKit/UIKit.h>
-#import "DeviceInfo.h"
+#import "AMPDeviceInfo.h"
 #import <sys/sysctl.h>
 
 #include <sys/types.h>
 
-@interface DeviceInfo ()
+@interface AMPDeviceInfo ()
 @end
 
-@implementation DeviceInfo {
+@implementation AMPDeviceInfo {
     NSObject* networkInfo;
 }
 
@@ -53,7 +53,7 @@
 
 -(NSString*) phoneModel {
     if (!_phoneModel) {
-        _phoneModel = [DeviceInfo getPhoneModel];
+        _phoneModel = [AMPDeviceInfo getPhoneModel];
     }
     return _phoneModel;
 }
@@ -99,7 +99,7 @@
 -(NSString*) advertiserID {
     if (!_advertiserID) {
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
-            NSString *advertiserId = [DeviceInfo getAdvertiserID:5];
+            NSString *advertiserId = [AMPDeviceInfo getAdvertiserID:5];
             if (advertiserId != nil &&
                 ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
                 _advertiserID = advertiserId;
@@ -112,7 +112,7 @@
 -(NSString*) vendorID {
     if (!_vendorID) {
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
-            NSString *identifierForVendor = [DeviceInfo getVendorID:5];
+            NSString *identifierForVendor = [AMPDeviceInfo getVendorID:5];
             if (identifierForVendor != nil &&
                 ![identifierForVendor isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
                 _vendorID = identifierForVendor;
@@ -145,7 +145,7 @@
         if (identifier == nil && maxAttempts > 0) {
             // Try again every 5 seconds
             [NSThread sleepForTimeInterval:5.0];
-            return [DeviceInfo getAdvertiserID:maxAttempts - 1];
+            return [AMPDeviceInfo getAdvertiserID:maxAttempts - 1];
         } else {
             return identifier;
         }
@@ -160,7 +160,7 @@
     if (identifier == nil && maxAttempts > 0) {
         // Try again every 5 seconds
         [NSThread sleepForTimeInterval:5.0];
-        return [DeviceInfo getVendorID:maxAttempts - 1];
+        return [AMPDeviceInfo getVendorID:maxAttempts - 1];
     } else {
         return identifier;
     }

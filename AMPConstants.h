@@ -1,5 +1,5 @@
 //
-//  Constants.h
+//  AMPConstants.h
 
 NSString *const kAMPVersion = @"2.2.0";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";

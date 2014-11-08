@@ -13,10 +13,10 @@
 
 
 #import "Amplitude.h"
-#import "AmplitudeLocationManagerDelegate.h"
-#import "AmplitudeARCMacros.h"
-#import "Constants.h"
-#import "DeviceInfo.h"
+#import "AMPLocationManagerDelegate.h"
+#import "AMPARCMacros.h"
+#import "AMPConstants.h"
+#import "AMPDeviceInfo.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -32,7 +32,7 @@ static NSString *_apiKey;
 static NSString *_userId;
 static NSString *_deviceId;
 
-static DeviceInfo *_deviceInfo;
+static AMPDeviceInfo *_deviceInfo;
 
 static NSDictionary *_userProperties;
 
@@ -55,7 +55,7 @@ static UIBackgroundTaskIdentifier uploadTaskID;
 static BOOL locationListeningEnabled = YES;
 static CLLocationManager *locationManager;
 static CLLocation *lastKnownLocation;
-static AmplitudeLocationManagerDelegate *locationManagerDelegate;
+static AMPLocationManagerDelegate *locationManagerDelegate;
 
 static BOOL useAdvertisingIdForDeviceId = NO;
 
@@ -75,7 +75,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     
     [initializerQueue addOperationWithBlock:^{
         
-        _deviceInfo = SAFE_ARC_RETAIN([[DeviceInfo alloc] init]);
+        _deviceInfo = SAFE_ARC_RETAIN([[AMPDeviceInfo alloc] init]);
 
         mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
         uploadTaskID = UIBackgroundTaskInvalid;
@@ -176,7 +176,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         Class CLLocationManager = NSClassFromString(@"CLLocationManager");
         locationManager = [[CLLocationManager alloc] init];
-        locationManagerDelegate = [[AmplitudeLocationManagerDelegate alloc] init];
+        locationManagerDelegate = [[AMPLocationManagerDelegate alloc] init];
         SEL setDelegate = NSSelectorFromString(@"setDelegate:");
         [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
     });
@@ -327,6 +327,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [event setValue:_deviceInfo.country forKey:@"country"];
     [event setValue:_deviceInfo.language forKey:@"language"];
     [event setValue:@"ios" forKey:@"client"];
+    [event setValue:@"iOS" forKey:@"platform"];
+    [event setValue:@"iOS" forKey:@"os"];
+    [event setValue:kAMPVersion forKey:@"sdk"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     
@@ -996,7 +999,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 +(CLLocation*)lastKnownLocation {
     return lastKnownLocation;
 }
-+(AmplitudeLocationManagerDelegate*)locationManagerDelegate {
++(AMPLocationManagerDelegate*)locationManagerDelegate {
     return locationManagerDelegate;
 }
 @end

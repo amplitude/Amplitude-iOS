@@ -1,9 +1,7 @@
 //
-//  DeviceInfo.h
+//  AMPDeviceInfo.h
 
-#import <CoreLocation/CoreLocation.h>
-
-@interface DeviceInfo : NSObject
+@interface AMPDeviceInfo : NSObject
 
 -(id) init;
 @property (readonly) NSString *versionName;
