@@ -285,9 +285,9 @@ static BOOL useAdvertisingIdForDeviceId = NO;
             
             [event setValue:eventType forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
-            [event setValue:[Amplitude replaceWithEmptyJSON:eventProperties] forKey:@"custom_properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
             [event setValue:[Amplitude replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-            [event setValue:[Amplitude replaceWithEmptyJSON:_userProperties] forKey:@"global_properties"];
+            [event setValue:[Amplitude replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
             
             [Amplitude addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
             [Amplitude refreshSessionTime:timestamp];
@@ -320,16 +320,20 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [event setValue:_userId forKey:@"user_id"];
     [event setValue:_deviceId forKey:@"device_id"];
     [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
-    [event setValue:_deviceInfo.versionName forKey:@"version_name"];
-    [event setValue:_deviceInfo.buildVersionRelease forKey:@"build_version_release"];
-    [event setValue:_deviceInfo.phoneModel forKey:@"phone_model"];
-    [event setValue:_deviceInfo.phoneCarrier forKey:@"phone_carrier"];
+    [event setValue:kAMPPlatform forKey:@"platform"];
+    [event setValue:_deviceInfo.appVersion forKey:@"version_name"];
+    [event setValue:_deviceInfo.osName forKey:@"os_name"];
+    [event setValue:_deviceInfo.osVersion forKey:@"os_version"];
+    [event setValue:_deviceInfo.model forKey:@"device_model"];
+    [event setValue:_deviceInfo.manufacturer forKey:@"device_manufacturer"];
+    [event setValue:_deviceInfo.carrier forKey:@"carrier"];
     [event setValue:_deviceInfo.country forKey:@"country"];
     [event setValue:_deviceInfo.language forKey:@"language"];
-    [event setValue:@"ios" forKey:@"client"];
-    [event setValue:@"iOS" forKey:@"platform"];
-    [event setValue:@"iOS" forKey:@"os"];
-    [event setValue:kAMPVersion forKey:@"sdk"];
+    NSDictionary *library = @{
+        @"name": kAMPLibrary,
+        @"version": kAMPVersion
+    };
+    [event setValue:library forKey:@"library"];
     
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
     

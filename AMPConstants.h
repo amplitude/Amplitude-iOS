@@ -1,6 +1,8 @@
 //
 //  AMPConstants.h
 
+NSString *const kAMPLibrary = @"amplitude-ios";
+NSString *const kAMPPlatform = @"iOS";
 NSString *const kAMPVersion = @"2.2.1";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
 const int kAMPApiVersion = 2;

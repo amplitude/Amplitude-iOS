@@ -4,11 +4,12 @@
 @interface AMPDeviceInfo : NSObject
 
 -(id) init;
-@property (readonly) NSString *versionName;
-@property (readonly) NSString *buildVersionRelease;
-@property (readonly) NSString *phoneManufacturer;
-@property (readonly) NSString *phoneModel;
-@property (readonly) NSString *phoneCarrier;
+@property (readonly) NSString *appVersion;
+@property (readonly) NSString *osName;
+@property (readonly) NSString *osVersion;
+@property (readonly) NSString *manufacturer;
+@property (readonly) NSString *model;
+@property (readonly) NSString *carrier;
 @property (readonly) NSString *country;
 @property (readonly) NSString *language;
 @property (readonly) NSString *advertiserID;

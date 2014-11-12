@@ -16,10 +16,10 @@
     NSObject* networkInfo;
 }
 
-@synthesize versionName = _versionName;
-@synthesize buildVersionRelease = _buildVersionRelease;
-@synthesize phoneModel = _phoneModel;
-@synthesize phoneCarrier = _phoneCarrier;
+@synthesize appVersion = _appVersion;
+@synthesize osVersion = _osVersion;
+@synthesize model = _model;
+@synthesize carrier = _carrier;
 @synthesize country = _country;
 @synthesize language = _language;
 @synthesize advertiserID = _advertiserID;
@@ -33,33 +33,37 @@
     return self;
 }
 
--(NSString*) versionName {
-    if (!_versionName) {
-        _versionName = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"];
+-(NSString*) appVersion {
+    if (!_appVersion) {
+        _appVersion = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"];
     }
-    return _versionName;
+    return _appVersion;
 }
 
--(NSString*) buildVersionRelease {
-    if (!_buildVersionRelease) {
-        _buildVersionRelease = [[UIDevice currentDevice] systemVersion];
-    }
-    return _buildVersionRelease;
+-(NSString*) osName {
+    return @"ios";
 }
 
--(NSString*) phoneManufacturer {
+-(NSString*) osVersion {
+    if (!_osVersion) {
+        _osVersion = [[UIDevice currentDevice] systemVersion];
+    }
+    return _osVersion;
+}
+
+-(NSString*) manufacturer {
     return @"Apple";
 }
 
--(NSString*) phoneModel {
-    if (!_phoneModel) {
-        _phoneModel = [AMPDeviceInfo getPhoneModel];
+-(NSString*) model {
+    if (!_model) {
+        _model = [AMPDeviceInfo getPhoneModel];
     }
-    return _phoneModel;
+    return _model;
 }
 
--(NSString*) phoneCarrier {
-    if (!_phoneCarrier) {
+-(NSString*) carrier {
+    if (!_carrier) {
         Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
         SEL carrierName = NSSelectorFromString(@"carrierName");
@@ -72,11 +76,11 @@
             }
             NSString* (*imp2)(id, SEL) = (NSString* (*)(id, SEL))[carrier methodForSelector:carrierName];
             if (imp2) {
-                _phoneCarrier = imp2(carrier, carrierName);
+                _carrier = imp2(carrier, carrierName);
             }
         }
     }
-    return _phoneCarrier;
+    return _carrier;
 }
 
 -(NSString*) country {
