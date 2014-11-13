@@ -585,7 +585,14 @@ static BOOL useAdvertisingIdForDeviceId = NO;
     [apiProperties setValue:productIdentifier forKey:@"productId"];
     [apiProperties setValue:[NSNumber numberWithInteger:quantity] forKey:@"quantity"];
     [apiProperties setValue:price forKey:@"price"];
-    [apiProperties setValue:[receipt base64Encoding] forKey:@"receipt"];
+    if ([receipt respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
+        [apiProperties setValue:[receipt base64EncodedStringWithOptions:0] forKey:@"receipt"];
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+        [apiProperties setValue:[receipt base64Encoding] forKey:@"receipt"];
+#pragma clang diagnostic pop
+    }
     [Amplitude logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
 }
 
