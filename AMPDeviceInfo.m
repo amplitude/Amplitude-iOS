@@ -33,9 +33,21 @@
     return self;
 }
 
+- (void) dealloc {
+    SAFE_ARC_RELEASE(_appVersion);
+    SAFE_ARC_RELEASE(_osVersion);
+    SAFE_ARC_RELEASE(_model);
+    SAFE_ARC_RELEASE(_carrier);
+    SAFE_ARC_RELEASE(_country);
+    SAFE_ARC_RELEASE(_language);
+    SAFE_ARC_RELEASE(_advertiserID);
+    SAFE_ARC_RELEASE(_vendorID);
+    SAFE_ARC_SUPER_DEALLOC();
+}
+
 -(NSString*) appVersion {
     if (!_appVersion) {
-        _appVersion = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"];
+        _appVersion = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
     }
     return _appVersion;
 }
@@ -46,7 +58,7 @@
 
 -(NSString*) osVersion {
     if (!_osVersion) {
-        _osVersion = [[UIDevice currentDevice] systemVersion];
+        _osVersion = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
     }
     return _osVersion;
 }
@@ -57,7 +69,7 @@
 
 -(NSString*) model {
     if (!_model) {
-        _model = [AMPDeviceInfo getPhoneModel];
+        _model = SAFE_ARC_RETAIN([AMPDeviceInfo getPhoneModel]);
     }
     return _model;
 }
@@ -76,7 +88,7 @@
             }
             NSString* (*imp2)(id, SEL) = (NSString* (*)(id, SEL))[carrier methodForSelector:carrierName];
             if (imp2) {
-                _carrier = imp2(carrier, carrierName);
+                _carrier = SAFE_ARC_RETAIN(imp2(carrier, carrierName));
             }
         }
     }
@@ -85,17 +97,17 @@
 
 -(NSString*) country {
     if (!_country) {
-        _country = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:
+        _country = SAFE_ARC_RETAIN([[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:
             NSLocaleCountryCode value:
-            [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]];
+            [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]]);
     }
     return _country;
 }
 
 -(NSString*) language {
     if (!_language) {
-        _language = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:
-            NSLocaleLanguageCode value:[[NSLocale preferredLanguages] objectAtIndex:0]];
+        _language = SAFE_ARC_RETAIN([[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:
+            NSLocaleLanguageCode value:[[NSLocale preferredLanguages] objectAtIndex:0]]);
     }
     return _language;
 }
@@ -106,7 +118,7 @@
             NSString *advertiserId = [AMPDeviceInfo getAdvertiserID:5];
             if (advertiserId != nil &&
                 ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-                _advertiserID = advertiserId;
+                _advertiserID = SAFE_ARC_RETAIN(advertiserId);
             }
         }
     }
@@ -119,7 +131,7 @@
             NSString *identifierForVendor = [AMPDeviceInfo getVendorID:5];
             if (identifierForVendor != nil &&
                 ![identifierForVendor isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-                _vendorID = identifierForVendor;
+                _vendorID = SAFE_ARC_RETAIN(identifierForVendor);
             }
         }
     }
@@ -206,6 +218,10 @@
     if ([platform isEqualToString:@"iPhone4,1"])    return @"iPhone 4S";
     if ([platform isEqualToString:@"iPhone5,1"])    return @"iPhone 5";
     if ([platform isEqualToString:@"iPhone5,2"])    return @"iPhone 5";
+    if ([platform isEqualToString:@"iPhone6,1"])    return @"iPhone 5s";
+    if ([platform isEqualToString:@"iPhone6,2"])    return @"iPhone 5s";
+    if ([platform isEqualToString:@"iPhone7,1"])    return @"iPhone 6 Plus";
+    if ([platform isEqualToString:@"iPhone7,2"])    return @"iPhone 6";
     if ([platform isEqualToString:@"iPod1,1"])      return @"iPod Touch 1G";
     if ([platform isEqualToString:@"iPod2,1"])      return @"iPod Touch 2G";
     if ([platform isEqualToString:@"iPod3,1"])      return @"iPod Touch 3G";
@@ -219,12 +235,23 @@
     if ([platform isEqualToString:@"iPad2,5"])      return @"iPad Mini";
     if ([platform isEqualToString:@"iPad2,6"])      return @"iPad Mini";
     if ([platform isEqualToString:@"iPad2,7"])      return @"iPad Mini";
+    if ([platform isEqualToString:@"iPad4,4"])      return @"iPad Mini 2";
+    if ([platform isEqualToString:@"iPad4,5"])      return @"iPad Mini 2";
+    if ([platform isEqualToString:@"iPad4,6"])      return @"iPad Mini 2";
+    if ([platform isEqualToString:@"iPad4,7"])      return @"iPad Mini 3";
+    if ([platform isEqualToString:@"iPad4,8"])      return @"iPad Mini 3";
+    if ([platform isEqualToString:@"iPad4,9"])      return @"iPad Mini 3";
     if ([platform isEqualToString:@"iPad3,1"])      return @"iPad 3";
     if ([platform isEqualToString:@"iPad3,2"])      return @"iPad 3";
     if ([platform isEqualToString:@"iPad3,3"])      return @"iPad 3";
     if ([platform isEqualToString:@"iPad3,4"])      return @"iPad 4";
     if ([platform isEqualToString:@"iPad3,5"])      return @"iPad 4";
     if ([platform isEqualToString:@"iPad3,6"])      return @"iPad 4";
+    if ([platform isEqualToString:@"iPad4,1"])      return @"iPad Air";
+    if ([platform isEqualToString:@"iPad4,2"])      return @"iPad Air";
+    if ([platform isEqualToString:@"iPad4,3"])      return @"iPad Air";
+    if ([platform isEqualToString:@"iPad5,3"])      return @"iPad Air 2";
+    if ([platform isEqualToString:@"iPad5,4"])      return @"iPad Air 2";
     if ([platform isEqualToString:@"i386"])         return @"Simulator";
     if ([platform isEqualToString:@"x86_64"])       return @"Simulator";
     return platform;
