@@ -832,7 +832,7 @@ static BOOL useAdvertisingIdForDeviceId = NO;
 
 + (NSString*)_getDeviceId
 {
-    NSString *deviceId;
+    NSString *deviceId = nil;
     if (useAdvertisingIdForDeviceId) {
         deviceId = _deviceInfo.advertiserID;
     }
