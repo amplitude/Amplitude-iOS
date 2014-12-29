@@ -29,6 +29,7 @@
 
 @interface Amplitude ()
 @property NSOperationQueue *backgroundQueue;
+@property BOOL initialized;
 @end
 
 @implementation Amplitude
@@ -42,6 +43,7 @@ long long _sessionId = -1;
 BOOL sessionStarted = NO;
 BOOL updateScheduled = NO;
 BOOL updatingCurrently = NO;
+BOOL _initialized = NO;
 
 BOOL locationListeningEnabled = YES;
 BOOL useAdvertisingIdForDeviceId = NO;
@@ -198,7 +200,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
             
             [_backgroundQueue setSuspended:NO];
         }];
-        
+
         // CLLocationManager must be created on the main thread
         dispatch_async(dispatch_get_main_queue(), ^{
             Class CLLocationManager = NSClassFromString(@"CLLocationManager");
@@ -207,6 +209,16 @@ AMPLocationManagerDelegate *locationManagerDelegate;
             SEL setDelegate = NSSelectorFromString(@"setDelegate:");
             [locationManager performSelector:setDelegate withObject:locationManagerDelegate];
         });
+
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        [center addObserver:self
+                   selector:@selector(enterForeground)
+                       name:UIApplicationWillEnterForegroundNotification
+                     object:nil];
+        [center addObserver:self
+                   selector:@selector(enterBackground)
+                       name:UIApplicationDidEnterBackgroundNotification
+                     object:nil];
     }
     return self;
 };
@@ -251,7 +263,6 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     _apiKey = apiKey;
     
     [_backgroundQueue addOperationWithBlock:^{
-
         @synchronized (eventsData) {
             if (userId != nil) {
                 [self setUserId:userId];
@@ -259,22 +270,13 @@ AMPLocationManagerDelegate *locationManagerDelegate;
                 _userId = SAFE_ARC_RETAIN([eventsData objectForKey:@"user_id"]);
             }
         }
-        
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        
-        [center addObserver:self
-                   selector:@selector(enterForeground)
-                       name:UIApplicationWillEnterForegroundNotification
-                     object:nil];
-        
-        [center addObserver:self
-                   selector:@selector(enterBackground)
-                       name:UIApplicationDidEnterBackgroundNotification
-                     object:nil];
-        
     }];
-    
-    [self enterForeground];
+
+    if (!_initialized) {
+        _initialized = YES;
+
+        [self enterForeground];
+    }
 }
 
 - (void)logEvent:(NSString*) eventType

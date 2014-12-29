@@ -19,6 +19,7 @@
 @interface Amplitude (Test)
 
 @property NSOperationQueue *backgroundQueue;
+@property BOOL initialized;
 
 - (void)flushQueue;
 
@@ -27,6 +28,7 @@
 @implementation Amplitude (Test)
 
 @dynamic backgroundQueue;
+@dynamic initialized;
 
 - (void)flushQueue {
     [[self backgroundQueue] waitUntilAllOperationsAreFinished];
@@ -76,7 +78,7 @@ id partialMock;
 
 - (void)testDeviceIdSet {
     [amplitude initializeApiKey:apiKey];
-    [[amplitude backgroundQueue] waitUntilAllOperationsAreFinished];
+    [amplitude flushQueue];
     XCTAssertNotNil([amplitude deviceId]);
     XCTAssertEqual([amplitude deviceId].length, 36);
     XCTAssertEqualObjects([amplitude deviceId], [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
@@ -84,13 +86,17 @@ id partialMock;
 
 - (void)testUserIdNotSet {
     [amplitude initializeApiKey:apiKey];
-    [amplitude.backgroundQueue waitUntilAllOperationsAreFinished];
+    [amplitude flushQueue];
     XCTAssertNil([amplitude userId]);
 }
 - (void)testUserIdSet {
     [amplitude initializeApiKey:apiKey userId:userId];
-    [amplitude.backgroundQueue waitUntilAllOperationsAreFinished];
+    [amplitude flushQueue];
     XCTAssertEqualObjects([amplitude userId], userId);
+}
+- (void)testInitializedSet {
+    [amplitude initializeApiKey:apiKey];
+    XCTAssert([amplitude initialized]);
 }
 
 @end
