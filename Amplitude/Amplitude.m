@@ -279,6 +279,8 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     }
 }
 
+#pragma mark - logEvent
+
 - (void)logEvent:(NSString*) eventType
 {
     if (![self isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
@@ -406,6 +408,42 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         }
     }
 }
+
+#pragma mark - logRevenue
+
+// amount is a double in units of dollars
+// ex. $3.99 would be passed as [NSNumber numberWithDouble:3.99]
+- (void)logRevenue:(NSNumber*) amount
+{
+    [self logRevenue:nil quantity:1 price:amount];
+}
+
+
+- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price
+{
+    [self logRevenue:productIdentifier quantity:quantity price:price receipt:nil];
+}
+
+
+- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
+        return;
+    }
+    if (![self isArgument:price validType:[NSNumber class] methodName:@"logRevenue:"]) {
+        return;
+    }
+    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:@"revenue_amount" forKey:@"special"];
+    [apiProperties setValue:productIdentifier forKey:@"productId"];
+    [apiProperties setValue:[NSNumber numberWithInteger:quantity] forKey:@"quantity"];
+    [apiProperties setValue:price forKey:@"price"];
+    [apiProperties setValue:[receipt base64Encoding] forKey:@"receipt"];
+    [self logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
+}
+
+#pragma mark - Upload events
 
 - (void)uploadEventsWithDelay:(int) delay
 {
@@ -580,64 +618,6 @@ AMPLocationManagerDelegate *locationManagerDelegate;
      }];
 }
 
-// amount is a double in units of dollars
-// ex. $3.99 would be passed as [NSNumber numberWithDouble:3.99]
-- (void)logRevenue:(NSNumber*) amount
-{
-    [self logRevenue:nil quantity:1 price:amount];
-}
-
-
-- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price
-{
-    [self logRevenue:productIdentifier quantity:quantity price:price receipt:nil];
-}
-
-
-- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt
-{
-    if (_apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
-        return;
-    }
-    if (![self isArgument:price validType:[NSNumber class] methodName:@"logRevenue:"]) {
-        return;
-    }
-    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:@"revenue_amount" forKey:@"special"];
-    [apiProperties setValue:productIdentifier forKey:@"productId"];
-    [apiProperties setValue:[NSNumber numberWithInteger:quantity] forKey:@"quantity"];
-    [apiProperties setValue:price forKey:@"price"];
-    [apiProperties setValue:[receipt base64Encoding] forKey:@"receipt"];
-    [self logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
-}
-
-
-
-- (NSString*)urlEncodeString:(NSString*) string
-{
-    NSString *newString;
-#if __has_feature(objc_arc)
-    newString = (__bridge_transfer NSString*)
-    CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                            (__bridge CFStringRef)string,
-                                            NULL,
-                                            CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                            CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-#else
-    newString = NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                          (CFStringRef)string,
-                                                                          NULL,
-                                                                          CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                                                          CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
-    SAFE_ARC_AUTORELEASE(newString);
-#endif
-    if (newString) {
-        return newString;
-    }
-    return @"";
-}
-
 #pragma mark - application lifecycle methods
 
 - (void)enterForeground
@@ -672,6 +652,8 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         [self uploadEventsWithLimit:0];
     }];
 }
+
+#pragma mark - Sessions
 
 - (void)startSession
 {
@@ -919,6 +901,30 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         [ret appendFormat:@"%02x",result[i]];
     }
     return ret;
+}
+
+- (NSString*)urlEncodeString:(NSString*) string
+{
+    NSString *newString;
+#if __has_feature(objc_arc)
+    newString = (__bridge_transfer NSString*)
+    CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                            (__bridge CFStringRef)string,
+                                            NULL,
+                                            CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
+                                            CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
+#else
+    newString = NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                                                          (CFStringRef)string,
+                                                                          NULL,
+                                                                          CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
+                                                                          CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
+    SAFE_ARC_AUTORELEASE(newString);
+#endif
+    if (newString) {
+        return newString;
+    }
+    return @"";
 }
 
 - (void)printEventsCount
