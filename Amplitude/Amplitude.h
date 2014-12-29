@@ -35,6 +35,46 @@
  */
 @interface Amplitude : NSObject
 
+#pragma mark - Properties
+@property (readonly) NSString *apiKey;
+@property (readonly) NSString *userId;
+@property (readonly) NSString *deviceId;
+
+
+#pragma mark - Methods
+
+- (void)initializeApiKey:(NSString*) apiKey;
+
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
+
+- (void)logEvent:(NSString*) eventType;
+
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
+
+- (void)logRevenue:(NSNumber*) amount;
+
+- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price;
+
+- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt;
+
+- (void)uploadEvents;
+
+- (void)setUserProperties:(NSDictionary*) userProperties;
+
+- (void)setUserId:(NSString*) userId;
+
+- (void)enableLocationListening;
+
+- (void)disableLocationListening;
+
+- (void)useAdvertisingIdForDeviceId;
+
+- (void)printEventsCount;
+
+- (NSString*)getDeviceId;
+
+
+#pragma mark - Static methods (old API)
 // Step 1: Initialization
 // ----------------------
 
