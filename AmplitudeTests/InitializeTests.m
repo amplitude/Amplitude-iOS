@@ -1,6 +1,6 @@
 //
-//  AmplitudeTests.m
-//  AmplitudeTests
+//  InitializeTests.m
+//  InitializeTests
 //
 //  Created by Curtis on 9/24/14.
 //  Copyright (c) 2014 Amplitude. All rights reserved.

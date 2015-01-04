@@ -1,6 +1,6 @@
 //
-//  AmplitudeTests.m
-//  AmplitudeTests
+//  AMPLocationManagerDelegateTests.m
+//  AMPLocationManagerDelegateTests
 //
 //  Created by Curtis on 1/3/2015.
 //  Copyright (c) 2015 Amplitude. All rights reserved.
