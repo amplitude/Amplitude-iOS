@@ -136,6 +136,11 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     return [[Amplitude instance] getDeviceId];
 }
 
++ (void)updateLocation
+{
+    [[Amplitude instance] updateLocation];
+}
+
 
 #pragma mark - Main class methods
 - (id)init
