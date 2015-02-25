@@ -19,19 +19,26 @@
 @interface Amplitude (Test)
 
 @property NSOperationQueue *backgroundQueue;
+@property NSMutableDictionary *eventsData;
 @property BOOL initialized;
 
 - (void)flushQueue;
+- (NSDictionary *)getLastEvent;
 
 @end
 
 @implementation Amplitude (Test)
 
 @dynamic backgroundQueue;
+@dynamic eventsData;
 @dynamic initialized;
 
 - (void)flushQueue {
     [[self backgroundQueue] waitUntilAllOperationsAreFinished];
+}
+
+- (NSDictionary *)getLastEvent {
+    return [[self eventsData][@"events"] lastObject];
 }
 
 @end
