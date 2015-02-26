@@ -742,7 +742,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
 
 - (void)setUserProperties:(NSDictionary*) userProperties
 {
-    [self setUserProperties:userProperties replace:YES];
+    [self setUserProperties:userProperties replace:NO];
 }
 
 - (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
