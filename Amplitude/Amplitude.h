@@ -61,6 +61,8 @@
 
 - (void)setUserProperties:(NSDictionary*) userProperties;
 
+- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace;
+
 - (void)setUserId:(NSString*) userId;
 
 - (void)enableLocationListening;

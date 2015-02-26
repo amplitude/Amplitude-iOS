@@ -742,11 +742,27 @@ AMPLocationManagerDelegate *locationManagerDelegate;
 
 - (void)setUserProperties:(NSDictionary*) userProperties
 {
+    [self setUserProperties:userProperties replace:YES];
+}
+
+- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
+{
     if (![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"]) {
         return;
     }
+
     (void) SAFE_ARC_RETAIN(userProperties);
-    SAFE_ARC_RELEASE(_userProperties);
+
+    // Merge the given properties into the existing set if not asked to replace.
+    if (!replace && _userProperties) {
+        NSMutableDictionary *mergedProperties = [_userProperties mutableCopy];
+        [mergedProperties addEntriesFromDictionary:userProperties];
+
+        (void) SAFE_ARC_AUTORELEASE(userProperties);
+        userProperties = mergedProperties;
+    }
+
+    (void) SAFE_ARC_AUTORELEASE(_userProperties);
     _userProperties = userProperties;
 }
 
