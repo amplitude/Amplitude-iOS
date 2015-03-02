@@ -17,7 +17,11 @@
 
 - (void)locationManager:(CLLocationManager*) manager didChangeAuthorizationStatus:(CLAuthorizationStatus) status
 {
+#ifdef __IPHONE_8_0
+    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+#else
     if (status == kCLAuthorizationStatusAuthorized) {
+#endif
         SEL updateLocation = NSSelectorFromString(@"updateLocation");
         [Amplitude performSelector:updateLocation];
     }
