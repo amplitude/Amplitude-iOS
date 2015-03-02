@@ -117,8 +117,8 @@ id partialMock;
          @"name": @"John"
     };
 
-    [amplitude setUserProperties:@{@"property": @"true"}];
-    [amplitude setUserProperties:properties];
+    [amplitude setUserProperties:@{@"property": @"true"} replace:YES];
+    [amplitude setUserProperties:properties replace:YES];
 
     [amplitude logEvent:@"Test Event"];
     [amplitude flushQueue];
@@ -136,7 +136,7 @@ id partialMock;
          @"name": @"John"
     } mutableCopy];
 
-    [amplitude setUserProperties:properties replace:NO];
+    [amplitude setUserProperties:properties];
 
     [amplitude logEvent:@"Test Event"];
     [amplitude flushQueue];
