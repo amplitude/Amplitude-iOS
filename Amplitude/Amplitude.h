@@ -43,6 +43,8 @@
 
 #pragma mark - Methods
 
++ (Amplitude *)instance;
+
 - (void)initializeApiKey:(NSString*) apiKey;
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;

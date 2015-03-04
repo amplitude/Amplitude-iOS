@@ -67,7 +67,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 #pragma mark - Static methods
 
-+ (id)instance {
++ (Amplitude *)instance {
     static Amplitude *_instance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -502,6 +502,12 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     [_backgroundQueue addOperationWithBlock:^{
         
         @synchronized (_eventsData) {
+            // Don't communicate with the server if the user has opted out.
+            if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
+                updatingCurrently = NO;
+                return;
+            }
+
             NSMutableArray *events = [_eventsData objectForKey:@"events"];
             long long numEvents = limit ? fminl([events count], limit) : [events count];
             if (numEvents == 0) {
