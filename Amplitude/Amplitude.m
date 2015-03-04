@@ -228,7 +228,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         [center addObserver:self
                    selector:@selector(enterForeground)
-                       name:UIApplicationWillEnterForegroundNotification
+                       name:UIApplicationDidBecomeActiveNotification
                      object:nil];
         [center addObserver:self
                    selector:@selector(enterBackground)
@@ -288,11 +288,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         }
     }];
 
-    if (!_initialized) {
-        _initialized = YES;
-
-        [self enterForeground];
-    }
+    _initialized = YES;
 }
 
 #pragma mark - logEvent
