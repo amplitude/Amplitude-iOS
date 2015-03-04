@@ -64,6 +64,18 @@ NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
 [Amplitude setUserProperties:userProperties];
 ```
 
+# Allowing Users to Opt Out
+
+To stop all event and session logging for a user, call setOptOut:
+
+``` objective-c
+[Amplitude setOptOut:YES];
+```
+
+Logging can be restarted by calling setOptOut again with enabled set to NO.
+No events will be logged during any period opt out is enabled, even after opt
+out is disabled.
+
 # Tracking Revenue #
 
 To track revenue from a user, call

@@ -312,6 +312,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent:");
         return;
     }
+
     if (timestamp == nil) {
         timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     }
@@ -321,6 +322,12 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
         
         @synchronized (_eventsData) {
+            // Respect the opt-out setting by not sending or storing any events.
+            if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
+                NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
+                return;
+            }
+
             // Increment propertyList max_id and save immediately
             NSNumber *propertyListMaxId = [NSNumber numberWithLongLong:[[propertyList objectForKey:@"max_id"] longLongValue] + 1];
             [propertyList setObject: propertyListMaxId forKey:@"max_id"];
@@ -778,6 +785,16 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         _userId = userId;
         @synchronized (_eventsData) {
             [_eventsData setObject:_userId forKey:@"user_id"];
+            [self saveEventsData];
+        }
+    }];
+}
+
+- (void)setOptOut:(BOOL)enabled
+{
+    [_backgroundQueue addOperationWithBlock:^{
+        @synchronized (_eventsData) {
+            [_eventsData setObject:[NSNumber numberWithBool:enabled] forKey:@"opt_out"];
             [self saveEventsData];
         }
     }];

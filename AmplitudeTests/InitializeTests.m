@@ -108,6 +108,22 @@ id partialMock;
     XCTAssert([amplitude initialized]);
 }
 
+- (void)testOptOut {
+    [amplitude initializeApiKey:apiKey];
+
+    [amplitude setOptOut:YES];
+    [amplitude logEvent:@"Opted Out"];
+    [amplitude flushQueue];
+
+    XCTAssert(![[amplitude getLastEvent][@"event_type"] isEqualToString:@"Opted Out"]);
+
+    [amplitude setOptOut:NO];
+    [amplitude logEvent:@"Opted In"];
+    [amplitude flushQueue];
+
+    XCTAssert([[amplitude getLastEvent][@"event_type"] isEqualToString:@"Opted In"]);
+}
+
 - (void)testUserPropertiesSet {
     [amplitude initializeApiKey:apiKey];
 

@@ -65,6 +65,8 @@
 
 - (void)setUserId:(NSString*) userId;
 
+- (void)setOptOut:(BOOL)enabled;
+
 - (void)enableLocationListening;
 
 - (void)disableLocationListening;
