@@ -43,6 +43,8 @@
 
 #pragma mark - Methods
 
++ (Amplitude *)instance;
+
 - (void)initializeApiKey:(NSString*) apiKey;
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
@@ -64,6 +66,8 @@
 - (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace;
 
 - (void)setUserId:(NSString*) userId;
+
+- (void)setOptOut:(BOOL)enabled;
 
 - (void)enableLocationListening;
 

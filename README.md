@@ -64,6 +64,27 @@ NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
 [Amplitude setUserProperties:userProperties];
 ```
 
+To replace any existing user properties with a new set:
+
+``` objective-c
+NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
+[userProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+[[Amplitude instance] setUserProperties:userProperties replace:YES];
+```
+
+
+# Allowing Users to Opt Out
+
+To stop all event and session logging for a user, call setOptOut:
+
+``` objective-c
+[[Amplitude instance] setOptOut:YES];
+```
+
+Logging can be restarted by calling setOptOut again with enabled set to NO.
+No events will be logged during any period opt out is enabled, even after opt
+out is disabled.
+
 # Tracking Revenue #
 
 To track revenue from a user, call
