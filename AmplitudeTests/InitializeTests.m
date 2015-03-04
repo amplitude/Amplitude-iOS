@@ -19,19 +19,26 @@
 @interface Amplitude (Test)
 
 @property NSOperationQueue *backgroundQueue;
+@property NSMutableDictionary *eventsData;
 @property BOOL initialized;
 
 - (void)flushQueue;
+- (NSDictionary *)getLastEvent;
 
 @end
 
 @implementation Amplitude (Test)
 
 @dynamic backgroundQueue;
+@dynamic eventsData;
 @dynamic initialized;
 
 - (void)flushQueue {
     [[self backgroundQueue] waitUntilAllOperationsAreFinished];
+}
+
+- (NSDictionary *)getLastEvent {
+    return [[self eventsData][@"events"] lastObject];
 }
 
 @end
@@ -89,14 +96,63 @@ id partialMock;
     [amplitude flushQueue];
     XCTAssertNil([amplitude userId]);
 }
+
 - (void)testUserIdSet {
     [amplitude initializeApiKey:apiKey userId:userId];
     [amplitude flushQueue];
     XCTAssertEqualObjects([amplitude userId], userId);
 }
+
 - (void)testInitializedSet {
     [amplitude initializeApiKey:apiKey];
     XCTAssert([amplitude initialized]);
+}
+
+- (void)testUserPropertiesSet {
+    [amplitude initializeApiKey:apiKey];
+
+    NSDictionary *properties = @{
+         @"shoeSize": @10,
+         @"hatSize":  @5.125,
+         @"name": @"John"
+    };
+
+    [amplitude setUserProperties:@{@"property": @"true"} replace:YES];
+    [amplitude setUserProperties:properties replace:YES];
+
+    [amplitude logEvent:@"Test Event"];
+    [amplitude flushQueue];
+
+    NSDictionary *event = [amplitude getLastEvent];
+    XCTAssert([event[@"user_properties"] isEqualToDictionary:properties]);
+}
+
+- (void)testUserPropertiesMerge {
+    [amplitude initializeApiKey:apiKey];
+
+    NSMutableDictionary *properties = [@{
+         @"shoeSize": @10,
+         @"hatSize":  @5.125,
+         @"name": @"John"
+    } mutableCopy];
+
+    [amplitude setUserProperties:properties];
+
+    [amplitude logEvent:@"Test Event"];
+    [amplitude flushQueue];
+
+    NSDictionary *event = [amplitude getLastEvent];
+    XCTAssert([event[@"user_properties"] isEqualToDictionary:properties]);
+
+    NSDictionary *extraProperties = @{@"mergedProperty": @"merged"};
+    [amplitude setUserProperties:extraProperties replace:NO];
+
+    [amplitude logEvent:@"Test Event"];
+    [amplitude flushQueue];
+
+    event = [amplitude getLastEvent];
+    [properties addEntriesFromDictionary:extraProperties];
+    XCTAssert([event[@"user_properties"] isEqualToDictionary:properties]);
 }
 
 @end
