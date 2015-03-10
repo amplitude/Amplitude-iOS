@@ -152,6 +152,8 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         [_backgroundQueue setMaxConcurrentOperationCount:1];
         // Ensure initialize finishes running asynchronously before other calls are run
         [_backgroundQueue setSuspended:YES];
+        // Name the queue so runOnBackgroundQueue can tell which queue an operation is running
+        _backgroundQueue.name = @"BACKGROUND";
         
         [initializerQueue addOperationWithBlock:^{
             
@@ -268,7 +270,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
     
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
             if (userId != nil) {
                 [self setUserId:userId];
@@ -279,6 +281,22 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     }];
 
     _initialized = YES;
+}
+
+/**
+ * Run a block in the background. If already in the background, run immediately.
+ */
+- (BOOL)runOnBackgroundQueue:(void (^)(void))block
+{
+    if ([[NSOperationQueue currentQueue].name isEqualToString:@"BACKGROUND"]) {
+        NSLog(@"Already running in the background.");
+        block();
+        return NO;
+    }
+    else {
+        [_backgroundQueue addOperationWithBlock:block];
+        return YES;
+    }
 }
 
 #pragma mark - logEvent
@@ -313,7 +331,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     }
     
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
         
@@ -480,7 +498,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
 {
     updateScheduled = NO;
     
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         [self uploadEvents];
     }];
 }
@@ -504,7 +522,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         updatingCurrently = YES;
     }
     
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         
         @synchronized (_eventsData) {
             // Don't communicate with the server if the user has opted out.
@@ -654,7 +672,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         [[UIApplication sharedApplication] endBackgroundTask:uploadTaskID];
         uploadTaskID = UIBackgroundTaskInvalid;
     }
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         [self uploadEvents];
     }];
 }
@@ -673,7 +691,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     }];
     
     [self endSession];
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         [self saveEventsData];
         [self uploadEventsWithLimit:0];
     }];
@@ -692,37 +710,33 @@ AMPLocationManagerDelegate *locationManagerDelegate;
                                                    object:self];
     }];
     
-    [_backgroundQueue addOperationWithBlock:^{
-        
+    [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
-            
             // Session has not been started yet, check overlap with previous session
             NSNumber *previousSessionTime = [_eventsData objectForKey:@"previous_session_time"];
             long long timeDelta = [now longLongValue] - [previousSessionTime longLongValue];
             
-            if (!sessionStarted || _sessionId < 0) {
-                if (timeDelta < kAMPMinTimeBetweenSessionsMillis) {
-                    _sessionId = [[_eventsData objectForKey:@"previous_session_id"] longLongValue];
-                } else {
-                    _sessionId = [now longLongValue];
-                    [_eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
-                }
-            } else {
-                if (timeDelta > kAMPSessionTimeoutMillis) {
-                    // Session has expired
-                    _sessionId = [now longLongValue];
-                    [_eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
-                }
-                // else _sessionId = previous session id
-            }
-        }
-        
-        sessionStarted = YES;
-    }];
+            BOOL sessionExists = sessionStarted && _sessionId >= 0;
+            BOOL sessionExpired = timeDelta > kAMPSessionTimeoutMillis;
 
-    NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:@"session_start" forKey:@"special"];
-    [self logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties withTimestamp:now];
+            if (!sessionExists && timeDelta < kAMPMinTimeBetweenSessionsMillis) {
+                // The previous session happened recently enough to be considered the same session. Use it.
+                _sessionId = [[_eventsData objectForKey:@"previous_session_id"] longLongValue];
+            } else if (!sessionExists || sessionExpired) {
+                // Session has expired or doesn't exist.
+                _sessionId = [now longLongValue];
+                [_eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
+            }
+            // else _sessionId = previous session id
+
+            if (!sessionStarted) {
+                NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
+                [apiProperties setValue:@"session_start" forKey:@"special"];
+                [self logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties withTimestamp:now];
+            }
+            sessionStarted = YES;
+        }
+    }];
 }
 
 - (void)endSession
@@ -731,8 +745,10 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     [apiProperties setValue:@"session_end" forKey:@"special"];
     [self logEvent:@"session_end" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
     
-    [_backgroundQueue addOperationWithBlock:^{
-        sessionStarted = NO;
+    [self runOnBackgroundQueue:^{
+        @synchronized (_eventsData) {
+            sessionStarted = NO;
+        }
     }];
     
     [mainQueue addOperationWithBlock:^{
@@ -749,7 +765,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
 
 - (void)turnOffSessionLaterExecute
 {
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         if (!sessionStarted) {
             _sessionId = -1;
         }
@@ -790,7 +806,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
         return;
     }
     
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         (void) SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
@@ -803,7 +819,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
 
 - (void)setOptOut:(BOOL)enabled
 {
-    [_backgroundQueue addOperationWithBlock:^{
+    [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
             [_eventsData setObject:[NSNumber numberWithBool:enabled] forKey:@"opt_out"];
             [self saveEventsData];
