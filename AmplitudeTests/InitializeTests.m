@@ -19,6 +19,7 @@
 
 - (void)flushQueue;
 - (NSDictionary *)getLastEvent;
+- (NSDictionary *)getEvent:(NSInteger) fromEnd;
 
 @end
 
@@ -32,8 +33,17 @@
     [[self backgroundQueue] waitUntilAllOperationsAreFinished];
 }
 
+- (NSDictionary *)getEvent:(NSInteger) fromEnd {
+    NSArray *events = [self eventsData][@"events"];
+    return [events objectAtIndex:[events count] - fromEnd - 1];
+}
+
 - (NSDictionary *)getLastEvent {
     return [[self eventsData][@"events"] lastObject];
+}
+
+- (NSUInteger)queuedEventCount {
+    return [[self eventsData][@"events"] count];
 }
 
 @end
@@ -104,6 +114,50 @@ NSString *const userId = @"userId";
 - (void)testInitializedSet {
     [amplitude initializeApiKey:apiKey];
     XCTAssert([amplitude initialized]);
+}
+
+/**
+ * Any number of session start calls should only generate exactly one logged event.
+ */
+- (void)testStartSession {
+    [amplitude initializeApiKey:apiKey];
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+
+    [amplitude flushQueue];
+    XCTAssertEqual([amplitude queuedEventCount], 1);
+    XCTAssert([[amplitude getLastEvent][@"event_type"] isEqualToString:@"session_start"]);
+}
+
+- (void)testSessionEnd {
+    [amplitude initializeApiKey:apiKey];
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil userInfo:nil];
+
+    [amplitude flushQueue];
+    XCTAssertEqual([amplitude queuedEventCount], 1);
+    XCTAssert([[amplitude getEvent:0][@"event_type"] isEqualToString:@"session_end"]);
+}
+
+/**
+ * Ending a session should case another start session event to be logged.
+ */
+- (void)testSessionRestart {
+    [amplitude initializeApiKey:apiKey];
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+    [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil userInfo:nil];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+
+    [amplitude flushQueue];
+    XCTAssertEqual([amplitude queuedEventCount], 3);
+    XCTAssert([[amplitude getEvent:0][@"event_type"] isEqualToString:@"session_start"]);
+    XCTAssert([[amplitude getEvent:1][@"event_type"] isEqualToString:@"session_end"]);
+    XCTAssert([[amplitude getEvent:2][@"event_type"] isEqualToString:@"session_start"]);
 }
 
 - (void)testOptOut {
