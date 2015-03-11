@@ -58,6 +58,50 @@
     XCTAssert([self.amplitude initialized]);
 }
 
+/**
+ * Any number of session start calls should only generate exactly one logged event.
+ */
+- (void)testStartSession {
+    [self.amplitude initializeApiKey:apiKey];
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude queuedEventCount], 1);
+    XCTAssert([[self.amplitude getLastEvent][@"event_type"] isEqualToString:@"session_start"]);
+}
+
+- (void)testSessionEnd {
+    [self.amplitude initializeApiKey:apiKey];
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil userInfo:nil];
+
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude queuedEventCount], 1);
+    XCTAssert([[self.amplitude getEvent:0][@"event_type"] isEqualToString:@"session_end"]);
+}
+
+/**
+ * Ending a session should case another start session event to be logged.
+ */
+- (void)testSessionRestart {
+    [self.amplitude initializeApiKey:apiKey];
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+    [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil userInfo:nil];
+    [center postNotificationName:UIApplicationDidBecomeActiveNotification object:nil userInfo:nil];
+
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude queuedEventCount], 3);
+    XCTAssert([[self.amplitude getEvent:0][@"event_type"] isEqualToString:@"session_start"]);
+    XCTAssert([[self.amplitude getEvent:1][@"event_type"] isEqualToString:@"session_end"]);
+    XCTAssert([[self.amplitude getEvent:2][@"event_type"] isEqualToString:@"session_start"]);
+}
+
 - (void)testOptOut {
     [self.amplitude initializeApiKey:apiKey];
 
