@@ -267,6 +267,15 @@
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
 {
+    UIApplicationState state = [UIApplication sharedApplication].applicationState;
+    [self initializeApiKey:apiKey userId:userId startSession:(state != UIApplicationStateBackground)];
+}
+
+/**
+ * Initialize Amplitude with a given apiKey and userId. Optionally, start a session at the same time.
+ */
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession
+{
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
@@ -297,6 +306,10 @@
             }
         }
     }];
+
+    if (startSession) {
+        [self enterForeground];
+    }
 
     _initialized = YES;
 }
@@ -727,7 +740,7 @@
                                                  selector:@selector(turnOffSessionLaterExecute)
                                                    object:self];
     }];
-    
+
     [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
             // Check overlap with previous session
@@ -774,8 +787,15 @@
     }];
 }
 
+/**
+ * Update the session timer if there's a running session.
+ */
 - (void)refreshSessionTime:(NSNumber*) timestamp
 {
+    if (_sessionId < 0) {
+        return;
+    }
+
     @synchronized (_eventsData) {
         [_eventsData setValue:timestamp forKey:@"previous_session_time"];
     }
