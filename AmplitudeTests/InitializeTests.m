@@ -121,22 +121,4 @@
     XCTAssert([event[@"user_properties"] isEqualToDictionary:properties]);
 }
 
-- (void)testSSLPinning {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
-
-    [self.amplitude initializeApiKey:@"cd6312957e01361e6c876290f26d9104"];
-    [self.amplitude logEvent:@"Test SSL Pinning"];
-    [self.amplitude flushUploads:^() {
-        NSDictionary *event = [self.amplitude getLastEvent];
-        XCTAssertNil(event);
-        [expectation fulfill];
-    }];
-
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-        if (error) {
-            XCTFail(@"Expectation Failed with error: %@", error);
-        }
-    }];
-}
-
 @end

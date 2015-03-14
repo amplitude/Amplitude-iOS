@@ -24,44 +24,63 @@
 
 @implementation AMPURLConnection
 
-+ (NSDictionary *)loadSSLCertificate
++ (void)initialize
+{
+    if (self == [AMPURLConnection class]) {
+#ifdef AMPLITUDE_SSL_PINNING
+        [AMPURLConnection pinSSLCertificate:@"ComodoCaLimitedRsaCertificationAuthority"];
+#endif
+    }
+}
+
++ (void)unpinSSLCertificate
+{
+    if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:@{}] != YES) {
+        NSLog(@"Failed to unpin the certificates");
+        return;
+    }
+}
+
++ (void)pinSSLCertificate:(NSString *)certFilename
 {
     // We pin the anchor/CA certificate
-    NSString *certFilename = @"ComodoCaLimitedRsaCertificationAuthority";
     NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:@"der"];
     NSData *certData = SAFE_ARC_AUTORELEASE([[NSData alloc] initWithContentsOfFile:certPath]);
 
     if (certData == nil) {
         NSLog(@"Failed to load a certificate");
-        return nil;
+        return;
     }
 
     NSMutableDictionary *certs = [[NSMutableDictionary alloc] init];
     [certs setObject:[NSArray arrayWithObject:certData] forKey:kAMPEventLogDomain];
-    return certs;
-}
 
-+ (void)sendAsynchronousRequest:(NSURLRequest *)request
-                          queue:(NSOperationQueue *)queue
-              completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler
-{
-
-#ifdef AMPLITUDE_SSL_PINNING
-    // Create our SSL pins dictionnary
-    NSDictionary *certs = [AMPURLConnection loadSSLCertificate];
     if (certs == nil) {
         NSLog(@"Failed to pin a certificate");
+        return;
     }
 
     // Save the SSL pins so that our connection delegates automatically use them
     if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:certs] != YES) {
         NSLog(@"Failed to pin the certificates");
+        return;
     }
-#endif
+}
 
-    AMPURLConnection *connection = [[AMPURLConnection alloc] initWithRequest:request
-                                                                       queue:queue
-                                                           completionHandler:handler];
+/**
+ * Instantiate a connection to run the request and handle the response.
+ *
+ * Emulates the +sendAsynchronous:queue:completionHandler method in NSURLConnection.
+ * In order to have optional SSL pinning, a ISPPinnedNSURLConnectionDelegate was needed, so
+ * the async method with callback wasn't sufficient.
+ */
++ (void)sendAsynchronousRequest:(NSURLRequest *)request
+                          queue:(NSOperationQueue *)queue
+              completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler
+{
+    [[AMPURLConnection alloc] initWithRequest:request
+                                        queue:queue
+                            completionHandler:handler];
 }
 
 - (AMPURLConnection *)initWithRequest:(NSURLRequest *)request

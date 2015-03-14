@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ISPPinnedNSURLConnectionDelegate.h"
 
-@interface AMPURLConnection : ISPPinnedNSURLConnectionDelegate <NSURLConnectionDelegate,NSURLConnectionDelegate>
+@interface AMPURLConnection : ISPPinnedNSURLConnectionDelegate <NSURLConnectionDelegate,NSURLConnectionDataDelegate>
 
 + (void)sendAsynchronousRequest:(NSURLRequest *)request queue:(NSOperationQueue *)queue completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler;
 
