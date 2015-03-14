@@ -18,5 +18,6 @@
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
+- (void)flushUploads:(void (^)())handler;
 
 @end

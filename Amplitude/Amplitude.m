@@ -17,6 +17,7 @@
 #import "AMPARCMacros.h"
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
+#import "AMPURLConnection.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -320,7 +321,6 @@
 - (BOOL)runOnBackgroundQueue:(void (^)(void))block
 {
     if ([[NSOperationQueue currentQueue].name isEqualToString:@"BACKGROUND"]) {
-        NSLog(@"Already running in the background.");
         block();
         return NO;
     }
@@ -628,8 +628,8 @@
     AMPLITUDE_LOG(@"Events: %@", events);
     
     SAFE_ARC_RELEASE(postData);
-    
-    [NSURLConnection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+
+    [AMPURLConnection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          BOOL uploadSuccessful = NO;
          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;

@@ -8,6 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		321B1765FE30892CC6A0E979 /* libPods-test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB69FAEFF28EED71342290C /* libPods-test.a */; };
+		9D40E17C1AB3BF7F0095C7C6 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1781AB3BF7F0095C7C6 /* AMPConstants.m */; };
+		9D40E17D1AB3BF7F0095C7C6 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1781AB3BF7F0095C7C6 /* AMPConstants.m */; };
+		9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
+		9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
+		9D40E1801AB3BF7F0095C7C6 /* ComodoCaLimitedRsaCertificationAuthority.der in Resources */ = {isa = PBXBuildFile; fileRef = 9D40E17B1AB3BF7F0095C7C6 /* ComodoCaLimitedRsaCertificationAuthority.der */; };
+		9D40E1891AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */; };
+		9D40E18A1AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */; };
+		9D40E18B1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */; };
+		9D40E18C1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */; };
+		9D40E18D1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */; };
+		9D40E18E1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */; };
 		9DFBB9C71AB0D1DD0017F703 /* Amplitude+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */; };
 		9DFBB9CA1AB0D26E0017F703 /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */; };
 		9DFBB9CC1AB0D47A0017F703 /* SessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */; };
@@ -36,6 +47,17 @@
 /* Begin PBXFileReference section */
 		73478F50C66F6A68F4367561 /* Pods-test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-test.debug.xcconfig"; path = "Pods/Target Support Files/Pods-test/Pods-test.debug.xcconfig"; sourceTree = "<group>"; };
 		9BB69FAEFF28EED71342290C /* libPods-test.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-test.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D40E1781AB3BF7F0095C7C6 /* AMPConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPConstants.m; sourceTree = "<group>"; };
+		9D40E1791AB3BF7F0095C7C6 /* AMPURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPURLConnection.h; sourceTree = "<group>"; };
+		9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPURLConnection.m; sourceTree = "<group>"; };
+		9D40E17B1AB3BF7F0095C7C6 /* ComodoCaLimitedRsaCertificationAuthority.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoCaLimitedRsaCertificationAuthority.der; sourceTree = "<group>"; };
+		9D40E1821AB3BF890095C7C6 /* ISPCertificatePinning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPCertificatePinning.h; sourceTree = "<group>"; };
+		9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPCertificatePinning.m; sourceTree = "<group>"; };
+		9D40E1841AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLConnectionDelegate.h; sourceTree = "<group>"; };
+		9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLConnectionDelegate.m; sourceTree = "<group>"; };
+		9D40E1861AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLSessionDelegate.h; sourceTree = "<group>"; };
+		9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLSessionDelegate.m; sourceTree = "<group>"; };
+		9D40E1881AB3BF890095C7C6 /* SSLCertificatePinning-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSLCertificatePinning-Prefix.pch"; sourceTree = "<group>"; };
 		9DFBB9C51AB0D1DD0017F703 /* Amplitude+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Amplitude+Test.h"; sourceTree = "<group>"; };
 		9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Amplitude+Test.m"; sourceTree = "<group>"; };
 		9DFBB9C81AB0D26E0017F703 /* BaseTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTestCase.h; sourceTree = "<group>"; };
@@ -93,9 +115,24 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		9D40E1811AB3BF890095C7C6 /* SSLCertificatePinning */ = {
+			isa = PBXGroup;
+			children = (
+				9D40E1821AB3BF890095C7C6 /* ISPCertificatePinning.h */,
+				9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */,
+				9D40E1841AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.h */,
+				9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */,
+				9D40E1861AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.h */,
+				9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */,
+				9D40E1881AB3BF890095C7C6 /* SSLCertificatePinning-Prefix.pch */,
+			);
+			path = SSLCertificatePinning;
+			sourceTree = "<group>";
+		};
 		E98C051A1A48E7FE00800C63 = {
 			isa = PBXGroup;
 			children = (
+				9D40E1811AB3BF890095C7C6 /* SSLCertificatePinning */,
 				E98C05251A48E7FE00800C63 /* Amplitude */,
 				E98C052F1A48E7FE00800C63 /* AmplitudeTests */,
 				E98C05241A48E7FE00800C63 /* Products */,
@@ -118,12 +155,16 @@
 			children = (
 				E96785E11A48E93F00887CCD /* AMPARCMacros.h */,
 				E96785E21A48E93F00887CCD /* AMPConstants.h */,
+				9D40E1781AB3BF7F0095C7C6 /* AMPConstants.m */,
 				E96785E31A48E93F00887CCD /* AMPDeviceInfo.h */,
 				E96785E41A48E93F00887CCD /* AMPDeviceInfo.m */,
 				E96785E61A48E93F00887CCD /* Amplitude.h */,
 				E96785E71A48E93F00887CCD /* Amplitude.m */,
 				E96785E81A48E93F00887CCD /* AMPLocationManagerDelegate.h */,
 				E96785E91A48E93F00887CCD /* AMPLocationManagerDelegate.m */,
+				9D40E1791AB3BF7F0095C7C6 /* AMPURLConnection.h */,
+				9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */,
+				9D40E17B1AB3BF7F0095C7C6 /* ComodoCaLimitedRsaCertificationAuthority.der */,
 			);
 			path = Amplitude;
 			sourceTree = "<group>";
@@ -133,11 +174,11 @@
 			children = (
 				9DFBB9C51AB0D1DD0017F703 /* Amplitude+Test.h */,
 				9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */,
-				E96785F01A48E9F600887CCD /* InitializeTests.m */,
-				9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */,
+				E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */,
 				9DFBB9C81AB0D26E0017F703 /* BaseTestCase.h */,
 				9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */,
-				E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */,
+				E96785F01A48E9F600887CCD /* InitializeTests.m */,
+				9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */,
 				E98C05301A48E7FE00800C63 /* Supporting Files */,
 			);
 			path = AmplitudeTests;
@@ -230,6 +271,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D40E1801AB3BF7F0095C7C6 /* ComodoCaLimitedRsaCertificationAuthority.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,9 +315,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D40E1891AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */,
+				9D40E18B1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
+				9D40E17C1AB3BF7F0095C7C6 /* AMPConstants.m in Sources */,
+				9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */,
 				E96785EC1A48E93F00887CCD /* AMPDeviceInfo.m in Sources */,
 				E96785EE1A48E93F00887CCD /* AMPLocationManagerDelegate.m in Sources */,
 				E96785ED1A48E93F00887CCD /* Amplitude.m in Sources */,
+				9D40E18D1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,9 +332,14 @@
 			files = (
 				9DFBB9CC1AB0D47A0017F703 /* SessionTests.m in Sources */,
 				E96786001A48FBD100887CCD /* AMPDeviceInfo.m in Sources */,
+				9D40E17D1AB3BF7F0095C7C6 /* AMPConstants.m in Sources */,
+				9D40E18A1AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */,
+				9D40E18E1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				9DFBB9CA1AB0D26E0017F703 /* BaseTestCase.m in Sources */,
 				E96786011A48FBD100887CCD /* Amplitude.m in Sources */,
+				9D40E18C1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				E93C8C551A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m in Sources */,
+				9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */,
 				E96786021A48FBD100887CCD /* AMPLocationManagerDelegate.m in Sources */,
 				E96785F11A48E9F600887CCD /* InitializeTests.m in Sources */,
 				9DFBB9C71AB0D1DD0017F703 /* Amplitude+Test.m in Sources */,

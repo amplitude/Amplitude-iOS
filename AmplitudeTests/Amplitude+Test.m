@@ -32,5 +32,17 @@
     return [[self eventsData][@"events"] count];
 }
 
+- (void)flushUploads:(void (^)())handler {
+    [self performSelector:@selector(uploadEvents)];
+    [self flushQueue];
+
+    // Wait a second for the upload response to get into the queue.
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC);
+    dispatch_after(delay, dispatch_get_main_queue(), ^(void){
+        [self flushQueue];
+        handler();
+    });
+}
+
 @end
 

@@ -2,7 +2,7 @@
 // Amplitude.h
 
 #import <Foundation/Foundation.h>
-
+#import "ISPPinnedNSURLConnectionDelegate.h"
 
 /*!
  @class
