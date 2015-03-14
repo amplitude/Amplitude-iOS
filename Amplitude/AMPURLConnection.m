@@ -18,6 +18,7 @@
 @property (nonatomic, retain) NSURLConnection *connection;
 @property (nonatomic, retain) NSMutableData *data;
 @property (nonatomic, retain) NSURLResponse *response;
+@property (nonatomic, retain) AMPURLConnection *delegate;
 
 @end
 
@@ -40,8 +41,12 @@
     return certs;
 }
 
-+ (void)sendAsynchronousRequest:(NSURLRequest *)request queue:(NSOperationQueue *)queue completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler
++ (void)sendAsynchronousRequest:(NSURLRequest *)request
+                          queue:(NSOperationQueue *)queue
+              completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler
 {
+
+#ifdef AMPLITUDE_SSL_PINNING
     // Create our SSL pins dictionnary
     NSDictionary *certs = [AMPURLConnection loadSSLCertificate];
     if (certs == nil) {
@@ -52,23 +57,39 @@
     if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:certs] != YES) {
         NSLog(@"Failed to pin the certificates");
     }
+#endif
 
-    [[AMPURLConnection alloc] initWithRequest:request queue:queue completionHandler:handler];
+    AMPURLConnection *connection = [[AMPURLConnection alloc] initWithRequest:request
+                                                                       queue:queue
+                                                           completionHandler:handler];
 }
 
 - (AMPURLConnection *)initWithRequest:(NSURLRequest *)request
                                 queue:(NSOperationQueue *)queue
                     completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler
 {
+
     if (self = [super init]) {
         self.completionHandler = handler;
         self.data = nil;
         self.response = nil;
+
+        // Have to retain self so it's not deallocated after the connection
+        // finishes, but before the completion handler runs and self gets
+        // cleaned up. When instantiated by sendAsynchronousRequest, the instance
+        // is really it's own owner. The NSUrlConnection holds a strong reference
+        // to the instance as a delegate, but releases after the connection completes.
+        self.delegate = self;
     }
 
-    _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+
+    _connection = [[NSURLConnection alloc] initWithRequest:request
+                                                  delegate:self
+                                          startImmediately:NO];
+
     [self.connection setDelegateQueue:queue];
     [self.connection start];
+
 
     return self;
 }
@@ -86,7 +107,9 @@
 {
     self.completionHandler(self.response, self.data, error);
 
+    // The instance has done it's work. Release thyself.
     SAFE_ARC_RELEASE(self);
+    self.delegate = nil;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
