@@ -909,6 +909,9 @@ AMPLocationManagerDelegate *locationManagerDelegate;
             return obj;
         }
     }
+    if ([obj isKindOfClass:[NSDate class]]) {
+        return [obj description];
+    }
     if ([obj isKindOfClass:[NSArray class]]) {
         NSMutableArray *arr = [NSMutableArray array];
         for (id i in obj) {
