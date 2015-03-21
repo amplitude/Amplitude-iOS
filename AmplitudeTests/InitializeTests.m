@@ -115,12 +115,14 @@ id partialMock;
     [amplitude logEvent:@"Opted Out"];
     [amplitude flushQueue];
 
+    XCTAssert(amplitude.optOut == YES);
     XCTAssert(![[amplitude getLastEvent][@"event_type"] isEqualToString:@"Opted Out"]);
 
     [amplitude setOptOut:NO];
     [amplitude logEvent:@"Opted In"];
     [amplitude flushQueue];
 
+    XCTAssert(amplitude.optOut == NO);
     XCTAssert([[amplitude getLastEvent][@"event_type"] isEqualToString:@"Opted In"]);
 }
 

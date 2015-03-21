@@ -815,6 +815,11 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     }];
 }
 
+- (BOOL)optOut
+{
+    return [_eventsData[@"opt_out"] boolValue];
+}
+
 #pragma mark - location methods
 
 - (void)updateLocation
