@@ -1,5 +1,8 @@
 ## Unreleased
 
+
+## 2.3.0 (March 21, 2015)
+
 * Add opt out method to disable logging for a user
 * Fix CLLocationManager authorization constants warning
 * Add method for adding new user properties without replacing. Make it default
