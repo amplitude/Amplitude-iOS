@@ -1,6 +1,6 @@
 //
-//  InitializeTests.m
-//  InitializeTests
+//  SessionTests.m
+//  SessionTests
 //
 //  Created by Curtis on 9/24/14.
 //  Copyright (c) 2014 Amplitude. All rights reserved.
@@ -13,11 +13,11 @@
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 
-@interface InitializeTests : BaseTestCase
+@interface SetupTests : BaseTestCase
 
 @end
 
-@implementation InitializeTests { }
+@implementation SetupTests { }
 
 - (void)setUp {
     [super setUp];
@@ -26,7 +26,6 @@
 - (void)tearDown {
     [super tearDown];
 }
-
 
 - (void)testApiKeySet {
     [self.amplitude initializeApiKey:apiKey];
