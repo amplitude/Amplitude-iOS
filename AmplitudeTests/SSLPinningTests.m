@@ -16,8 +16,7 @@
 
 @interface AMPURLConnection (Test)
 
-+ (void)pinSSLCertificate:(NSString *)certFilename;
-+ (void)unpinSSLCertificate;
++ (void)pinSSLCertificate:(NSArray *)certFilename;
 
 @end
 
@@ -29,19 +28,19 @@
 
 - (void)setUp {
     [super setUp];
-    [AMPURLConnection unpinSSLCertificate];
 }
 
 - (void)tearDown {
-    [AMPURLConnection unpinSSLCertificate];
     [super tearDown];
 }
 
 - (void)testSSLWithoutPinning {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
 
+    self.amplitude.sslPinningEnabled = NO;
+
     [self.amplitude initializeApiKey:@"cd6312957e01361e6c876290f26d9104"];
-    [self.amplitude logEvent:@"Test SSL Pinning"];
+    [self.amplitude logEvent:@"Test without SSL Pinning"];
     [self.amplitude flushUploads:^() {
         NSDictionary *event = [self.amplitude getLastEvent];
         XCTAssertNil(event);
@@ -54,14 +53,16 @@
         }
     }];
 }
+
 - (void)testSSLPinningInvalidCert {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
 
-    NSString *certFile = @"InvalidCertificationAuthority";
-    [AMPURLConnection pinSSLCertificate:certFile];
+    self.amplitude.sslPinningEnabled = YES;
+    [AMPURLConnection pinSSLCertificate:@[@"InvalidCertificationAuthority"]];
 
     [self.amplitude initializeApiKey:@"cd6312957e01361e6c876290f26d9104"];
-    [self.amplitude logEvent:@"Test SSL Pinning"];
+    [self.amplitude logEvent:@"Test Invalid SSL Pinning"];
+
     [self.amplitude flushUploads:^() {
         NSDictionary *event = [self.amplitude getLastEvent];
         XCTAssertNotNil(event);
@@ -75,14 +76,11 @@
     }];
 }
 
-// For some reason, this test needs to run second in order for the tests to pass.
-// They both pass when run individually, but when run together, there must be some
-// caching or session holding that happens once a successful connection is made.
 - (void)testSSLPinningValidCert {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
 
-    NSString *certFile = @"ComodoCaLimitedRsaCertificationAuthority";
-    [AMPURLConnection pinSSLCertificate:certFile];
+    self.amplitude.sslPinningEnabled = YES;
+    [AMPURLConnection pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
 
     [self.amplitude initializeApiKey:@"cd6312957e01361e6c876290f26d9104"];
     [self.amplitude logEvent:@"Test SSL Pinning"];

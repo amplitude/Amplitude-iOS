@@ -36,15 +36,16 @@ NSString *const userId = @"userId";
 - (void)tearDown {
     // Ensure all background operations are done
     [self.amplitude flushQueue];
+    [self.amplitude performSelector:NSSelectorFromString(@"removeObservers")];
     [super tearDown];
 }
 
-- (BOOL) archive:(id)rootObject toFile:(NSString *)path {
+- (BOOL)archive:(id)rootObject toFile:(NSString *)path {
     _archivedObj = rootObject;
     return TRUE;
 }
 
-- (id) unarchive:(NSString *)path {
+- (id)unarchive:(NSString *)path {
     return _archivedObj;
 }
 

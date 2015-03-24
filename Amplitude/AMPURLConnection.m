@@ -27,41 +27,34 @@
 + (void)initialize
 {
     if (self == [AMPURLConnection class]) {
-#ifdef AMPLITUDE_SSL_PINNING
-        [AMPURLConnection pinSSLCertificate:@"ComodoCaLimitedRsaCertificationAuthority"];
-#endif
+        [AMPURLConnection pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
     }
 }
 
-+ (void)unpinSSLCertificate
++ (void)pinSSLCertificate:(NSArray *)certFilenames
 {
-    if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:@{}] != YES) {
-        NSLog(@"Failed to unpin the certificates");
-        return;
-    }
-}
-
-+ (void)pinSSLCertificate:(NSString *)certFilename
-{
-    // We pin the anchor/CA certificate
-    NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:@"der"];
-    NSData *certData = SAFE_ARC_AUTORELEASE([[NSData alloc] initWithContentsOfFile:certPath]);
-
-    if (certData == nil) {
-        NSLog(@"Failed to load a certificate");
-        return;
+    // We pin the anchor/CA certificates
+    NSMutableArray *certs = [NSMutableArray array];
+    for (NSString *certFilename in certFilenames) {
+        NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:@"der"];
+        NSData *certData = SAFE_ARC_AUTORELEASE([[NSData alloc] initWithContentsOfFile:certPath]);
+        if (certData == nil) {
+            NSLog(@"Failed to load a certificate");
+            return;
+        }
+        [certs addObject:certData];
     }
 
-    NSMutableDictionary *certs = [[NSMutableDictionary alloc] init];
-    [certs setObject:[NSArray arrayWithObject:certData] forKey:kAMPEventLogDomain];
+    NSMutableDictionary *pins = [[NSMutableDictionary alloc] init];
+    [pins setObject:certs forKey:kAMPEventLogDomain];
 
-    if (certs == nil) {
+    if (pins == nil) {
         NSLog(@"Failed to pin a certificate");
         return;
     }
 
     // Save the SSL pins so that our connection delegates automatically use them
-    if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:certs] != YES) {
+    if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:pins] != YES) {
         NSLog(@"Failed to pin the certificates");
         return;
     }
@@ -101,14 +94,12 @@
         self.delegate = self;
     }
 
-
     _connection = [[NSURLConnection alloc] initWithRequest:request
                                                   delegate:self
                                           startImmediately:NO];
 
     [self.connection setDelegateQueue:queue];
     [self.connection start];
-
 
     return self;
 }

@@ -10,14 +10,15 @@
 
 @interface Amplitude (Test)
 
-@property NSOperationQueue *backgroundQueue;
-@property NSMutableDictionary *eventsData;
-@property BOOL initialized;
+@property (nonatomic, retain) NSOperationQueue *backgroundQueue;
+@property (nonatomic, retain) NSMutableDictionary *eventsData;
+@property (nonatomic, assign) BOOL initialized;
+@property (nonatomic, assign) BOOL sslPinningEnabled;
 
 - (void)flushQueue;
+- (void)flushUploads:(void (^)())handler;
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
-- (void)flushUploads:(void (^)())handler;
 
 @end
