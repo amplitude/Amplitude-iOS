@@ -358,6 +358,8 @@ AMPLocationManagerDelegate *locationManagerDelegate;
             [[_eventsData objectForKey:@"events"] addObject:event];
             [_eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
 
+            AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
+
             if ([[_eventsData objectForKey:@"events"] count] >= kAMPEventMaxCount) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
                 [[_eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, kAMPEventRemoveBatchSize)];
