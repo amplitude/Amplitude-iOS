@@ -11,13 +11,13 @@
 		9D265EF41AB3FA2500399D93 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */; };
 		9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
 		9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
-		9D40E1891AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */; };
-		9D40E18A1AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */; };
-		9D40E18B1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */; };
-		9D40E18C1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */; };
-		9D40E18D1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */; };
-		9D40E18E1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */; };
 		9D40E1951AB3F6550095C7C6 /* InvalidCertificationAuthority.der in Resources */ = {isa = PBXBuildFile; fileRef = 9D40E1941AB3F6550095C7C6 /* InvalidCertificationAuthority.der */; };
+		9D6E19531ACCDE1C00352C6C /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6E194D1ACCDE1C00352C6C /* ISPCertificatePinning.m */; };
+		9D6E19541ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6E194F1ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.m */; };
+		9D6E19551ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6E19511ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m */; };
+		9D6E19561ACCDE9000352C6C /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6E194D1ACCDE1C00352C6C /* ISPCertificatePinning.m */; };
+		9D6E19571ACCDE9000352C6C /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6E194F1ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.m */; };
+		9D6E19581ACCDE9000352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D6E19511ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m */; };
 		9D76A3A51ABA5F890062E132 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = 9D76A3A31ABA5F890062E132 /* ComodoRsaDomainValidationCA.der */; };
 		9D76A3A61ABA5F890062E132 /* ComodoRsaCA.der in Resources */ = {isa = PBXBuildFile; fileRef = 9D76A3A41ABA5F890062E132 /* ComodoRsaCA.der */; };
 		9D82D1D81AC1006600C3F321 /* SetupTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D82D1D71AC1006600C3F321 /* SetupTests.m */; };
@@ -50,14 +50,14 @@
 		9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSLPinningTests.m; sourceTree = "<group>"; };
 		9D40E1791AB3BF7F0095C7C6 /* AMPURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPURLConnection.h; sourceTree = "<group>"; };
 		9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPURLConnection.m; sourceTree = "<group>"; };
-		9D40E1821AB3BF890095C7C6 /* ISPCertificatePinning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPCertificatePinning.h; sourceTree = "<group>"; };
-		9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPCertificatePinning.m; sourceTree = "<group>"; };
-		9D40E1841AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLConnectionDelegate.h; sourceTree = "<group>"; };
-		9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLConnectionDelegate.m; sourceTree = "<group>"; };
-		9D40E1861AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLSessionDelegate.h; sourceTree = "<group>"; };
-		9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLSessionDelegate.m; sourceTree = "<group>"; };
-		9D40E1881AB3BF890095C7C6 /* SSLCertificatePinning-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSLCertificatePinning-Prefix.pch"; sourceTree = "<group>"; };
 		9D40E1941AB3F6550095C7C6 /* InvalidCertificationAuthority.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = InvalidCertificationAuthority.der; sourceTree = "<group>"; };
+		9D6E194C1ACCDE1C00352C6C /* ISPCertificatePinning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPCertificatePinning.h; sourceTree = "<group>"; };
+		9D6E194D1ACCDE1C00352C6C /* ISPCertificatePinning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPCertificatePinning.m; sourceTree = "<group>"; };
+		9D6E194E1ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLConnectionDelegate.h; sourceTree = "<group>"; };
+		9D6E194F1ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLConnectionDelegate.m; sourceTree = "<group>"; };
+		9D6E19501ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLSessionDelegate.h; sourceTree = "<group>"; };
+		9D6E19511ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLSessionDelegate.m; sourceTree = "<group>"; };
+		9D6E19521ACCDE1C00352C6C /* SSLCertificatePinning-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SSLCertificatePinning-Prefix.pch"; sourceTree = "<group>"; };
 		9D76A3A31ABA5F890062E132 /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
 		9D76A3A41ABA5F890062E132 /* ComodoRsaCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaCA.der; sourceTree = "<group>"; };
 		9D82D1D71AC1006600C3F321 /* SetupTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetupTests.m; sourceTree = "<group>"; };
@@ -116,16 +116,16 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		9D40E1811AB3BF890095C7C6 /* SSLCertificatePinning */ = {
+		9D6E194B1ACCDE1C00352C6C /* SSLCertificatePinning */ = {
 			isa = PBXGroup;
 			children = (
-				9D40E1821AB3BF890095C7C6 /* ISPCertificatePinning.h */,
-				9D40E1831AB3BF890095C7C6 /* ISPCertificatePinning.m */,
-				9D40E1841AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.h */,
-				9D40E1851AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m */,
-				9D40E1861AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.h */,
-				9D40E1871AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m */,
-				9D40E1881AB3BF890095C7C6 /* SSLCertificatePinning-Prefix.pch */,
+				9D6E194C1ACCDE1C00352C6C /* ISPCertificatePinning.h */,
+				9D6E194D1ACCDE1C00352C6C /* ISPCertificatePinning.m */,
+				9D6E194E1ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.h */,
+				9D6E194F1ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.m */,
+				9D6E19501ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.h */,
+				9D6E19511ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m */,
+				9D6E19521ACCDE1C00352C6C /* SSLCertificatePinning-Prefix.pch */,
 			);
 			path = SSLCertificatePinning;
 			sourceTree = "<group>";
@@ -133,7 +133,6 @@
 		E98C051A1A48E7FE00800C63 = {
 			isa = PBXGroup;
 			children = (
-				9D40E1811AB3BF890095C7C6 /* SSLCertificatePinning */,
 				E98C05251A48E7FE00800C63 /* Amplitude */,
 				E98C052F1A48E7FE00800C63 /* AmplitudeTests */,
 				E98C05241A48E7FE00800C63 /* Products */,
@@ -154,6 +153,7 @@
 		E98C05251A48E7FE00800C63 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
+				9D6E194B1ACCDE1C00352C6C /* SSLCertificatePinning */,
 				E96785E11A48E93F00887CCD /* AMPARCMacros.h */,
 				E96785E21A48E93F00887CCD /* AMPConstants.h */,
 				E96785E31A48E93F00887CCD /* AMPDeviceInfo.h */,
@@ -319,13 +319,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D40E1891AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */,
-				9D40E18B1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
+				9D6E19541ACCDE1C00352C6C /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */,
 				E96785EC1A48E93F00887CCD /* AMPDeviceInfo.m in Sources */,
 				E96785EE1A48E93F00887CCD /* AMPLocationManagerDelegate.m in Sources */,
+				9D6E19551ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				E96785ED1A48E93F00887CCD /* Amplitude.m in Sources */,
-				9D40E18D1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
+				9D6E19531ACCDE1C00352C6C /* ISPCertificatePinning.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,14 +333,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D6E19561ACCDE9000352C6C /* ISPCertificatePinning.m in Sources */,
+				9D6E19571ACCDE9000352C6C /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
+				9D6E19581ACCDE9000352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				E96786001A48FBD100887CCD /* AMPDeviceInfo.m in Sources */,
-				9D40E18A1AB3BF890095C7C6 /* ISPCertificatePinning.m in Sources */,
-				9D40E18E1AB3BF890095C7C6 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				9DFBB9CA1AB0D26E0017F703 /* BaseTestCase.m in Sources */,
 				9D82D1D81AC1006600C3F321 /* SetupTests.m in Sources */,
 				9D265EF41AB3FA2500399D93 /* SSLPinningTests.m in Sources */,
 				E96786011A48FBD100887CCD /* Amplitude.m in Sources */,
-				9D40E18C1AB3BF890095C7C6 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				E93C8C551A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m in Sources */,
 				9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */,
 				E96786021A48FBD100887CCD /* AMPLocationManagerDelegate.m in Sources */,
