@@ -28,6 +28,27 @@ It's important to think about what types of events you care about as a developer
 
 A session is a period of time that a user has the app in the foreground. Sessions within 10 seconds of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically.
 
+If your users can take actions while the app is in the background and you would like to track a user session for those actions, use the ```startSession``` method.
+
+``` objective-c
+MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+[commandCenter.nextTrackCommand addTargetUsingBlock:^(MPRemoteCommandEvent *event) {
+  [[Amplitude instance] startSession]
+  [Amplitude logEvent:@"Skip Track"];
+}]
+```
+
+Or, you may want to track a session for interactions with push notification actions. In that case, call ```startSession``` or use ```initializeApiKey:apiKey:userId:startSession``` from ```application:handleActionWithIdentifier:forRemoteNotification:completionHandler:``` or ```application:handleActionWithIdentifier:forLocalNotification:completionHandler:```
+
+``` objective-c
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())completionHandler {
+  [[Amplitude instance] initializeApiKey:@"KEY" userId:nil startSession:YES];
+  if ([identifier isEqualToString:NotificationActionOneIdent]) {
+    [Amplitude logEvent:@"Action One"];
+  }
+}
+```
+
 # Setting Custom User IDs #
 
 If your app has its own login system that you want to track users with, you can call `setUserId:` at any time:
