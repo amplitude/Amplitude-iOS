@@ -51,6 +51,8 @@
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession;
 
+- (void)startSession;
+
 - (void)logEvent:(NSString*) eventType;
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;

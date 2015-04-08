@@ -101,6 +101,18 @@
     XCTAssert([[self.amplitude getEvent:0][@"event_type"] isEqualToString:@"session_end"]);
 }
 
+- (void)testManualStartSession {
+    [self.amplitude initializeApiKey:apiKey userId:nil startSession:NO];
+
+    [self.amplitude startSession];
+
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude queuedEventCount], 1);
+
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssert([event[@"event_type"] isEqualToString:@"session_start"]);
+    XCTAssertEqual(event[@"session_id"], event[@"timestamp"]);
+}
 /**
  * Ending a session should case another start session event to be logged.
  */
