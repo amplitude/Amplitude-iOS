@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.4.0 (April 7, 2015)
+
 * Expose the startSession method publicly. Can be used to start a session for a user
   interaction that happens while the app is in the background, for example,
   changing tracks on background audio.
