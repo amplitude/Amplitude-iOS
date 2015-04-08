@@ -1,13 +1,13 @@
 ## Unreleased
 
-* Expose :startSession publicly. Can be used to start a session for a user
+* Expose the startSession method publicly. Can be used to start a session for a user
   interaction that happens while the app is in the background, for example,
   changing tracks on background audio.
 * No longer starts a session if the app is in the background when the SDK is
   initialized. Prevents logging of silent push notifications from starting
   a session and counting a user visit. This changes the previous default
   behavior. To maintain the previous behavior, use
-  :initializeApiKey:apiKey:userId:startSession and set startSession to true.
+  initializeApiKey:apiKey:userId:startSession and set startSession to true.
 
 ## 2.3.0 (March 21, 2015)
 

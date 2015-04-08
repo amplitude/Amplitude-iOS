@@ -9,10 +9,9 @@
 
 #import "AMPURLConnection.h"
 #import "AMPARCMacros.h"
+#import "AMPConstants.h"
 #import "ISPCertificatePinning.h"
 #import "ISPPinnedNSURLConnectionDelegate.h"
-
-NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 
 @interface AMPURLConnection ()
 
