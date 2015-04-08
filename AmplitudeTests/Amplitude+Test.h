@@ -13,7 +13,6 @@
 @property (nonatomic, retain) NSOperationQueue *backgroundQueue;
 @property (nonatomic, retain) NSMutableDictionary *eventsData;
 @property (nonatomic, assign) BOOL initialized;
-@property (nonatomic, assign) BOOL sslPinningEnabled;
 
 - (void)flushQueue;
 - (void)flushUploads:(void (^)())handler;

@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  AMPURLConnection.m
 //  Amplitude
@@ -142,3 +143,4 @@ NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 }
 
 @end
+#endif

@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  ISPPinnedNSURLConnectionDelegate.h
 //  SSLCertificatePinning
@@ -22,3 +23,4 @@
 - (void)connection:(NSURLConnection *)connection willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 
 @end
+#endif

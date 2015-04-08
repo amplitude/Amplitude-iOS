@@ -13,6 +13,7 @@
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 #import "AMPURLConnection.h"
+#import "Amplitude+SSLPinning.h"
 
 @interface AMPURLConnection (Test)
 

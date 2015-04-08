@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  Prefix header
 //
@@ -6,4 +7,5 @@
 
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
+#endif
 #endif

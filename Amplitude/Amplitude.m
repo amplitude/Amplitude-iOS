@@ -152,7 +152,7 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     if (self = [super init]) {
         initializerQueue = [[NSOperationQueue alloc] init];
 
-#ifdef AMPLITUDE_SSL_PINNING
+#if AMPLITUDE_SSL_PINNING
         _sslPinningEnabled = YES;
 #else
         _sslPinningEnabled = NO;
@@ -595,8 +595,12 @@ AMPLocationManagerDelegate *locationManagerDelegate;
     SAFE_ARC_RELEASE(postData);
 
     // If pinning is enabled, use the AMPURLConnection that handles it.
+#if AMPLITUDE_SSL_PINNING
     id Connection = (self.sslPinningEnabled ? [AMPURLConnection class] : [NSURLConnection class]);
     [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+#else
+    [NSURLConnection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+#endif
     {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;

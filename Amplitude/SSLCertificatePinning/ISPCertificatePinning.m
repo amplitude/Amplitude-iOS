@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  ISPCertificatePinning.m
 //  SSLCertificatePinning
@@ -110,3 +111,4 @@
 }
 
 @end
+#endif

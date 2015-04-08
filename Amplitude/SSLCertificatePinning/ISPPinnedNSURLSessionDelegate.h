@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  ISPPinnedNSURLSessionDelegate.h
 //  SSLCertificatePinning
@@ -22,3 +23,4 @@
 - (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler;
 
 @end
+#endif

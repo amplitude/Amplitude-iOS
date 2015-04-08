@@ -14,7 +14,6 @@
 @dynamic backgroundQueue;
 @dynamic eventsData;
 @dynamic initialized;
-@dynamic sslPinningEnabled;
 
 - (void)flushQueue {
     [[self backgroundQueue] waitUntilAllOperationsAreFinished];

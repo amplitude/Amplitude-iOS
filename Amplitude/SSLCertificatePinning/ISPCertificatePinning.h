@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  ISPCertificatePinning.h
 //  SSLCertificatePinning v3
@@ -62,3 +63,4 @@
 + (BOOL)verifyPinnedCertificateForTrust:(SecTrustRef)trust andDomain:(NSString*)domain;
 
 @end
+#endif

@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import <OCMock/OCMock.h>
 #import "Amplitude.h"
+#import "Amplitude+SSLPinning.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 
@@ -31,6 +32,7 @@ NSString *const userId = @"userId";
     OCMStub([_partialMock unarchive:[OCMArg any]]).andCall(self, @selector(unarchive:));
 
     [self.amplitude init];
+    self.amplitude.sslPinningEnabled = NO;
 }
 
 - (void)tearDown {

@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  AMPURLConnection.h
 //  Amplitude
@@ -14,3 +15,4 @@
 + (void)sendAsynchronousRequest:(NSURLRequest *)request queue:(NSOperationQueue *)queue completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler;
 
 @end
+#endif

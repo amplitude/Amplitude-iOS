@@ -1,3 +1,4 @@
+#if AMPLITUDE_SSL_PINNING
 //
 //  ISPPinnedNSURLSessionDelegate.m
 //  SSLCertificatePinning
@@ -45,3 +46,4 @@
 }
 
 @end
+#endif
