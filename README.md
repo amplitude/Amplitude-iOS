@@ -1,3 +1,12 @@
+[![Circle CI](https://circleci.com/gh/amplitude/Amplitude-iOS/tree/master.svg?style=badge&circle-token=e1b2a7d2cd6dd64ac3643bc8cb2117c0ed5cbb75)](https://circleci.com/gh/amplitude/Amplitude-iOS/tree/master)
+
+Amplitude iOS SDK
+====================
+
+An iOS SDK for tracking events and revenue to [Amplitude](http://www.amplitude.com).
+
+A [demo application](https://github.com/amplitude/iOS-Demo) is available to show a simple integration.
+
 # Setup #
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
 2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file. Alternatively, you can pull directly from GitHub. If you use Cocoapods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 2.4'`
@@ -92,7 +101,6 @@ NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
 [userProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
 [[Amplitude instance] setUserProperties:userProperties replace:YES];
 ```
-
 
 # Allowing Users to Opt Out
 
