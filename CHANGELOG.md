@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Static methods are now deprecated. Use the [Amplitude instance] singleton instead.
+
 ## 2.4.0 (April 7, 2015)
 
 * Expose the startSession method publicly. Can be used to start a session for a user
