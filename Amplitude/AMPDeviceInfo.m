@@ -91,6 +91,9 @@
                 _carrier = SAFE_ARC_RETAIN(imp2(carrier, carrierName));
             }
         }
+        else {
+            return @"Unknown";
+        }
     }
     return _carrier;
 }

@@ -23,6 +23,7 @@
 		9D82D1D81AC1006600C3F321 /* SetupTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D82D1D71AC1006600C3F321 /* SetupTests.m */; };
 		9DC7085A1AD4B28300949778 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DC708591AD4B28300949778 /* AMPConstants.m */; };
 		9DC7085B1AD4B28300949778 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DC708591AD4B28300949778 /* AMPConstants.m */; };
+		9DDE2C031AE7069200B740EC /* DeviceInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DDE2C021AE7069200B740EC /* DeviceInfoTests.m */; };
 		9DFBB9C71AB0D1DD0017F703 /* Amplitude+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */; };
 		9DFBB9CA1AB0D26E0017F703 /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */; };
 		9DFBB9CC1AB0D47A0017F703 /* SessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */; };
@@ -66,6 +67,7 @@
 		9D82D1D71AC1006600C3F321 /* SetupTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetupTests.m; sourceTree = "<group>"; };
 		9DC708561AD4A49E00949778 /* Amplitude+SSLPinning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Amplitude+SSLPinning.h"; path = "Amplitude/Amplitude+SSLPinning.h"; sourceTree = SOURCE_ROOT; };
 		9DC708591AD4B28300949778 /* AMPConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPConstants.m; sourceTree = "<group>"; };
+		9DDE2C021AE7069200B740EC /* DeviceInfoTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceInfoTests.m; sourceTree = "<group>"; };
 		9DFBB9C51AB0D1DD0017F703 /* Amplitude+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Amplitude+Test.h"; sourceTree = "<group>"; };
 		9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Amplitude+Test.m"; sourceTree = "<group>"; };
 		9DFBB9C81AB0D26E0017F703 /* BaseTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTestCase.h; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */,
 				9D40E1941AB3F6550095C7C6 /* InvalidCertificationAuthority.der */,
 				9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */,
+				9DDE2C021AE7069200B740EC /* DeviceInfoTests.m */,
 				9D82D1D71AC1006600C3F321 /* SetupTests.m */,
 				9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */,
 				E98C05301A48E7FE00800C63 /* Supporting Files */,
@@ -357,6 +360,7 @@
 				9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */,
 				E96786021A48FBD100887CCD /* AMPLocationManagerDelegate.m in Sources */,
 				9DFBB9C71AB0D1DD0017F703 /* Amplitude+Test.m in Sources */,
+				9DDE2C031AE7069200B740EC /* DeviceInfoTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
