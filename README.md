@@ -35,9 +35,9 @@ It's important to think about what types of events you care about as a developer
 
 # Tracking Sessions #
 
-A session is a period of time that a user has the app in the foreground. Sessions within 10 seconds of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically.
+A session is a period of time that a user has the app in the foreground. Sessions within 15 seconds of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically. When the SDK is initialized, it determines whether the app is launched into the foreground or background and starts a new session if launched in the foreground. Each time the app is placed in the background, the SDK ends the session. It starts a new session when the app is brought back into the foreground (unless the app was inactive for less than 15 seconds).
 
-If your users can take actions while the app is in the background and you would like to track a user session for those actions, use the ```startSession``` method.
+If your users can take actions while the app is in the background and you would like to track a user session for those actions, use the ```startSession``` method. For example:
 
 ``` objective-c
 MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
@@ -143,3 +143,5 @@ User IDs are automatically generated and will default to device specific identif
 Device IDs use identifierForVendor if available, or a random ID otherwise. You can retrieve the Device ID that Amplitude uses with `[Amplitude getDeviceId]`.
 
 This code will work with both ARC and non-ARC projects. Preprocessor macros are used to determine which version of the compiler is being used.
+
+The SDK includes support for SSL pinning, but it is undocumented and recommended against unless you have a specific need. Please contact Amplitude support before you ship any products with SSL pinning enabled so that we are aware and can provide documentation and implementation help.
