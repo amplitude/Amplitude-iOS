@@ -330,7 +330,7 @@
 - (BOOL)runOnBackgroundQueue:(void (^)(void))block
 {
     if ([[NSOperationQueue currentQueue].name isEqualToString:@"BACKGROUND"]) {
-        NSLog(@"Already running in the background.");
+        AMPLITUDE_LOG(@"Already running in the background.");
         block();
         return NO;
     }
