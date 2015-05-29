@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.5.0 (May 29, 2015)
+
 * Static methods are now deprecated. Use the [Amplitude instance] singleton instead.
 * Enable configuration of eventUploadThreshold, eventMaxCount,
   eventUploadMaxBatchSize, eventUploadPeriodSeconds, minTimeBetweenSessionsMillis,
