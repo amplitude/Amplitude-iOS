@@ -30,7 +30,7 @@
  [Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
  </pre>
 
- For me details on the setup and usage, be sure to check out the docs here:
+ For more details on the setup and usage, be sure to check out the docs here:
  https://github.com/amplitude/Amplitude-iOS#setup
  */
 @interface Amplitude : NSObject
@@ -40,6 +40,42 @@
 @property (nonatomic, readonly) NSString *userId;
 @property (nonatomic, readonly) NSString *deviceId;
 @property (nonatomic, assign) BOOL optOut;
+
+/*!
+ The maximum number of events that can be stored locally before forcing an upload.
+ The default is 30 events.
+ */
+@property (nonatomic, assign) int eventUploadThreshold;
+
+/*!
+ The maximum number of events that can be uploaded in a single request.
+ The default is 100 events.
+ */
+@property (nonatomic, assign) int eventUploadMaxBatchSize;
+
+/*!
+ The maximum number of events that can be stored lcoally.
+ The default is 1000 events.
+ */
+@property (nonatomic, assign) int eventMaxCount;
+
+/*!
+ The amount of time after an event is logged that events will be batched before being uploaded to the server.
+ The default is 30 seconds.
+ */
+@property (nonatomic, assign) int eventUploadPeriodSeconds;
+
+/*!
+ When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created.
+ The default is 15000 milliseconds (15 seconds).
+ */
+@property (nonatomic, assign) long minTimeBetweenSessionsMillis;
+
+/*!
+ A session will time out automatically after a period of inactivity. If the user has performed no events within sessionTimeoutMillis milliseconds, a new session is created on the next event logged.
+ The default is 1800000 milliseconds (30 minutes).
+ */
+@property (nonatomic, assign) long sessionTimeoutMillis;
 
 #pragma mark - Methods
 

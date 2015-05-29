@@ -155,6 +155,13 @@
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
 
+        self.eventUploadThreshold = kAMPEventUploadThreshold;
+        self.eventMaxCount = kAMPEventMaxCount;
+        self.eventUploadMaxBatchSize = kAMPEventUploadMaxBatchSize;
+        self.eventUploadPeriodSeconds = kAMPEventUploadPeriodSeconds;
+        self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
+        self.sessionTimeoutMillis = kAMPSessionTimeoutMillis;
+
         _initializerQueue = [[NSOperationQueue alloc] init];
         _backgroundQueue = [[NSOperationQueue alloc] init];
         // Force method calls to happen in FIFO order by only allowing 1 concurrent operation
@@ -405,7 +412,7 @@
 
             AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
-            if ([[_eventsData objectForKey:@"events"] count] >= kAMPEventMaxCount) {
+            if ([[_eventsData objectForKey:@"events"] count] >= self.eventMaxCount) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
                 [[_eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, kAMPEventRemoveBatchSize)];
                 [self saveEventsData];
@@ -413,10 +420,10 @@
                 [self saveEventsData];
             }
 
-            if ([[_eventsData objectForKey:@"events"] count] >= kAMPEventUploadThreshold) {
+            if ([[_eventsData objectForKey:@"events"] count] >= self.eventUploadThreshold) {
                 [self uploadEvents];
             } else {
-                [self uploadEventsWithDelay:kAMPEventUploadPeriodSeconds];
+                [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
             }
 
         }
@@ -546,7 +553,7 @@
 
 - (void)uploadEvents
 {
-    [self uploadEventsWithLimit:kAMPEventUploadMaxBatchSize];
+    [self uploadEventsWithLimit:self.eventUploadMaxBatchSize];
 }
 
 - (void)uploadEventsWithLimit:(int) limit
@@ -699,7 +706,7 @@
 
         _updatingCurrently = NO;
 
-        if (uploadSuccessful && [[_eventsData objectForKey:@"events"] count] > kAMPEventUploadThreshold) {
+        if (uploadSuccessful && [[_eventsData objectForKey:@"events"] count] > self.eventUploadThreshold) {
             [self uploadEventsWithLimit:0];
         } else if (_uploadTaskID != UIBackgroundTaskInvalid) {
             // Upload finished, allow background task to be ended
@@ -764,9 +771,9 @@
             long long timeDelta = [now longLongValue] - [previousSessionTime longLongValue];
             
             BOOL sessionExists = _sessionStarted && _sessionId >= 0;
-            BOOL sessionExpired = timeDelta > kAMPSessionTimeoutMillis;
+            BOOL sessionExpired = timeDelta > self.sessionTimeoutMillis;
 
-            if (!sessionExists && timeDelta < kAMPMinTimeBetweenSessionsMillis) {
+            if (!sessionExists && timeDelta < self.minTimeBetweenSessionsMillis) {
                 // The previous session happened recently enough to be considered the same session. Use it.
                 _sessionId = [[_eventsData objectForKey:@"previous_session_id"] longLongValue];
             } else if (!sessionExists || sessionExpired) {
@@ -799,7 +806,7 @@
     }];
     
     [_mainQueue addOperationWithBlock:^{
-        [self performSelector:@selector(turnOffSessionLaterExecute) withObject:nil afterDelay:kAMPMinTimeBetweenSessionsMillis];
+        [self performSelector:@selector(turnOffSessionLaterExecute) withObject:nil afterDelay:self.minTimeBetweenSessionsMillis];
     }];
 }
 
