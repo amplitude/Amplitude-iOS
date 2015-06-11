@@ -992,14 +992,16 @@
     }
     if ([obj isKindOfClass:[NSArray class]]) {
         NSMutableArray *arr = [NSMutableArray array];
-        for (id i in obj) {
+        id objCopy = [obj copy];
+        for (id i in objCopy) {
             [arr addObject:[self makeJSONSerializable:i]];
         }
         return [NSArray arrayWithArray:arr];
     }
     if ([obj isKindOfClass:[NSDictionary class]]) {
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        for (id key in obj) {
+        id objCopy = [obj copy];
+        for (id key in objCopy) {
             NSString *coercedKey;
             if (![key isKindOfClass:[NSString class]]) {
                 coercedKey = [key description];
@@ -1007,7 +1009,7 @@
             } else {
                 coercedKey = key;
             }
-            dict[coercedKey] = [self makeJSONSerializable:obj[key]];
+            dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
         }
         return [NSDictionary dictionaryWithDictionary:dict];
     }
