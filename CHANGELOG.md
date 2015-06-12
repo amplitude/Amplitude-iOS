@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 2.5.1 (June 12, 2015)
+
 * Fix crash when array or dictionary is modified during JSON serialization
 
 ## 2.5.0 (May 29, 2015)
