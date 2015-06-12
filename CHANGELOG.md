@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Fix crash when array or dictionary is modified during JSON serialization
+
 ## 2.5.0 (May 29, 2015)
 
 * Static methods are now deprecated. Use the [Amplitude instance] singleton instead.
