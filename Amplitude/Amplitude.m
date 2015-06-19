@@ -24,9 +24,16 @@
 #import <net/if.h>
 #import <net/if_dl.h>
 #import <CommonCrypto/CommonDigest.h>
-#import <UIKit/UIKit.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#import <objc/runtime.h>
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif // TARGET_OS_IPHONE
+
 
 @interface Amplitude ()
 
@@ -52,7 +59,9 @@
     BOOL _sessionStarted;
     BOOL _updateScheduled;
     BOOL _updatingCurrently;
+#if TARGET_OS_IPHONE
     UIBackgroundTaskIdentifier _uploadTaskID;
+#endif
     BOOL _useAdvertisingIdForDeviceId;
     NSDictionary *_userProperties;
 }
@@ -176,7 +185,9 @@
             _deviceInfo = [[AMPDeviceInfo alloc] init];
 
             _mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
+#if TARGET_OS_IPHONE
             _uploadTaskID = UIBackgroundTaskInvalid;
+#endif
             
             NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
             
@@ -233,6 +244,7 @@
         });
 
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if TARGET_OS_IPHONE
         [center addObserver:self
                    selector:@selector(enterForeground)
                        name:UIApplicationDidBecomeActiveNotification
@@ -241,6 +253,16 @@
                    selector:@selector(enterBackground)
                        name:UIApplicationDidEnterBackgroundNotification
                      object:nil];
+#else
+        [center addObserver:self
+                   selector:@selector(enterForeground)
+                       name:NSApplicationDidBecomeActiveNotification
+                     object:nil];
+        [center addObserver:self
+                   selector:@selector(enterBackground)
+                       name:NSApplicationDidResignActiveNotification
+                     object:nil];
+#endif
     }
     return self;
 };
@@ -248,8 +270,13 @@
 - (void) removeObservers
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if TARGET_OS_IPHONE
     [center removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+#else
+    [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
+    [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
+#endif
 }
 
 - (void) dealloc {
@@ -284,8 +311,17 @@
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
 {
-    UIApplicationState state = [UIApplication sharedApplication].applicationState;
-    [self initializeApiKey:apiKey userId:userId startSession:(state != UIApplicationStateBackground)];
+#if TARGET_OS_IPHONE
+    if ([UIApplication respondsToSelector:@selector(sharedApplication)]) {
+        UIApplication *app = (UIApplication*)[UIApplication performSelector:@selector(sharedApplication)];
+        UIApplicationState state = app.applicationState;
+        [self initializeApiKey:apiKey userId:userId startSession:(state != UIApplicationStateBackground)];
+    } else {
+        [self initializeApiKey:apiKey userId:userId startSession:YES];
+    }
+#else
+    [self initializeApiKey:apiKey userId:userId startSession:YES];
+#endif
 }
 
 /**
@@ -708,10 +744,15 @@
 
         if (uploadSuccessful && [[_eventsData objectForKey:@"events"] count] > self.eventUploadThreshold) {
             [self uploadEventsWithLimit:0];
+#if TARGET_OS_IPHONE
         } else if (_uploadTaskID != UIBackgroundTaskInvalid) {
-            // Upload finished, allow background task to be ended
-            [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
-            _uploadTaskID = UIBackgroundTaskInvalid;
+            if ([UIApplication respondsToSelector:@selector(sharedApplication)]) {
+                UIApplication *app = (UIApplication*)[UIApplication performSelector:@selector(sharedApplication)];
+                // Upload finished, allow background task to be ended
+                [app endBackgroundTask:_uploadTaskID];
+                _uploadTaskID = UIBackgroundTaskInvalid;
+            }
+#endif
         }
     }];
 }
@@ -722,10 +763,15 @@
 {
     [self updateLocation];
     [self startSession];
+#if TARGET_OS_IPHONE
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
-        _uploadTaskID = UIBackgroundTaskInvalid;
+        if ([UIApplication respondsToSelector:@selector(sharedApplication)]) {
+            UIApplication *app = (UIApplication*)[UIApplication performSelector:@selector(sharedApplication)];
+            [app endBackgroundTask:_uploadTaskID];
+            _uploadTaskID = UIBackgroundTaskInvalid;
+        }
     }
+#endif
     [self runOnBackgroundQueue:^{
         [self uploadEvents];
     }];
@@ -733,16 +779,22 @@
 
 - (void)enterBackground
 {
-    if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
-    }
-    _uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        //Took too long, manually stop
+#if TARGET_OS_IPHONE
+    if ([UIApplication respondsToSelector:@selector(sharedApplication)]) {
+        UIApplication *app = (UIApplication*)[UIApplication performSelector:@selector(sharedApplication)];
+
         if (_uploadTaskID != UIBackgroundTaskInvalid) {
-            [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
-            _uploadTaskID = UIBackgroundTaskInvalid;
+            [app endBackgroundTask:_uploadTaskID];
         }
-    }];
+        _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
+            //Took too long, manually stop
+            if (_uploadTaskID != UIBackgroundTaskInvalid) {
+                [app endBackgroundTask:_uploadTaskID];
+                _uploadTaskID = UIBackgroundTaskInvalid;
+            }
+        }];
+    }
+#endif
 
     [self endSession];
     [self runOnBackgroundQueue:^{
