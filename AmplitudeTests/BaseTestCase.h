@@ -14,6 +14,7 @@ extern NSString *const userId;
 @interface BaseTestCase : XCTestCase
 
 @property (nonatomic, retain) Amplitude *amplitude;
+@property (nonatomic) id partialMockAmplitude;
 
 - (BOOL) archive:(id)rootObject toFile:(NSString *)path;
 - (id) unarchive:(NSString *)path;

@@ -19,7 +19,6 @@ NSString *const userId = @"userId";
 
 @implementation BaseTestCase {
     id _archivedObj;
-    id _partialMock;
 }
 
 - (void)setUp {
@@ -27,9 +26,9 @@ NSString *const userId = @"userId";
     self.amplitude = [Amplitude alloc];
 
     // Mock the methods before init
-    _partialMock = OCMPartialMock(self.amplitude);
-    OCMStub([_partialMock archive:[OCMArg any] toFile:[OCMArg any]]).andCall(self, @selector(archive:toFile:));
-    OCMStub([_partialMock unarchive:[OCMArg any]]).andCall(self, @selector(unarchive:));
+    _partialMockAmplitude = OCMPartialMock(self.amplitude);
+    OCMStub([_partialMockAmplitude archive:[OCMArg any] toFile:[OCMArg any]]).andCall(self, @selector(archive:toFile:));
+    OCMStub([_partialMockAmplitude unarchive:[OCMArg any]]).andCall(self, @selector(unarchive:));
 
     [self.amplitude init];
     self.amplitude.sslPinningEnabled = NO;

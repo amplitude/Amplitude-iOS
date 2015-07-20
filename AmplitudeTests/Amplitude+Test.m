@@ -12,11 +12,17 @@
 @implementation Amplitude (Test)
 
 @dynamic backgroundQueue;
+@dynamic initializerQueue;
 @dynamic eventsData;
 @dynamic initialized;
+@dynamic sessionId;
 
 - (void)flushQueue {
     [[self backgroundQueue] waitUntilAllOperationsAreFinished];
+}
+
+- (void)flushQueueWithQueue:(NSOperationQueue*) queue {
+    [queue waitUntilAllOperationsAreFinished];
 }
 
 - (NSDictionary *)getEvent:(NSInteger) fromEnd {
@@ -42,6 +48,20 @@
         [self flushQueue];
         handler();
     });
+}
+
+- (void)setLastEventTime:(NSNumber*) timestamp
+{
+    @synchronized ([self eventsData]) {
+        [[self eventsData] setValue:timestamp forKey:@"previous_session_time"];
+    }
+}
+
+- (NSNumber*)getLastEventTime
+{
+    @synchronized ([self eventsData]) {
+        return [self eventsData][@"previous_session_time"];
+    }
 }
 
 @end

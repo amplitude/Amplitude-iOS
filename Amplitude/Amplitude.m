@@ -31,30 +31,42 @@
 @interface Amplitude ()
 
 @property (nonatomic, retain) NSOperationQueue *backgroundQueue;
+@property (nonatomic, retain) NSOperationQueue *initializerQueue;
 @property (nonatomic, retain) NSMutableDictionary *eventsData;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
+@property (nonatomic, assign) long long sessionId;
 
 @end
 
+NSString *const kAMPSessionStartEvent = @"session_start";
+NSString *const kAMPSessionEndEvent = @"session_end";
+NSString *const kAMPRevenueEvent = @"revenue_amount";
+
 @implementation Amplitude {
-    AMPDeviceInfo *_deviceInfo;
-    NSString *_eventsDataPath;
-    NSOperationQueue *_initializerQueue;
+
     NSOperationQueue *_mainQueue;
+
+    AMPDeviceInfo *_deviceInfo;
+
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
     CLLocationManager *_locationManager;
     AMPLocationManagerDelegate *_locationManagerDelegate;
+
+    NSString *_eventsDataPath;
     NSMutableDictionary *_propertyList;
     NSString *_propertyListPath;
-    long long _sessionId;
-    BOOL _sessionStarted;
+
     BOOL _updateScheduled;
     BOOL _updatingCurrently;
     UIBackgroundTaskIdentifier _uploadTaskID;
+
     BOOL _useAdvertisingIdForDeviceId;
+
     NSDictionary *_userProperties;
+
+    BOOL _inForeground;
 }
 
 #pragma clang diagnostic push
@@ -150,7 +162,6 @@
         _initialized = NO;
         _locationListeningEnabled = YES;
         _sessionId = -1;
-        _sessionStarted = NO;
         _updateScheduled = NO;
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
@@ -160,7 +171,6 @@
         self.eventUploadMaxBatchSize = kAMPEventUploadMaxBatchSize;
         self.eventUploadPeriodSeconds = kAMPEventUploadPeriodSeconds;
         self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
-        self.sessionTimeoutMillis = kAMPSessionTimeoutMillis;
 
         _initializerQueue = [[NSOperationQueue alloc] init];
         _backgroundQueue = [[NSOperationQueue alloc] init];
@@ -183,12 +193,7 @@
             _propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
             _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
 
-            // Copy any old data files to new file paths
-            NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-            NSString *oldPropertyListPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
-            NSString *oldEventsDataPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
-            [self moveFileIfNotExists:oldPropertyListPath to:_propertyListPath];
-            [self moveFileIfNotExists:oldEventsDataPath to:_eventsDataPath];
+            [self upgradePrefs];
 
             // Load propertyList object
             _propertyList = SAFE_ARC_RETAIN([self deserializePList:_propertyListPath]);
@@ -214,8 +219,6 @@
                 if (!success) {
                     NSLog(@"ERROR: Unable to save eventsData to file on initialization");
                 }
-            } else {
-                AMPLITUDE_LOG(@"Loaded from %@", _eventsDataPath);
             }
 
             [self initializeDeviceId];
@@ -232,23 +235,28 @@
             [_locationManager performSelector:setDelegate withObject:_locationManagerDelegate];
         });
 
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self
-                   selector:@selector(enterForeground)
-                       name:UIApplicationDidBecomeActiveNotification
-                     object:nil];
-        [center addObserver:self
-                   selector:@selector(enterBackground)
-                       name:UIApplicationDidEnterBackgroundNotification
-                     object:nil];
+        [self addObservers];
     }
     return self;
 };
 
+- (void) addObservers
+{
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self
+               selector:@selector(enterForeground)
+                   name:UIApplicationWillEnterForegroundNotification
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(enterBackground)
+                   name:UIApplicationDidEnterBackgroundNotification
+                 object:nil];
+}
+
 - (void) removeObservers
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
+    [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
 
@@ -282,16 +290,10 @@
     [self initializeApiKey:apiKey userId:nil];
 }
 
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
-{
-    UIApplicationState state = [UIApplication sharedApplication].applicationState;
-    [self initializeApiKey:apiKey userId:userId startSession:(state != UIApplicationStateBackground)];
-}
-
 /**
- * Initialize Amplitude with a given apiKey and userId. Optionally, start a session at the same time.
+ * Initialize Amplitude with a given apiKey and userId.
  */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
 {
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
@@ -324,10 +326,12 @@
         }
     }];
 
-    if (startSession) {
+    UIApplicationState state = [UIApplication sharedApplication].applicationState;
+    if (state != UIApplicationStateBackground) {
+        // If this is called while the app is running in the background, for example
+        // via a push notification, don't call enterForeground
         [self enterForeground];
     }
-
     _initialized = YES;
 }
 
@@ -351,32 +355,35 @@
 
 - (void)logEvent:(NSString*) eventType
 {
-    if (![self isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
-        return;
-    }
     [self logEvent:eventType withEventProperties:nil];
 }
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties
 {
-    if (![self isArgument:eventType validType:[NSString class] methodName:@"logEvent:withEventProperties:"]) {
-        return;
-    }
-    if (eventProperties != nil && ![self isArgument:eventProperties validType:[NSDictionary class] methodName:@"logEvent:withEventProperties:"]) {
-        return;
-    }
-    [self logEvent:eventType withEventProperties:eventProperties apiProperties:nil withTimestamp:nil];
+    [self logEvent:eventType withEventProperties:eventProperties outOfSession:NO];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties apiProperties:(NSDictionary*) apiProperties withTimestamp:(NSNumber*) timestamp
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession
+{
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withTimestamp:nil outOfSession:outOfSession];
+}
+
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
 {
     if (_apiKey == nil) {
-        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent:");
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
+        return;
+    }
+
+    if (![self isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
+        return;
+    }
+    if (eventProperties != nil && ![self isArgument:eventProperties validType:[NSDictionary class] methodName:@"logEvent"]) {
         return;
     }
 
     if (timestamp == nil) {
-        timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
+        timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
     }
     
     [self runOnBackgroundQueue:^{
@@ -384,16 +391,16 @@
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
 
         @synchronized (_eventsData) {
+
             // Respect the opt-out setting by not sending or storing any events.
             if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
                 NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
                 return;
             }
 
-            // Increment propertyList max_id and save immediately
-            NSNumber *propertyListMaxId = [NSNumber numberWithLongLong:[[_propertyList objectForKey:@"max_id"] longLongValue] + 1];
-            [_propertyList setObject: propertyListMaxId forKey:@"max_id"];
-            [self savePropertyList];
+            if (!outOfSession) {
+                [self startOrContinueSession:timestamp];
+            }
 
             // Increment _eventsData max_id
             long long newId = [[_eventsData objectForKey:@"max_id"] longLongValue] + 1;
@@ -403,9 +410,10 @@
             [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
             [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
+            [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
+            [event setValue:timestamp forKey:@"timestamp"];
 
-            [self addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
-            [self refreshSessionTime:timestamp];
+            [self annotateEvent:event];
 
             [[_eventsData objectForKey:@"events"] addObject:event];
             [_eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
@@ -431,12 +439,10 @@
     }];
 }
 
-- (void)addBoilerplate:(NSMutableDictionary*) event timestamp:(NSNumber*) timestamp maxIdCheck:(NSNumber*) propertyListMaxId
+- (void)annotateEvent:(NSMutableDictionary*) event
 {
-    [event setValue:timestamp forKey:@"timestamp"];
     [event setValue:_userId forKey:@"user_id"];
     [event setValue:_deviceId forKey:@"device_id"];
-    [event setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"session_id"];
     [event setValue:kAMPPlatform forKey:@"platform"];
     [event setValue:_deviceInfo.appVersion forKey:@"version_name"];
     [event setValue:_deviceInfo.osName forKey:@"os_name"];
@@ -454,7 +460,6 @@
 
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
-    [apiProperties setValue:propertyListMaxId forKey:@"max_id"];
     NSString* advertiserID = _deviceInfo.advertiserID;
     if (advertiserID) {
         [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
@@ -512,7 +517,7 @@
         return;
     }
     NSDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:@"revenue_amount" forKey:@"special"];
+    [apiProperties setValue:kAMPRevenueEvent forKey:@"special"];
     [apiProperties setValue:productIdentifier forKey:@"productId"];
     [apiProperties setValue:[NSNumber numberWithInteger:quantity] forKey:@"quantity"];
     [apiProperties setValue:price forKey:@"price"];
@@ -526,7 +531,7 @@
 #pragma clang diagnostic pop
     }
 
-    [self logEvent:@"revenue_amount" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
+    [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withTimestamp:nil outOfSession:NO];
 }
 
 #pragma mark - Upload events
@@ -537,12 +542,12 @@
         _updateScheduled = YES;
         
         [_mainQueue addOperationWithBlock:^{
-            [self performSelector:@selector(uploadEventsExecute) withObject:nil afterDelay:delay];
+            [self performSelector:@selector(uploadEventsInBackground) withObject:nil afterDelay:delay];
         }];
     }
 }
 
-- (void)uploadEventsExecute
+- (void)uploadEventsInBackground
 {
     _updateScheduled = NO;
     
@@ -628,7 +633,7 @@
 
     // Add timestamp of upload
     [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *timestampString = [[NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000] stringValue];
+    NSString *timestampString = [[NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000] stringValue];
     [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
 
     // Add checksum
@@ -649,11 +654,10 @@
     // If pinning is enabled, use the AMPURLConnection that handles it.
 #if AMPLITUDE_SSL_PINNING
     id Connection = (self.sslPinningEnabled ? [AMPURLConnection class] : [NSURLConnection class]);
-    [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
 #else
-    [NSURLConnection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+    id Connection = [NSUrlConnection class];
 #endif
-    {
+    [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -721,18 +725,26 @@
 - (void)enterForeground
 {
     [self updateLocation];
-    [self startSession];
+
+    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+
+    // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
         _uploadTaskID = UIBackgroundTaskInvalid;
     }
     [self runOnBackgroundQueue:^{
+        [self startOrContinueSession:now];
+        _inForeground = YES;
         [self uploadEvents];
     }];
 }
 
 - (void)enterBackground
 {
+    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+
+    // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
     }
@@ -743,9 +755,9 @@
             _uploadTaskID = UIBackgroundTaskInvalid;
         }
     }];
-
-    [self endSession];
     [self runOnBackgroundQueue:^{
+        _inForeground = NO;
+        [self refreshSessionTime:now];
         [self saveEventsData];
         [self uploadEventsWithLimit:0];
     }];
@@ -753,61 +765,101 @@
 
 #pragma mark - Sessions
 
-- (void)startSession
+/**
+ * Creates a new session if we are in the background and
+ * the current session is expired or if there is no current session ID].
+ * Otherwise extends the session.
+ *
+ * Returns true of a new session was created.
+ */
+- (BOOL)startOrContinueSession:(NSNumber*) timestamp
 {
-    NSNumber *now = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
-    
-    [_mainQueue addOperationWithBlock:^{
-        // Remove turn off session later callback
-        [NSObject cancelPreviousPerformRequestsWithTarget:self
-                                                 selector:@selector(turnOffSessionLaterExecute)
-                                                   object:self];
-    }];
-
-    [self runOnBackgroundQueue:^{
-        @synchronized (_eventsData) {
-            // Check overlap with previous session
-            NSNumber *previousSessionTime = [_eventsData objectForKey:@"previous_session_time"];
-            long long timeDelta = [now longLongValue] - [previousSessionTime longLongValue];
-            
-            BOOL sessionExists = _sessionStarted && _sessionId >= 0;
-            BOOL sessionExpired = timeDelta > self.sessionTimeoutMillis;
-
-            if (!sessionExists && timeDelta < self.minTimeBetweenSessionsMillis) {
-                // The previous session happened recently enough to be considered the same session. Use it.
-                _sessionId = [[_eventsData objectForKey:@"previous_session_id"] longLongValue];
-            } else if (!sessionExists || sessionExpired) {
-                // Session has expired or doesn't exist.
-                _sessionId = [now longLongValue];
-                [_eventsData setValue:[NSNumber numberWithLongLong:_sessionId] forKey:@"previous_session_id"];
+    @synchronized (_eventsData) {
+        if (!_inForeground) {
+            if ([self inSession]) {
+                if ([self isWithinMinTimeBetweenSessions:timestamp]) {
+                    [self refreshSessionTime:timestamp];
+                    return FALSE;
+                }
+                [self startNewSession:timestamp];
+                return TRUE;
             }
-            // else _sessionId = previous session id
-
-            if (!_sessionStarted) {
-                NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
-                [apiProperties setValue:@"session_start" forKey:@"special"];
-                [self logEvent:@"session_start" withEventProperties:nil apiProperties:apiProperties withTimestamp:now];
+            // no current session, check for previous session
+            if ([self isWithinMinTimeBetweenSessions:timestamp]) {
+                // extract session id
+                long long previousSessionId = [self getPreviousSessionId];
+                if (previousSessionId == -1) {
+                    [self startNewSession:timestamp];
+                    return TRUE;
+                }
+                // extend previous session
+                [self setSessionId:previousSessionId];
+                [self refreshSessionTime:timestamp];
+                return FALSE;
+            } else {
+                [self startNewSession:timestamp];
+                return TRUE;
             }
-            _sessionStarted = YES;
         }
-    }];
+        // not creating a session means we should continue the session
+        [self refreshSessionTime:timestamp];
+        return FALSE;
+    }
 }
 
-- (void)endSession
+- (void)startNewSession:(NSNumber*) timestamp
 {
-    NSDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:@"session_end" forKey:@"special"];
-    [self logEvent:@"session_end" withEventProperties:nil apiProperties:apiProperties withTimestamp:nil];
-    
-    [self runOnBackgroundQueue:^{
-        @synchronized (_eventsData) {
-            _sessionStarted = NO;
-        }
-    }];
-    
-    [_mainQueue addOperationWithBlock:^{
-        [self performSelector:@selector(turnOffSessionLaterExecute) withObject:nil afterDelay:self.minTimeBetweenSessionsMillis];
-    }];
+    if (_trackingSessionEvents) {
+        [self sendSessionEvent:kAMPSessionEndEvent];
+    }
+    [self setSessionId:[timestamp longLongValue]];
+    [self refreshSessionTime:timestamp];
+    if (_trackingSessionEvents) {
+        [self sendSessionEvent:kAMPSessionStartEvent];
+    }
+}
+
+- (void)sendSessionEvent:(NSString*) sessionEvent
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before sending session event");
+        return;
+    }
+
+    if (![self inSession]) {
+        return;
+    }
+
+    NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
+    [apiProperties setValue:sessionEvent forKey:@"special"];
+    NSNumber* timestamp = [self getLastEventTime];
+    [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withTimestamp:timestamp outOfSession:NO];
+}
+
+- (BOOL)inSession
+{
+    return _sessionId >= 0;
+}
+
+- (BOOL)isWithinMinTimeBetweenSessions:(NSNumber*) timestamp
+{
+    @synchronized (_eventsData) {
+        NSNumber *previousSessionTime = [self getLastEventTime];
+        long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
+        
+        return timeDelta < self.minTimeBetweenSessionsMillis;
+    }
+}
+
+/**
+ * Sets the session ID in memory and persists it to disk.
+ */
+- (void)setSessionId:(long long) timestamp
+{
+    @synchronized (_eventsData) {
+        _sessionId = timestamp;
+        [self setPreviousSessionId:_sessionId];
+    }
 }
 
 /**
@@ -815,22 +867,42 @@
  */
 - (void)refreshSessionTime:(NSNumber*) timestamp
 {
-    if (_sessionId < 0) {
+    if (![self inSession]) {
         return;
     }
+    [self setLastEventTime:timestamp];
+}
 
+- (void)setPreviousSessionId:(long long) previousSessionId
+{
+    @synchronized (_eventsData) {
+        [_eventsData setValue:[NSNumber numberWithLongLong:previousSessionId] forKey:@"previous_session_id"];
+    }
+}
+
+- (long long)getPreviousSessionId
+{
+    @synchronized (_eventsData) {
+        NSNumber* previousSessionId = _eventsData[@"previous_session_id"];
+        if (previousSessionId == nil) {
+            return -1;
+        }
+        return [previousSessionId longLongValue];
+    }
+}
+
+- (void)setLastEventTime:(NSNumber*) timestamp
+{
     @synchronized (_eventsData) {
         [_eventsData setValue:timestamp forKey:@"previous_session_time"];
     }
 }
 
-- (void)turnOffSessionLaterExecute
+- (NSNumber*)getLastEventTime
 {
-    [self runOnBackgroundQueue:^{
-        if (!_sessionStarted) {
-            _sessionId = -1;
-        }
-    }];
+    @synchronized (_eventsData) {
+        return _eventsData[@"previous_session_time"];
+    }
 }
 
 #pragma mark - configurations
@@ -1066,9 +1138,36 @@
     return @"";
 }
 
+- (NSDate*) currentTime
+{
+    return [NSDate date];
+}
+
 - (void)printEventsCount
 {
     NSLog(@"Events count:%ld", (long) [[_eventsData objectForKey:@"events"] count]);
+}
+
+#pragma mark - Compatibility
+
+
+/**
+ * Move all preference data from the legacy name to the new, static name if needed.
+ *
+ * Data used to be in the NSCachesDirectory, which would sometimes be cleared unexpectedly,
+ * resulting in data loss. We move the data from NSCachesDirectory to the current
+ * location in NSLibraryDirectory.
+ *
+ */
+- (BOOL)upgradePrefs
+{
+    // Copy any old data files to new file paths
+    NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    NSString *oldPropertyListPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
+    NSString *oldEventsDataPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
+    BOOL success = [self moveFileIfNotExists:oldPropertyListPath to:_propertyListPath];
+    success &= [self moveFileIfNotExists:oldEventsDataPath to:_eventsDataPath];
+    return success;
 }
 
 #pragma mark - Filesystem
@@ -1163,7 +1262,7 @@
     return [NSKeyedArchiver archiveRootObject:obj toFile:path];
 }
 
-- (void)moveFileIfNotExists:(NSString*)from to:(NSString*)to
+- (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error;
@@ -1174,8 +1273,10 @@
             [fileManager removeItemAtPath:from error:NULL];
         } else {
             AMPLITUDE_LOG(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
+            return false;
         }
     }
+    return true;
 }
 
 #pragma clang diagnostic pop
