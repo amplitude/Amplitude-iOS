@@ -261,7 +261,11 @@
 - (NSString*)getDeviceId;
 
 
-#pragma mark - Static methods (deprecated)
+#pragma mark - Deprecated methods
+
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession __attribute((deprecated()));
+
+- (void)startSession __attribute((deprecated()));
 
 + (void)initializeApiKey:(NSString*) apiKey __attribute((deprecated()));
 

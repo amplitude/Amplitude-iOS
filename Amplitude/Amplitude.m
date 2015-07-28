@@ -335,6 +335,11 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     _initialized = YES;
 }
 
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession
+{
+    [self initializeApiKey:apiKey userId:userId];
+}
+
 /**
  * Run a block in the background. If already in the background, run immediately.
  */
@@ -903,6 +908,11 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     @synchronized (_eventsData) {
         return _eventsData[@"previous_session_time"];
     }
+}
+
+- (void)startSession
+{
+    return;
 }
 
 #pragma mark - configurations
