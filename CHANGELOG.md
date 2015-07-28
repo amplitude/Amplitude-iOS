@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Simplified session tracking. minTimeBetweenSessionsMillis default changed to 15 minutes. Removed sessionTimeoutMillis. No longer send start/end session events by default.
+
 ## 2.5.1 (June 12, 2015)
 
 * Fix crash when array or dictionary is modified during JSON serialization

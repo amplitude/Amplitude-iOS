@@ -19,12 +19,12 @@ A [demo application](https://github.com/amplitude/iOS-Demo) is available to show
 
 5. In the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file, initialize the SDK:
     ``` objective-c
-    [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE"];
+    [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
     ```
 
 6. To track an event anywhere in the app, call:
     ``` objective-c
-    [Amplitude logEvent:@"EVENT_IDENTIFIER_HERE"];
+    [[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];
     ```
 
 7. Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close. After calling logEvent in your app, you will immediately see data appear on the Amplitude Website.
@@ -35,27 +35,24 @@ It's important to think about what types of events you care about as a developer
 
 # Tracking Sessions #
 
-A session is a period of time that a user has the app in the foreground. Sessions within 15 seconds of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically. When the SDK is initialized, it determines whether the app is launched into the foreground or background and starts a new session if launched in the foreground. Each time the app is placed in the background, the SDK ends the session. It starts a new session when the app is brought back into the foreground (unless the app was inactive for less than 15 seconds).
+A session is a period of time that a user has the app in the foreground. Sessions within 15 minutes of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically. When the SDK is initialized, it determines whether the app is launched into the foreground or background and starts a new session if launched in the foreground. Each time the app is placed in the background, the SDK ends the session. It starts a new session when the app is brought back into the foreground (unless the app was inactive for less than 15 minutes).
 
-If your users can take actions while the app is in the background and you would like to track a user session for those actions, use the ```startSession``` method. For example:
-
+You can adjust the time window for which sessions are extended by changing the variable minTimeBetweenSessionsMillis:
 ``` objective-c
-MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
-[commandCenter.nextTrackCommand addTargetUsingBlock:^(MPRemoteCommandEvent *event) {
-  [[Amplitude instance] startSession]
-  [Amplitude logEvent:@"Skip Track"];
-}]
+[Amplitude instance].minTimeBetweenSessionsMillis = 30 * 60 * 1000; // 30 minutes
+[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
 ```
 
-Or, you may want to track a session for interactions with push notification actions. In that case, call ```startSession``` or use ```initializeApiKey:apiKey:userId:startSession``` from ```application:handleActionWithIdentifier:forRemoteNotification:completionHandler:``` or ```application:handleActionWithIdentifier:forLocalNotification:completionHandler:```
+By default start and end session events are no longer sent. To renable add this line before initializing the SDK:
+``` objective-c
+[Amplitude instance].trackingSessionEvents = true;
+[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
+```
+
+You can also log events as out of session. Out of session events have a session_id of -1 and are not considered part of the current session, meaning they do not extend the current session. You can log events as out of session by setting input parameter outOfSession to true when calling logEvent.
 
 ``` objective-c
-- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())completionHandler {
-  [[Amplitude instance] initializeApiKey:@"KEY" userId:nil startSession:YES];
-  if ([identifier isEqualToString:NotificationActionOneIdent]) {
-    [Amplitude logEvent:@"Action One"];
-  }
-}
+[Amplitude logEvent:@"EVENT_IDENTIFIER_HERE" withEventProperties:nil outOfSession:true];
 ```
 
 # Setting Custom User IDs #

@@ -67,7 +67,7 @@
 
 /*!
  When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created.
- The default is 15000 milliseconds (15 seconds).
+ The default is 15 minutes.
  */
 @property (nonatomic, assign) long minTimeBetweenSessionsMillis;
 
