@@ -150,7 +150,7 @@
     XCTAssertEqual(self.amplitude.sessionId, 0);
 }
 
-- (void)testSessionEnd {
+- (void)testEnterBackgroundDoesNotTrackEvent {
     [self.amplitude initializeApiKey:apiKey userId:nil];
     [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
 
