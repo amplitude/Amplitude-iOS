@@ -44,15 +44,7 @@ NSString *const kAMPSessionEndEvent = @"session_end";
 NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 @implementation Amplitude {
-
     NSOperationQueue *_mainQueue;
-
-    AMPDeviceInfo *_deviceInfo;
-
-    CLLocation *_lastKnownLocation;
-    BOOL _locationListeningEnabled;
-    CLLocationManager *_locationManager;
-    AMPLocationManagerDelegate *_locationManagerDelegate;
 
     NSString *_eventsDataPath;
     NSMutableDictionary *_propertyList;
@@ -62,9 +54,14 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     BOOL _updatingCurrently;
     UIBackgroundTaskIdentifier _uploadTaskID;
 
+    AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
-
     NSDictionary *_userProperties;
+
+    CLLocation *_lastKnownLocation;
+    BOOL _locationListeningEnabled;
+    CLLocationManager *_locationManager;
+    AMPLocationManagerDelegate *_locationManagerDelegate;
 
     BOOL _inForeground;
 }
