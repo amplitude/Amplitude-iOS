@@ -18,7 +18,7 @@
 @dynamic sessionId;
 
 - (void)flushQueue {
-    [[self backgroundQueue] waitUntilAllOperationsAreFinished];
+    [self flushQueueWithQueue:[self backgroundQueue]];
 }
 
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue {
