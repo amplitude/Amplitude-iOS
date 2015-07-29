@@ -44,8 +44,6 @@ NSString *const kAMPSessionEndEvent = @"session_end";
 NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 @implementation Amplitude {
-    NSOperationQueue *_mainQueue;
-
     NSString *_eventsDataPath;
     NSMutableDictionary *_propertyList;
     NSString *_propertyListPath;
@@ -182,7 +180,6 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             
             _deviceInfo = [[AMPDeviceInfo alloc] init];
 
-            _mainQueue = SAFE_ARC_RETAIN([NSOperationQueue mainQueue]);
             _uploadTaskID = UIBackgroundTaskInvalid;
             
             NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
@@ -271,7 +268,6 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     SAFE_ARC_RELEASE(_deviceInfo);
     SAFE_ARC_RELEASE(_eventsDataPath);
     SAFE_ARC_RELEASE(_initializerQueue);
-    SAFE_ARC_RELEASE(_mainQueue);
     SAFE_ARC_RELEASE(_lastKnownLocation);
     SAFE_ARC_RELEASE(_locationManager);
     SAFE_ARC_RELEASE(_locationManagerDelegate);
@@ -543,7 +539,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     if (!_updateScheduled) {
         _updateScheduled = YES;
         
-        [_mainQueue addOperationWithBlock:^{
+        [_backgroundQueue addOperationWithBlock:^{
             [self performSelector:@selector(uploadEventsInBackground) withObject:nil afterDelay:delay];
         }];
     }
@@ -552,10 +548,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 - (void)uploadEventsInBackground
 {
     _updateScheduled = NO;
-    
-    [self runOnBackgroundQueue:^{
-        [self uploadEvents];
-    }];
+    [self uploadEvents];
 }
 
 - (void)uploadEvents
