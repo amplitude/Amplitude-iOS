@@ -16,6 +16,7 @@
 @dynamic eventsData;
 @dynamic initialized;
 @dynamic sessionId;
+@dynamic lastEventTime;
 
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
@@ -48,20 +49,6 @@
         [self flushQueue];
         handler();
     });
-}
-
-- (void)setLastEventTime:(NSNumber*) timestamp
-{
-    @synchronized ([self eventsData]) {
-        [[self eventsData] setValue:timestamp forKey:@"previous_session_time"];
-    }
-}
-
-- (NSNumber*)getLastEventTime
-{
-    @synchronized ([self eventsData]) {
-        return [self eventsData][@"previous_session_time"];
-    }
 }
 
 @end

@@ -36,9 +36,9 @@
 @interface Amplitude : NSObject
 
 #pragma mark - Properties
-@property (nonatomic, readonly) NSString *apiKey;
-@property (nonatomic, readonly) NSString *userId;
-@property (nonatomic, readonly) NSString *deviceId;
+@property (nonatomic, strong, readonly) NSString *apiKey;
+@property (nonatomic, strong, readonly) NSString *userId;
+@property (nonatomic, strong, readonly) NSString *deviceId;
 @property (nonatomic, assign) BOOL optOut;
 
 /*!

@@ -36,6 +36,7 @@ NSString *const userId = @"userId";
 
 - (void)tearDown {
     // Ensure all background operations are done
+    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
     [super tearDown];
 }

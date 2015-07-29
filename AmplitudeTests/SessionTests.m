@@ -37,7 +37,6 @@
     id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
     OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateBackground);
-
     [[self.partialMockAmplitude reject] enterForeground];
 
     [self.amplitude initializeApiKey:apiKey];
@@ -82,7 +81,7 @@
  * A new session should start on UIApplicationWillEnterForeground after minTimeBetweenSessionsMillis
  */
 - (void)testRestartSessionOnUIApplicationWillEnterForeground {
-    __block NSDate *date = [NSDate dateWithTimeIntervalSince1970:0];
+    __unsafe_unretained __block NSDate *date = [NSDate dateWithTimeIntervalSince1970:0];
     [[[self.partialMockAmplitude stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&date];
     }] currentTime];
@@ -107,7 +106,7 @@
  * An event should continue the session in the foreground after minTimeBetweenSessionsMillis + 1 seconds
  */
 - (void)testContinueSessionInForeground {
-    __block NSDate* date = [NSDate dateWithTimeIntervalSince1970:0];
+    __unsafe_unretained __block NSDate* date = [NSDate dateWithTimeIntervalSince1970:0];
     [[[self.partialMockAmplitude stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&date];
     }] currentTime];
@@ -119,7 +118,7 @@
     [self.amplitude logEvent:@"continue_session"];
 
     [self.amplitude flushQueue];
-    XCTAssertEqual([[self.amplitude getLastEventTime] longLongValue], 1001000 + self.amplitude.minTimeBetweenSessionsMillis);
+    XCTAssertEqual([self.amplitude.lastEventTime longLongValue], 1001000 + self.amplitude.minTimeBetweenSessionsMillis);
     XCTAssertEqual([self.amplitude queuedEventCount], 1);
     XCTAssertEqual(self.amplitude.sessionId, 0);
 }
@@ -128,7 +127,7 @@
  * A new session should continue on UIApplicationWillEnterForeground after minTimeBetweenSessionsMillis - 1 second
  */
 - (void)testContinueSessionOnUIApplicationWillEnterForeground {
-    __block NSDate* date = [NSDate dateWithTimeIntervalSince1970:0];
+    __unsafe_unretained __block NSDate* date = [NSDate dateWithTimeIntervalSince1970:0];
     [[[self.partialMockAmplitude stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&date];
     }] currentTime];
@@ -162,7 +161,7 @@
 }
 
 - (void)testOutOfSessionEvent {
-    __block NSDate* date = [NSDate dateWithTimeIntervalSince1970:1000];
+    __unsafe_unretained __block NSDate* date = [NSDate dateWithTimeIntervalSince1970:1000];
     [[[self.partialMockAmplitude stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&date];
     }] currentTime];
@@ -185,7 +184,7 @@
                isEqualToNumber:[NSNumber numberWithLongLong:-1]]);
     
     // An out of session event should not continue the session
-    XCTAssertEqual([[self.amplitude getLastEventTime] longLongValue], 1000000);
+    XCTAssertEqual([self.amplitude.lastEventTime longLongValue], 1000000);
 }
 
 - (void)testStartSessionWithTrackSessionEvents {
@@ -203,7 +202,7 @@
 
 
 - (void)testEndSessionWithTrackSessionEvents {
-    __block NSDate *date = [NSDate dateWithTimeIntervalSince1970:0];
+    __unsafe_unretained __block NSDate *date = [NSDate dateWithTimeIntervalSince1970:0];
     [[[self.partialMockAmplitude stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&date];
     }] currentTime];

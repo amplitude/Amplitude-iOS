@@ -10,11 +10,12 @@
 
 @interface Amplitude (Test)
 
-@property (nonatomic, retain) NSOperationQueue *backgroundQueue;
-@property (nonatomic, retain) NSOperationQueue *initializerQueue;
-@property (nonatomic, retain) NSMutableDictionary *eventsData;
+@property (nonatomic, strong) NSOperationQueue *backgroundQueue;
+@property (nonatomic, strong) NSOperationQueue *initializerQueue;
+@property (nonatomic, strong) NSMutableDictionary *eventsData;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) long long sessionId;
+@property (nonatomic, strong) NSNumber* lastEventTime;
 
 - (void)flushQueue;
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;
@@ -22,5 +23,8 @@
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
+- (void)enterForeground;
+- (void)enterBackground;
+- (NSDate*)currentTime;
 
 @end

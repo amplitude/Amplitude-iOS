@@ -30,9 +30,9 @@
 
 @interface Amplitude ()
 
-@property (nonatomic, retain) NSOperationQueue *backgroundQueue;
-@property (nonatomic, retain) NSOperationQueue *initializerQueue;
-@property (nonatomic, retain) NSMutableDictionary *eventsData;
+@property (nonatomic, strong) NSOperationQueue *backgroundQueue;
+@property (nonatomic, strong) NSOperationQueue *initializerQueue;
+@property (nonatomic, strong) NSMutableDictionary *eventsData;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 @property (nonatomic, assign) long long sessionId;
@@ -789,7 +789,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             // no current session, check for previous session
             if ([self isWithinMinTimeBetweenSessions:timestamp]) {
                 // extract session id
-                long long previousSessionId = [self getPreviousSessionId];
+                long long previousSessionId = [self previousSessionId];
                 if (previousSessionId == -1) {
                     [self startNewSession:timestamp];
                     return TRUE;
@@ -834,7 +834,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:sessionEvent forKey:@"special"];
-    NSNumber* timestamp = [self getLastEventTime];
+    NSNumber* timestamp = [self lastEventTime];
     [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withTimestamp:timestamp outOfSession:NO];
 }
 
@@ -846,7 +846,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 - (BOOL)isWithinMinTimeBetweenSessions:(NSNumber*) timestamp
 {
     @synchronized (_eventsData) {
-        NSNumber *previousSessionTime = [self getLastEventTime];
+        NSNumber *previousSessionTime = [self lastEventTime];
         long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
         
         return timeDelta < self.minTimeBetweenSessionsMillis;
@@ -882,7 +882,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
 }
 
-- (long long)getPreviousSessionId
+- (long long)previousSessionId
 {
     @synchronized (_eventsData) {
         NSNumber* previousSessionId = _eventsData[@"previous_session_id"];
@@ -900,7 +900,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
 }
 
-- (NSNumber*)getLastEventTime
+- (NSNumber*)lastEventTime
 {
     @synchronized (_eventsData) {
         return _eventsData[@"previous_session_time"];
