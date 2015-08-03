@@ -30,8 +30,8 @@
 }
 
 - (void)tearDown {
-    [super tearDown];
     SAFE_ARC_RELEASE(_deviceInfo);
+    [super tearDown];
 }
 
 - (void) testAppVersion {
