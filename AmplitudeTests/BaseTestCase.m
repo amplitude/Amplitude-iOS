@@ -37,7 +37,9 @@ NSString *const userId = @"userId";
 
 - (void)tearDown {
     // Ensure all background operations are done
+    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
+    [_partialMock stopMocking];
     [super tearDown];
 }
 

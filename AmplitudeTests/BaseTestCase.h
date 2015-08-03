@@ -13,7 +13,7 @@ extern NSString *const userId;
 
 @interface BaseTestCase : XCTestCase
 
-@property (nonatomic, retain) Amplitude *amplitude;
+@property (nonatomic, strong) Amplitude *amplitude;
 
 - (BOOL) archive:(id)rootObject toFile:(NSString *)path;
 - (id) unarchive:(NSString *)path;
