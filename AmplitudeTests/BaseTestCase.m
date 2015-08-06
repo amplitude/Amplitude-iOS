@@ -13,6 +13,7 @@
 #import "Amplitude+SSLPinning.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
+#import "AMPARCMacros.h"
 
 NSString *const apiKey = @"000000";
 NSString *const userId = @"userId";
@@ -37,7 +38,10 @@ NSString *const userId = @"userId";
 
 - (void)tearDown {
     // Ensure all background operations are done
+    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
+    [_partialMock stopMocking];
+    SAFE_ARC_RELEASE(self.amplitude);
     [super tearDown];
 }
 

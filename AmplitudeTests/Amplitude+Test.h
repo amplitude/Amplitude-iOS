@@ -10,11 +10,13 @@
 
 @interface Amplitude (Test)
 
-@property (nonatomic, retain) NSOperationQueue *backgroundQueue;
+@property (nonatomic, strong) NSOperationQueue *backgroundQueue;
+@property (nonatomic, strong) NSOperationQueue *initializerQueue;
 @property (nonatomic, retain) NSMutableDictionary *eventsData;
 @property (nonatomic, assign) BOOL initialized;
 
 - (void)flushQueue;
+- (void)flushQueueWithQueue:(NSOperationQueue*) queue;
 - (void)flushUploads:(void (^)())handler;
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;

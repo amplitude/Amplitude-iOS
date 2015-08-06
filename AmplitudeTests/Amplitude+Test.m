@@ -12,11 +12,16 @@
 @implementation Amplitude (Test)
 
 @dynamic backgroundQueue;
+@dynamic initializerQueue;
 @dynamic eventsData;
 @dynamic initialized;
 
 - (void)flushQueue {
-    [[self backgroundQueue] waitUntilAllOperationsAreFinished];
+    [self flushQueueWithQueue:[self backgroundQueue]];
+}
+
+- (void)flushQueueWithQueue:(NSOperationQueue*) queue {
+    [queue waitUntilAllOperationsAreFinished];
 }
 
 - (NSDictionary *)getEvent:(NSInteger) fromEnd {

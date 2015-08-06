@@ -30,7 +30,8 @@
 
 @interface Amplitude ()
 
-@property (nonatomic, retain) NSOperationQueue *backgroundQueue;
+@property (nonatomic, strong) NSOperationQueue *backgroundQueue;
+@property (nonatomic, strong) NSOperationQueue *initializerQueue;
 @property (nonatomic, retain) NSMutableDictionary *eventsData;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
@@ -40,7 +41,6 @@
 @implementation Amplitude {
     AMPDeviceInfo *_deviceInfo;
     NSString *_eventsDataPath;
-    NSOperationQueue *_initializerQueue;
     NSOperationQueue *_mainQueue;
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
