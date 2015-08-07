@@ -195,7 +195,7 @@
 #endif
     CFRelease(uuid);
     // Add "R" at the end of the ID to distinguish it from advertiserId
-    NSString *result = SAFE_ARC_AUTORELEASE([uuidStr stringByAppendingString:@"R"]);
+    NSString *result = [uuidStr stringByAppendingString:@"R"];
     SAFE_ARC_RELEASE(uuidStr);
     return result;
 }

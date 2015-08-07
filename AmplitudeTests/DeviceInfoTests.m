@@ -14,6 +14,7 @@
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
+#import "AMPARCMacros.h"
 
 @interface DeviceInfoTests : BaseTestCase
 
@@ -29,8 +30,8 @@
 }
 
 - (void)tearDown {
+    SAFE_ARC_RELEASE(_deviceInfo);
     [super tearDown];
-    _deviceInfo = nil;
 }
 
 - (void) testAppVersion {
