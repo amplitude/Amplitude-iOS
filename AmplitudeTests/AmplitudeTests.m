@@ -46,7 +46,6 @@
 }
 
 - (void)testLogEventUploadLogic {
-    // mocking sendAsynchronousRequest
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                             @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
                                             @"data" : [@"invalid_api_key" dataUsingEncoding:NSUTF8StringEncoding]
@@ -74,6 +73,28 @@
 
     // make post request should only be called 3 times
     XCTAssertEqual(_connectionCallCount, 3);
+}
+
+- (void)testRequestTooLargeBackoffLogic {
+    [self.amplitude setEventUploadThreshold:2];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self.amplitude flushQueue];
+
+    // 413 error force backoff with 2 events --> new upload limit will be 1
+    [serverResponse setValue:[[NSHTTPURLResponse alloc] initWithURL:nil statusCode:413 HTTPVersion:nil headerFields:@{}] forKey:@"response"];
+    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    // with upload limit 1 and 413 --> the top event will be deleted until no events left
+    XCTAssertEqual([self.amplitude queuedEventCount], 0);
+
+    // sent 4 server requests: start_session, 2 events, delete top event, delete top event
+    XCTAssertEqual(_connectionCallCount, 4);
 }
 
 
