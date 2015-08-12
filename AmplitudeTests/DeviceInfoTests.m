@@ -9,14 +9,11 @@
 #import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>
 #import <OCMock/OCMock.h>
-#import "Amplitude.h"
 #import "AMPConstants.h"
-#import "Amplitude+Test.h"
-#import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
 #import "AMPARCMacros.h"
 
-@interface DeviceInfoTests : BaseTestCase
+@interface DeviceInfoTests : XCTestCase
 
 @end
 
@@ -37,9 +34,10 @@
 - (void) testAppVersion {
     id mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
     [[[mockBundle stub] andReturn:mockBundle] mainBundle];
-    OCMStub([mockBundle infoDictionary]).andReturn(@{
+    NSDictionary *mockDictionary = @{
         @"CFBundleShortVersionString": kAMPVersion
-    });
+    };
+    OCMStub([mockBundle infoDictionary]).andReturn(mockDictionary);
     
     XCTAssertEqualObjects(kAMPVersion, _deviceInfo.appVersion);
     [mockBundle stopMocking];
