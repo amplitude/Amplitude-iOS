@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		321B1765FE30892CC6A0E979 /* libPods-test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB69FAEFF28EED71342290C /* libPods-test.a */; };
+		602A9A6B1B754E7B0067230C /* AmplitudeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 602A9A6A1B754E7B0067230C /* AmplitudeTests.m */; };
 		9D265EF41AB3FA2500399D93 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */; };
 		9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
 		9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
@@ -49,6 +50,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		602A9A6A1B754E7B0067230C /* AmplitudeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmplitudeTests.m; sourceTree = "<group>"; };
 		73478F50C66F6A68F4367561 /* Pods-test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-test.debug.xcconfig"; path = "Pods/Target Support Files/Pods-test/Pods-test.debug.xcconfig"; sourceTree = "<group>"; };
 		9BB69FAEFF28EED71342290C /* libPods-test.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-test.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSLPinningTests.m; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 			children = (
 				9DFBB9C51AB0D1DD0017F703 /* Amplitude+Test.h */,
 				9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */,
+				602A9A6A1B754E7B0067230C /* AmplitudeTests.m */,
 				E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */,
 				9DFBB9C81AB0D26E0017F703 /* BaseTestCase.h */,
 				9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */,
@@ -349,6 +352,7 @@
 				9D6E19561ACCDE9000352C6C /* ISPCertificatePinning.m in Sources */,
 				9D6E19571ACCDE9000352C6C /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				9D6E19581ACCDE9000352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */,
+				602A9A6B1B754E7B0067230C /* AmplitudeTests.m in Sources */,
 				9DFBB9CC1AB0D47A0017F703 /* SessionTests.m in Sources */,
 				E96786001A48FBD100887CCD /* AMPDeviceInfo.m in Sources */,
 				9DFBB9CA1AB0D26E0017F703 /* BaseTestCase.m in Sources */,

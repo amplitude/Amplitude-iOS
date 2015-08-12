@@ -62,6 +62,9 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     AMPLocationManagerDelegate *_locationManagerDelegate;
 
     BOOL _inForeground;
+
+    BOOL _backoffUpload;
+    int _backoffUploadBatchSize;
 }
 
 #pragma clang diagnostic push
@@ -160,12 +163,14 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         _updateScheduled = NO;
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
+        _backoffUpload = NO;
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
         self.eventUploadMaxBatchSize = kAMPEventUploadMaxBatchSize;
         self.eventUploadPeriodSeconds = kAMPEventUploadPeriodSeconds;
         self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
+        _backoffUploadBatchSize = self.eventUploadMaxBatchSize;
 
         _initializerQueue = [[NSOperationQueue alloc] init];
         _backgroundQueue = [[NSOperationQueue alloc] init];
@@ -418,15 +423,17 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
             AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
-            if ([[_eventsData objectForKey:@"events"] count] >= self.eventMaxCount) {
+            unsigned long eventCount = [[_eventsData objectForKey:@"events"] count];
+            if (eventCount >= self.eventMaxCount) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
                 [[_eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, kAMPEventRemoveBatchSize)];
+                eventCount -= kAMPEventRemoveBatchSize;
                 [self saveEventsData];
-            } else if ([[_eventsData objectForKey:@"events"] count] >= kAMPEventRemoveBatchSize && [[_eventsData objectForKey:@"events"] count] % kAMPEventRemoveBatchSize == 0) {
+            } else if ((eventCount % kAMPEventRemoveBatchSize) == 0 && eventCount >= kAMPEventRemoveBatchSize) {
                 [self saveEventsData];
             }
 
-            if ([[_eventsData objectForKey:@"events"] count] >= self.eventUploadThreshold) {
+            if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
                 [self uploadEvents];
             } else {
                 [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
@@ -553,7 +560,8 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)uploadEvents
 {
-    [self uploadEventsWithLimit:self.eventUploadMaxBatchSize];
+    int limit = _backoffUpload ? _backoffUploadBatchSize : self.eventUploadMaxBatchSize;
+    [self uploadEventsWithLimit:limit];
 }
 
 - (void)uploadEventsWithLimit:(int) limit
@@ -580,7 +588,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             }
 
             NSMutableArray *events = [_eventsData objectForKey:@"events"];
-            long long numEvents = limit ? fminl([events count], limit) : [events count];
+            long long numEvents = limit > 0 ? fminl([events count], limit) : [events count];
             if (numEvents == 0) {
                 _updatingCurrently = NO;
                 return;
@@ -683,6 +691,21 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                     NSLog(@"ERROR: %@, will attempt to reupload later", result);
                 }
                 SAFE_ARC_RELEASE(result);
+            } else if ([httpResponse statusCode] == 413) {
+                // If blocked by one massive event, drop it
+                if (_backoffUpload && _backoffUploadBatchSize == 1) {
+                    [[_eventsData objectForKey:@"events"] removeObjectAtIndex:0];
+                    [self saveEventsData];
+                }
+
+                // server complained about length of request, backoff and try again
+                _backoffUpload = YES;
+                int numEvents = fminl([[_eventsData objectForKey:@"events"] count], _backoffUploadBatchSize);
+                _backoffUploadBatchSize = (int)ceilf(numEvents / 2.0f);
+                AMPLITUDE_LOG(@"Request too large, will decrease size and attempt to reupload");
+                _updatingCurrently = NO;
+                [self uploadEventsWithLimit:_backoffUploadBatchSize];
+
             } else {
                 NSLog(@"ERROR: Connection response received:%ld, %@", (long)[httpResponse statusCode],
                     SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
@@ -706,8 +729,15 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         _updatingCurrently = NO;
 
         if (uploadSuccessful && [[_eventsData objectForKey:@"events"] count] > self.eventUploadThreshold) {
-            [self uploadEventsWithLimit:0];
+            int limit = _backoffUpload ? _backoffUploadBatchSize : 0;
+            [self uploadEventsWithLimit:limit];
+
         } else if (_uploadTaskID != UIBackgroundTaskInvalid) {
+            if (uploadSuccessful) {
+                _backoffUpload = NO;
+                _backoffUploadBatchSize = self.eventUploadMaxBatchSize;
+            }
+
             // Upload finished, allow background task to be ended
             [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
             _uploadTaskID = UIBackgroundTaskInvalid;
@@ -958,6 +988,12 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             [self saveEventsData];
         }
     }];
+}
+
+- (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
+{
+    _eventUploadMaxBatchSize = eventUploadMaxBatchSize;
+    _backoffUploadBatchSize = eventUploadMaxBatchSize;
 }
 
 - (BOOL)optOut
