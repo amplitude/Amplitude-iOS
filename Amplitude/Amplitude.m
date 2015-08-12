@@ -658,7 +658,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 #if AMPLITUDE_SSL_PINNING
     id Connection = (self.sslPinningEnabled ? [AMPURLConnection class] : [NSURLConnection class]);
 #else
-    id Connection = [NSUrlConnection class];
+    id Connection = [NSURLConnection class];
 #endif
     [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         BOOL uploadSuccessful = NO;
