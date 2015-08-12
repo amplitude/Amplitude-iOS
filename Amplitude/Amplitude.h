@@ -36,9 +36,9 @@
 @interface Amplitude : NSObject
 
 #pragma mark - Properties
-@property (nonatomic, readonly) NSString *apiKey;
-@property (nonatomic, readonly) NSString *userId;
-@property (nonatomic, readonly) NSString *deviceId;
+@property (nonatomic, strong, readonly) NSString *apiKey;
+@property (nonatomic, strong, readonly) NSString *userId;
+@property (nonatomic, strong, readonly) NSString *deviceId;
 @property (nonatomic, assign) BOOL optOut;
 
 /*!
@@ -67,15 +67,15 @@
 
 /*!
  When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created.
- The default is 15000 milliseconds (15 seconds).
+ The default is 15 minutes.
  */
 @property (nonatomic, assign) long minTimeBetweenSessionsMillis;
 
 /*!
- A session will time out automatically after a period of inactivity. If the user has performed no events within sessionTimeoutMillis milliseconds, a new session is created on the next event logged.
- The default is 1800000 milliseconds (30 minutes).
+ Whether to track start and end of session events
  */
-@property (nonatomic, assign) long sessionTimeoutMillis;
+@property (nonatomic, assign) BOOL trackingSessionEvents;
+
 
 #pragma mark - Methods
 
@@ -89,7 +89,6 @@
 
  @param apiKey                 Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
  @param userId                 If your app has its own login system that you want to track users with, you can set the userId.
- @param startSession           Whether or not to automatically start a user session at the time of initialization. By default, initialization automatically starts a session if it determinesthe app is active. This parameter overrides that default behavior. Useful for initialization when tracking push notifications receipt.
 
  @discussion
  We recommend you first initialize your class within your "didFinishLaunchingWithOptions" method inside your app delegate.
@@ -106,9 +105,7 @@
  */
 - (void)initializeApiKey:(NSString*) apiKey;
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession;
 
-- (void)startSession;
 
 /*!
  @method
@@ -118,6 +115,7 @@
 
  @param eventType                The name of the event you wish to track.
  @param eventProperties          You can attach additional data to any event by passing a NSDictionary object.
+ @param outOfSession             If YES, will track the event as out of session. Useful for push notification events.
 
  @discussion
  Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close.
@@ -131,6 +129,7 @@
  */
 - (void)logEvent:(NSString*) eventType;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession;
 
 /*!
  @method
@@ -262,7 +261,11 @@
 - (NSString*)getDeviceId;
 
 
-#pragma mark - Static methods (deprecated)
+#pragma mark - Deprecated methods
+
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession __attribute((deprecated()));
+
+- (void)startSession __attribute((deprecated()));
 
 + (void)initializeApiKey:(NSString*) apiKey __attribute((deprecated()));
 
@@ -294,3 +297,9 @@
 
 + (NSString*)getDeviceId __attribute((deprecated()));
 @end
+
+#pragma mark - constants
+
+extern NSString *const kAMPSessionStartEvent;
+extern NSString *const kAMPSessionEndEvent;
+extern NSString *const kAMPRevenueEvent;

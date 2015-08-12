@@ -19,12 +19,12 @@ A [demo application](https://github.com/amplitude/iOS-Demo) is available to show
 
 5. In the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file, initialize the SDK:
     ``` objective-c
-    [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE"];
+    [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
     ```
 
 6. To track an event anywhere in the app, call:
     ``` objective-c
-    [Amplitude logEvent:@"EVENT_IDENTIFIER_HERE"];
+    [[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];
     ```
 
 7. Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close. After calling logEvent in your app, you will immediately see data appear on the Amplitude Website.
@@ -35,27 +35,24 @@ It's important to think about what types of events you care about as a developer
 
 # Tracking Sessions #
 
-A session is a period of time that a user has the app in the foreground. Sessions within 15 seconds of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically. When the SDK is initialized, it determines whether the app is launched into the foreground or background and starts a new session if launched in the foreground. Each time the app is placed in the background, the SDK ends the session. It starts a new session when the app is brought back into the foreground (unless the app was inactive for less than 15 seconds).
+A session is a period of time that a user has the app in the foreground. Sessions within 15 minutes of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically. When the SDK is initialized, it determines whether the app is launched into the foreground or background and starts a new session if launched in the foreground. A new session is created when the app comes back into the foreground after being out of the foreground for 15 minutes or more.
 
-If your users can take actions while the app is in the background and you would like to track a user session for those actions, use the ```startSession``` method. For example:
-
+You can adjust the time window for which sessions are extended by changing the variable minTimeBetweenSessionsMillis:
 ``` objective-c
-MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
-[commandCenter.nextTrackCommand addTargetUsingBlock:^(MPRemoteCommandEvent *event) {
-  [[Amplitude instance] startSession]
-  [Amplitude logEvent:@"Skip Track"];
-}]
+[Amplitude instance].minTimeBetweenSessionsMillis = 30 * 60 * 1000; // 30 minutes
+[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
 ```
 
-Or, you may want to track a session for interactions with push notification actions. In that case, call ```startSession``` or use ```initializeApiKey:apiKey:userId:startSession``` from ```application:handleActionWithIdentifier:forRemoteNotification:completionHandler:``` or ```application:handleActionWithIdentifier:forLocalNotification:completionHandler:```
+By default start and end session events are no longer sent. To renable add this line before initializing the SDK:
+``` objective-c
+[Amplitude instance].trackingSessionEvents = true;
+[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
+```
+
+You can also log events as out of session. Out of session events have a session_id of -1 and are not considered part of the current session, meaning they do not extend the current session. You can log events as out of session by setting input parameter outOfSession to true when calling logEvent.
 
 ``` objective-c
-- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)())completionHandler {
-  [[Amplitude instance] initializeApiKey:@"KEY" userId:nil startSession:YES];
-  if ([identifier isEqualToString:NotificationActionOneIdent]) {
-    [Amplitude logEvent:@"Action One"];
-  }
-}
+[[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE" withEventProperties:nil outOfSession:true];
 ```
 
 # Setting Custom User IDs #
@@ -63,7 +60,7 @@ Or, you may want to track a session for interactions with push notification acti
 If your app has its own login system that you want to track users with, you can call `setUserId:` at any time:
 
 ``` objective-c
-[Amplitude setUserId:@"USER_ID_HERE"];
+[[Amplitude instance] setUserId:@"USER_ID_HERE"];
 ```
 
 A user's data will be merged on the backend so that any events up to that point on the same device will be tracked under the same user.
@@ -71,7 +68,7 @@ A user's data will be merged on the backend so that any events up to that point 
 You can also add the user ID as an argument to the `initializeApiKey:` call:
 
 ``` objective-c
-[Amplitude initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
+[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
 ```
 
 # Setting Event Properties #
@@ -81,7 +78,7 @@ You can attach additional data to any event by passing a NSDictionary object as 
 ``` objective-c
 NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
 [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-[Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
+[[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
 ```
 
 # Setting User Properties
@@ -91,7 +88,7 @@ To add properties that are associated with a user, you can set user properties:
 ``` objective-c
 NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
 [userProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-[Amplitude setUserProperties:userProperties];
+[[Amplitude instance] setUserProperties:userProperties];
 ```
 
 To replace any existing user properties with a new set:
@@ -119,7 +116,7 @@ out is disabled.
 To track revenue from a user, call
 
 ``` objective-c
-[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]
+[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]
 ```
 
 after a successful purchase transaction. `logRevenue:` takes a string to identify the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`). `quantity:` takes an integer with the quantity of product purchased. `price:` takes a NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
@@ -129,18 +126,34 @@ after a successful purchase transaction. `logRevenue:` takes a string to identif
 Then call
 
 ``` objective-c
-[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]
+[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]
 ```
 
 after a successful purchase transaction. `receipt:` takes the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
 
+# Swift #
+
+This SDK will work with Swift. If you are copying the source files or using CocoaPods without the `use_frameworks!` directive, you should create a bridging header as documented [here](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html) and add the following line to your bridging header:
+
+``` objective-c
+#import "Amplitude.h"
+```
+
+If you have `use_frameworks!` set, you should not use a bridging header and instead use the following line in your swift files:
+
+``` swift
+import Amplitude_iOS
+```
+
+In either case, you can call Amplitude methods with `Amplitude.instance().method(...)`
+
 # Advanced #
 
-This SDK automatically grabs useful data from the phone, including app version, phone model, operating system version, and carrier information. If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app. Amplitude only polls for a location once on startup of the app, once on each app open, and once when the permission is first granted. There is no continuous tracking of location. If you wish to disable location tracking done by the app, you can call `[Amplitude disableLocationListening]` at any point. If you want location tracking disabled on startup of the app, call disableLocationListening before you call `initializeApiKey:`. You can always reenable location tracking through Amplitude with `[Amplitude enableLocationListening]`.
+This SDK automatically grabs useful data from the phone, including app version, phone model, operating system version, and carrier information. If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app. Amplitude only polls for a location once on startup of the app, once on each app open, and once when the permission is first granted. There is no continuous tracking of location. If you wish to disable location tracking done by the app, you can call `[[Amplitude instance] disableLocationListening]` at any point. If you want location tracking disabled on startup of the app, call disableLocationListening before you call `initializeApiKey:`. You can always reenable location tracking through Amplitude with `[[Amplitude instance] enableLocationListening]`.
 
 User IDs are automatically generated and will default to device specific identifiers if not specified.
 
-Device IDs use identifierForVendor if available, or a random ID otherwise. You can retrieve the Device ID that Amplitude uses with `[Amplitude getDeviceId]`.
+Device IDs use identifierForVendor if available, or a random ID otherwise. You can retrieve the Device ID that Amplitude uses with `[[Amplitude instance] getDeviceId]`.
 
 This code will work with both ARC and non-ARC projects. Preprocessor macros are used to determine which version of the compiler is being used.
 

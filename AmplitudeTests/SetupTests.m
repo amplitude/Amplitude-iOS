@@ -24,7 +24,6 @@
 }
 
 - (void)tearDown {
-    // Ensure all background operations are done
     [super tearDown];
 }
 

@@ -42,6 +42,7 @@
     });
     
     XCTAssertEqualObjects(kAMPVersion, _deviceInfo.appVersion);
+    [mockBundle stopMocking];
 }
 
 - (void) testOsName {

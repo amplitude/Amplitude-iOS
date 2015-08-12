@@ -15,6 +15,8 @@
 @dynamic initializerQueue;
 @dynamic eventsData;
 @dynamic initialized;
+@dynamic sessionId;
+@dynamic lastEventTime;
 
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
