@@ -35,7 +35,7 @@ It's important to think about what types of events you care about as a developer
 
 # Tracking Sessions #
 
-A session is a period of time that a user has the app in the foreground. Sessions within 15 minutes of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically. When the SDK is initialized, it determines whether the app is launched into the foreground or background and starts a new session if launched in the foreground. Each time the app is placed in the background, the SDK ends the session. It starts a new session when the app is brought back into the foreground (unless the app was inactive for less than 15 minutes).
+A session is a period of time that a user has the app in the foreground. Sessions within 15 minutes of each other are merged into a single session. In the iOS SDK, sessions are tracked automatically. When the SDK is initialized, it determines whether the app is launched into the foreground or background and starts a new session if launched in the foreground. A new session is created when the app comes back into the foreground after being out of the foreground for 15 minutes or more.
 
 You can adjust the time window for which sessions are extended by changing the variable minTimeBetweenSessionsMillis:
 ``` objective-c
@@ -52,7 +52,7 @@ By default start and end session events are no longer sent. To renable add this 
 You can also log events as out of session. Out of session events have a session_id of -1 and are not considered part of the current session, meaning they do not extend the current session. You can log events as out of session by setting input parameter outOfSession to true when calling logEvent.
 
 ``` objective-c
-[Amplitude logEvent:@"EVENT_IDENTIFIER_HERE" withEventProperties:nil outOfSession:true];
+[[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE" withEventProperties:nil outOfSession:true];
 ```
 
 # Setting Custom User IDs #
@@ -60,7 +60,7 @@ You can also log events as out of session. Out of session events have a session_
 If your app has its own login system that you want to track users with, you can call `setUserId:` at any time:
 
 ``` objective-c
-[Amplitude setUserId:@"USER_ID_HERE"];
+[[Amplitude instance] setUserId:@"USER_ID_HERE"];
 ```
 
 A user's data will be merged on the backend so that any events up to that point on the same device will be tracked under the same user.
@@ -68,7 +68,7 @@ A user's data will be merged on the backend so that any events up to that point 
 You can also add the user ID as an argument to the `initializeApiKey:` call:
 
 ``` objective-c
-[Amplitude initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
+[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
 ```
 
 # Setting Event Properties #
@@ -78,7 +78,7 @@ You can attach additional data to any event by passing a NSDictionary object as 
 ``` objective-c
 NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
 [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-[Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
+[[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
 ```
 
 # Setting User Properties
@@ -88,7 +88,7 @@ To add properties that are associated with a user, you can set user properties:
 ``` objective-c
 NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
 [userProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-[Amplitude setUserProperties:userProperties];
+[[Amplitude instance] setUserProperties:userProperties];
 ```
 
 To replace any existing user properties with a new set:
@@ -116,7 +116,7 @@ out is disabled.
 To track revenue from a user, call
 
 ``` objective-c
-[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]
+[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]
 ```
 
 after a successful purchase transaction. `logRevenue:` takes a string to identify the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`). `quantity:` takes an integer with the quantity of product purchased. `price:` takes a NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
@@ -126,7 +126,7 @@ after a successful purchase transaction. `logRevenue:` takes a string to identif
 Then call
 
 ``` objective-c
-[Amplitude logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]
+[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]
 ```
 
 after a successful purchase transaction. `receipt:` takes the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
