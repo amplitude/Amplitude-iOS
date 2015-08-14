@@ -14,4 +14,4 @@ const int kAMPEventUploadMaxBatchSize = 100;
 const int kAMPEventMaxCount = 1000;
 const int kAMPEventRemoveBatchSize = 20;
 const int kAMPEventUploadPeriodSeconds = 30; // 30s
-const long kAMPMinTimeBetweenSessionsMillis = 15 * 60 * 1000; // 15m
+const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5m
