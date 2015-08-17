@@ -310,7 +310,6 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     if (![self isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
-
     if (userId != nil && ![self isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
@@ -327,7 +326,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
             if (setUserId) {
-                [self setUserId: userId];
+                [self setUserId:userId];
             } else {
                 _userId = SAFE_ARC_RETAIN([_eventsData objectForKey:@"user_id"]);
             }
