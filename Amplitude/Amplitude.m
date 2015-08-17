@@ -285,13 +285,22 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)initializeApiKey:(NSString*) apiKey
 {
-    [self initializeApiKey:apiKey userId:nil];
+    [self initializeApiKey:apiKey userId:nil setUserId: NO];
 }
 
 /**
  * Initialize Amplitude with a given apiKey and userId.
  */
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
+{
+    [self initializeApiKey:apiKey userId:userId setUserId: YES];
+}
+
+/**
+ * SetUserId: client explicitly initialized with a userId (can be nil).
+ * If false, then attempt to load userId from saved eventsData.
+ */
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId setUserId:(BOOL) setUserId
 {
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
@@ -301,6 +310,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     if (![self isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
+
     if (userId != nil && ![self isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
     }
@@ -310,17 +320,13 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         return;
     }
 
-    (void) SAFE_ARC_RETAIN(apiKey);
+    SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
     
     [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
-            if (userId != nil) {
-                [self setUserId:userId];
-            } else {
-                _userId = SAFE_ARC_RETAIN([_eventsData objectForKey:@"user_id"]);
-            }
+            [self setUserId: setUserId ? userId : [_eventsData objectForKey:@"user_id"]];
         }
     }];
 
@@ -965,16 +971,15 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)setUserId:(NSString*) userId
 {
-    if (![self isArgument:userId validType:[NSString class] methodName:@"setUserId:"]) {
+    if (!([self isArgument:userId validType:[NSString class] methodName:@"setUserId:"] || userId == nil)) {
         return;
     }
     
     [self runOnBackgroundQueue:^{
-        (void) SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
-        _userId = userId;
+        _userId = SAFE_ARC_RETAIN(userId);
         @synchronized (_eventsData) {
-            [_eventsData setObject:_userId forKey:@"user_id"];
+            [_eventsData setValue:_userId forKey:@"user_id"];
             [self saveEventsData];
         }
     }];

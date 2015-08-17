@@ -45,6 +45,71 @@
     }] sendAsynchronousRequest:OCMOCK_ANY queue:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 }
 
+- (void)testInitializeLoadNilUserIdFromEventData {
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], nil);
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqual([event objectForKey:@"user_id"], nil);
+    XCTAssertFalse([[event allKeys] containsObject:@"user_id"]);
+}
+
+- (void)testInitializeLoadUserIdFromEventData {
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], nil);
+
+    NSString *testUserId = @"testUserId";
+    [[self.amplitude eventsData] setObject:testUserId forKey:@"user_id"];
+    [self.amplitude initializeApiKey:apiKey];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], testUserId);
+}
+
+- (void)testInitializeWithNilUserId {
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], nil);
+
+    NSString *nilUserId = nil;
+    [self.amplitude initializeApiKey:apiKey userId:nilUserId];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], nilUserId);
+}
+
+- (void)testInitializeWithUserId {
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], nil);
+
+    NSString *testUserId = @"testUserId";
+    [self.amplitude initializeApiKey:apiKey userId:testUserId];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], testUserId);
+}
+
+- (void)testClearUserId {
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], nil);
+
+    NSString *testUserId = @"testUserId";
+    [self.amplitude setUserId:testUserId];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], testUserId);
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    NSDictionary *event1 = [self.amplitude getLastEvent];
+    XCTAssertEqual([event1 objectForKey:@"user_id"], testUserId);
+
+    NSString *nilUserId = nil;
+    [self.amplitude setUserId:nilUserId];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([self.amplitude userId], nilUserId);
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    NSDictionary *event2 = [self.amplitude getLastEvent];
+    XCTAssertEqual([event2 objectForKey:@"user_id"], nilUserId);
+    XCTAssertFalse([[event2 allKeys] containsObject:@"user_id"]);
+}
+
 - (void)testLogEventUploadLogic {
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                             @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
