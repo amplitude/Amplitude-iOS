@@ -285,13 +285,22 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)initializeApiKey:(NSString*) apiKey
 {
-    [self initializeApiKey:apiKey userId:nil];
+    [self initializeApiKey:apiKey userId:nil setUserId: NO];
 }
 
 /**
  * Initialize Amplitude with a given apiKey and userId.
  */
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
+{
+    [self initializeApiKey:apiKey userId:userId setUserId: YES];
+}
+
+/**
+ * SetUserId: client explicitly initialized with a userId (can be nil).
+ * If false, then attempt to load userId from saved eventsData.
+ */
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId setUserId:(BOOL) setUserId
 {
     if (apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil in initializeApiKey:");
@@ -316,7 +325,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     
     [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
-            if (userId != nil) {
+            if (setUserId) {
                 [self setUserId:userId];
             } else {
                 _userId = SAFE_ARC_RETAIN([_eventsData objectForKey:@"user_id"]);
@@ -965,7 +974,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)setUserId:(NSString*) userId
 {
-    if (![self isArgument:userId validType:[NSString class] methodName:@"setUserId:"]) {
+    if (!([self isArgument:userId validType:[NSString class] methodName:@"setUserId:"] || userId == nil)) {
         return;
     }
     
@@ -974,7 +983,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
         @synchronized (_eventsData) {
-            [_eventsData setObject:_userId forKey:@"user_id"];
+            [_eventsData setValue:_userId forKey:@"user_id"];
             [self saveEventsData];
         }
     }];
