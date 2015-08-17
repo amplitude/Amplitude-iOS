@@ -326,7 +326,11 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     
     [self runOnBackgroundQueue:^{
         @synchronized (_eventsData) {
-            [self setUserId: setUserId ? userId : [_eventsData objectForKey:@"user_id"]];
+            if (setUserId) {
+                [self setUserId: userId];
+            } else {
+                _userId = SAFE_ARC_RETAIN([_eventsData objectForKey:@"user_id"]);
+            }
         }
     }];
 
@@ -976,8 +980,9 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
     
     [self runOnBackgroundQueue:^{
+        SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
-        _userId = SAFE_ARC_RETAIN(userId);
+        _userId = userId;
         @synchronized (_eventsData) {
             [_eventsData setValue:_userId forKey:@"user_id"];
             [self saveEventsData];
