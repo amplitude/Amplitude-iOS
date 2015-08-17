@@ -1,6 +1,7 @@
 ## Unreleased
 
-* Simplified session tracking. minTimeBetweenSessionsMillis default changed to 15 minutes. Removed sessionTimeoutMillis. No longer send start/end session events by default.
+* Simplified session tracking. minTimeBetweenSessionsMillis default changed to 5 minutes. Removed sessionTimeoutMillis. No longer send start/end session events by default.
+* Can now clear userId by setting to nil (subsequent logged events will be anonymous).
 
 ## 2.5.1 (June 12, 2015)
 
