@@ -319,7 +319,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         return;
     }
 
-    SAFE_ARC_RETAIN(apiKey);
+    (void) SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
     
@@ -979,7 +979,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
     
     [self runOnBackgroundQueue:^{
-        SAFE_ARC_RETAIN(userId);
+        (void) SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
         @synchronized (_eventsData) {
