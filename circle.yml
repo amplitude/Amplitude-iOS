@@ -1,0 +1,12 @@
+machine:
+  environment:
+    # CocoaPods versions greater than 0.34 require
+    # your terminal to be using UTF-8 encoding.
+    LANG: en_US.UTF-8
+dependencies:
+  pre:
+    - sudo gem install cocoapods --version 0.38.2
+    # CocoaPods sometimes has issues using caches
+    # between different versions of CocoaPods.
+    - pod setup
+    - pod install
