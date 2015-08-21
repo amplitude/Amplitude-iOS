@@ -10,7 +10,7 @@ target :test do
 end
 
 post_install do |installer|
-  installer.project.targets.each do |target|
+  installer.pods_project.targets.each do |target|
     puts target.name
   end
 end
