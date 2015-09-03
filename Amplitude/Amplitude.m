@@ -554,7 +554,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 {
     if (!_updateScheduled) {
         _updateScheduled = YES;
-        __weak __typeof(self)weakSelf = self;
+        __block __weak Amplitude *weakSelf = self;
         [_backgroundQueue addOperationWithBlock:^{
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf performSelector:@selector(uploadEventsInBackground) withObject:nil afterDelay:delay];

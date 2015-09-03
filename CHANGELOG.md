@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Fix uploadEventsWithDelay bug not triggering uploadEvents
+
 ## 3.0.0 (August 20, 2015)
 
 * Simplified session tracking. minTimeBetweenSessionsMillis default changed to 5 minutes. Removed sessionTimeoutMillis. No longer send start/end session events by default.
