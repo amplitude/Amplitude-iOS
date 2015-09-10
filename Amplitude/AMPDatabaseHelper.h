@@ -14,8 +14,17 @@
 + (AMPDatabaseHelper*)getDatabaseHelper;
 - (BOOL)createDB;
 - (void)resetDB;
-- (int)addEvent:(NSString*) event;
+- (void)delete;
+
+- (long)addEvent:(NSString*) event;
 - (NSDictionary*)getEvents:(long) upToId limit:(int) limit;
+- (long)getEventCount;
+- (void)removeEvents:(long) maxId;
+- (void)removeEvent:(long) eventId;
+- (long)getNthEventId:(long) n;
+
+- (long)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value;
+- (NSString*)getValue:(NSString*)key;
 
 @end
 
