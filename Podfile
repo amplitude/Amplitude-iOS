@@ -7,10 +7,11 @@ xcodeproj 'Amplitude'
 target :test do
   link_with "AmplitudeTests"
   pod 'OCMock', '~> 3.1.1'
+  pod 'sqlite3'
 end
 
 post_install do |installer|
-  installer.pods_project.targets.each do |target|
+  installer.project.targets.each do |target|
     puts target.name
   end
 end

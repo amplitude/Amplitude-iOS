@@ -1,10 +1,15 @@
 PODS:
   - OCMock (3.1.1)
+  - sqlite3 (3.8.11.1):
+    - sqlite3/common (= 3.8.11.1)
+  - sqlite3/common (3.8.11.1)
 
 DEPENDENCIES:
   - OCMock (~> 3.1.1)
+  - sqlite3
 
 SPEC CHECKSUMS:
   OCMock: a73f69963a8a542b0b343e2617650e4dca0cbbc2
+  sqlite3: 73d6ec33f24f74ceb91df8f1b6e1809251f0f580
 
-COCOAPODS: 0.38.2
+COCOAPODS: 0.37.2
