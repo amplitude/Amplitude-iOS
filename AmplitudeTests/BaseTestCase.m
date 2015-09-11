@@ -46,7 +46,7 @@ NSString *const userId = @"userId";
 
 - (BOOL)archive:(id)rootObject toFile:(NSString *)path {
     _archivedObj = rootObject;
-    return TRUE;
+    return YES;
 }
 
 - (id)unarchive:(NSString *)path {
