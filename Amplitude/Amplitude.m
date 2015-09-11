@@ -18,6 +18,7 @@
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
 #import "AMPURLConnection.h"
+#import "AMPDatabaseHelper.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -415,10 +416,10 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             }
 
             // Increment _eventsData max_id
-            long long newId = [[_eventsData objectForKey:@"max_id"] longLongValue] + 1;
+            // long long newId = [[_eventsData objectForKey:@"max_id"] longLongValue] + 1;
 
             [event setValue:eventType forKey:@"event_type"];
-            [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
+            // [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
             [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
             [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
@@ -427,16 +428,26 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
             [self annotateEvent:event];
 
-            [[_eventsData objectForKey:@"events"] addObject:event];
-            [_eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
+            // [[_eventsData objectForKey:@"events"] addObject:event];
+            // [_eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
+
+            // convert Dictionary to JSON String
+            NSError *err;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:&err];
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+            [[AMPDatabaseHelper getDatabaseHelper] addEvent:jsonString];
 
             AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
-            unsigned long eventCount = [[_eventsData objectForKey:@"events"] count];
+            // unsigned long eventCount = [[_eventsData objectForKey:@"events"] count];
+            unsigned long eventCount = [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
             if (eventCount >= self.eventMaxCount) {
                 // Delete old events if list starting to become too large to comfortably work with in memory
+                /*
                 [[_eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, kAMPEventRemoveBatchSize)];
                 eventCount -= kAMPEventRemoveBatchSize;
+                */
                 [self saveEventsData];
             } else if ((eventCount % kAMPEventRemoveBatchSize) == 0 && eventCount >= kAMPEventRemoveBatchSize) {
                 [self saveEventsData];
@@ -598,14 +609,19 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                 return;
             }
 
-            NSMutableArray *events = [_eventsData objectForKey:@"events"];
-            long long numEvents = limit > 0 ? fminl([events count], limit) : [events count];
+            // NSMutableArray *events = [_eventsData objectForKey:@"events"];
+            // NSMutableArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:
+            long eventCount = [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
+            long long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
             if (numEvents == 0) {
                 _updatingCurrently = NO;
                 return;
             }
-            NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, (int) numEvents)];
-            long long lastEventIDUploaded = [[[uploadEvents lastObject] objectForKey:@"event_id"] longLongValue];
+            NSDictionary *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:numEvents];
+            NSArray *uploadEvents = [events objectForKey:@"events"];
+            long long lastEventIDUploaded = [[events objectForKey:@"max_id"] longLongValue];
+            // NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, (int) numEvents)];
+            // long long lastEventIDUploaded = [[[uploadEvents lastObject] objectForKey:@"event_id"] longLongValue];
             NSError *error = nil;
             NSData *eventsDataLocal = nil;
             @try {
@@ -680,6 +696,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                 if ([result isEqualToString:@"success"]) {
                     // success, remove existing events from dictionary
                     uploadSuccessful = YES;
+                    /*
                     @synchronized (_eventsData) {
                         long long numberToRemove = 0;
                         long long i = 0;
@@ -692,6 +709,8 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                         }
                         [[_eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, (int) numberToRemove)];
                     }
+                    */
+                    [[AMPDatabaseHelper getDatabaseHelper] removeEvents:lastEventIDUploaded];
                 } else if ([result isEqualToString:@"invalid_api_key"]) {
                     NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
                 } else if ([result isEqualToString:@"bad_checksum"]) {
@@ -705,7 +724,8 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             } else if ([httpResponse statusCode] == 413) {
                 // If blocked by one massive event, drop it
                 if (_backoffUpload && _backoffUploadBatchSize == 1) {
-                    [[_eventsData objectForKey:@"events"] removeObjectAtIndex:0];
+                    // [[_eventsData objectForKey:@"events"] removeObjectAtIndex:0];
+                    [[AMPDatabaseHelper getDatabaseHelper] removeEvent: lastEventIDUploaded];
                     [self saveEventsData];
                 }
 

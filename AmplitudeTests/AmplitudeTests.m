@@ -97,7 +97,7 @@
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     NSDictionary *event1 = [self.amplitude getLastEvent];
-    XCTAssertEqual([event1 objectForKey:@"user_id"], testUserId);
+    XCTAssert([[event1 objectForKey:@"user_id"] isEqualToString:testUserId]);
 
     NSString *nilUserId = nil;
     [self.amplitude setUserId:nilUserId];

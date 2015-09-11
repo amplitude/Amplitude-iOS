@@ -8,6 +8,7 @@
 
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
+#import "AMPDatabaseHelper.h"
 
 @implementation Amplitude (Test)
 
@@ -27,16 +28,20 @@
 }
 
 - (NSDictionary *)getEvent:(NSInteger) fromEnd {
-    NSArray *events = [self eventsData][@"events"];
+    NSDictionary *result = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    NSArray *events = [result objectForKey:@"events"];
     return [events objectAtIndex:[events count] - fromEnd - 1];
 }
 
 - (NSDictionary *)getLastEvent {
-    return [[self eventsData][@"events"] lastObject];
+    NSDictionary *result = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    NSArray *events = [result objectForKey:@"events"];
+    return [events lastObject];
 }
 
 - (NSUInteger)queuedEventCount {
-    return [[self eventsData][@"events"] count];
+    // return [[self eventsData][@"events"] count];
+    return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
 }
 
 - (void)flushUploads:(void (^)())handler {

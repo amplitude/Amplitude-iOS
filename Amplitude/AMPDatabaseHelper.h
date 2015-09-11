@@ -17,7 +17,7 @@
 - (void)delete;
 
 - (long)addEvent:(NSString*) event;
-- (NSDictionary*)getEvents:(long) upToId limit:(int) limit;
+- (NSDictionary*)getEvents:(long) upToId limit:(long) limit;
 - (long)getEventCount;
 - (void)removeEvents:(long) maxId;
 - (void)removeEvent:(long) eventId;

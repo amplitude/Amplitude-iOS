@@ -10,6 +10,7 @@
 #import <sqlite3.h>
 #import "AMPARCMacros.h"
 #import "AMPDatabaseHelper.h"
+#import "AMPARCMacros.h"
 
 @interface AMPDatabaseHelper()
 @end
@@ -32,14 +33,14 @@ static NSString *const CREATE_EVENT_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ 
 static NSString *const DELETE_EVENT_ID_COLUMN = @"DELETE FROM sqlite_sequence WHERE NAME='%@';";
 
 static NSString *const INSERT_EVENT = @"INSERT INTO %@ (%@) VALUES ('%s');";
-static NSString *const GET_EVENT_WITH_UPTOID_AND_LIMIT = @"SELECT %@, %@ FROM %@ WHERE %@ <= %ld LIMIT %d;";
-static NSString *const GET_EVENT_WITH_UPTOID = @"SELECT %@, %@ FROM %@ WHERE %@ <= %ld;";
-static NSString *const GET_EVENT_WITH_LIMIT = @"SELECT %@, %@ FROM %@ LIMIT %d;";
+static NSString *const GET_EVENT_WITH_UPTOID_AND_LIMIT = @"SELECT %@, %@ FROM %@ WHERE %@ <= %li LIMIT %li;";
+static NSString *const GET_EVENT_WITH_UPTOID = @"SELECT %@, %@ FROM %@ WHERE %@ <= %li;";
+static NSString *const GET_EVENT_WITH_LIMIT = @"SELECT %@, %@ FROM %@ LIMIT %li;";
 static NSString *const GET_EVENT = @"SELECT %@, %@ FROM %@;";
 static NSString *const COUNT_EVENTS = @"SELECT COUNT(*) FROM %@;";
-static NSString *const REMOVE_EVENTS = @"DELETE FROM %@ WHERE %@ <= %ld;";
-static NSString *const REMOVE_EVENT = @"DELETE FROM %@ WHERE %@ = %ld;";
-static NSString *const GET_NTH_EVENT_ID = @"SELECT %@ FROM %@ LIMIT 1 OFFSET %ld;";
+static NSString *const REMOVE_EVENTS = @"DELETE FROM %@ WHERE %@ <= %li;";
+static NSString *const REMOVE_EVENT = @"DELETE FROM %@ WHERE %@ = %li;";
+static NSString *const GET_NTH_EVENT_ID = @"SELECT %@ FROM %@ LIMIT 1 OFFSET %li;";
 
 static NSString *const INSERT_OR_REPLACE_KEY_VALUE = @"INSERT OR REPLACE INTO %@ (%@, %@) VALUES ('%s', '%s');";
 static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = '%s';";
@@ -124,7 +125,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = '%s';";
     return result;
 }
 
-- (NSDictionary*)getEvents:(long) upToId limit:(int) limit
+- (NSDictionary*)getEvents:(long) upToId limit:(long) limit
 {
     long maxId = -1;
     NSMutableArray *events = [NSMutableArray array];
@@ -160,7 +161,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = '%s';";
         }
         sqlite3_close(database);
     }
-
     return [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithLong:maxId], @"maxId", events, @"events", nil];
 }
 
