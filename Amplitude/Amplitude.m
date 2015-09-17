@@ -976,7 +976,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)setUserId:(NSString*) userId
 {
-    if (!([self isArgument:userId validType:[NSString class] methodName:@"setUserId:"] || userId == nil)) {
+    if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
         return;
     }
     
