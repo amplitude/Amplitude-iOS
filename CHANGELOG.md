@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.0.1 (September 21, 2015)
+
 * Fix uploadEventsWithDelay bug not triggering uploadEvents.
 * Fix crash when dictionaries are deallocated during logEvent.
 
