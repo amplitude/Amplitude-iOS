@@ -391,9 +391,9 @@
             // Respect the opt-out setting by not sending or storing any events.
             if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
                 NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
-                (void) SAFE_ARC_AUTORELEASE(eventProperties);
-                (void) SAFE_ARC_AUTORELEASE(apiProperties);
-                (void) SAFE_ARC_AUTORELEASE(userProperties);
+                (void) SAFE_ARC_RELEASE(eventProperties);
+                (void) SAFE_ARC_RELEASE(apiProperties);
+                (void) SAFE_ARC_RELEASE(userProperties);
                 return;
             }
 
@@ -411,9 +411,9 @@
             [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
             [event setValue:[self replaceWithEmptyJSON:userProperties] forKey:@"user_properties"];
 
-            (void) SAFE_ARC_AUTORELEASE(eventProperties);
-            (void) SAFE_ARC_AUTORELEASE(apiProperties);
-            (void) SAFE_ARC_AUTORELEASE(userProperties);
+            (void) SAFE_ARC_RELEASE(eventProperties);
+            (void) SAFE_ARC_RELEASE(apiProperties);
+            (void) SAFE_ARC_RELEASE(userProperties);
 
             [self addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
             [self refreshSessionTime:timestamp];
