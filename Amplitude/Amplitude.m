@@ -379,8 +379,10 @@
         timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     }
 
+    // Create snapshot of all event json objects, to prevent deallocation crash
     eventProperties = [eventProperties copy];
     apiProperties = [apiProperties mutableCopy];
+    NSDictionary *userProperties = [_userProperties copy];
     [self runOnBackgroundQueue:^{
         
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
@@ -389,6 +391,9 @@
             // Respect the opt-out setting by not sending or storing any events.
             if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
                 NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
+                (void) SAFE_ARC_AUTORELEASE(eventProperties);
+                (void) SAFE_ARC_AUTORELEASE(apiProperties);
+                (void) SAFE_ARC_AUTORELEASE(userProperties);
                 return;
             }
 
@@ -403,10 +408,12 @@
             [event setValue:eventType forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
             [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
-            (void) SAFE_ARC_AUTORELEASE(eventProperties);
             [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
+            [event setValue:[self replaceWithEmptyJSON:userProperties] forKey:@"user_properties"];
+
+            (void) SAFE_ARC_AUTORELEASE(eventProperties);
             (void) SAFE_ARC_AUTORELEASE(apiProperties);
-            [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
+            (void) SAFE_ARC_AUTORELEASE(userProperties);
 
             [self addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
             [self refreshSessionTime:timestamp];
@@ -1000,6 +1007,7 @@
         for (id i in objCopy) {
             [arr addObject:[self makeJSONSerializable:i]];
         }
+        (void) SAFE_ARC_RELEASE(objCopy);
         return [NSArray arrayWithArray:arr];
     }
     if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -1015,6 +1023,7 @@
             }
             dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
         }
+        (void) SAFE_ARC_RELEASE(objCopy);
         return [NSDictionary dictionaryWithDictionary:dict];
     }
     NSString *str = [obj description];
