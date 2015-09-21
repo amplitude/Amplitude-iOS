@@ -1,6 +1,7 @@
 ## Unreleased
 
-* Fix uploadEventsWithDelay bug not triggering uploadEvents
+* Fix uploadEventsWithDelay bug not triggering uploadEvents.
+* Fix crash when dictionaries are deallocated during logEvent.
 
 ## 3.0.0 (August 20, 2015)
 
@@ -9,7 +10,7 @@
 
 ## 2.5.1 (June 12, 2015)
 
-* Fix crash when array or dictionary is modified during JSON serialization
+* Fix crash when array or dictionary is modified during JSON serialization.
 
 ## 2.5.0 (May 29, 2015)
 

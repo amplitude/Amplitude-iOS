@@ -397,6 +397,11 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     if (timestamp == nil) {
         timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
     }
+
+    // Create snapshot of all event json objects, to prevent deallocation crash
+    eventProperties = [eventProperties copy];
+    apiProperties = [apiProperties mutableCopy];
+    NSDictionary *userProperties = [_userProperties copy];
     
     [self runOnBackgroundQueue:^{
         
@@ -407,6 +412,9 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             // Respect the opt-out setting by not sending or storing any events.
             if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
                 NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
+                SAFE_ARC_RELEASE(eventProperties);
+                SAFE_ARC_RELEASE(apiProperties);
+                SAFE_ARC_RELEASE(userProperties);
                 return;
             }
 
@@ -421,9 +429,13 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
             [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
             [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-            [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
+            [event setValue:[self replaceWithEmptyJSON:userProperties] forKey:@"user_properties"];
             [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
             [event setValue:timestamp forKey:@"timestamp"];
+
+            SAFE_ARC_RELEASE(eventProperties);
+            SAFE_ARC_RELEASE(apiProperties);
+            SAFE_ARC_RELEASE(userProperties);
 
             [self annotateEvent:event];
 
@@ -1115,6 +1127,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         for (id i in objCopy) {
             [arr addObject:[self makeJSONSerializable:i]];
         }
+        SAFE_ARC_RELEASE(objCopy);
         return [NSArray arrayWithArray:arr];
     }
     if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -1130,6 +1143,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             }
             dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
         }
+        SAFE_ARC_RELEASE(objCopy);
         return [NSDictionary dictionaryWithDictionary:dict];
     }
     NSString *str = [obj description];
