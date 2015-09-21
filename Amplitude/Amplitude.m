@@ -378,7 +378,9 @@
     if (timestamp == nil) {
         timestamp = [NSNumber numberWithLongLong:[[NSDate date] timeIntervalSince1970] * 1000];
     }
-    
+
+    eventProperties = [eventProperties copy];
+    apiProperties = [apiProperties mutableCopy];
     [self runOnBackgroundQueue:^{
         
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
@@ -401,7 +403,9 @@
             [event setValue:eventType forKey:@"event_type"];
             [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
             [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
+            (void) SAFE_ARC_AUTORELEASE(eventProperties);
             [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
+            (void) SAFE_ARC_AUTORELEASE(apiProperties);
             [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
 
             [self addBoilerplate:event timestamp:timestamp maxIdCheck:propertyListMaxId];
