@@ -298,7 +298,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 /**
  * SetUserId: client explicitly initialized with a userId (can be nil).
- * If false, then attempt to load userId from saved eventsData.
+ * If NO, then attempt to load userId from saved eventsData.
  */
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId setUserId:(BOOL) setUserId
 {
@@ -818,7 +818,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
  * the current session is expired or if there is no current session ID].
  * Otherwise extends the session.
  *
- * Returns true of a new session was created.
+ * Returns YES if a new session was created.
  */
 - (BOOL)startOrContinueSession:(NSNumber*) timestamp
 {
@@ -827,10 +827,10 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             if ([self inSession]) {
                 if ([self isWithinMinTimeBetweenSessions:timestamp]) {
                     [self refreshSessionTime:timestamp];
-                    return FALSE;
+                    return NO;
                 }
                 [self startNewSession:timestamp];
-                return TRUE;
+                return YES;
             }
             // no current session, check for previous session
             if ([self isWithinMinTimeBetweenSessions:timestamp]) {
@@ -838,20 +838,20 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                 long long previousSessionId = [self previousSessionId];
                 if (previousSessionId == -1) {
                     [self startNewSession:timestamp];
-                    return TRUE;
+                    return YES;
                 }
                 // extend previous session
                 [self setSessionId:previousSessionId];
                 [self refreshSessionTime:timestamp];
-                return FALSE;
+                return NO;
             } else {
                 [self startNewSession:timestamp];
-                return TRUE;
+                return YES;
             }
         }
         // not creating a session means we should continue the session
         [self refreshSessionTime:timestamp];
-        return FALSE;
+        return NO;
     }
 }
 
@@ -1297,7 +1297,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     } else {
         NSLog(@"ERROR: Unable to serialize propertyList:%@", error);
     }
-    return FALSE;
+    return NO;
 
 }
 
@@ -1334,10 +1334,10 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             [fileManager removeItemAtPath:from error:NULL];
         } else {
             AMPLITUDE_LOG(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
-            return false;
+            return NO;
         }
     }
-    return true;
+    return YES;
 }
 
 #pragma clang diagnostic pop

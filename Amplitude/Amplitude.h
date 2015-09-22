@@ -200,7 +200,7 @@
  @param enabled                  Whether tracking opt out should be enabled or disabled.
 
  @discussion
- If the user wants to opt out of all tracking, use this method to enable opt out for them. Once opt out is enabled, no events will be saved locally or sent to the server. Calling this method again with enabled set to false will turn tracking back on for the user.
+ If the user wants to opt out of all tracking, use this method to enable opt out for them. Once opt out is enabled, no events will be saved locally or sent to the server. Calling this method again with enabled set to NO will turn tracking back on for the user.
  */
 - (void)setOptOut:(BOOL)enabled;
 
