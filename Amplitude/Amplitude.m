@@ -200,6 +200,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             if (!_propertyList) {
                 _propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
                 [_propertyList setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
+                [_propertyList setObject:[NSNumber numberWithInt:0] forKey:@"database_version"];
                 BOOL success = [self savePropertyList];
                 if (!success) {
                     NSLog(@"ERROR: Unable to save propertyList to file on initialization");
@@ -222,6 +223,19 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             }
 
             [self initializeDeviceId];
+
+            int oldVersion = 0;
+            NSNumber *oldDBVersion = [_propertyList objectForKey:@"database_version"];
+            if (oldDBVersion != nil) {
+                oldVersion = [oldDBVersion intValue];
+            }
+
+            // update the database
+            if (oldVersion < kAMPDBVersion) {
+                [[AMPDatabaseHelper getDatabaseHelper] upgrade:oldVersion newVersion:kAMPDBVersion];
+                [_propertyList setObject:[NSNumber numberWithInt:kAMPDBVersion] forKey:@"database_version"];
+                [self savePropertyList];
+            }
 
             [_backgroundQueue setSuspended:NO];
         }];
@@ -435,8 +449,8 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             NSError *err;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:&err];
             NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-
             [[AMPDatabaseHelper getDatabaseHelper] addEvent:jsonString];
+            SAFE_ARC_RELEASE(jsonString);
 
             AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
@@ -638,8 +652,9 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                 return;
             }
             if (eventsDataLocal) {
-                NSString *eventsString = SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding]);
+                NSString *eventsString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
                 [self makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString lastEventIDUploaded:lastEventIDUploaded];
+                SAFE_ARC_RELEASE(eventsString);
            }
         }
 

@@ -7,24 +7,24 @@
 //
 
 @interface AMPDatabaseHelper : NSObject
-{
-    NSString *databasePath;
-}
 
 + (AMPDatabaseHelper*)getDatabaseHelper;
-- (BOOL)createDB;
+- (void)createDB;
+- (void)upgrade:(int) oldVersion newVersion:(int) newVersion;
 - (void)resetDB;
 - (void)delete;
 
-- (long)addEvent:(NSString*) event;
+- (BOOL)addEvent:(NSString*) event;
 - (NSDictionary*)getEvents:(long) upToId limit:(long) limit;
-- (long)getEventCount;
-- (void)removeEvents:(long) maxId;
-- (void)removeEvent:(long) eventId;
-- (long)getNthEventId:(long) n;
+- (int)getEventCount;
+- (BOOL)removeEvents:(long) maxId;
+- (BOOL)removeEvent:(long) eventId;
+- (long long)getNthEventId:(long) n;
 
-- (long)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value;
-- (NSString*)getValue:(NSString*)key;
+- (BOOL)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value;
+- (BOOL)insertOrReplaceKeyLongValue:(NSString*) key value:(NSNumber*) value;
+- (NSString*)getValue:(NSString*) key;
+- (NSNumber*)getLongValue:(NSString*) key;
 
 @end
 

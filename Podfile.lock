@@ -1,15 +1,23 @@
 PODS:
+  - FMDB/common (2.5)
+  - FMDB/standalone (2.5):
+    - FMDB/common
+    - FMDB/standalone/default (= 2.5)
+  - FMDB/standalone/default (2.5):
+    - FMDB/common
+    - sqlite3
   - OCMock (3.1.1)
   - sqlite3 (3.8.11.1):
     - sqlite3/common (= 3.8.11.1)
   - sqlite3/common (3.8.11.1)
 
 DEPENDENCIES:
+  - FMDB/standalone (~> 2.5)
   - OCMock (~> 3.1.1)
-  - sqlite3
 
 SPEC CHECKSUMS:
+  FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
   OCMock: a73f69963a8a542b0b343e2617650e4dca0cbbc2
   sqlite3: 73d6ec33f24f74ceb91df8f1b6e1809251f0f580
 
-COCOAPODS: 0.37.2
+COCOAPODS: 0.38.2

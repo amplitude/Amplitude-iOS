@@ -9,6 +9,7 @@ NSString *const kAMPVersion = @"3.0.0";
 NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
 const int kAMPApiVersion = 2;
+const int kAMPDBVersion = 1;
 const int kAMPEventUploadThreshold = 30;
 const int kAMPEventUploadMaxBatchSize = 100;
 const int kAMPEventMaxCount = 1000;

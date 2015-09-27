@@ -4,3 +4,4 @@
 *.xccheckout
 /Build/
 /DerivedData/
+*.xcworkspace/xcshareddata/*.xcscmblueprint
