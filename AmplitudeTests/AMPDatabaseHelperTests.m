@@ -11,9 +11,7 @@
 #import "AMPDatabaseHelperTests.h"
 #import "AMPARCMacros.h"
 
-@implementation AMPDatabaseHelperTests {
-
-}
+@implementation AMPDatabaseHelperTests {}
 
 - (void)setUp {
     [super setUp];
@@ -135,6 +133,25 @@
 
     [self.databaseHelper removeEvents:10];
     XCTAssertEqual(-1, [self.databaseHelper getNthEventId:1]);
+}
+
+- (void)testUpgradeFromVersion0ToVersion1{
+    // inserts will fail since no tables exist
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper addEvent:@"test_event"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyValue:@"test_key" value:@"test_value"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyLongValue:@"test_key" value:[NSNumber numberWithInt:0]]);
+
+    // after upgrade, can insert into event, store, long_store
+    [self.databaseHelper dropTables];
+    [self.databaseHelper upgrade:0 newVersion:1];
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
 }
 
 @end

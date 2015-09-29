@@ -35,7 +35,6 @@ static NSString *const DROP_TABLE = @"DROP TABLE IF EXISTS %@;";
 static NSString *const CREATE_EVENT_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ INTEGER PRIMARY KEY AUTOINCREMENT, %@ TEXT);";
 static NSString *const CREATE_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ TEXT PRIMARY KEY NOT NULL, %@ TEXT);";
 static NSString *const CREATE_LONG_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ TEXT PRIMARY KEY NOT NULL, %@ INTEGER);";
-//static NSString *const DELETE_EVENT_ID_COLUMN = @"DELETE FROM sqlite_sequence WHERE NAME='%@';";
 
 static NSString *const INSERT_EVENT = @"INSERT INTO %@ (%@) VALUES (?);";
 static NSString *const GET_EVENT_WITH_UPTOID_AND_LIMIT = @"SELECT %@, %@ FROM %@ WHERE %@ <= %li LIMIT %li;";
@@ -66,12 +65,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     if (self = [super init]) {
 
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-        _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingString:@"Amplitude.db"]);
+        _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingString:@"com.amplitude.database"]);
         _dbQueue = SAFE_ARC_RETAIN([FMDatabaseQueue databaseQueueWithPath:_databasePath flags:(SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE)]);
         if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {
             [self createTables];
         }
-        [self resetDB:NO];
     }
     return self;
 }
@@ -113,13 +111,39 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (void)upgrade:(int) oldVersion newVersion:(int) newVersion
 {
-    switch (oldVersion) {
-        case 1:
-            break;
+    __block BOOL success = YES;
 
-        default:
-            NSLog(@"upgrade with unknown oldVersion %d", oldVersion);
-            [self resetDB:YES];
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+
+        if (![db open]) {
+            NSLog(@"Failed to open database during upgrade");
+            success = NO;
+            return;
+        }
+
+        switch (oldVersion) {
+            case 0: {
+                NSString *createEventsTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, EVENT_TABLE_NAME, ID_FIELD, EVENT_FIELD];
+                [db executeUpdate:createEventsTable];
+
+                NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
+                [db executeUpdate:createStoreTable];
+
+                NSString *createLongStoreTable = [NSString stringWithFormat:CREATE_LONG_STORE_TABLE, LONG_STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
+                [db executeUpdate:createLongStoreTable];
+
+                if (newVersion <= 1) break;
+            }
+            default:
+                success = NO;
+        }
+
+        [db close];
+    }];
+
+    if (!success) {
+        NSLog(@"upgrade with unknown oldVersion %d", oldVersion);
+        [self resetDB:NO];
     }
 }
 
@@ -143,9 +167,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
         NSString *dropLongStoreTableSQL = [NSString stringWithFormat:DROP_TABLE, LONG_STORE_TABLE_NAME];
         success &= [db executeUpdate: dropLongStoreTableSQL];
-
-        //    NSString *deleteEventIdColumnSQL = [NSString stringWithFormat:DELETE_EVENT_ID_COLUMN, EVENT_TABLE_NAME];
-        //    success &= [_db executeUpdate: deleteEventIdColumnSQL];
 
         [db close];
     }];
@@ -184,6 +205,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 - (BOOL)addEventToTable:(NSString*) table event:(NSString*) event
 {
     __block BOOL success = NO;
+    __block NSString *errMsg;
 
     [_dbQueue inDatabase:^(FMDatabase *db) {
         if (![db open]) {
@@ -194,12 +216,15 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         NSString *insertSQL = [NSString stringWithFormat:INSERT_EVENT, table, EVENT_FIELD];
         success = [db executeUpdate:insertSQL, event];
         if (!success) {
-            NSLog(@"addEventToTable %@ failed: %@", table, [db lastErrorMessage]);
+            errMsg = [db lastErrorMessage];
         }
-
         [db close];
     }];
 
+    if (!success) {
+        NSLog(@"addEventToTable %@ failed: %@", table, errMsg);
+        [self resetDB:NO]; // not much we can do, just start fresh
+    }
     return success;
 }
 
@@ -275,6 +300,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 - (BOOL)insertOrReplaceKeyValueToTable:(NSString*) table key:(NSString*) key value:(NSObject*) value
 {
     __block BOOL success = NO;
+    __block NSString *errMsg;
 
     [_dbQueue inDatabase:^(FMDatabase *db) {
         if (![db open]) {
@@ -290,11 +316,15 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         }
 
         if (!success) {
-            NSLog(@"insertOrReplaceKeyValue to table %@ failed: %@", table, [db lastErrorMessage]);
+            errMsg = [db lastErrorMessage];
         }
         [db close];
     }];
 
+    if (!success) {
+        NSLog(@"insertOrReplaceKeyValue to table %@ failed: %@", table, errMsg);
+        [self resetDB:NO]; // not much we can do, just start fresh
+    }
     return success;
 }
 

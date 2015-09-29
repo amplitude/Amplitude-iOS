@@ -209,7 +209,7 @@ NSString *const USER_ID = @"user_id";
             if (!_propertyList) {
                 _propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
                 [_propertyList setObject:[NSNumber numberWithLongLong:0LL] forKey:MAX_ID];
-                [_propertyList setObject:[NSNumber numberWithInt:1] forKey:DATABASE_VERSION];
+                [_propertyList setObject:[NSNumber numberWithInt:0] forKey:DATABASE_VERSION];
                 BOOL success = [self savePropertyList];
                 if (!success) {
                     NSLog(@"ERROR: Unable to save propertyList to file on initialization");
@@ -219,7 +219,7 @@ NSString *const USER_ID = @"user_id";
             }
 
             // update database if necessary
-            int oldDBVersion = 1;
+            int oldDBVersion = 0;
             NSNumber *oldDBVersionSaved = [_propertyList objectForKey:DATABASE_VERSION];
             if (oldDBVersionSaved != nil) {
                 oldDBVersion = [oldDBVersionSaved intValue];
