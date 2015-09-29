@@ -4,7 +4,6 @@ platform :ios, '6.0'
 
 xcodeproj 'Amplitude'
 
-# pod 'sqlite3', '~> 3.8'
 pod 'FMDB/standalone', '~> 2.5'
 
 target :test do

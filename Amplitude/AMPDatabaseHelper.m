@@ -71,6 +71,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {
             [self createTables];
         }
+        [self resetDB:NO];
     }
     return self;
 }
@@ -232,6 +233,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         if (s == nil) {
             NSLog(@"getEvents from table %@ failed: %@", table, [db lastErrorMessage]);
             [db close];
+            [self resetDB:NO];
             return;
         }
 

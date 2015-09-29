@@ -219,7 +219,7 @@ NSString *const USER_ID = @"user_id";
             }
 
             // update database if necessary
-            int oldDBVersion = 0;
+            int oldDBVersion = 1;
             NSNumber *oldDBVersionSaved = [_propertyList objectForKey:DATABASE_VERSION];
             if (oldDBVersionSaved != nil) {
                 oldDBVersion = [oldDBVersionSaved intValue];
@@ -274,10 +274,6 @@ NSString *const USER_ID = @"user_id";
         if (userId != nil) {
             [dbHelper insertOrReplaceKeyValue:USER_ID value:userId];
         }
-//        NSNumber *maxId = [eventsData objectForKey:MAX_ID];
-//        if (maxId != nil) {
-//            [dbHelper insertOrReplaceKeyLongValue:MAX_ID value:maxId];
-//        }
         NSNumber *optOut = [eventsData objectForKey:OPT_OUT];
         if (optOut != nil) {
             [dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:optOut];
@@ -473,7 +469,7 @@ NSString *const USER_ID = @"user_id";
 
         [self annotateEvent:event];
 
-        // convert Dictionary to JSON String
+        // convert event dictionary to JSON String
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [dbHelper addEvent:jsonString];
@@ -738,7 +734,6 @@ NSString *const USER_ID = @"user_id";
             } else if ([httpResponse statusCode] == 413) {
                 // If blocked by one massive event, drop it
                 if (_backoffUpload && _backoffUploadBatchSize == 1) {
-                    // [[_eventsData objectForKey:@"events"] removeObjectAtIndex:0];
                     [dbHelper removeEvent: lastEventIdUploaded];
                 }
 

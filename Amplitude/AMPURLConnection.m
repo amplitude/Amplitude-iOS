@@ -57,8 +57,10 @@
     // Save the SSL pins so that our connection delegates automatically use them
     if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:pins] != YES) {
         NSLog(@"Failed to pin the certificates");
+        SAFE_ARC_RELEASE(pins);
         return;
     }
+    SAFE_ARC_RELEASE(pins);
 }
 
 /**
@@ -94,24 +96,24 @@
         // is really it's own owner. The NSUrlConnection holds a strong reference
         // to the instance as a delegate, but releases after the connection completes.
         self.delegate = self;
+
+        _connection = [[NSURLConnection alloc] initWithRequest:request
+                                                      delegate:self
+                                              startImmediately:NO];
+
+        [self.connection setDelegateQueue:queue];
+        [self.connection start];
     }
-
-    _connection = [[NSURLConnection alloc] initWithRequest:request
-                                                  delegate:self
-                                          startImmediately:NO];
-
-    [self.connection setDelegateQueue:queue];
-    [self.connection start];
 
     return self;
 }
 
 - (void)dealloc
 {
-    SAFE_ARC_RELEASE(self.connection);
-    SAFE_ARC_RELEASE(self.completionHandler);
-    SAFE_ARC_RELEASE(self.data);
-    SAFE_ARC_RELEASE(self.response);
+    SAFE_ARC_RELEASE(_connection);
+    SAFE_ARC_RELEASE(_completionHandler);
+    SAFE_ARC_RELEASE(_data);
+    SAFE_ARC_RELEASE(_response);
     SAFE_ARC_SUPER_DEALLOC();
 }
 

@@ -40,7 +40,6 @@
 }
 
 - (NSUInteger)queuedEventCount {
-    // return [[self eventsData][@"events"] count];
     return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
 }
 

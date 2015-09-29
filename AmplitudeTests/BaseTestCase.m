@@ -43,8 +43,8 @@ NSString *const userId = @"userId";
     [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
     [_partialMockAmplitude stopMocking];
-    SAFE_ARC_RELEASE(self.amplitude);
-    SAFE_ARC_RELEASE(self.databaseHelper);
+    SAFE_ARC_RELEASE(_amplitude);
+    SAFE_ARC_RELEASE(_databaseHelper);
     [super tearDown];
 }
 
