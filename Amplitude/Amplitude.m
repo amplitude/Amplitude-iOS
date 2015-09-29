@@ -33,7 +33,6 @@
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) NSOperationQueue *initializerQueue;
-@property (nonatomic, strong) NSMutableDictionary *eventsData;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 @property (nonatomic, assign) long long sessionId;
@@ -43,6 +42,17 @@
 NSString *const kAMPSessionStartEvent = @"session_start";
 NSString *const kAMPSessionEndEvent = @"session_end";
 NSString *const kAMPRevenueEvent = @"revenue_amount";
+
+NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
+NSString *const DATABASE_VERSION = @"database_version";
+NSString *const DEVICE_ID = @"device_id";
+NSString *const EVENTS = @"events";
+NSString *const PREVIOUS_SESSION_ID = @"previous_session_id";
+NSString *const PREVIOUS_SESSION_TIME = @"previous_session_time";
+NSString *const MAX_ID = @"max_id";
+NSString *const OPT_OUT = @"opt_out";
+NSString *const USER_ID = @"user_id";
+
 
 @implementation Amplitude {
     NSString *_eventsDataPath;
@@ -180,7 +190,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         // Ensure initialize finishes running asynchronously before other calls are run
         [_backgroundQueue setSuspended:YES];
         // Name the queue so runOnBackgroundQueue can tell which queue an operation is running
-        _backgroundQueue.name = @"BACKGROUND";
+        _backgroundQueue.name = BACKGROUND_QUEUE_NAME;
         
         [_initializerQueue addOperationWithBlock:^{
             
@@ -188,8 +198,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
             _uploadTaskID = UIBackgroundTaskInvalid;
             
-            NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-            
+            NSString *eventsDataDirectory = SAFE_ARC_RETAIN([NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0]);
             _propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
             _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
 
@@ -199,8 +208,8 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             _propertyList = SAFE_ARC_RETAIN([self deserializePList:_propertyListPath]);
             if (!_propertyList) {
                 _propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
-                [_propertyList setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
-                [_propertyList setObject:[NSNumber numberWithInt:0] forKey:@"database_version"];
+                [_propertyList setObject:[NSNumber numberWithLongLong:0LL] forKey:MAX_ID];
+                [_propertyList setObject:[NSNumber numberWithInt:1] forKey:DATABASE_VERSION];
                 BOOL success = [self savePropertyList];
                 if (!success) {
                     NSLog(@"ERROR: Unable to save propertyList to file on initialization");
@@ -209,33 +218,24 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                 AMPLITUDE_LOG(@"Loaded from %@", _propertyListPath);
             }
 
-            // Load eventData object
-            _eventsData = SAFE_ARC_RETAIN([self unarchive:_eventsDataPath]);
-            if (!_eventsData) {
-                // Create new _eventsData object
-                _eventsData = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
-                [_eventsData setObject:[NSMutableArray array] forKey:@"events"];
-                [_eventsData setObject:[NSNumber numberWithLongLong:0LL] forKey:@"max_id"];
-                BOOL success = [self saveEventsData];
-                if (!success) {
-                    NSLog(@"ERROR: Unable to save eventsData to file on initialization");
-                }
-            }
-
-            [self initializeDeviceId];
-
-            int oldVersion = 0;
-            NSNumber *oldDBVersion = [_propertyList objectForKey:@"database_version"];
-            if (oldDBVersion != nil) {
-                oldVersion = [oldDBVersion intValue];
+            // update database if necessary
+            int oldDBVersion = 0;
+            NSNumber *oldDBVersionSaved = [_propertyList objectForKey:DATABASE_VERSION];
+            if (oldDBVersionSaved != nil) {
+                oldDBVersion = [oldDBVersionSaved intValue];
             }
 
             // update the database
-            if (oldVersion < kAMPDBVersion) {
-                [[AMPDatabaseHelper getDatabaseHelper] upgrade:oldVersion newVersion:kAMPDBVersion];
-                [_propertyList setObject:[NSNumber numberWithInt:kAMPDBVersion] forKey:@"database_version"];
+            if (oldDBVersion < kAMPDBVersion) {
+                [[AMPDatabaseHelper getDatabaseHelper] upgrade:oldDBVersion newVersion:kAMPDBVersion];
+                [_propertyList setObject:[NSNumber numberWithInt:kAMPDBVersion] forKey:DATABASE_VERSION];
                 [self savePropertyList];
             }
+
+            // migrate all of old _eventsData object to database store
+            [self migrateEventsDataToDB];
+
+            [self initializeDeviceId];
 
             [_backgroundQueue setSuspended:NO];
         }];
@@ -253,6 +253,46 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
     return self;
 };
+
+- (void) migrateEventsDataToDB
+{
+    NSDictionary *eventsData = [self unarchive:_eventsDataPath];
+    if (eventsData != nil) {
+        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+
+        // migrate events
+        NSArray *events = [eventsData objectForKey:EVENTS];
+        for (id event in events) {
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            [dbHelper addEvent:jsonString];
+            SAFE_ARC_RELEASE(jsonString);
+        }
+
+        // migrate remaining properties
+        NSString *userId = [eventsData objectForKey:USER_ID];
+        if (userId != nil) {
+            [dbHelper insertOrReplaceKeyValue:USER_ID value:userId];
+        }
+//        NSNumber *maxId = [eventsData objectForKey:MAX_ID];
+//        if (maxId != nil) {
+//            [dbHelper insertOrReplaceKeyLongValue:MAX_ID value:maxId];
+//        }
+        NSNumber *optOut = [eventsData objectForKey:OPT_OUT];
+        if (optOut != nil) {
+            [dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:optOut];
+        }
+        NSString *deviceId = [eventsData objectForKey:DEVICE_ID];
+        if (deviceId != nil) {
+            [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
+        }
+
+        // delete events data so don't need to migrate next time
+        if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
+            [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
+        }
+    }
+}
 
 - (void) addObservers
 {
@@ -281,7 +321,6 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     SAFE_ARC_RELEASE(_apiKey);
     SAFE_ARC_RELEASE(_backgroundQueue);
     SAFE_ARC_RELEASE(_deviceId);
-    SAFE_ARC_RELEASE(_eventsData);
     SAFE_ARC_RELEASE(_userId);
 
     // Release instance variables
@@ -333,18 +372,15 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
         NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:");
         return;
     }
-
-    (void) SAFE_ARC_RETAIN(apiKey);
+    SAFE_ARC_RETAIN(apiKey);
     SAFE_ARC_RELEASE(_apiKey);
     _apiKey = apiKey;
-    
+
     [self runOnBackgroundQueue:^{
-        @synchronized (_eventsData) {
-            if (setUserId) {
-                [self setUserId:userId];
-            } else {
-                _userId = SAFE_ARC_RETAIN([_eventsData objectForKey:@"user_id"]);
-            }
+        if (setUserId) {
+            [self setUserId:userId];
+        } else {
+            _userId = SAFE_ARC_RETAIN([[AMPDatabaseHelper getDatabaseHelper] getValue:USER_ID]);
         }
     }];
 
@@ -367,7 +403,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
  */
 - (BOOL)runOnBackgroundQueue:(void (^)(void))block
 {
-    if ([[NSOperationQueue currentQueue].name isEqualToString:@"BACKGROUND"]) {
+    if ([[NSOperationQueue currentQueue].name isEqualToString:BACKGROUND_QUEUE_NAME]) {
         AMPLITUDE_LOG(@"Already running in the background.");
         block();
         return NO;
@@ -414,67 +450,47 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
     
     [self runOnBackgroundQueue:^{
-        
-        NSMutableDictionary *event = [NSMutableDictionary dictionary];
+        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
-        @synchronized (_eventsData) {
-
-            // Respect the opt-out setting by not sending or storing any events.
-            if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
-                NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
-                return;
-            }
-
-            if (!outOfSession) {
-                [self startOrContinueSession:timestamp];
-            }
-
-            // Increment _eventsData max_id
-            // long long newId = [[_eventsData objectForKey:@"max_id"] longLongValue] + 1;
-
-            [event setValue:eventType forKey:@"event_type"];
-            // [event setValue:[NSNumber numberWithLongLong:newId] forKey:@"event_id"];
-            [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
-            [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-            [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
-            [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
-            [event setValue:timestamp forKey:@"timestamp"];
-
-            [self annotateEvent:event];
-
-            // [[_eventsData objectForKey:@"events"] addObject:event];
-            // [_eventsData setObject:[NSNumber numberWithLongLong:newId] forKey:@"max_id"];
-
-            // convert Dictionary to JSON String
-            NSError *err;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:&err];
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            [[AMPDatabaseHelper getDatabaseHelper] addEvent:jsonString];
-            SAFE_ARC_RELEASE(jsonString);
-
-            AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
-
-            // unsigned long eventCount = [[_eventsData objectForKey:@"events"] count];
-            unsigned long eventCount = [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
-            if (eventCount >= self.eventMaxCount) {
-                // Delete old events if list starting to become too large to comfortably work with in memory
-                /*
-                [[_eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, kAMPEventRemoveBatchSize)];
-                eventCount -= kAMPEventRemoveBatchSize;
-                */
-                [self saveEventsData];
-            } else if ((eventCount % kAMPEventRemoveBatchSize) == 0 && eventCount >= kAMPEventRemoveBatchSize) {
-                [self saveEventsData];
-            }
-
-            if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
-                [self uploadEvents];
-            } else {
-                [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
-            }
-
+        // Respect the opt-out setting by not sending or storing any events.
+        if ([self optOut])  {
+            NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
+            return;
         }
 
+        NSMutableDictionary *event = [NSMutableDictionary dictionary];
+
+        if (!outOfSession) {
+            [self startOrContinueSession:timestamp];
+        }
+
+        [event setValue:eventType forKey:@"event_type"];
+        [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
+        [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
+        [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
+        [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
+        [event setValue:timestamp forKey:@"timestamp"];
+
+        [self annotateEvent:event];
+
+        // convert Dictionary to JSON String
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [dbHelper addEvent:jsonString];
+        SAFE_ARC_RELEASE(jsonString);
+
+        AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
+
+        if ([dbHelper getEventCount] >= self.eventMaxCount) {
+            [dbHelper removeEvents:([dbHelper getNthEventId:kAMPEventRemoveBatchSize])];
+        }
+
+        int eventCount = [dbHelper getEventCount]; // refetch since events may have been deleted
+        if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
+            [self uploadEvents];
+        } else {
+            [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
+        }
     }];
 }
 
@@ -615,53 +631,49 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
     
     [self runOnBackgroundQueue:^{
-        
-        @synchronized (_eventsData) {
-            // Don't communicate with the server if the user has opted out.
-            if ([[_eventsData objectForKey:@"opt_out"] boolValue])  {
-                _updatingCurrently = NO;
-                return;
-            }
+        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
-            // NSMutableArray *events = [_eventsData objectForKey:@"events"];
-            // NSMutableArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:
-            long eventCount = [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
-            long long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
-            if (numEvents == 0) {
-                _updatingCurrently = NO;
-                return;
-            }
-            NSDictionary *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:numEvents];
-            NSArray *uploadEvents = [events objectForKey:@"events"];
-            long long lastEventIDUploaded = [[events objectForKey:@"max_id"] longLongValue];
-            // NSArray *uploadEvents = [events subarrayWithRange:NSMakeRange(0, (int) numEvents)];
-            // long long lastEventIDUploaded = [[[uploadEvents lastObject] objectForKey:@"event_id"] longLongValue];
-            NSError *error = nil;
-            NSData *eventsDataLocal = nil;
-            @try {
-                eventsDataLocal = [NSJSONSerialization dataWithJSONObject:[self makeJSONSerializable:uploadEvents] options:0 error:&error];
-            }
-            @catch (NSException *exception) {
-                NSLog(@"ERROR: NSJSONSerialization error: %@", exception.reason);
-                _updatingCurrently = NO;
-                return;
-            }
-            if (error != nil) {
-                NSLog(@"ERROR: NSJSONSerialization error: %@", error);
-                _updatingCurrently = NO;
-                return;
-            }
-            if (eventsDataLocal) {
-                NSString *eventsString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
-                [self makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString lastEventIDUploaded:lastEventIDUploaded];
-                SAFE_ARC_RELEASE(eventsString);
-           }
+        // Don't communicate with the server if the user has opted out.
+        if ([self optOut])  {
+            _updatingCurrently = NO;
+            return;
         }
+
+        long eventCount = [dbHelper getEventCount];
+        long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
+        if (numEvents == 0) {
+            _updatingCurrently = NO;
+            return;
+        }
+        NSDictionary *events = [dbHelper getEvents:-1 limit:numEvents];
+        NSArray *uploadEvents = [events objectForKey:EVENTS];
+        long lastEventIdUploaded = [[events objectForKey:MAX_ID] longValue];
+        NSError *error = nil;
+        NSData *eventsDataLocal = nil;
+        @try {
+            eventsDataLocal = [NSJSONSerialization dataWithJSONObject:[self makeJSONSerializable:uploadEvents] options:0 error:&error];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"ERROR: NSJSONSerialization error: %@", exception.reason);
+            _updatingCurrently = NO;
+            return;
+        }
+        if (error != nil) {
+            NSLog(@"ERROR: NSJSONSerialization error: %@", error);
+            _updatingCurrently = NO;
+            return;
+        }
+        if (eventsDataLocal) {
+            NSString *eventsString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
+            [self makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString lastEventIDUploaded:lastEventIdUploaded];
+            SAFE_ARC_RELEASE(eventsString);
+       }
+
 
     }];
 }
 
-- (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events lastEventIDUploaded:(long long) lastEventIDUploaded
+- (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events lastEventIDUploaded:(long long) lastEventIdUploaded
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
@@ -703,6 +715,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     id Connection = [NSURLConnection class];
 #endif
     [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -711,21 +724,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                 if ([result isEqualToString:@"success"]) {
                     // success, remove existing events from dictionary
                     uploadSuccessful = YES;
-                    /*
-                    @synchronized (_eventsData) {
-                        long long numberToRemove = 0;
-                        long long i = 0;
-                        for (id event in [_eventsData objectForKey:@"events"]) {
-                            i++;
-                            if ([[event objectForKey:@"event_id"] longLongValue] == lastEventIDUploaded) {
-                                numberToRemove = i;
-                                break;
-                            }
-                        }
-                        [[_eventsData objectForKey:@"events"] removeObjectsInRange:NSMakeRange(0, (int) numberToRemove)];
-                    }
-                    */
-                    [[AMPDatabaseHelper getDatabaseHelper] removeEvents:lastEventIDUploaded];
+                    [dbHelper removeEvents:lastEventIdUploaded];
                 } else if ([result isEqualToString:@"invalid_api_key"]) {
                     NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
                 } else if ([result isEqualToString:@"bad_checksum"]) {
@@ -740,13 +739,12 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
                 // If blocked by one massive event, drop it
                 if (_backoffUpload && _backoffUploadBatchSize == 1) {
                     // [[_eventsData objectForKey:@"events"] removeObjectAtIndex:0];
-                    [[AMPDatabaseHelper getDatabaseHelper] removeEvent: lastEventIDUploaded];
-                    [self saveEventsData];
+                    [dbHelper removeEvent: lastEventIdUploaded];
                 }
 
                 // server complained about length of request, backoff and try again
                 _backoffUpload = YES;
-                int numEvents = fminl([[_eventsData objectForKey:@"events"] count], _backoffUploadBatchSize);
+                int numEvents = fminl([dbHelper getEventCount], _backoffUploadBatchSize);
                 _backoffUploadBatchSize = (int)ceilf(numEvents / 2.0f);
                 AMPLITUDE_LOG(@"Request too large, will decrease size and attempt to reupload");
                 _updatingCurrently = NO;
@@ -770,11 +768,9 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
             NSLog(@"ERROR: response empty, error empty for NSURLConnection");
         }
 
-        [self saveEventsData];
-
         _updatingCurrently = NO;
 
-        if (uploadSuccessful && [[_eventsData objectForKey:@"events"] count] > self.eventUploadThreshold) {
+        if (uploadSuccessful && [dbHelper getEventCount] > self.eventUploadThreshold) {
             int limit = _backoffUpload ? _backoffUploadBatchSize : 0;
             [self uploadEventsWithLimit:limit];
 
@@ -829,7 +825,6 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     [self runOnBackgroundQueue:^{
         _inForeground = NO;
         [self refreshSessionTime:now];
-        [self saveEventsData];
         [self uploadEventsWithLimit:0];
     }];
 }
@@ -845,37 +840,35 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
  */
 - (BOOL)startOrContinueSession:(NSNumber*) timestamp
 {
-    @synchronized (_eventsData) {
-        if (!_inForeground) {
-            if ([self inSession]) {
-                if ([self isWithinMinTimeBetweenSessions:timestamp]) {
-                    [self refreshSessionTime:timestamp];
-                    return FALSE;
-                }
-                [self startNewSession:timestamp];
-                return TRUE;
-            }
-            // no current session, check for previous session
+    if (!_inForeground) {
+        if ([self inSession]) {
             if ([self isWithinMinTimeBetweenSessions:timestamp]) {
-                // extract session id
-                long long previousSessionId = [self previousSessionId];
-                if (previousSessionId == -1) {
-                    [self startNewSession:timestamp];
-                    return TRUE;
-                }
-                // extend previous session
-                [self setSessionId:previousSessionId];
                 [self refreshSessionTime:timestamp];
                 return FALSE;
-            } else {
+            }
+            [self startNewSession:timestamp];
+            return TRUE;
+        }
+        // no current session, check for previous session
+        if ([self isWithinMinTimeBetweenSessions:timestamp]) {
+            // extract session id
+            long long previousSessionId = [self previousSessionId];
+            if (previousSessionId == -1) {
                 [self startNewSession:timestamp];
                 return TRUE;
             }
+            // extend previous session
+            [self setSessionId:previousSessionId];
+            [self refreshSessionTime:timestamp];
+            return FALSE;
+        } else {
+            [self startNewSession:timestamp];
+            return TRUE;
         }
-        // not creating a session means we should continue the session
-        [self refreshSessionTime:timestamp];
-        return FALSE;
     }
+    // not creating a session means we should continue the session
+    [self refreshSessionTime:timestamp];
+    return FALSE;
 }
 
 - (void)startNewSession:(NSNumber*) timestamp
@@ -914,12 +907,10 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (BOOL)isWithinMinTimeBetweenSessions:(NSNumber*) timestamp
 {
-    @synchronized (_eventsData) {
-        NSNumber *previousSessionTime = [self lastEventTime];
-        long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
-        
-        return timeDelta < self.minTimeBetweenSessionsMillis;
-    }
+    NSNumber *previousSessionTime = [self lastEventTime];
+    long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
+
+    return timeDelta < self.minTimeBetweenSessionsMillis;
 }
 
 /**
@@ -927,10 +918,8 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
  */
 - (void)setSessionId:(long long) timestamp
 {
-    @synchronized (_eventsData) {
-        _sessionId = timestamp;
-        [self setPreviousSessionId:_sessionId];
-    }
+    _sessionId = timestamp;
+    [self setPreviousSessionId:_sessionId];
 }
 
 /**
@@ -946,34 +935,27 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)setPreviousSessionId:(long long) previousSessionId
 {
-    @synchronized (_eventsData) {
-        [_eventsData setValue:[NSNumber numberWithLongLong:previousSessionId] forKey:@"previous_session_id"];
-    }
+    NSNumber *value = [NSNumber numberWithLongLong:previousSessionId];
+    [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:value];
 }
 
 - (long long)previousSessionId
 {
-    @synchronized (_eventsData) {
-        NSNumber* previousSessionId = _eventsData[@"previous_session_id"];
-        if (previousSessionId == nil) {
-            return -1;
-        }
-        return [previousSessionId longLongValue];
+    NSNumber* previousSessionId = [[AMPDatabaseHelper getDatabaseHelper] getLongValue:PREVIOUS_SESSION_ID];
+    if (previousSessionId == nil) {
+        return -1;
     }
+    return [previousSessionId longLongValue];
 }
 
 - (void)setLastEventTime:(NSNumber*) timestamp
 {
-    @synchronized (_eventsData) {
-        [_eventsData setValue:timestamp forKey:@"previous_session_time"];
-    }
+    [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
 }
 
 - (NSNumber*)lastEventTime
 {
-    @synchronized (_eventsData) {
-        return _eventsData[@"previous_session_time"];
-    }
+    return [[AMPDatabaseHelper getDatabaseHelper] getLongValue:PREVIOUS_SESSION_TIME];
 }
 
 - (void)startSession
@@ -1016,23 +998,18 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
     }
     
     [self runOnBackgroundQueue:^{
-        (void) SAFE_ARC_RETAIN(userId);
+        SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
-        @synchronized (_eventsData) {
-            [_eventsData setValue:_userId forKey:@"user_id"];
-            [self saveEventsData];
-        }
+        [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyValue:USER_ID value:_userId];
     }];
 }
 
 - (void)setOptOut:(BOOL)enabled
 {
     [self runOnBackgroundQueue:^{
-        @synchronized (_eventsData) {
-            [_eventsData setObject:[NSNumber numberWithBool:enabled] forKey:@"opt_out"];
-            [self saveEventsData];
-        }
+        NSNumber *value = [NSNumber numberWithBool:enabled];
+        [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyLongValue:OPT_OUT value:value];
     }];
 }
 
@@ -1044,7 +1021,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (BOOL)optOut
 {
-    return [_eventsData[@"opt_out"] boolValue];
+    return [[[AMPDatabaseHelper getDatabaseHelper] getLongValue:OPT_OUT] boolValue];
 }
 
 #pragma mark - location methods
@@ -1087,15 +1064,14 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (NSString*) initializeDeviceId
 {
-    @synchronized (_eventsData) {
-        if (_deviceId == nil) {
-            _deviceId = SAFE_ARC_RETAIN([_eventsData objectForKey:@"device_id"]);
-            if (_deviceId == nil ||
-                [_deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
-                [_deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
-                _deviceId = SAFE_ARC_RETAIN([self _getDeviceId]);
-                [_eventsData setObject:_deviceId forKey:@"device_id"];
-            }
+    if (_deviceId == nil) {
+        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+        _deviceId = SAFE_ARC_RETAIN([dbHelper getValue:DEVICE_ID]);
+        if (_deviceId == nil ||
+            [_deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
+            [_deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
+            _deviceId = SAFE_ARC_RETAIN([self _getDeviceId]);
+            [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:_deviceId];
         }
     }
     return _deviceId;
@@ -1227,7 +1203,7 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 
 - (void)printEventsCount
 {
-    NSLog(@"Events count:%ld", (long) [[_eventsData objectForKey:@"events"] count]);
+    NSLog(@"Events count:%ld", (long) [[AMPDatabaseHelper getDatabaseHelper] getEventCount]);
 }
 
 #pragma mark - Compatibility
@@ -1253,17 +1229,6 @@ NSString *const kAMPRevenueEvent = @"revenue_amount";
 }
 
 #pragma mark - Filesystem
-
-- (BOOL)saveEventsData
-{
-    @synchronized (_eventsData) {
-        BOOL success = [self archive:_eventsData toFile:_eventsDataPath];
-        if (!success) {
-            NSLog(@"ERROR: Unable to save eventsData to file");
-        }
-        return success;
-    }
-}
 
 - (BOOL)savePropertyList {
     @synchronized (_propertyList) {

@@ -19,7 +19,7 @@
 {
     NSString *_databasePath;
     BOOL _databaseCreated;
-    FMDatabase *_db;
+    FMDatabaseQueue *_dbQueue;
 }
 
 static NSString *const EVENT_TABLE_NAME = @"events";
@@ -48,7 +48,6 @@ static NSString *const REMOVE_EVENT = @"DELETE FROM %@ WHERE %@ = %li;";
 static NSString *const GET_NTH_EVENT_ID = @"SELECT %@ FROM %@ LIMIT 1 OFFSET %li;";
 
 static NSString *const INSERT_OR_REPLACE_KEY_VALUE = @"INSERT OR REPLACE INTO %@ (%@, %@) VALUES (?, ?);";
-// static NSString *const INSERT_OR_REPLACE_KEY_LONG_VALUE = @"INSERT OR REPLACE INTO %@ (%@, %@) VALUES (?, ?);";
 static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 
@@ -65,13 +64,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 - (id) init
 {
     if (self = [super init]) {
+
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingString:@"Amplitude.db"]);
-
-        BOOL shouldCreateDB = ![[NSFileManager defaultManager] fileExistsAtPath:_databasePath];
-        _db = SAFE_ARC_RETAIN([FMDatabase databaseWithPath:_databasePath]);
-        if (shouldCreateDB) {
-            [self createDB];
+        _dbQueue = SAFE_ARC_RETAIN([FMDatabaseQueue databaseQueueWithPath:_databasePath flags:(SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE)]);
+        if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {
+            [self createTables];
         }
     }
     return self;
@@ -79,28 +77,37 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (void)dealloc
 {
+    [_dbQueue close];
     SAFE_ARC_RELEASE(_databasePath);
-    SAFE_ARC_RELEASE(_db);
+    SAFE_ARC_RELEASE(_dbQueue);
     SAFE_ARC_SUPER_DEALLOC();
 }
 
-- (void)createDB
+- (BOOL)createTables
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during createDB");
-        return;
-    }
+    __block BOOL success = YES;
 
-    NSString *createEventsTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, EVENT_TABLE_NAME, ID_FIELD, EVENT_FIELD];
-    [_db executeUpdate:createEventsTable];
+    [_dbQueue inDatabase:^(FMDatabase *db) {
 
-    NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
-    [_db executeUpdate:createStoreTable];
+        if (![db open]) {
+            NSLog(@"Failed to open database during create tables");
+            success = NO;
+            return;
+        }
 
-    NSString *createLongStoreTable = [NSString stringWithFormat:CREATE_LONG_STORE_TABLE, LONG_STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
-    [_db executeUpdate:createLongStoreTable];
+        NSString *createEventsTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, EVENT_TABLE_NAME, ID_FIELD, EVENT_FIELD];
+        success &= [db executeUpdate:createEventsTable];
 
-    [_db close];
+        NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
+        success &= [db executeUpdate:createStoreTable];
+
+        NSString *createLongStoreTable = [NSString stringWithFormat:CREATE_LONG_STORE_TABLE, LONG_STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
+        success &= [db executeUpdate:createLongStoreTable];
+
+        [db close];
+    }];
+
+    return success;
 }
 
 - (void)upgrade:(int) oldVersion newVersion:(int) newVersion
@@ -111,38 +118,61 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
         default:
             NSLog(@"upgrade with unknown oldVersion %d", oldVersion);
-            [self resetDB];
+            [self resetDB:YES];
     }
 }
 
-- (void)resetDB
+- (BOOL)dropTables
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during resetDB");
-        return;
-    }
+    __block BOOL success = YES;
 
-    NSString *dropEventTableSQL = [NSString stringWithFormat:DROP_TABLE, EVENT_TABLE_NAME];
-    [_db executeUpdate: dropEventTableSQL];
+    [_dbQueue inDatabase:^(FMDatabase *db) {
 
-    NSString *dropStoreTableSQL = [NSString stringWithFormat:DROP_TABLE, STORE_TABLE_NAME];
-    [_db executeUpdate: dropStoreTableSQL];
+        if (![db open]) {
+            NSLog(@"Failed to open database during drop tables");
+            success = NO;
+            return;
+        }
 
-    NSString *dropLongStoreTableSQL = [NSString stringWithFormat:DROP_TABLE, LONG_STORE_TABLE_NAME];
-    [_db executeUpdate: dropLongStoreTableSQL];
+        NSString *dropEventTableSQL = [NSString stringWithFormat:DROP_TABLE, EVENT_TABLE_NAME];
+        success &= [db executeUpdate: dropEventTableSQL];
 
-//    NSString *deleteEventIdColumnSQL = [NSString stringWithFormat:DELETE_EVENT_ID_COLUMN, EVENT_TABLE_NAME];
-//    [_db executeUpdate: deleteEventIdColumnSQL];
+        NSString *dropStoreTableSQL = [NSString stringWithFormat:DROP_TABLE, STORE_TABLE_NAME];
+        success &= [db executeUpdate: dropStoreTableSQL];
 
-    [_db close];
-    [self createDB];
+        NSString *dropLongStoreTableSQL = [NSString stringWithFormat:DROP_TABLE, LONG_STORE_TABLE_NAME];
+        success &= [db executeUpdate: dropLongStoreTableSQL];
+
+        //    NSString *deleteEventIdColumnSQL = [NSString stringWithFormat:DELETE_EVENT_ID_COLUMN, EVENT_TABLE_NAME];
+        //    success &= [_db executeUpdate: deleteEventIdColumnSQL];
+
+        [db close];
+    }];
+
+    return success;
 }
 
-- (void)delete
+- (BOOL)resetDB:(BOOL) deleteDB
 {
+    BOOL success = YES;
+
+    if (deleteDB) {
+        success &= [self deleteDB];
+    } else {
+        success &= [self dropTables];
+    }
+    success &= [self createTables];
+
+    return success;
+}
+
+- (BOOL)deleteDB
+{
+    BOOL success = YES;
     if ([[NSFileManager defaultManager] fileExistsAtPath:_databasePath] == YES) {
-        [[NSFileManager defaultManager] removeItemAtPath:_databasePath error:NULL];
+        success = [[NSFileManager defaultManager] removeItemAtPath:_databasePath error:NULL];
     }
+    return success;
 }
 
 - (BOOL)addEvent:(NSString*) event
@@ -152,18 +182,23 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (BOOL)addEventToTable:(NSString*) table event:(NSString*) event
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during addEventToTable %@", table);
-        return NO;
-    }
+    __block BOOL success = NO;
 
-    NSString *insertSQL = [NSString stringWithFormat:INSERT_EVENT, table, EVENT_FIELD];
-    BOOL success = [_db executeUpdate:insertSQL, event];
-    if (!success) {
-        NSLog(@"addEventToTable %@ failed: %@", table, [_db lastErrorMessage]);
-    }
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during addEventToTable %@", table);
+            return;
+        }
 
-    [_db close];
+        NSString *insertSQL = [NSString stringWithFormat:INSERT_EVENT, table, EVENT_FIELD];
+        success = [db executeUpdate:insertSQL, event];
+        if (!success) {
+            NSLog(@"addEventToTable %@ failed: %@", table, [db lastErrorMessage]);
+        }
+
+        [db close];
+    }];
+
     return success;
 }
 
@@ -174,50 +209,54 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (NSDictionary*)getEventsFromTable:(NSString*) table upToId:(long) upToId limit:(long) limit
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during getEventsFromTable %@", table);
-        return nil;
-    }
+    __block long maxId = -1;
+    __block NSMutableArray *events = [NSMutableArray array];
 
-    long maxId = -1;
-    NSMutableArray *events = [NSMutableArray array];
-    NSString *querySQL;
-    if (upToId > 0 && limit > 0) {
-        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID_AND_LIMIT, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId, limit];
-    } else if (upToId > 0) {
-        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId];
-    } else if (limit > 0) {
-        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_LIMIT, ID_FIELD, EVENT_FIELD, table, limit];
-    } else {
-        querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
-    }
-    FMResultSet *s = [_db executeQuery:querySQL];
-    if (s == nil) {
-        NSLog(@"getEvents from table %@ failed: %@", table, [_db lastErrorMessage]);
-        [_db close];
-        return nil;
-    }
-
-    while ([s next]) {
-        int eventId = [s intForColumnIndex:0];
-        NSString *eventString = [s stringForColumnIndex:1];
-        NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
-
-        id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
-        if (eventImmutable == nil) {
-            NSLog(@"Error JSON deserialization of event id %d from table %@", eventId, table);
-            continue;
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during getEventsFromTable %@", table);
+            return;
         }
 
-        NSMutableDictionary *event = [eventImmutable mutableCopy];
-        [event setValue:[NSNumber numberWithInt:eventId] forKey:@"event_id"];
-        [events addObject:event];
-        SAFE_ARC_RELEASE(event);
-        maxId = eventId;
-    }
+        NSString *querySQL;
+        if (upToId > 0 && limit > 0) {
+            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID_AND_LIMIT, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId, limit];
+        } else if (upToId > 0) {
+            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId];
+        } else if (limit > 0) {
+            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_LIMIT, ID_FIELD, EVENT_FIELD, table, limit];
+        } else {
+            querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
+        }
+        FMResultSet *s = [db executeQuery:querySQL];
+        if (s == nil) {
+            NSLog(@"getEvents from table %@ failed: %@", table, [db lastErrorMessage]);
+            [db close];
+            return;
+        }
 
-    [_db close];
-    NSDictionary *fetchedEvents = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithLong:maxId], @"maxId", events, @"events", nil];
+        while ([s next]) {
+            int eventId = [s intForColumnIndex:0];
+            NSString *eventString = [s stringForColumnIndex:1];
+            NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
+
+            id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
+            if (eventImmutable == nil) {
+                NSLog(@"Error JSON deserialization of event id %d from table %@", eventId, table);
+                continue;
+            }
+
+            NSMutableDictionary *event = [eventImmutable mutableCopy];
+            [event setValue:[NSNumber numberWithInt:eventId] forKey:@"event_id"];
+            [events addObject:event];
+            SAFE_ARC_RELEASE(event);
+            maxId = eventId;
+        }
+
+        [db close];
+    }];
+
+    NSDictionary *fetchedEvents = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithLong:maxId], @"max_id", events, @"events", nil];
     return SAFE_ARC_AUTORELEASE(fetchedEvents);
 }
 
@@ -233,23 +272,27 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (BOOL)insertOrReplaceKeyValueToTable:(NSString*) table key:(NSString*) key value:(NSObject*) value
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during insertOrReplaceKeyValueToTable %@", table);
-        return NO;
-    }
+    __block BOOL success = NO;
 
-    NSString *insertSQL = [NSString stringWithFormat:INSERT_OR_REPLACE_KEY_VALUE, table, KEY_FIELD, VALUE_FIELD];
-    BOOL success;
-    if ([table isEqualToString:STORE_TABLE_NAME]) {
-        success = [_db executeUpdate:insertSQL, key, (NSString*) value];
-    } else {
-        success = [_db executeUpdate:insertSQL, key, (NSNumber*) value];
-    }
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during insertOrReplaceKeyValueToTable %@", table);
+            return;
+        }
 
-    if (!success) {
-        NSLog(@"insertOrReplaceKeyValue to table %@ failed: %@", table, [_db lastErrorMessage]);
-    }
-    [_db close];
+        NSString *insertSQL = [NSString stringWithFormat:INSERT_OR_REPLACE_KEY_VALUE, table, KEY_FIELD, VALUE_FIELD];
+        if ([table isEqualToString:STORE_TABLE_NAME]) {
+            success = [db executeUpdate:insertSQL, key, (NSString*) value];
+        } else {
+            success = [db executeUpdate:insertSQL, key, (NSNumber*) value];
+        }
+
+        if (!success) {
+            NSLog(@"insertOrReplaceKeyValue to table %@ failed: %@", table, [db lastErrorMessage]);
+        }
+        [db close];
+    }];
+
     return success;
 }
 
@@ -265,30 +308,38 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (NSObject*)getValueFromTable:(NSString*) table key:(NSString*) key
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during getValueFromTable %@", table);
-        return nil;
-    }
+    __block NSObject *value = nil;
+    __block BOOL success = NO;
 
-    NSObject *value = nil;
-    NSString *querySQL = [NSString stringWithFormat:GET_VALUE, KEY_FIELD, VALUE_FIELD, table, KEY_FIELD];
-
-    FMResultSet *s = [_db executeQuery:querySQL, key];
-    if (s == nil) {
-        NSLog(@"getValueFromTable %@ failed: %@", table, [_db lastErrorMessage]);
-        [_db close];
-        return nil;
-    }
-
-    if ([s next]) {
-        if ([table isEqualToString:STORE_TABLE_NAME]) {
-            value = [[NSString alloc] initWithString:[s stringForColumnIndex:1]];
-        } else {
-            value = [[NSNumber alloc] initWithLongLong:[s longLongIntForColumnIndex:1]];
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during getValueFromTable %@", table);
+            return;
         }
-    }
 
-    [_db close];
+        NSString *querySQL = [NSString stringWithFormat:GET_VALUE, KEY_FIELD, VALUE_FIELD, table, KEY_FIELD];
+        FMResultSet *s = [db executeQuery:querySQL, key];
+        if (s == nil) {
+            NSLog(@"getValueFromTable %@ failed: %@", table, [db lastErrorMessage]);
+            [db close];
+            return;
+        }
+
+        if ([s next]) {
+            success = YES;
+            if ([table isEqualToString:STORE_TABLE_NAME]) {
+                value = [[NSString alloc] initWithString:[s stringForColumnIndex:1]];
+            } else {
+                value = [[NSNumber alloc] initWithLongLong:[s longLongIntForColumnIndex:1]];
+            }
+        }
+
+        [db close];
+    }];
+
+    if (!success) {
+        return nil;
+    }
     return SAFE_ARC_AUTORELEASE(value);
 }
 
@@ -299,27 +350,31 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (int)getEventCountFromTable:(NSString*) table
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during getEventCountFromTable %@", table);
-        return -1;
-    }
+    __block int count = 0;
 
-    int count = -1;
-    NSString *querySQL = [NSString stringWithFormat:COUNT_EVENTS, table];
-    FMResultSet *s = [_db executeQuery:querySQL];
-    if (s == nil) {
-        NSLog(@"getEventCountFromTable %@ failed: %@", table, [_db lastErrorMessage]);
-        [_db close];
-        return count;
-    }
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during getEventCountFromTable %@", table);
+            return;
+        }
 
-    if ([s next]) {
-        count = [s intForColumnIndex:0];
-    } else {
-        NSLog(@"getEventCountFromTable %@ failed", table);
-    }
+        NSString *querySQL = [NSString stringWithFormat:COUNT_EVENTS, table];
+        FMResultSet *s = [db executeQuery:querySQL];
+        if (s == nil) {
+            NSLog(@"getEventCountFromTable %@ failed: %@", table, [db lastErrorMessage]);
+            [db close];
+            return;
+        }
 
-    [_db close];
+        if ([s next]) {
+            count = [s intForColumnIndex:0];
+        } else {
+            NSLog(@"getEventCountFromTable %@ failed", table);
+        }
+
+        [db close];
+    }];
+
     return count;
 }
 
@@ -330,18 +385,23 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (BOOL)removeEventsFromTable:(NSString*) table maxId:(long) maxId
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during removeEventsFromTable %@", table);
-        return NO;
-    }
+    __block BOOL success = NO;
 
-    NSString *removeSQL = [NSString stringWithFormat:REMOVE_EVENTS, table, ID_FIELD, maxId];
-    BOOL success = [_db executeUpdate:removeSQL];
-    if (!success) {
-        NSLog(@"removeEventsFromTable %@ failed: %@", table, [_db lastErrorMessage]);
-    }
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during removeEventsFromTable %@", table);
+            return;
+        }
 
-    [_db close];
+        NSString *removeSQL = [NSString stringWithFormat:REMOVE_EVENTS, table, ID_FIELD, maxId];
+        BOOL success = [db executeUpdate:removeSQL];
+        if (!success) {
+            NSLog(@"removeEventsFromTable %@ failed: %@", table, [db lastErrorMessage]);
+        }
+
+        [db close];
+    }];
+
     return success;
 }
 
@@ -352,18 +412,23 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (BOOL)removeEventFromTable:(NSString*) table eventId:(long) eventId
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during removeEventFromTable %@", table);
-        return NO;
-    }
+    __block BOOL success = NO;
 
-    NSString *removeSQL = [NSString stringWithFormat:REMOVE_EVENT, table, ID_FIELD, eventId];
-    BOOL success = [_db executeUpdate:removeSQL];
-    if (!success) {
-        NSLog(@"removeEvent from table %@ failed: %@", table, [_db lastErrorMessage]);
-    }
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during removeEventFromTable %@", table);
+            return;
+        }
 
-    [_db close];
+        NSString *removeSQL = [NSString stringWithFormat:REMOVE_EVENT, table, ID_FIELD, eventId];
+        BOOL success = [db executeUpdate:removeSQL];
+        if (!success) {
+            NSLog(@"removeEvent from table %@ failed: %@", table, [db lastErrorMessage]);
+        }
+
+        [db close];
+    }];
+
     return success;
 }
 
@@ -374,27 +439,31 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (long long)getNthEventIdFromTable:(NSString*) table n:(long) n
 {
-    if (![_db open]) {
-        NSLog(@"Failed to open database during getNthEventIdFromTable %@", table);
-        return -1;
-    }
+    __block long long eventId = -1;
 
-    long long eventId = -1;
-    NSString *querySQL = [NSString stringWithFormat:GET_NTH_EVENT_ID, ID_FIELD, table, n-1];
-    FMResultSet *s = [_db executeQuery:querySQL];
-    if (s == nil) {
-        NSLog(@"getNthEventIdFromTable %@ failed: %@", table, [_db lastErrorMessage]);
-        [_db close];
-        return eventId;
-    }
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        if (![db open]) {
+            NSLog(@"Failed to open database during getNthEventIdFromTable %@", table);
+            return;
+        }
 
-    if ([s next]) {
-        eventId = [s longLongIntForColumnIndex:0];
-    } else {
-        NSLog(@"getNthEventIdFromTable %@ failed", table);
-    }
+        NSString *querySQL = [NSString stringWithFormat:GET_NTH_EVENT_ID, ID_FIELD, table, n-1];
+        FMResultSet *s = [db executeQuery:querySQL];
+        if (s == nil) {
+            NSLog(@"getNthEventIdFromTable %@ failed: %@", table, [db lastErrorMessage]);
+            [db close];
+            return;
+        }
 
-    [_db close];
+        if ([s next]) {
+            eventId = [s longLongIntForColumnIndex:0];
+        } else {
+            NSLog(@"getNthEventIdFromTable %@ failed", table);
+        }
+
+        [db close];
+    }];
+
     return eventId;
 }
 

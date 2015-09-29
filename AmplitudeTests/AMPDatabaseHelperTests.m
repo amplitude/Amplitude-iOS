@@ -18,12 +18,12 @@
 - (void)setUp {
     [super setUp];
     self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
-    [self.databaseHelper resetDB];
+    [self.databaseHelper resetDB:NO];
 }
 
 - (void)tearDown {
     [super tearDown];
-    [self.databaseHelper delete];
+    [self.databaseHelper deleteDB];
     self.databaseHelper = nil;
 }
 
@@ -35,14 +35,14 @@
 
 - (void)testGetEvents {
     NSDictionary *emptyResults = [self.databaseHelper getEvents:-1 limit:-1];
-    XCTAssertEqual(-1, [[emptyResults objectForKey:@"maxId"] longValue]);
+    XCTAssertEqual(-1, [[emptyResults objectForKey:@"max_id"] longValue]);
 
     [self.databaseHelper addEvent:@"{\"event_type\":\"test1\"}"];
     [self.databaseHelper addEvent:@"{\"event_type\":\"test2\"}"];
 
     // test get all events
     NSDictionary *results = [self.databaseHelper getEvents:-1 limit:-1];
-    XCTAssertEqual(2, [[results objectForKey:@"maxId"] longValue]);
+    XCTAssertEqual(2, [[results objectForKey:@"max_id"] longValue]);
     NSArray *events = [results objectForKey:@"events"];
     XCTAssertEqual(2, events.count);
     XCTAssert([[[events objectAtIndex:0] objectForKey:@"event_type"] isEqualToString:@"test1"]);
@@ -52,13 +52,13 @@
 
     // test get all events up to certain id
     results = [self.databaseHelper getEvents:1 limit:-1];
-    XCTAssertEqual(1, [[results objectForKey:@"maxId"] longValue]);
+    XCTAssertEqual(1, [[results objectForKey:@"max_id"] longValue]);
     events = [results objectForKey:@"events"];
     XCTAssertEqual(1, events.count);
 
     // test get all events with limit
     results = [self.databaseHelper getEvents:1 limit:1];
-    XCTAssertEqual(1, [[results objectForKey:@"maxId"] longValue]);
+    XCTAssertEqual(1, [[results objectForKey:@"max_id"] longValue]);
     events = [results objectForKey:@"events"];
     XCTAssertEqual(1, events.count);
 }
@@ -87,6 +87,11 @@
 
     [self.databaseHelper insertOrReplaceKeyLongValue:key value:value2];
     XCTAssert([[self.databaseHelper getLongValue:key] isEqualToNumber:value2]);
+
+    NSString *boolKey = @"bool_value";
+    NSNumber *boolValue = [NSNumber numberWithBool:YES];
+    [self.databaseHelper insertOrReplaceKeyLongValue:boolKey value:boolValue];
+    XCTAssertTrue([[self.databaseHelper getLongValue:boolKey] boolValue]);
 }
 
 - (void)testEventCount {

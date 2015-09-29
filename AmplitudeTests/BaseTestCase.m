@@ -27,7 +27,7 @@ NSString *const userId = @"userId";
     [super setUp];
     self.amplitude = [Amplitude alloc];
     self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
-    [self.databaseHelper resetDB];
+    XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
     // Mock the methods before init
     _partialMockAmplitude = OCMPartialMock(self.amplitude);
@@ -44,7 +44,6 @@ NSString *const userId = @"userId";
     [self.amplitude flushQueue];
     [_partialMockAmplitude stopMocking];
     SAFE_ARC_RELEASE(self.amplitude);
-    [self.databaseHelper delete];
     SAFE_ARC_RELEASE(self.databaseHelper);
     [super tearDown];
 }

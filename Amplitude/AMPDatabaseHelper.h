@@ -9,10 +9,11 @@
 @interface AMPDatabaseHelper : NSObject
 
 + (AMPDatabaseHelper*)getDatabaseHelper;
-- (void)createDB;
+- (BOOL)createTables;
+- (BOOL)dropTables;
 - (void)upgrade:(int) oldVersion newVersion:(int) newVersion;
-- (void)resetDB;
-- (void)delete;
+- (BOOL)resetDB:(BOOL) deleteDB;
+- (BOOL)deleteDB;
 
 - (BOOL)addEvent:(NSString*) event;
 - (NSDictionary*)getEvents:(long) upToId limit:(long) limit;

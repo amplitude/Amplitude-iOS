@@ -60,10 +60,10 @@
     XCTAssertEqual([self.amplitude userId], nil);
 
     NSString *testUserId = @"testUserId";
-    [[self.amplitude eventsData] setObject:testUserId forKey:@"user_id"];
+    [self.databaseHelper insertOrReplaceKeyValue:@"user_id" value:testUserId];
     [self.amplitude initializeApiKey:apiKey];
     [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude userId], testUserId);
+    XCTAssertTrue([[self.amplitude userId] isEqualToString:testUserId]);
 }
 
 - (void)testInitializeWithNilUserId {
