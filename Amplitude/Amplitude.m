@@ -444,6 +444,11 @@ NSString *const USER_ID = @"user_id";
     if (timestamp == nil) {
         timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
     }
+
+    // Create snapshot of all event json objects, to prevent deallocation crash
+    eventProperties = [eventProperties copy];
+    apiProperties = [apiProperties mutableCopy];
+    NSDictionary *userProperties = [_userProperties copy];
     
     [self runOnBackgroundQueue:^{
         AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
@@ -451,6 +456,9 @@ NSString *const USER_ID = @"user_id";
         // Respect the opt-out setting by not sending or storing any events.
         if ([self optOut])  {
             NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
+            SAFE_ARC_RELEASE(eventProperties);
+            SAFE_ARC_RELEASE(apiProperties);
+            SAFE_ARC_RELEASE(userProperties);
             return;
         }
 
@@ -466,6 +474,13 @@ NSString *const USER_ID = @"user_id";
         [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
         [event setValue:timestamp forKey:@"timestamp"];
+
+        SAFE_ARC_RELEASE(eventProperties);
+        SAFE_ARC_RELEASE(apiProperties);
+        SAFE_ARC_RELEASE(userProperties);
+
+        [self annotateEvent:event];
+
 
         [self annotateEvent:event];
 
@@ -988,7 +1003,7 @@ NSString *const USER_ID = @"user_id";
 
 - (void)setUserId:(NSString*) userId
 {
-    if (!([self isArgument:userId validType:[NSString class] methodName:@"setUserId:"] || userId == nil)) {
+    if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
         return;
     }
     
@@ -1121,6 +1136,7 @@ NSString *const USER_ID = @"user_id";
         for (id i in objCopy) {
             [arr addObject:[self makeJSONSerializable:i]];
         }
+        SAFE_ARC_RELEASE(objCopy);
         return [NSArray arrayWithArray:arr];
     }
     if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -1136,6 +1152,7 @@ NSString *const USER_ID = @"user_id";
             }
             dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
         }
+        SAFE_ARC_RELEASE(objCopy);
         return [NSDictionary dictionaryWithDictionary:dict];
     }
     NSString *str = [obj description];
