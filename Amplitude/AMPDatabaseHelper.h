@@ -28,4 +28,3 @@
 - (NSNumber*)getLongValue:(NSString*) key;
 
 @end
-

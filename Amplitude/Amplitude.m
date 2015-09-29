@@ -198,7 +198,7 @@ NSString *const USER_ID = @"user_id";
 
             _uploadTaskID = UIBackgroundTaskInvalid;
             
-            NSString *eventsDataDirectory = SAFE_ARC_RETAIN([NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0]);
+            NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
             _propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
             _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
 
@@ -208,7 +208,6 @@ NSString *const USER_ID = @"user_id";
             _propertyList = SAFE_ARC_RETAIN([self deserializePList:_propertyListPath]);
             if (!_propertyList) {
                 _propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
-                [_propertyList setObject:[NSNumber numberWithLongLong:0LL] forKey:MAX_ID];
                 [_propertyList setObject:[NSNumber numberWithInt:0] forKey:DATABASE_VERSION];
                 BOOL success = [self savePropertyList];
                 if (!success) {
@@ -234,6 +233,7 @@ NSString *const USER_ID = @"user_id";
 
             // migrate all of old _eventsData object to database store
             [self migrateEventsDataToDB];
+            SAFE_ARC_RELEASE(_eventsDataPath);
 
             [self initializeDeviceId];
 
@@ -257,36 +257,38 @@ NSString *const USER_ID = @"user_id";
 - (void) migrateEventsDataToDB
 {
     NSDictionary *eventsData = [self unarchive:_eventsDataPath];
-    if (eventsData != nil) {
-        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    if (eventsData == nil) {
+        return;
+    }
 
-        // migrate events
-        NSArray *events = [eventsData objectForKey:EVENTS];
-        for (id event in events) {
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            [dbHelper addEvent:jsonString];
-            SAFE_ARC_RELEASE(jsonString);
-        }
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
-        // migrate remaining properties
-        NSString *userId = [eventsData objectForKey:USER_ID];
-        if (userId != nil) {
-            [dbHelper insertOrReplaceKeyValue:USER_ID value:userId];
-        }
-        NSNumber *optOut = [eventsData objectForKey:OPT_OUT];
-        if (optOut != nil) {
-            [dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:optOut];
-        }
-        NSString *deviceId = [eventsData objectForKey:DEVICE_ID];
-        if (deviceId != nil) {
-            [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
-        }
+    // migrate events
+    NSArray *events = [eventsData objectForKey:EVENTS];
+    for (id event in events) {
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [dbHelper addEvent:jsonString];
+        SAFE_ARC_RELEASE(jsonString);
+    }
 
-        // delete events data so don't need to migrate next time
-        if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
-            [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
-        }
+    // migrate remaining properties
+    NSString *userId = [eventsData objectForKey:USER_ID];
+    if (userId != nil) {
+        [dbHelper insertOrReplaceKeyValue:USER_ID value:userId];
+    }
+    NSNumber *optOut = [eventsData objectForKey:OPT_OUT];
+    if (optOut != nil) {
+        [dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:optOut];
+    }
+    NSString *deviceId = [eventsData objectForKey:DEVICE_ID];
+    if (deviceId != nil) {
+        [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
+    }
+
+    // delete events data so don't need to migrate next time
+    if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
     }
 }
 
@@ -321,7 +323,6 @@ NSString *const USER_ID = @"user_id";
 
     // Release instance variables
     SAFE_ARC_RELEASE(_deviceInfo);
-    SAFE_ARC_RELEASE(_eventsDataPath);
     SAFE_ARC_RELEASE(_initializerQueue);
     SAFE_ARC_RELEASE(_lastKnownLocation);
     SAFE_ARC_RELEASE(_locationManager);
@@ -481,9 +482,6 @@ NSString *const USER_ID = @"user_id";
 
         [self annotateEvent:event];
 
-
-        [self annotateEvent:event];
-
         // convert event dictionary to JSON String
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -566,12 +564,10 @@ NSString *const USER_ID = @"user_id";
     [self logRevenue:nil quantity:1 price:amount];
 }
 
-
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price
 {
     [self logRevenue:productIdentifier quantity:quantity price:price receipt:nil];
 }
-
 
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt
 {
@@ -642,7 +638,6 @@ NSString *const USER_ID = @"user_id";
     }
     
     [self runOnBackgroundQueue:^{
-        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
         // Don't communicate with the server if the user has opted out.
         if ([self optOut])  {
@@ -650,6 +645,7 @@ NSString *const USER_ID = @"user_id";
             return;
         }
 
+        AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
         long eventCount = [dbHelper getEventCount];
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
         if (numEvents == 0) {
@@ -1091,19 +1087,19 @@ NSString *const USER_ID = @"user_id";
 {
     NSString *deviceId = nil;
     if (_useAdvertisingIdForDeviceId) {
-        deviceId = SAFE_ARC_AUTORELEASE(_deviceInfo.advertiserID);
+        deviceId = _deviceInfo.advertiserID;
     }
 
     // return identifierForVendor
     if (!deviceId) {
-        deviceId = SAFE_ARC_AUTORELEASE(_deviceInfo.vendorID);
+        deviceId = _deviceInfo.vendorID;
     }
 
     if (!deviceId) {
         // Otherwise generate random ID
-        deviceId = SAFE_ARC_AUTORELEASE(_deviceInfo.generateUUID);
+        deviceId = _deviceInfo.generateUUID;
     }
-    return deviceId;
+    return SAFE_ARC_AUTORELEASE([[NSString alloc] initWithString:deviceId]);
 }
 
 - (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
