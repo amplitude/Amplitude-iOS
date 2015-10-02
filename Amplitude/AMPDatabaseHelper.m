@@ -254,17 +254,17 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         } else {
             querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
         }
-        FMResultSet *s = [db executeQuery:querySQL];
-        if (s == nil) {
+        FMResultSet *rs = [db executeQuery:querySQL];
+        if (rs == nil) {
             NSLog(@"getEvents from table %@ failed: %@", table, [db lastErrorMessage]);
             [db close];
             [self resetDB:NO];
             return;
         }
 
-        while ([s next]) {
-            int eventId = [s intForColumnIndex:0];
-            NSString *eventString = [s stringForColumnIndex:1];
+        while ([rs next]) {
+            int eventId = [rs intForColumnIndex:0];
+            NSString *eventString = [rs stringForColumnIndex:1];
             NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
 
             id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
@@ -350,19 +350,19 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         }
 
         NSString *querySQL = [NSString stringWithFormat:GET_VALUE, KEY_FIELD, VALUE_FIELD, table, KEY_FIELD];
-        FMResultSet *s = [db executeQuery:querySQL, key];
-        if (s == nil) {
+        FMResultSet *rs = [db executeQuery:querySQL, key];
+        if (rs == nil) {
             NSLog(@"getValueFromTable %@ failed: %@", table, [db lastErrorMessage]);
             [db close];
             return;
         }
 
-        if ([s next]) {
+        if ([rs next]) {
             success = YES;
             if ([table isEqualToString:STORE_TABLE_NAME]) {
-                value = [[NSString alloc] initWithString:[s stringForColumnIndex:1]];
+                value = [[NSString alloc] initWithString:[rs stringForColumnIndex:1]];
             } else {
-                value = [[NSNumber alloc] initWithLongLong:[s longLongIntForColumnIndex:1]];
+                value = [[NSNumber alloc] initWithLongLong:[rs longLongIntForColumnIndex:1]];
             }
         }
 
@@ -391,15 +391,15 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         }
 
         NSString *querySQL = [NSString stringWithFormat:COUNT_EVENTS, table];
-        FMResultSet *s = [db executeQuery:querySQL];
-        if (s == nil) {
+        FMResultSet *rs = [db executeQuery:querySQL];
+        if (rs == nil) {
             NSLog(@"getEventCountFromTable %@ failed: %@", table, [db lastErrorMessage]);
             [db close];
             return;
         }
 
-        if ([s next]) {
-            count = [s intForColumnIndex:0];
+        if ([rs next]) {
+            count = [rs intForColumnIndex:0];
         } else {
             NSLog(@"getEventCountFromTable %@ failed", table);
         }
@@ -480,15 +480,15 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         }
 
         NSString *querySQL = [NSString stringWithFormat:GET_NTH_EVENT_ID, ID_FIELD, table, n-1];
-        FMResultSet *s = [db executeQuery:querySQL];
-        if (s == nil) {
+        FMResultSet *rs = [db executeQuery:querySQL];
+        if (rs == nil) {
             NSLog(@"getNthEventIdFromTable %@ failed: %@", table, [db lastErrorMessage]);
             [db close];
             return;
         }
 
-        if ([s next]) {
-            eventId = [s longLongIntForColumnIndex:0];
+        if ([rs next]) {
+            eventId = [rs longLongIntForColumnIndex:0];
         } else {
             NSLog(@"getNthEventIdFromTable %@ failed", table);
         }

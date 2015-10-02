@@ -231,8 +231,10 @@ NSString *const USER_ID = @"user_id";
                 [self savePropertyList];
             }
 
-            // migrate all of old _eventsData object to database store
-            [self migrateEventsDataToDB];
+            // migrate all of old _eventsData object to database store if database just created
+            if (oldDBVersion < kAMPDBFirstVersion) {
+                [self migrateEventsDataToDB];
+            }
             SAFE_ARC_RELEASE(_eventsDataPath);
 
             [self initializeDeviceId];
@@ -284,6 +286,14 @@ NSString *const USER_ID = @"user_id";
     NSString *deviceId = [eventsData objectForKey:DEVICE_ID];
     if (deviceId != nil) {
         [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
+    }
+    NSNumber *previousSessionId = [eventsData objectForKey:PREVIOUS_SESSION_ID];
+    if (previousSessionId != nil) {
+        [dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:previousSessionId];
+    }
+    NSNumber *previousSessionTime = [eventsData objectForKey:PREVIOUS_SESSION_TIME];
+    if (previousSessionTime != nil) {
+        [dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:previousSessionTime];
     }
 
     // delete events data so don't need to migrate next time
