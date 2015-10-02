@@ -482,7 +482,7 @@ NSString *const USER_ID = @"user_id";
         [event setValue:eventType forKey:@"event_type"];
         [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
         [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-        [event setValue:[self replaceWithEmptyJSON:_userProperties] forKey:@"user_properties"];
+        [event setValue:[self replaceWithEmptyJSON:userProperties] forKey:@"user_properties"];
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
         [event setValue:timestamp forKey:@"timestamp"];
 
