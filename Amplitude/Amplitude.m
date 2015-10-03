@@ -237,6 +237,12 @@ NSString *const USER_ID = @"user_id";
             }
             SAFE_ARC_RELEASE(_eventsDataPath);
 
+            // try to restore previous session
+            long long previousSessionId = [self previousSessionId];
+            if (previousSessionId >= 0) {
+                _sessionId = previousSessionId;
+            }
+
             [self initializeDeviceId];
 
             [_backgroundQueue setSuspended:NO];
