@@ -4,6 +4,8 @@ platform :ios, '6.0'
 
 xcodeproj 'Amplitude'
 
+pod 'FMDB/standalone', '~> 2.5'
+
 target :test do
   link_with "AmplitudeTests"
   pod 'OCMock', '~> 3.1.1'

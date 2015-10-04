@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "AMPDatabaseHelper.h"
 
 extern NSString *const apiKey;
 extern NSString *const userId;
@@ -15,6 +16,7 @@ extern NSString *const userId;
 
 @property (nonatomic, strong) Amplitude *amplitude;
 @property (nonatomic, assign) id partialMockAmplitude;
+@property (nonatomic, strong) AMPDatabaseHelper *databaseHelper;
 
 - (BOOL) archive:(id)rootObject toFile:(NSString *)path;
 - (id) unarchive:(NSString *)path;

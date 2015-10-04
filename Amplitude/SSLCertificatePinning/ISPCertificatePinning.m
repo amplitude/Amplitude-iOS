@@ -80,8 +80,10 @@
 
             // Compare the two certificates
             if ([pinnedCertificate isEqualToData:DERCertificate]) {
+                CFRelease(DERCertificate);
                 return YES;
             }
+            CFRelease(DERCertificate);
         }
 
         // Check the anchor/CA certificate separately

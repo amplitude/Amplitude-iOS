@@ -14,6 +14,7 @@
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 #import "AMPARCMacros.h"
+#import "AMPDatabaseHelper.h"
 
 NSString *const apiKey = @"000000";
 NSString *const userId = @"userId";
@@ -25,6 +26,8 @@ NSString *const userId = @"userId";
 - (void)setUp {
     [super setUp];
     self.amplitude = [Amplitude alloc];
+    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
+    XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
     // Mock the methods before init
     _partialMockAmplitude = OCMPartialMock(self.amplitude);
@@ -40,7 +43,8 @@ NSString *const userId = @"userId";
     [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
     [_partialMockAmplitude stopMocking];
-    SAFE_ARC_RELEASE(self.amplitude);
+    SAFE_ARC_RELEASE(_amplitude);
+    SAFE_ARC_RELEASE(_databaseHelper);
     [super tearDown];
 }
 
