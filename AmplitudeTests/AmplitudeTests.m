@@ -158,5 +158,20 @@
     XCTAssertEqual(_connectionCallCount, 3);
 }
 
+- (void)testUUIDInEvent {
+    [self.amplitude setEventUploadThreshold:5];
+    [self.amplitude logEvent:@"event1"];
+    [self.amplitude logEvent:@"event2"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([self.amplitude queuedEventCount], 2);
+    NSDictionary *eventsDict = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    XCTAssertEqual([[eventsDict objectForKey:@"max_id"] intValue], 2);
+    NSArray *events = [eventsDict objectForKey:@"events"];
+    XCTAssertNotNil([events[0] objectForKey:@"uuid"]);
+    XCTAssertNotNil([events[1] objectForKey:@"uuid"]);
+    XCTAssertNotEqual([events[0] objectForKey:@"uuid"], [events[1] objectForKey:@"uuid"]);
+}
+
 
 @end
