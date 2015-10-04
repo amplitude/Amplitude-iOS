@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.1.0 (October 4, 2015)
+
 * Migrate events data to Sqlite database.
 * Fix bug where end session event was not being sent upon app reopen.
 
