@@ -19,6 +19,7 @@
 #import "AMPDeviceInfo.h"
 #import "AMPURLConnection.h"
 #import "AMPDatabaseHelper.h"
+#import "AMPUtils.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -537,6 +538,7 @@ NSString *const USER_ID = @"user_id";
         @"version": kAMPVersion
     };
     [event setValue:library forKey:@"library"];
+    [event setValue:[AMPUtils generateUUID] forKey:@"uuid"];
 
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 

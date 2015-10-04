@@ -3,8 +3,9 @@
 
 #import <Foundation/Foundation.h>
 #import "AMPARCMacros.h"
-#import <UIKit/UIKit.h>
 #import "AMPDeviceInfo.h"
+#import "AMPUtils.h"
+#import <UIKit/UIKit.h>
 #import <sys/sysctl.h>
 
 #include <sys/types.h>
@@ -187,16 +188,8 @@
 
 - (NSString*)generateUUID
 {
-    CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
-#if __has_feature(objc_arc)
-    NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
-#else
-    NSString *uuidStr = (NSString *) CFUUIDCreateString(kCFAllocatorDefault, uuid);
-#endif
-    CFRelease(uuid);
     // Add "R" at the end of the ID to distinguish it from advertiserId
-    NSString *result = [uuidStr stringByAppendingString:@"R"];
-    SAFE_ARC_RELEASE(uuidStr);
+    NSString *result = [[AMPUtils generateUUID] stringByAppendingString:@"R"];
     return result;
 }
 
