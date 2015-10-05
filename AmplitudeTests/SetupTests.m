@@ -12,6 +12,7 @@
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
+#import "AMPConstants.h"
 
 @interface SetupTests : BaseTestCase
 
@@ -77,6 +78,8 @@
 
 - (void)testUserPropertiesSet {
     [self.amplitude initializeApiKey:apiKey];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    XCTAssertEqual([dbHelper getEventCount], 0);
 
     NSDictionary *properties = @{
          @"shoeSize": @10,
@@ -84,42 +87,16 @@
          @"name": @"John"
     };
 
-    [self.amplitude setUserProperties:@{@"property": @"true"} replace:YES];
-    [self.amplitude setUserProperties:properties replace:YES];
-
-    [self.amplitude logEvent:@"Test Event"];
-    [self.amplitude flushQueue];
-
-    NSDictionary *event = [self.amplitude getLastEvent];
-    XCTAssert([event[@"user_properties"] isEqualToDictionary:properties]);
-}
-
-- (void)testUserPropertiesMerge {
-    [self.amplitude initializeApiKey:apiKey];
-
-    NSMutableDictionary *properties = [@{
-         @"shoeSize": @10,
-         @"hatSize":  @5.125,
-         @"name": @"John"
-    } mutableCopy];
-
     [self.amplitude setUserProperties:properties];
-
-    [self.amplitude logEvent:@"Test Event"];
     [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], 1);
+
+    NSDictionary *expected = [NSDictionary dictionaryWithObject:properties forKey:AMP_OP_SET];
 
     NSDictionary *event = [self.amplitude getLastEvent];
-    XCTAssert([event[@"user_properties"] isEqualToDictionary:properties]);
-
-    NSDictionary *extraProperties = @{@"mergedProperty": @"merged"};
-    [self.amplitude setUserProperties:extraProperties replace:NO];
-
-    [self.amplitude logEvent:@"Test Event"];
-    [self.amplitude flushQueue];
-
-    event = [self.amplitude getLastEvent];
-    [properties addEntriesFromDictionary:extraProperties];
-    XCTAssert([event[@"user_properties"] isEqualToDictionary:properties]);
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
+    XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
 }
 
 @end

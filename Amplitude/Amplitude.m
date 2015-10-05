@@ -20,6 +20,7 @@
 #import "AMPURLConnection.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPUtils.h"
+#import "AMPIdentify.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -66,7 +67,6 @@ NSString *const USER_ID = @"user_id";
 
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
-    NSDictionary *_userProperties;
 
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
@@ -346,7 +346,6 @@ NSString *const USER_ID = @"user_id";
     SAFE_ARC_RELEASE(_locationManagerDelegate);
     SAFE_ARC_RELEASE(_propertyList);
     SAFE_ARC_RELEASE(_propertyListPath);
-    SAFE_ARC_RELEASE(_userProperties);
 
     SAFE_ARC_SUPER_DEALLOC();
 }
@@ -442,10 +441,10 @@ NSString *const USER_ID = @"user_id";
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession
 {
-    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withTimestamp:nil outOfSession:outOfSession];
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withTimestamp:nil outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
@@ -466,7 +465,7 @@ NSString *const USER_ID = @"user_id";
     // Create snapshot of all event json objects, to prevent deallocation crash
     eventProperties = [eventProperties copy];
     apiProperties = [apiProperties mutableCopy];
-    NSDictionary *userProperties = [_userProperties copy];
+    userProperties = [userProperties copy];
     
     [self runOnBackgroundQueue:^{
         AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
@@ -611,7 +610,7 @@ NSString *const USER_ID = @"user_id";
 #pragma clang diagnostic pop
     }
 
-    [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withTimestamp:nil outOfSession:NO];
+    [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withTimestamp:nil outOfSession:NO];
 }
 
 #pragma mark - Upload events
@@ -921,7 +920,7 @@ NSString *const USER_ID = @"user_id";
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:sessionEvent forKey:@"special"];
     NSNumber* timestamp = [self lastEventTime];
-    [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withTimestamp:timestamp outOfSession:NO];
+    [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withTimestamp:timestamp outOfSession:NO];
 }
 
 - (BOOL)inSession
@@ -987,32 +986,37 @@ NSString *const USER_ID = @"user_id";
     return;
 }
 
+- (void)identify:(AMPIdentify *)identify
+{
+    if (identify == nil || [identify.userPropertyOperations count] == 0) {
+        return;
+    }
+    [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withTimestamp:nil outOfSession:NO];
+}
+
 #pragma mark - configurations
 
 - (void)setUserProperties:(NSDictionary*) userProperties
 {
-    [self setUserProperties:userProperties replace:NO];
-}
-
-- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
-{
-    if (![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"]) {
+    if (userProperties == nil || ![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"] || [userProperties count] == 0) {
         return;
     }
 
-    (void) SAFE_ARC_RETAIN(userProperties);
+    NSDictionary *copy = [userProperties copy];
+    [self runOnBackgroundQueue:^{
+        AMPIdentify *identify = [[[AMPIdentify alloc] init] autorelease];
+        for (NSString *key in copy) {
+            NSObject *value = [copy objectForKey:key];
+            [identify set:key value:value];
+        }
+        [self identify:identify];
+    }];
+}
 
-    // Merge the given properties into the existing set if not asked to replace.
-    if (!replace && _userProperties) {
-        NSMutableDictionary *mergedProperties = [_userProperties mutableCopy];
-        [mergedProperties addEntriesFromDictionary:userProperties];
-
-        (void) SAFE_ARC_AUTORELEASE(userProperties);
-        userProperties = mergedProperties;
-    }
-
-    (void) SAFE_ARC_AUTORELEASE(_userProperties);
-    _userProperties = userProperties;
+// maintain for legacy
+- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
+{
+    [self setUserProperties:userProperties];
 }
 
 - (void)setUserId:(NSString*) userId

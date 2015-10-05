@@ -17,3 +17,9 @@ const int kAMPEventMaxCount = 1000;
 const int kAMPEventRemoveBatchSize = 20;
 const int kAMPEventUploadPeriodSeconds = 30; // 30s
 const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5m
+
+NSString *const IDENTIFY_EVENT = @"$identify";
+NSString *const AMP_OP_ADD = @"$add";
+NSString *const AMP_OP_SET = @"set";
+NSString *const AMP_OP_SET_ONCE = @"setOnce";
+NSString *const AMP_OP_UNSET = @"unset";

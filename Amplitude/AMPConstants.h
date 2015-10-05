@@ -16,3 +16,9 @@ extern const int kAMPEventMaxCount;
 extern const int kAMPEventRemoveBatchSize;
 extern const int kAMPEventUploadPeriodSeconds;
 extern const long kAMPMinTimeBetweenSessionsMillis;
+
+extern NSString *const IDENTIFY_EVENT;
+extern NSString *const AMP_OP_ADD;
+extern NSString *const AMP_OP_SET;
+extern NSString *const AMP_OP_SET_ONCE;
+extern NSString *const AMP_OP_UNSET;

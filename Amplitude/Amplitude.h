@@ -2,6 +2,7 @@
 // Amplitude.h
 
 #import <Foundation/Foundation.h>
+#import "AMPIdentify.h"
 
 
 /*!
@@ -150,6 +151,24 @@
 - (void)logRevenue:(NSNumber*) amount;
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price;
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt;
+
+/*!
+ @method
+
+ @abstract
+ Update user properties using operations provided via Identify API.
+
+ @param identify                   An AMPIdentify object with the intended user property operations
+
+ @discussion
+ To update user properties, first create an AMPIdentify object. For example if you wanted to set a user's gender, and then increment their
+ karma count by 1, you would do:
+ AMPIdentify *identify = [[[[[AMPIdentify alloc] init] autorelease] set:@"gender" value:@"male"] add:@"karma" value:[NSNumber numberForInt:1]];
+ Then you would pass this AMPIdentify object to the identify function to send to the server: [Amplitude identify:identify];
+ The Identify API supports add, set, setOnce, unset operations. See the AMPIdentify.h header file for the method signatures.
+ */
+
+- (void)identify:(AMPIdentify *)identify;
 
 /*!
  @method
