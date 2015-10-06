@@ -29,6 +29,11 @@
     return self;
 }
 
++ (instancetype)identify
+{
+    return SAFE_ARC_AUTORELEASE([[self alloc] init]);
+}
+
 - (void)dealloc
 {
     SAFE_ARC_RELEASE(_userPropertyOperations);

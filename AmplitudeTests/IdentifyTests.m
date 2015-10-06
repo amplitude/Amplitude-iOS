@@ -48,7 +48,7 @@
     NSString *property7 = @"array value";
     NSArray *value7 = [NSArray array];
 
-    AMPIdentify *identify = [[[[AMPIdentify alloc] init] autorelease] add:property1 value:value1];
+    AMPIdentify *identify = [[AMPIdentify identify] add:property1 value:value1];
     [[[identify add:property2 value:value2] add:property3 value:value3] add:property4 value:value4];
     [[[identify add:property5 value:value5] add:property6 value:value6] add:property7 value:value7];
 
@@ -83,7 +83,7 @@
     NSString *property4 = @"array value";
     NSArray *value4 = [NSArray array];
 
-    AMPIdentify *identify = [[[[AMPIdentify alloc] init] autorelease] set:property1 value:value1];
+    AMPIdentify *identify = [[AMPIdentify identify] set:property1 value:value1];
     [[[identify set:property2 value:value2] set:property3 value:value3] set:property4 value:value4];
 
     // identify should ignore this since duplicate key
@@ -115,7 +115,7 @@
     NSString *property4 = @"array value";
     NSArray *value4 = [NSArray array];
 
-    AMPIdentify *identify = [[[[AMPIdentify alloc] init] autorelease] setOnce:property1 value:value1];
+    AMPIdentify *identify = [[AMPIdentify identify] setOnce:property1 value:value1];
     [[[identify setOnce:property2 value:value2] setOnce:property3 value:value3] setOnce:property4 value:value4];
 
     // identify should ignore this since duplicate key
@@ -138,7 +138,7 @@
     NSString *property1 = @"testProperty1";
     NSString *property2 = @"testProperty2";
 
-    AMPIdentify *identify = [[[AMPIdentify alloc] init] autorelease];
+    AMPIdentify *identify = [AMPIdentify identify];
     [[identify unset:property1] unset:property2];
 
     NSMutableDictionary *operations = [NSMutableDictionary dictionary];
@@ -163,7 +163,7 @@
 
     NSString *property4 = @"array value";
 
-    AMPIdentify *identify = [[[[AMPIdentify alloc] init] autorelease] setOnce:property1 value:value1];
+    AMPIdentify *identify = [[AMPIdentify identify] setOnce:property1 value:value1];
     [[[identify add:property2 value:value2] set:property3 value:value3] unset:property4];
 
     // identify should ignore this since duplicate key
@@ -186,7 +186,7 @@
     NSNumber *value2 = [NSNumber numberWithDouble:0.123];
     NSNumber *value3 = [NSNumber numberWithBool:YES];
 
-    AMPIdentify *identify = [[[AMPIdentify alloc] init] autorelease];
+    AMPIdentify *identify = [AMPIdentify identify];
     [[[[identify setOnce:property value:value1] add:property value:value2] set:property value:value3] unset:property];
 
     NSMutableDictionary *operations = [NSMutableDictionary dictionary];

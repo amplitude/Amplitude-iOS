@@ -64,7 +64,6 @@
 		605E43C91BA0D92A00FD78CE /* AMPDatabaseHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPDatabaseHelper.m; sourceTree = "<group>"; };
 		605E43CB1BA0DB4F00FD78CE /* AMPDatabaseHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPDatabaseHelper.h; sourceTree = "<group>"; };
 		605E43CC1BA0FEE500FD78CE /* AMPDatabaseHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPDatabaseHelperTests.m; sourceTree = "<group>"; };
-		605E43CE1BA0FF4300FD78CE /* AMPDatabaseHelperTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPDatabaseHelperTests.h; sourceTree = "<group>"; };
 		608865D41BC30EBB00233023 /* AMPIdentify.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPIdentify.m; sourceTree = "<group>"; };
 		608865D61BC30ECA00233023 /* AMPIdentify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPIdentify.h; sourceTree = "<group>"; };
 		608865D81BC3176600233023 /* IdentifyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IdentifyTests.m; sourceTree = "<group>"; };
@@ -216,7 +215,6 @@
 		E98C052F1A48E7FE00800C63 /* AmplitudeTests */ = {
 			isa = PBXGroup;
 			children = (
-				605E43CE1BA0FF4300FD78CE /* AMPDatabaseHelperTests.h */,
 				605E43CC1BA0FEE500FD78CE /* AMPDatabaseHelperTests.m */,
 				9DFBB9C51AB0D1DD0017F703 /* Amplitude+Test.h */,
 				9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */,

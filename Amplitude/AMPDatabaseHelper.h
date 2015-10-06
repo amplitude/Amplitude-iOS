@@ -17,8 +17,8 @@
 
 - (BOOL)addEvent:(NSString*) event;
 - (BOOL)addIdentify:(NSString*) identify;
-- (NSDictionary*)getEvents:(long) upToId limit:(long) limit;
-- (NSDictionary*)getIdentifys:(long) upToId limit:(long) limit;
+- (NSMutableArray*)getEvents:(long) upToId limit:(long) limit;
+- (NSMutableArray*)getIdentifys:(long) upToId limit:(long) limit;
 - (int)getEventCount;
 - (int)getIdentifyCount;
 - (int)getTotalEventCount;

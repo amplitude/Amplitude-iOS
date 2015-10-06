@@ -246,20 +246,19 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return success;
 }
 
-- (NSDictionary*)getEvents:(long) upToId limit:(long) limit
+- (NSMutableArray*)getEvents:(long) upToId limit:(long) limit
 {
     return [self getEventsFromTable:EVENT_TABLE_NAME upToId:upToId limit:limit];
 }
 
-- (NSDictionary*)getIdentifys:(long) upToId limit:(long) limit
+- (NSMutableArray*)getIdentifys:(long) upToId limit:(long) limit
 {
     return [self getEventsFromTable:IDENTIFY_TABLE_NAME upToId:upToId limit:limit];
 }
 
-- (NSDictionary*)getEventsFromTable:(NSString*) table upToId:(long) upToId limit:(long) limit
+- (NSMutableArray*)getEventsFromTable:(NSString*) table upToId:(long) upToId limit:(long) limit
 {
-    __block long maxId = -1;
-    __block NSMutableArray *events = [NSMutableArray array];
+    __block NSMutableArray *events = [[NSMutableArray alloc] init];
 
     [_dbQueue inDatabase:^(FMDatabase *db) {
         if (![db open]) {
@@ -300,14 +299,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
             [event setValue:[NSNumber numberWithInt:eventId] forKey:@"event_id"];
             [events addObject:event];
             SAFE_ARC_RELEASE(event);
-            maxId = eventId;
         }
 
         [db close];
     }];
 
-    NSDictionary *fetchedEvents = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithLong:maxId], @"max_id", events, @"events", nil];
-    return SAFE_ARC_AUTORELEASE(fetchedEvents);
+    return SAFE_ARC_AUTORELEASE(events);
 }
 
 - (BOOL)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value

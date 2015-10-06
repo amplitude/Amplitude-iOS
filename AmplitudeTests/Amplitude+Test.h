@@ -21,6 +21,7 @@
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;
 - (void)flushUploads:(void (^)())handler;
 - (NSDictionary *)getLastEvent;
+- (NSDictionary *)getLastIdentify;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
 - (void)enterForeground;
