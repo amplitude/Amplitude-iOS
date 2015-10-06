@@ -16,11 +16,18 @@
 - (BOOL)deleteDB;
 
 - (BOOL)addEvent:(NSString*) event;
+- (BOOL)addIdentify:(NSString*) identify;
 - (NSDictionary*)getEvents:(long) upToId limit:(long) limit;
+- (NSDictionary*)getIdentifys:(long) upToId limit:(long) limit;
 - (int)getEventCount;
+- (int)getIdentifyCount;
+- (int)getTotalEventCount;
 - (BOOL)removeEvents:(long) maxId;
+- (BOOL)removeIdentifys:(long) maxIdentifyId;
 - (BOOL)removeEvent:(long) eventId;
+- (BOOL)removeIdentify:(long) identifyId;
 - (long long)getNthEventId:(long) n;
+- (long long)getNthIdentifyId:(long) n;
 
 - (BOOL)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value;
 - (BOOL)insertOrReplaceKeyLongValue:(NSString*) key value:(NSNumber*) value;

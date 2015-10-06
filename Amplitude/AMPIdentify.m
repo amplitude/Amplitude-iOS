@@ -20,8 +20,6 @@
     NSMutableSet *_userProperties;
 }
 
-
-
 - (id)init
 {
     if (self = [super init]) {
@@ -29,6 +27,13 @@
         _userProperties = [[NSMutableSet alloc] init];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    SAFE_ARC_RELEASE(_userPropertyOperations);
+    SAFE_ARC_RELEASE(_userProperties);
+    SAFE_ARC_SUPER_DEALLOC();
 }
 
 - (AMPIdentify*)add:(NSString*) property value:(NSObject*) value
@@ -74,13 +79,6 @@
     }
     [operations setObject:value forKey:property];
     [_userProperties addObject:property];
-}
-
-- (void)dealloc
-{
-    SAFE_ARC_RELEASE(_userPropertyOperations);
-    SAFE_ARC_RELEASE(_userProperties);
-    [super dealloc];
 }
 
 @end

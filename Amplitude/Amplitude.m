@@ -1004,7 +1004,7 @@ NSString *const USER_ID = @"user_id";
 
     NSDictionary *copy = [userProperties copy];
     [self runOnBackgroundQueue:^{
-        AMPIdentify *identify = [[[AMPIdentify alloc] init] autorelease];
+        AMPIdentify *identify = SAFE_ARC_AUTORELEASE([[AMPIdentify alloc] init]);
         for (NSString *key in copy) {
             NSObject *value = [copy objectForKey:key];
             [identify set:key value:value];
