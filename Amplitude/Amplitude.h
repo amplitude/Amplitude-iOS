@@ -163,7 +163,7 @@
  @discussion
  To update user properties, first create an AMPIdentify object. For example if you wanted to set a user's gender, and then increment their
  karma count by 1, you would do:
- AMPIdentify *identify = [[[[[AMPIdentify alloc] init] autorelease] set:@"gender" value:@"male"] add:@"karma" value:[NSNumber numberForInt:1]];
+ AMPIdentify *identify = [[[AMPIdentify identify] set:@"gender" value:@"male"] add:@"karma" value:[NSNumber numberForInt:1]];
  Then you would pass this AMPIdentify object to the identify function to send to the server: [Amplitude identify:identify];
  The Identify API supports add, set, setOnce, unset operations. See the AMPIdentify.h header file for the method signatures.
  */

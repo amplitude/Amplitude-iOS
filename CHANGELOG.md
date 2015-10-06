@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add support for user property operations (set, setOnce, add, unset).
+
 ## 3.1.0 (October 4, 2015)
 
 * Migrate events data to Sqlite database.

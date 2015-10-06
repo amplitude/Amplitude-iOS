@@ -28,19 +28,16 @@
 @implementation AmplitudeTests {
     id _connectionMock;
     int _connectionCallCount;
-    NSMutableURLRequest *_connectionRequest;
 }
 
 - (void)setUp {
     [super setUp];
     _connectionMock = [OCMockObject mockForClass:NSURLConnection.class];
     _connectionCallCount = 0;
-    _connectionRequest = nil;
     [self.amplitude initializeApiKey:apiKey];
 }
 
 - (void)tearDown {
-    SAFE_ARC_RELEASE(_connectionRequest);
     [_connectionMock stopMocking];
 }
 
@@ -48,8 +45,6 @@
     [[[connectionMock expect] andDo:^(NSInvocation *invocation) {
         _connectionCallCount++;
         void (^handler)(NSURLResponse*, NSData*, NSError*);
-        [invocation getArgument:&_connectionRequest atIndex:2];
-        SAFE_ARC_RETAIN(_connectionRequest);
         [invocation getArgument:&handler atIndex:4];
         handler(serverResponse[@"response"], serverResponse[@"data"], serverResponse[@"error"]);
     }] sendAsynchronousRequest:OCMOCK_ANY queue:OCMOCK_ANY completionHandler:OCMOCK_ANY];
@@ -280,6 +275,9 @@
     XCTAssertEqual([dbHelper getEventCount], 0);
     XCTAssertEqual([dbHelper getIdentifyCount], 0);
     XCTAssertEqual([dbHelper getTotalEventCount], 0);
+
+    AMPIdentify *identify = [[AMPIdentify identify] setOnce:@"sign_up_date" value:@"10/06/2015"];
+    [[Amplitude instance] identify:identify];
 }
 
 
