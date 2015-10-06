@@ -65,7 +65,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     if (self = [super init]) {
 
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-        _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingString:@"com.amplitude.database"]);
+        _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"]);
         _dbQueue = SAFE_ARC_RETAIN([FMDatabaseQueue databaseQueueWithPath:_databasePath flags:(SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE)]);
         if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {
             [self createTables];
