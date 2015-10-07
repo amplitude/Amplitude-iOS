@@ -239,7 +239,7 @@
     XCTAssertEqual(1, [self.databaseHelper getIdentifyCount]);
 }
 
-- (void)testUpgradeFromVersion0ToVersion1 {
+- (void)testUpgradeFromVersion0ToVersion2{
     // inserts will fail since no tables exist
     [self.databaseHelper dropTables];
     XCTAssertFalse([self.databaseHelper addEvent:@"test_event"]);
@@ -255,38 +255,17 @@
 
     // after upgrade, can insert into event, store, long_store
     [self.databaseHelper dropTables];
-    [self.databaseHelper upgrade:0 newVersion:1];
+    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:2]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
 
-    // still can't insert into identify table
-    XCTAssertFalse([self.databaseHelper addIdentify:@"test"]);
-}
-
-- (void)testUpgradeFromVersion1ToVersion2 {
-    [self.databaseHelper dropTables];
-    [self.databaseHelper upgrade:0 newVersion:1];
-
-    // can insert into events, store, long_store
-    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
-    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
-    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
-
-    // insert into identifys fail since table doesn't exist yet
+    // still can't insert into identify
     XCTAssertFalse([self.databaseHelper addIdentify:@"test_identify"]);
-
-    // after upgrade, can insert into identify
-    [self.databaseHelper dropTables];
-    [self.databaseHelper upgrade:0 newVersion:1];
-    [self.databaseHelper upgrade:0 newVersion:2];
-    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
-    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
-    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
-    XCTAssertTrue([self.databaseHelper addIdentify:@"test_identify"]);
 }
 
-- (void)testUpgradeFromVersion0ToVersion2 {
+// should be exact same as upgrading from 0 to 2
+- (void)testUpgradeFromVersion1ToVersion2{
     // inserts will fail since no tables exist
     [self.databaseHelper dropTables];
     XCTAssertFalse([self.databaseHelper addEvent:@"test_event"]);
@@ -300,9 +279,90 @@
     [self.databaseHelper dropTables];
     XCTAssertFalse([self.databaseHelper addIdentify:@"test_identify"]);
 
-    // after upgrade, can insert into event, store, long_store, identifys
+    // after upgrade, can insert into event, store, long_store
     [self.databaseHelper dropTables];
-    [self.databaseHelper upgrade:0 newVersion:2];
+    XCTAssertTrue([self.databaseHelper upgrade:1 newVersion:2]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+
+    // still can't insert into identify
+    XCTAssertFalse([self.databaseHelper addIdentify:@"test_identify"]);
+}
+
+- (void)testUpgradeFromVersion2ToVersion3 {
+    [self.databaseHelper dropTables];
+    [self.databaseHelper upgrade:1 newVersion:2];
+
+    // can insert into events, store, long_store
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+
+    // insert into identifys fail since table doesn't exist yet
+    XCTAssertFalse([self.databaseHelper addIdentify:@"test_identify"]);
+
+    // after upgrade, can insert into identify
+    [self.databaseHelper dropTables];
+    [self.databaseHelper upgrade:1 newVersion:2];
+    [self.databaseHelper upgrade:2 newVersion:3];
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+    XCTAssertTrue([self.databaseHelper addIdentify:@"test_identify"]);
+}
+
+- (void)testUpgradeFromVersion0ToVersion3 {
+    // inserts will fail since no tables exist
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper addEvent:@"test_event"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyValue:@"test_key" value:@"test_value"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyLongValue:@"test_key" value:[NSNumber numberWithInt:0]]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper addIdentify:@"test_identify"]);
+
+    // after upgrade, can insert into event, store, long_store, identify
+    [self.databaseHelper dropTables];
+    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:3]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+    XCTAssertTrue([self.databaseHelper addIdentify:@"test_identify"]);
+}
+
+// should be exact same as upgrading from 0 to 3
+- (void)testUpgradeFromVersion1ToVersion3 {
+    // inserts will fail since no tables exist
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper addEvent:@"test_event"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyValue:@"test_key" value:@"test_value"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyLongValue:@"test_key" value:[NSNumber numberWithInt:0]]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper addIdentify:@"test_identify"]);
+
+    // after upgrade, can insert into event, store, long_store, identify
+    [self.databaseHelper dropTables];
+    XCTAssertTrue([self.databaseHelper upgrade:1 newVersion:3]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+    XCTAssertTrue([self.databaseHelper addIdentify:@"test_identify"]);
+}
+
+- (void)testUpgradeFromVersion3ToVersion3{
+    // upgrade does nothing, can insert into event, store, long_store, identify
+    [self.databaseHelper dropTables];
+    XCTAssertTrue([self.databaseHelper upgrade:3 newVersion:3]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);

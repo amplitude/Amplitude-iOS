@@ -66,7 +66,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     if (self = [super init]) {
 
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-        _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingString:@"com.amplitude.database"]);
+        _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"]);
         _dbQueue = SAFE_ARC_RETAIN([FMDatabaseQueue databaseQueueWithPath:_databasePath flags:(SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE)]);
         if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {
             [self createTables];
@@ -113,7 +113,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return success;
 }
 
-- (void)upgrade:(int) oldVersion newVersion:(int) newVersion
+- (BOOL)upgrade:(int) oldVersion newVersion:(int) newVersion
 {
     __block BOOL success = YES;
 
@@ -126,23 +126,24 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         }
 
         switch (oldVersion) {
-            case 0: {
+            case 0:
+            case 1: {
                 NSString *createEventsTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, EVENT_TABLE_NAME, ID_FIELD, EVENT_FIELD];
-                [db executeUpdate:createEventsTable];
+                success &= [db executeUpdate:createEventsTable];
 
                 NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
-                [db executeUpdate:createStoreTable];
+                success &= [db executeUpdate:createStoreTable];
 
                 NSString *createLongStoreTable = [NSString stringWithFormat:CREATE_LONG_STORE_TABLE, LONG_STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
-                [db executeUpdate:createLongStoreTable];
+                success &= [db executeUpdate:createLongStoreTable];
 
-                if (newVersion <= 1) break;
+                if (newVersion <= 2) break;
             }
-            case 1: {
+            case 2: {
                 NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
                 [db executeUpdate:createIdentifysTable];
 
-                if (newVersion <= 2) break;
+                if (newVersion <= 3) break;
             }
             default:
                 success = NO;
@@ -153,8 +154,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
     if (!success) {
         NSLog(@"upgrade with unknown oldVersion %d", oldVersion);
-        [self resetDB:NO];
+        return [self resetDB:NO];
     }
+
+    return success;
 }
 
 - (BOOL)dropTables

@@ -279,6 +279,33 @@
     XCTAssertEqual([dbHelper getTotalEventCount], 0);
 }
 
+-(void)testMergeEventsBackwardsCompatible {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"key"]];
+    [self.amplitude logEvent:@"test_event"];
+    [self.amplitude flushQueue];
+
+    // reinsert test event without sequence_number
+    NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:[self.amplitude getLastEvent]];
+    [event removeObjectForKey:@"sequence_number"];
+    long eventId = [[event objectForKey:@"event_id"] longValue];
+    [dbHelper removeEvent:eventId];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    [dbHelper addEvent:jsonString];
+    SAFE_ARC_RELEASE(jsonString);
+
+    // the event without sequence number should be ordered before the identify
+    NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
+    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
+    NSDictionary *merged = [self.amplitude mergeEventsAndIdentifys:events identifys:identifys numEvents:[dbHelper getTotalEventCount]];
+    NSArray *mergedEvents = [merged objectForKey:@"events"];
+    XCTAssertEqualObjects([mergedEvents[0] objectForKey:@"event_type"], @"test_event");
+    XCTAssertNil([mergedEvents[0] objectForKey:@"sequence_number"]);
+    XCTAssertEqualObjects([mergedEvents[1] objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqual(1, [[mergedEvents[1] objectForKey:@"sequence_number"] intValue]);
+}
+
 -(void)testTruncateLongStrings {
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
     XCTAssertEqual([longString length], kAMPMaxStringLength*2);
