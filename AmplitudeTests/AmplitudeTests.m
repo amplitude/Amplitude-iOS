@@ -16,9 +16,11 @@
 #import "AMPDeviceInfo.h"
 #import "AMPARCMacros.h"
 
-// expose private method for unit testing
+// expose private methods for unit testing
 @interface Amplitude (Tests)
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
+- (id) truncate:(id) obj;
+- (long long)getNextSequenceNumber;
 @end
 
 @interface AmplitudeTests : BaseTestCase
@@ -275,10 +277,68 @@
     XCTAssertEqual([dbHelper getEventCount], 0);
     XCTAssertEqual([dbHelper getIdentifyCount], 0);
     XCTAssertEqual([dbHelper getTotalEventCount], 0);
-
-    AMPIdentify *identify = [[AMPIdentify identify] setOnce:@"sign_up_date" value:@"10/06/2015"];
-    [[Amplitude instance] identify:identify];
 }
 
+-(void)testTruncateLongStrings {
+    NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
+    XCTAssertEqual([longString length], kAMPMaxStringLength*2);
+    NSString *truncatedString = [self.amplitude truncate:longString];
+    XCTAssertEqual([truncatedString length], kAMPMaxStringLength);
+    XCTAssertEqualObjects(truncatedString, [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0]);
+
+    NSString *shortString = [@"" stringByPaddingToLength:kAMPMaxStringLength-1 withString: @"c" startingAtIndex:0];
+    XCTAssertEqual([shortString length], kAMPMaxStringLength-1);
+    truncatedString = [self.amplitude truncate:shortString];
+    XCTAssertEqual([truncatedString length], kAMPMaxStringLength-1);
+    XCTAssertEqualObjects(truncatedString, shortString);
+}
+
+-(void)testTruncateNullObjects {
+    XCTAssertNil([self.amplitude truncate:nil]);
+}
+
+-(void)testTruncateDictionary {
+    NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
+    NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
+    NSMutableDictionary *object = [NSMutableDictionary dictionary];
+    [object setValue:[NSNumber numberWithInt:10] forKey:@"int value"];
+    [object setValue:[NSNumber numberWithBool:NO] forKey:@"bool value"];
+    [object setValue:longString forKey:@"long string"];
+    [object setValue:[NSArray arrayWithObject:longString] forKey:@"array"];
+
+    object = [self.amplitude truncate:object];
+    XCTAssertEqual([[object objectForKey:@"int value"] intValue], 10);
+    XCTAssertFalse([[object objectForKey:@"bool value"] boolValue]);
+    XCTAssertEqual([[object objectForKey:@"long string"] length], kAMPMaxStringLength);
+    XCTAssertEqual([[object objectForKey:@"array"] count], 1);
+    XCTAssertEqualObjects([object objectForKey:@"array"][0], truncString);
+    XCTAssertEqual([[object objectForKey:@"array"][0] length], kAMPMaxStringLength);
+}
+
+-(void)testTruncateEventAndIdentify {
+    NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
+    NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
+
+    [self.amplitude logEvent:@"test" withEventProperties:[NSDictionary dictionaryWithObject:longString forKey:@"long_string"]];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"long_string" value:longString]];
+    [self.amplitude flushQueue];
+
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionaryWithObject:truncString forKey:@"long_string"]);
+
+    NSDictionary *identify = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects([identify objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqualObjects([identify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$set"]);
+}
+
+-(void)testAutoIncrementSequenceNumber {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    int limit = 10;
+    for (int i = 0; i < limit; i++) {
+        XCTAssertEqual([self.amplitude getNextSequenceNumber], i+1);
+        XCTAssertEqual([[dbHelper getLongValue:@"sequence_number"] intValue], i+1);
+    }
+}
 
 @end

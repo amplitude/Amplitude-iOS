@@ -307,7 +307,6 @@
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
     XCTAssertTrue([self.databaseHelper addIdentify:@"test"]);
-
 }
 
 @end

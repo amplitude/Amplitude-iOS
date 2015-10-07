@@ -489,9 +489,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
 
         [event setValue:eventType forKey:@"event_type"];
-        [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
+        [event setValue:[self replaceWithEmptyJSON:[self truncate:eventProperties]] forKey:@"event_properties"];
         [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-        [event setValue:[self replaceWithEmptyJSON:userProperties] forKey:@"user_properties"];
+        [event setValue:[self replaceWithEmptyJSON:[self truncate:userProperties]] forKey:@"user_properties"];
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
         [event setValue:timestamp forKey:@"timestamp"];
 
@@ -1217,6 +1217,40 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
 {
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
+}
+
+- (id) truncate:(id) obj
+{
+    if ([obj isKindOfClass:[NSString class]]) {
+        obj = (NSString*)obj;
+        if ([obj length] > kAMPMaxStringLength) {
+            obj = [obj substringToIndex:kAMPMaxStringLength];
+        }
+    } else if ([obj isKindOfClass:[NSArray class]]) {
+        NSMutableArray *arr = [NSMutableArray array];
+        id objCopy = [obj copy];
+        for (id i in objCopy) {
+            [arr addObject:[self truncate:i]];
+        }
+        SAFE_ARC_RELEASE(objCopy);
+        obj = [NSArray arrayWithArray:arr];
+    } else if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        id objCopy = [obj copy];
+        for (id key in objCopy) {
+            NSString *coercedKey;
+            if (![key isKindOfClass:[NSString class]]) {
+                coercedKey = [key description];
+                NSLog(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
+            } else {
+                coercedKey = key;
+            }
+            dict[coercedKey] = [self truncate:objCopy[key]];
+        }
+        SAFE_ARC_RELEASE(objCopy);
+        obj = [NSDictionary dictionaryWithDictionary:dict];
+    }
+    return obj;
 }
 
 - (id) makeJSONSerializable:(id) obj
