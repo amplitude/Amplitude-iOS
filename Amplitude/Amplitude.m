@@ -689,8 +689,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:numEvents];
 
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
-        long maxEventId = [[merged objectForKey:MAX_EVENT_ID] longValue];
-        long maxIdentifyId = [[merged objectForKey:MAX_IDENTIFY_ID] longValue];
+        long long maxEventId = [[merged objectForKey:MAX_EVENT_ID] longLongValue];
+        long long maxIdentifyId = [[merged objectForKey:MAX_IDENTIFY_ID] longLongValue];
 
         NSError *error = nil;
         NSData *eventsDataLocal = nil;
@@ -733,50 +733,52 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents
 {
     NSMutableArray *mergedEvents = [[NSMutableArray alloc] init];
-    long maxEventId = -1;
-    long maxIdentifyId = -1;
+    long long maxEventId = -1;
+    long long maxIdentifyId = -1;
 
     // NSArrays actually have O(1) performance for push/pop
     while ([mergedEvents count] < numEvents) {
+        NSDictionary *event = nil;
+        NSDictionary *identify = nil;
 
         // case 1: no identifys grab from events
         if ([identifys count] == 0) {
-            NSDictionary *event = SAFE_ARC_RETAIN(events[0]);
+            event = SAFE_ARC_RETAIN(events[0]);
             [events removeObjectAtIndex:0];
             maxEventId = [[event objectForKey:@"event_id"] longValue];
-            [mergedEvents addObject:event];
-            SAFE_ARC_RELEASE(event);
 
         // case 2: no events grab from identifys
         } else if ([events count] == 0) {
-            NSDictionary *identify = SAFE_ARC_RETAIN(identifys[0]);
+            identify = SAFE_ARC_RETAIN(identifys[0]);
             [identifys removeObjectAtIndex:0];
             maxIdentifyId = [[identify objectForKey:@"event_id"] longValue];
-            [mergedEvents addObject:identify];
-            SAFE_ARC_RELEASE(identify);
 
         // case 3: need to compare sequence numbers
         } else {
             // events logged before v3.2.0 won't have sequeunce number, put those first
-            NSDictionary *event = SAFE_ARC_RETAIN(events[0]);
-            NSDictionary *identify = SAFE_ARC_RETAIN(identifys[0]);
+            event = SAFE_ARC_RETAIN(events[0]);
+            identify = SAFE_ARC_RETAIN(identifys[0]);
             if ([event objectForKey:SEQUENCE_NUMBER] == nil ||
                     ([[event objectForKey:SEQUENCE_NUMBER] longLongValue] <
                      [[identify objectForKey:SEQUENCE_NUMBER] longLongValue])) {
                 [events removeObjectAtIndex:0];
                 maxEventId = [[event objectForKey:EVENT_ID] longValue];
-                [mergedEvents addObject:event];
+                SAFE_ARC_RELEASE(identify);
+                identify = nil;
             } else {
                 [identifys removeObjectAtIndex:0];
                 maxIdentifyId = [[identify objectForKey:EVENT_ID] longValue];
-                [mergedEvents addObject:identify];
+                SAFE_ARC_RELEASE(event);
+                event = nil;
             }
-            SAFE_ARC_RELEASE(event);
-            SAFE_ARC_RELEASE(identify);
         }
+
+        [mergedEvents addObject: event != nil ? event : identify];
+        SAFE_ARC_RELEASE(event);
+        SAFE_ARC_RELEASE(identify);
     }
 
-    NSDictionary *results = [[NSDictionary alloc] initWithObjectsAndKeys: mergedEvents, EVENTS, [NSNumber numberWithLong:maxEventId], MAX_EVENT_ID, [NSNumber numberWithLong:maxIdentifyId], MAX_IDENTIFY_ID, nil];
+    NSDictionary *results = [[NSDictionary alloc] initWithObjectsAndKeys: mergedEvents, EVENTS, [NSNumber numberWithLongLong:maxEventId], MAX_EVENT_ID, [NSNumber numberWithLongLong:maxIdentifyId], MAX_IDENTIFY_ID, nil];
     SAFE_ARC_RELEASE(mergedEvents);
     return SAFE_ARC_AUTORELEASE(results);
 }

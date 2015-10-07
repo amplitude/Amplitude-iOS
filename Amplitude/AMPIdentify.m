@@ -16,7 +16,6 @@
 
 @implementation AMPIdentify
 {
-    // NSMutableDictionary *_userPropertyOperations;
     NSMutableSet *_userProperties;
 }
 
@@ -73,7 +72,7 @@
 {
     // check if property already used in a previous operation
     if ([_userProperties containsObject:property]) {
-        NSLog(@"Already used property '%@' in previous operation, ignoring operation '%@'", property, operation);
+        NSLog(@"Already used property '%@' in previous operation, ignoring for operation '%@'", property, operation);
         return;
     }
 

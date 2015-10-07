@@ -141,7 +141,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
             }
             case 2: {
                 NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
-                [db executeUpdate:createIdentifysTable];
+                success &= [db executeUpdate:createIdentifysTable];
 
                 if (newVersion <= 3) break;
             }

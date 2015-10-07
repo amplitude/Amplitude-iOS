@@ -20,15 +20,15 @@
  #import "Amplitude.h"
 
  // First, be sure to initialize the API in your didFinishLaunchingWithOptions delegate
- [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE"];
+ [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
 
  // Track an event anywhere in the app
- [Amplitude logEvent:@"EVENT_IDENTIFIER_HERE"];
+ [[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];
 
  // You can attach additional data to any event by passing a NSDictionary object
  NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
  [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
- [Amplitude logEvent:@"Compute Hash" withEventProperties:eventProperties];
+ [[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
  </pre>
 
  For more details on the setup and usage, be sure to check out the docs here:
@@ -97,7 +97,7 @@
  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
  {
  // Initialize your shared Analytics instance.
- [Amplitude initializeApiKey:@"YOUR_API_KEY_HERE"];
+ [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
 
  // YOUR OTHER APP LAUNCH CODE HERE....
 
@@ -141,12 +141,12 @@
  @param amount                   The amount of revenue to track, e.g. "3.99".
 
  @discussion
- To track revenue from a user, call [Amplitude logRevenue:[NSNumber numberWithDouble:3.99]] each time the user generates revenue.
+ To track revenue from a user, call [[Amplitude instance] logRevenue:[NSNumber numberWithDouble:3.99]] each time the user generates revenue.
  logRevenue: takes in an NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display
  data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue,
  lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
 
- For validating revenue, use [Amplitude logRevenue:@"com.company.app.productId" quantity:1 price:[NSNumber numberWithDouble:3.99] receipt:transactionReceipt]
+ For validating revenue, use [[Amplitude instance] logRevenue:@"com.company.app.productId" quantity:1 price:[NSNumber numberWithDouble:3.99] receipt:transactionReceipt]
  */
 - (void)logRevenue:(NSNumber*) amount;
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price;
@@ -163,8 +163,8 @@
  @discussion
  To update user properties, first create an AMPIdentify object. For example if you wanted to set a user's gender, and then increment their
  karma count by 1, you would do:
- AMPIdentify *identify = [[[AMPIdentify identify] set:@"gender" value:@"male"] add:@"karma" value:[NSNumber numberForInt:1]];
- Then you would pass this AMPIdentify object to the identify function to send to the server: [Amplitude identify:identify];
+ AMPIdentify *identify = [[[AMPIdentify identify] set:@"gender" value:@"male"] add:@"karma" value:[NSNumber numberWithInt:1]];
+ Then you would pass this AMPIdentify object to the identify function to send to the server: [[Amplitude instance] identify:identify];
  The Identify API supports add, set, setOnce, unset operations. See the AMPIdentify.h header file for the method signatures.
  */
 
