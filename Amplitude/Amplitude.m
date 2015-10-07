@@ -209,7 +209,7 @@ NSString *const USER_ID = @"user_id";
             _propertyList = SAFE_ARC_RETAIN([self deserializePList:_propertyListPath]);
             if (!_propertyList) {
                 _propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
-                [_propertyList setObject:[NSNumber numberWithInt:0] forKey:DATABASE_VERSION];
+                [_propertyList setObject:[NSNumber numberWithInt:1] forKey:DATABASE_VERSION];
                 BOOL success = [self savePropertyList];
                 if (!success) {
                     NSLog(@"ERROR: Unable to save propertyList to file on initialization");
@@ -219,7 +219,7 @@ NSString *const USER_ID = @"user_id";
             }
 
             // update database if necessary
-            int oldDBVersion = 0;
+            int oldDBVersion = 1;
             NSNumber *oldDBVersionSaved = [_propertyList objectForKey:DATABASE_VERSION];
             if (oldDBVersionSaved != nil) {
                 oldDBVersion = [oldDBVersionSaved intValue];
@@ -227,14 +227,20 @@ NSString *const USER_ID = @"user_id";
 
             // update the database
             if (oldDBVersion < kAMPDBVersion) {
-                [[AMPDatabaseHelper getDatabaseHelper] upgrade:oldDBVersion newVersion:kAMPDBVersion];
-                [_propertyList setObject:[NSNumber numberWithInt:kAMPDBVersion] forKey:DATABASE_VERSION];
-                [self savePropertyList];
+                if ([[AMPDatabaseHelper getDatabaseHelper] upgrade:oldDBVersion newVersion:kAMPDBVersion]) {
+                    [_propertyList setObject:[NSNumber numberWithInt:kAMPDBVersion] forKey:DATABASE_VERSION];
+                    [self savePropertyList];
+                }
             }
 
             // migrate all of old _eventsData object to database store if database just created
             if (oldDBVersion < kAMPDBFirstVersion) {
-                [self migrateEventsDataToDB];
+                if ([self migrateEventsDataToDB]) {
+                    // delete events data so don't need to migrate next time
+                    if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
+                        [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
+                    }
+                }
             }
             SAFE_ARC_RELEASE(_eventsDataPath);
 
@@ -263,50 +269,48 @@ NSString *const USER_ID = @"user_id";
     return self;
 };
 
-- (void) migrateEventsDataToDB
+- (BOOL) migrateEventsDataToDB
 {
     NSDictionary *eventsData = [self unarchive:_eventsDataPath];
     if (eventsData == nil) {
-        return;
+        return NO;
     }
 
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    BOOL success = YES;
 
     // migrate events
     NSArray *events = [eventsData objectForKey:EVENTS];
     for (id event in events) {
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [dbHelper addEvent:jsonString];
+        success &= [dbHelper addEvent:jsonString];
         SAFE_ARC_RELEASE(jsonString);
     }
 
     // migrate remaining properties
     NSString *userId = [eventsData objectForKey:USER_ID];
     if (userId != nil) {
-        [dbHelper insertOrReplaceKeyValue:USER_ID value:userId];
+        success &= [dbHelper insertOrReplaceKeyValue:USER_ID value:userId];
     }
     NSNumber *optOut = [eventsData objectForKey:OPT_OUT];
     if (optOut != nil) {
-        [dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:optOut];
+        success &= [dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:optOut];
     }
     NSString *deviceId = [eventsData objectForKey:DEVICE_ID];
     if (deviceId != nil) {
-        [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
+        success &= [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
     }
     NSNumber *previousSessionId = [eventsData objectForKey:PREVIOUS_SESSION_ID];
     if (previousSessionId != nil) {
-        [dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:previousSessionId];
+        success &= [dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:previousSessionId];
     }
     NSNumber *previousSessionTime = [eventsData objectForKey:PREVIOUS_SESSION_TIME];
     if (previousSessionTime != nil) {
-        [dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:previousSessionTime];
+        success &= [dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:previousSessionTime];
     }
 
-    // delete events data so don't need to migrate next time
-    if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
-        [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
-    }
+    return success;
 }
 
 - (void) addObservers

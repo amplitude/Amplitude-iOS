@@ -135,7 +135,7 @@
     XCTAssertEqual(-1, [self.databaseHelper getNthEventId:1]);
 }
 
-- (void)testUpgradeFromVersion0ToVersion1{
+- (void)testUpgradeFromVersion1ToVersion2{
     // inserts will fail since no tables exist
     [self.databaseHelper dropTables];
     XCTAssertFalse([self.databaseHelper addEvent:@"test_event"]);
@@ -148,7 +148,34 @@
 
     // after upgrade, can insert into event, store, long_store
     [self.databaseHelper dropTables];
-    [self.databaseHelper upgrade:0 newVersion:1];
+    XCTAssertTrue([self.databaseHelper upgrade:1 newVersion:2]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+}
+
+- (void)testUpgradeFromVersion0ToVersion2{
+    // inserts will fail since no tables exist
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper addEvent:@"test_event"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyValue:@"test_key" value:@"test_value"]);
+
+    [self.databaseHelper dropTables];
+    XCTAssertFalse([self.databaseHelper insertOrReplaceKeyLongValue:@"test_key" value:[NSNumber numberWithInt:0]]);
+
+    // after upgrade, can insert into event, store, long_store
+    [self.databaseHelper dropTables];
+    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:2]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+}
+
+- (void)testUpgradeFromVersion2ToVersion2{
+    // upgrade does nothing, can insert into event, store, long_store
+    XCTAssertTrue([self.databaseHelper upgrade:2 newVersion:2]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
