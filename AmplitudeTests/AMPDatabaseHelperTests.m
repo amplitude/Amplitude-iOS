@@ -148,7 +148,7 @@
 
     // after upgrade, can insert into event, store, long_store
     [self.databaseHelper dropTables];
-    [self.databaseHelper upgrade:1 newVersion:2];
+    XCTAssertTrue([self.databaseHelper upgrade:1 newVersion:2]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
@@ -167,7 +167,15 @@
 
     // after upgrade, can insert into event, store, long_store
     [self.databaseHelper dropTables];
-    [self.databaseHelper upgrade:0 newVersion:2];
+    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:2]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+}
+
+- (void)testUpgradeFromVersion2ToVersion2{
+    // upgrade does nothing, can insert into event, store, long_store
+    XCTAssertTrue([self.databaseHelper upgrade:2 newVersion:2]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);

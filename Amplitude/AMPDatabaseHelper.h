@@ -11,7 +11,7 @@
 + (AMPDatabaseHelper*)getDatabaseHelper;
 - (BOOL)createTables;
 - (BOOL)dropTables;
-- (void)upgrade:(int) oldVersion newVersion:(int) newVersion;
+- (BOOL)upgrade:(int) oldVersion newVersion:(int) newVersion;
 - (BOOL)resetDB:(BOOL) deleteDB;
 - (BOOL)deleteDB;
 

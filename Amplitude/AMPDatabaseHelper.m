@@ -109,7 +109,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return success;
 }
 
-- (void)upgrade:(int) oldVersion newVersion:(int) newVersion
+- (BOOL)upgrade:(int) oldVersion newVersion:(int) newVersion
 {
     __block BOOL success = YES;
 
@@ -125,15 +125,18 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
             case 0:
             case 1: {
                 NSString *createEventsTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, EVENT_TABLE_NAME, ID_FIELD, EVENT_FIELD];
-                [db executeUpdate:createEventsTable];
+                success &= [db executeUpdate:createEventsTable];
 
                 NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
-                [db executeUpdate:createStoreTable];
+                success &= [db executeUpdate:createStoreTable];
 
                 NSString *createLongStoreTable = [NSString stringWithFormat:CREATE_LONG_STORE_TABLE, LONG_STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
-                [db executeUpdate:createLongStoreTable];
+                success &= [db executeUpdate:createLongStoreTable];
 
                 if (newVersion <= 2) break;
+            }
+            case 2: {
+                if (newVersion <= 3) break;
             }
             default:
                 success = NO;
@@ -144,8 +147,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
     if (!success) {
         NSLog(@"upgrade with unknown oldVersion %d", oldVersion);
-        [self resetDB:NO];
+        return [self resetDB:NO];
     }
+
+    return success;
 }
 
 - (BOOL)dropTables
