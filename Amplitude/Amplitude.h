@@ -253,6 +253,19 @@
  @method
 
  @abstract
+ Sets the deviceId.
+
+ @param deviceId                  If your app has its own logic for tracking devices before a user logs in, set the device id
+
+ @discussion
+ If your app has its own logic for tracking devices before a user logs in, set the deviceId
+ */
+- (void)setDeviceId:(NSString*)deviceId;
+
+/*!
+ @method
+
+ @abstract
  Returns deviceId
 
  @discussion

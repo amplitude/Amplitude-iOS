@@ -1019,6 +1019,20 @@ NSString *const USER_ID = @"user_id";
     _userProperties = userProperties;
 }
 
+- (void)setDeviceId:(NSString*)deviceId
+{
+    if (!(deviceId == nil || [self isArgument:deviceId validType:[NSString class] methodName:@"setDeviceId:"])) {
+        return;
+    }
+
+    [self runOnBackgroundQueue:^{
+        SAFE_ARC_RETAIN(deviceId);
+        SAFE_ARC_RELEASE(_deviceId);
+        _deviceId = deviceId;
+        [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyValue:DEVICE_ID value:_deviceId];
+    }];
+}
+
 - (void)setUserId:(NSString*) userId
 {
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
