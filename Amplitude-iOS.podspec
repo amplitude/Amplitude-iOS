@@ -9,5 +9,5 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '5.0'
   s.source_files = 'Amplitude/*.{h,m}'
   s.requires_arc = true
-  s.dependency 'FMDB/standalone', '~> 2.5'
+  s.dependency 'FMDB/standard', '~> 2.5'
 end
