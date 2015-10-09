@@ -2,10 +2,15 @@
 
 * Add support for user property operations (set, setOnce, add, unset).
 
-## 3.1.0 (October 4, 2015)
+## 3.1.1 (October 8, 2015)
+
+* Switch to using FMDB/standard.
+
+## 3.1.0 (October 5, 2015)
 
 * Migrate events data to Sqlite database.
 * Fix bug where end session event was not being sent upon app reopen.
+* Fix bug in database path.
 
 ## 3.0.1 (September 21, 2015)
 
