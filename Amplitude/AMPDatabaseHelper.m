@@ -34,6 +34,7 @@ static NSString *const VALUE_FIELD = @"value";
 
 static NSString *const DROP_TABLE = @"DROP TABLE IF EXISTS %@;";
 static NSString *const CREATE_EVENT_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ INTEGER PRIMARY KEY AUTOINCREMENT, %@ TEXT);";
+static NSString *const CREATE_IDENTIFY_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ INTEGER PRIMARY KEY AUTOINCREMENT, %@ TEXT);";
 static NSString *const CREATE_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ TEXT PRIMARY KEY NOT NULL, %@ TEXT);";
 static NSString *const CREATE_LONG_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ TEXT PRIMARY KEY NOT NULL, %@ INTEGER);";
 
@@ -98,7 +99,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         NSString *createEventsTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, EVENT_TABLE_NAME, ID_FIELD, EVENT_FIELD];
         success &= [db executeUpdate:createEventsTable];
 
-        NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
+        NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_IDENTIFY_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
         success &= [db executeUpdate:createIdentifysTable];
 
         NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
@@ -140,7 +141,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
                 if (newVersion <= 2) break;
             }
             case 2: {
-                NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
+                NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_IDENTIFY_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
                 success &= [db executeUpdate:createIdentifysTable];
 
                 if (newVersion <= 3) break;
