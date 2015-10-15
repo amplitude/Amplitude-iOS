@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Add ability to set custom deviceId.
 * Add support for user property operations (set, setOnce, add, unset).
 
 ## 3.1.1 (October 8, 2015)

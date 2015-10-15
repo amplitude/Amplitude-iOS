@@ -198,7 +198,9 @@ This SDK automatically grabs useful data from the phone, including app version, 
 
 User IDs are automatically generated and will default to device specific identifiers if not specified.
 
-Device IDs use identifierForVendor if available, or a random ID otherwise. You can retrieve the Device ID that Amplitude uses with `[[Amplitude instance] getDeviceId]`.
+Device IDs use identifierForVendor if available, or a randomly generated ID otherwise. You can retrieve the Device ID that Amplitude uses with `[[Amplitude instance] getDeviceId]`.
+
+If you have your own system for tracking device IDs and would like to set a custom device ID, you can do so with `[[Amplitude instance] setDeviceId:@"CUSTOM_DEVICE_ID"];` **Note: this is not recommended unless you really know what you are doing.** Make sure the device ID you set is sufficiently unique (we recommend something like a UUID - see `[AMPUtils generateUUID]` for an example on how to generate) to prevent conflicts with other devices in our system.
 
 This code will work with both ARC and non-ARC projects. Preprocessor macros are used to determine which version of the compiler is being used.
 
