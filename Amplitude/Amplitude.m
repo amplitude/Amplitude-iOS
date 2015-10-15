@@ -1052,6 +1052,20 @@ NSString *const USER_ID = @"user_id";
     return [[[AMPDatabaseHelper getDatabaseHelper] getLongValue:OPT_OUT] boolValue];
 }
 
+- (void)setDeviceId:(NSString*)deviceId
+{
+    if (![self isValidDeviceId:deviceId]) {
+        return;
+    }
+
+    [self runOnBackgroundQueue:^{
+        SAFE_ARC_RETAIN(deviceId);
+        SAFE_ARC_RELEASE(_deviceId);
+        _deviceId = deviceId;
+        [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
+    }];
+}
+
 #pragma mark - location methods
 
 - (void)updateLocation
@@ -1095,11 +1109,11 @@ NSString *const USER_ID = @"user_id";
     if (_deviceId == nil) {
         AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
         _deviceId = SAFE_ARC_RETAIN([dbHelper getValue:DEVICE_ID]);
-        if (_deviceId == nil ||
-            [_deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
-            [_deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
-            _deviceId = SAFE_ARC_RETAIN([self _getDeviceId]);
-            [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:_deviceId];
+        if (![self isValidDeviceId:_deviceId]) {
+            NSString *newDeviceId = SAFE_ARC_RETAIN([self _getDeviceId]);
+            SAFE_ARC_RELEASE(_deviceId);
+            _deviceId = newDeviceId;
+            [dbHelper insertOrReplaceKeyValue:DEVICE_ID value:newDeviceId];
         }
     }
     return _deviceId;
@@ -1122,6 +1136,17 @@ NSString *const USER_ID = @"user_id";
         deviceId = _deviceInfo.generateUUID;
     }
     return SAFE_ARC_AUTORELEASE([[NSString alloc] initWithString:deviceId]);
+}
+
+- (BOOL)isValidDeviceId:(NSString*)deviceId
+{
+    if (deviceId == nil ||
+        ![self isArgument:deviceId validType:[NSString class] methodName:@"isValidDeviceId"] ||
+        [deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
+        [deviceId isEqualToString:@"04bab7ee75b9a58d39b8dc54e8851084"]) {
+        return NO;
+    }
+    return YES;
 }
 
 - (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary

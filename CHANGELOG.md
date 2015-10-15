@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add ability to set custom deviceId.
+
 ## 3.1.1 (October 8, 2015)
 
 * Switch to using FMDB/standard.

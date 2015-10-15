@@ -195,6 +195,19 @@
  @method
 
  @abstract
+ Sets the deviceId.
+
+ @param deviceId                  If your app has its own system for tracking devices, you can set the deviceId.
+
+ @discussion
+ If your app has its own system for tracking devices, you can set the deviceId.
+ */
+- (void)setDeviceId:(NSString*) deviceId;
+
+/*!
+ @method
+
+ @abstract
  Enables tracking opt out.
 
  @param enabled                  Whether tracking opt out should be enabled or disabled.
