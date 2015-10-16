@@ -394,4 +394,75 @@
     XCTAssertEqual([dbHelper getTotalEventCount], 0);
 }
 
+-(void)testSetOfflineTruncate {
+    int eventMaxCount = 3;
+    self.amplitude.eventMaxCount = eventMaxCount;
+
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:_connectionMock response:serverResponse];
+
+    [self.amplitude setOffline:YES];
+    [self.amplitude logEvent:@"test1"];
+    [self.amplitude logEvent:@"test2"];
+    [self.amplitude logEvent:@"test3"];
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"key1"]];
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"key2"]];
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"key3"]];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 3);
+    XCTAssertEqual([dbHelper getIdentifyCount], 3);
+    XCTAssertEqual([dbHelper getTotalEventCount], 6);
+
+    [self.amplitude logEvent:@"test4"];
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"key4"]];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 3);
+    XCTAssertEqual([dbHelper getIdentifyCount], 3);
+    XCTAssertEqual([dbHelper getTotalEventCount], 6);
+
+    NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
+    XCTAssertEqual([events count], 3);
+    XCTAssertEqualObjects([events[0] objectForKey:@"event_type"], @"test2");
+    XCTAssertEqualObjects([events[1] objectForKey:@"event_type"], @"test3");
+    XCTAssertEqualObjects([events[2] objectForKey:@"event_type"], @"test4");
+
+    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
+    XCTAssertEqual([identifys count], 3);
+    XCTAssertEqualObjects([[[identifys[0] objectForKey:@"user_properties"] objectForKey:@"$unset"] objectForKey:@"key2"], @"-");
+    XCTAssertEqualObjects([[[identifys[1] objectForKey:@"user_properties"] objectForKey:@"$unset"] objectForKey:@"key3"], @"-");
+    XCTAssertEqualObjects([[[identifys[2] objectForKey:@"user_properties"] objectForKey:@"$unset"] objectForKey:@"key4"], @"-");
+
+
+    [self.amplitude setOffline:NO];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+}
+
+-(void)testTruncateEventsQueues {
+    int eventMaxCount = 50;
+    XCTAssertGreaterThanOrEqual(eventMaxCount, kAMPEventRemoveBatchSize);
+    self.amplitude.eventMaxCount = eventMaxCount;
+
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude setOffline:YES];
+    for (int i = 0; i < eventMaxCount; i++) {
+        [self.amplitude logEvent:@"test"];
+    }
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], eventMaxCount);
+
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], eventMaxCount - kAMPEventRemoveBatchSize + 1);
+}
+
 @end

@@ -533,12 +533,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
-        if ([dbHelper getEventCount] >= self.eventMaxCount) {
-            [dbHelper removeEvents:([dbHelper getNthEventId:kAMPEventRemoveBatchSize])];
-        }
-        if ([dbHelper getIdentifyCount] >= self.eventMaxCount) {
-            [dbHelper removeIdentifys:([dbHelper getNthIdentifyId:kAMPEventRemoveBatchSize])];
-        }
+        [self truncateEventQueues];
 
         int eventCount = [dbHelper getTotalEventCount]; // refetch since events may have been deleted
         if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
@@ -547,6 +542,20 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
         }
     }];
+}
+
+- (void)truncateEventQueues
+{
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    int numEventsToRemove = self.eventMaxCount > kAMPEventRemoveBatchSize ? kAMPEventRemoveBatchSize : self.eventMaxCount/2;
+    int eventCount = [dbHelper getEventCount];
+    if (eventCount > self.eventMaxCount) {
+        [dbHelper removeEvents:([dbHelper getNthEventId:numEventsToRemove])];
+    }
+    int identifyCount = [dbHelper getIdentifyCount];
+    if (identifyCount > self.eventMaxCount) {
+        [dbHelper removeIdentifys:([dbHelper getNthIdentifyId:numEventsToRemove])];
+    }
 }
 
 - (void)annotateEvent:(NSMutableDictionary*) event
