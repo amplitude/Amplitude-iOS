@@ -80,6 +80,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     BOOL _backoffUpload;
     int _backoffUploadBatchSize;
+
+    BOOL _offline;
 }
 
 #pragma clang diagnostic push
@@ -179,6 +181,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
         _backoffUpload = NO;
+        _offline = NO;
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
@@ -672,7 +675,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
 
         // Don't communicate with the server if the user has opted out.
-        if ([self optOut])  {
+        if ([self optOut] || _offline)  {
             _updatingCurrently = NO;
             return;
         }
@@ -1135,6 +1138,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSNumber *value = [NSNumber numberWithBool:enabled];
         [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyLongValue:OPT_OUT value:value];
     }];
+}
+
+- (void)setOffline:(BOOL)offline
+{
+    _offline = offline;
+
+    if (!_offline) {
+        [self uploadEvents];
+    }
 }
 
 - (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
