@@ -23,6 +23,7 @@
 }
 
 static NSString *const EVENT_TABLE_NAME = @"events";
+static NSString *const IDENTIFY_TABLE_NAME = @"identifys";
 static NSString *const ID_FIELD = @"id";
 static NSString *const EVENT_FIELD = @"event";
 
@@ -33,6 +34,7 @@ static NSString *const VALUE_FIELD = @"value";
 
 static NSString *const DROP_TABLE = @"DROP TABLE IF EXISTS %@;";
 static NSString *const CREATE_EVENT_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ INTEGER PRIMARY KEY AUTOINCREMENT, %@ TEXT);";
+static NSString *const CREATE_IDENTIFY_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ INTEGER PRIMARY KEY AUTOINCREMENT, %@ TEXT);";
 static NSString *const CREATE_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ TEXT PRIMARY KEY NOT NULL, %@ TEXT);";
 static NSString *const CREATE_LONG_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ TEXT PRIMARY KEY NOT NULL, %@ INTEGER);";
 
@@ -97,6 +99,9 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         NSString *createEventsTable = [NSString stringWithFormat:CREATE_EVENT_TABLE, EVENT_TABLE_NAME, ID_FIELD, EVENT_FIELD];
         success &= [db executeUpdate:createEventsTable];
 
+        NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_IDENTIFY_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
+        success &= [db executeUpdate:createIdentifysTable];
+
         NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
         success &= [db executeUpdate:createStoreTable];
 
@@ -136,6 +141,9 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
                 if (newVersion <= 2) break;
             }
             case 2: {
+                NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_IDENTIFY_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
+                success &= [db executeUpdate:createIdentifysTable];
+
                 if (newVersion <= 3) break;
             }
             default:
@@ -167,6 +175,9 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
         NSString *dropEventTableSQL = [NSString stringWithFormat:DROP_TABLE, EVENT_TABLE_NAME];
         success &= [db executeUpdate: dropEventTableSQL];
+
+        NSString *dropIdentifyTableSQL = [NSString stringWithFormat:DROP_TABLE, IDENTIFY_TABLE_NAME];
+        success &= [db executeUpdate: dropIdentifyTableSQL];
 
         NSString *dropStoreTableSQL = [NSString stringWithFormat:DROP_TABLE, STORE_TABLE_NAME];
         success &= [db executeUpdate: dropStoreTableSQL];
@@ -208,6 +219,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return [self addEventToTable:EVENT_TABLE_NAME event:event];
 }
 
+- (BOOL)addIdentify:(NSString*) identifyEvent
+{
+    return [self addEventToTable:IDENTIFY_TABLE_NAME event:identifyEvent];
+}
+
 - (BOOL)addEventToTable:(NSString*) table event:(NSString*) event
 {
     __block BOOL success = NO;
@@ -234,15 +250,19 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return success;
 }
 
-- (NSDictionary*)getEvents:(long) upToId limit:(long) limit
+- (NSMutableArray*)getEvents:(long) upToId limit:(long) limit
 {
     return [self getEventsFromTable:EVENT_TABLE_NAME upToId:upToId limit:limit];
 }
 
-- (NSDictionary*)getEventsFromTable:(NSString*) table upToId:(long) upToId limit:(long) limit
+- (NSMutableArray*)getIdentifys:(long) upToId limit:(long) limit
 {
-    __block long maxId = -1;
-    __block NSMutableArray *events = [NSMutableArray array];
+    return [self getEventsFromTable:IDENTIFY_TABLE_NAME upToId:upToId limit:limit];
+}
+
+- (NSMutableArray*)getEventsFromTable:(NSString*) table upToId:(long) upToId limit:(long) limit
+{
+    __block NSMutableArray *events = [[NSMutableArray alloc] init];
 
     [_dbQueue inDatabase:^(FMDatabase *db) {
         if (![db open]) {
@@ -283,14 +303,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
             [event setValue:[NSNumber numberWithInt:eventId] forKey:@"event_id"];
             [events addObject:event];
             SAFE_ARC_RELEASE(event);
-            maxId = eventId;
         }
 
         [db close];
     }];
 
-    NSDictionary *fetchedEvents = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithLong:maxId], @"max_id", events, @"events", nil];
-    return SAFE_ARC_AUTORELEASE(fetchedEvents);
+    return SAFE_ARC_AUTORELEASE(events);
 }
 
 - (BOOL)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value
@@ -386,6 +404,16 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return [self getEventCountFromTable:EVENT_TABLE_NAME];
 }
 
+- (int)getIdentifyCount
+{
+    return [self getEventCountFromTable:IDENTIFY_TABLE_NAME];
+}
+
+- (int)getTotalEventCount
+{
+    return [self getEventCount] + [self getIdentifyCount];
+}
+
 - (int)getEventCountFromTable:(NSString*) table
 {
     __block int count = 0;
@@ -421,6 +449,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return [self removeEventsFromTable:EVENT_TABLE_NAME maxId:maxId];
 }
 
+- (BOOL)removeIdentifys:(long) maxIdentifyId
+{
+    return [self removeEventsFromTable:IDENTIFY_TABLE_NAME maxId:maxIdentifyId];
+}
+
 - (BOOL)removeEventsFromTable:(NSString*) table maxId:(long) maxId
 {
     __block BOOL success = NO;
@@ -448,6 +481,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return [self removeEventFromTable:EVENT_TABLE_NAME eventId:eventId];
 }
 
+- (BOOL)removeIdentify:(long) identifyId
+{
+    return [self removeEventFromTable:IDENTIFY_TABLE_NAME eventId:identifyId];
+}
+
 - (BOOL)removeEventFromTable:(NSString*) table eventId:(long) eventId
 {
     __block BOOL success = NO;
@@ -473,6 +511,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 - (long long)getNthEventId:(long) n
 {
     return [self getNthEventIdFromTable:EVENT_TABLE_NAME n:n];
+}
+
+- (long long)getNthIdentifyId:(long) n
+{
+    return [self getNthEventIdFromTable:IDENTIFY_TABLE_NAME n:n];
 }
 
 - (long long)getNthEventIdFromTable:(NSString*) table n:(long) n

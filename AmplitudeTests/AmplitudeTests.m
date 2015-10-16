@@ -16,6 +16,13 @@
 #import "AMPDeviceInfo.h"
 #import "AMPARCMacros.h"
 
+// expose private methods for unit testing
+@interface Amplitude (Tests)
+- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
+- (id) truncate:(id) obj;
+- (long long)getNextSequenceNumber;
+@end
+
 @interface AmplitudeTests : BaseTestCase
 
 @end
@@ -165,13 +172,200 @@
     [self.amplitude flushQueue];
 
     XCTAssertEqual([self.amplitude queuedEventCount], 2);
-    NSDictionary *eventsDict = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
-    XCTAssertEqual([[eventsDict objectForKey:@"max_id"] intValue], 2);
-    NSArray *events = [eventsDict objectForKey:@"events"];
+    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    XCTAssertEqual(2, [[events[1] objectForKey:@"event_id"] intValue]);
     XCTAssertNotNil([events[0] objectForKey:@"uuid"]);
     XCTAssertNotNil([events[1] objectForKey:@"uuid"]);
     XCTAssertNotEqual([events[0] objectForKey:@"uuid"], [events[1] objectForKey:@"uuid"]);
 }
 
+- (void)testIdentify {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude setEventUploadThreshold:2];
+
+    AMPIdentify *identify = [[AMPIdentify identify] set:@"key1" value:@"value1"];
+    [self.amplitude identify:identify];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+
+    NSDictionary *operations = [NSDictionary dictionaryWithObject:@"value1" forKey:@"key1"];
+    NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$set"];
+    NSDictionary *event = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
+    XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
+    XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
+    [self.amplitude identify:identify2];
+    SAFE_ARC_RELEASE(identify2);
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+}
+
+- (void)testMergeEventsAndIdentifys {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude setEventUploadThreshold:7];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:_connectionMock response:serverResponse];
+
+    [self.amplitude logEvent:@"test_event1"];
+    [self.amplitude identify:[[AMPIdentify identify] add:@"photoCount" value:[NSNumber numberWithInt:1]]];
+    [self.amplitude logEvent:@"test_event2"];
+    [self.amplitude logEvent:@"test_event3"];
+    [self.amplitude logEvent:@"test_event4"];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"gender" value:@"male"]];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 4);
+    XCTAssertEqual([dbHelper getIdentifyCount], 2);
+    XCTAssertEqual([dbHelper getTotalEventCount], 6);
+
+    // verify merging
+    NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
+    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
+    NSDictionary *merged = [self.amplitude mergeEventsAndIdentifys:events identifys:identifys numEvents:[dbHelper getTotalEventCount]];
+    NSArray *mergedEvents = [merged objectForKey:@"events"];
+
+    XCTAssertEqual(4, [[merged objectForKey:@"max_event_id"] intValue]);
+    XCTAssertEqual(2, [[merged objectForKey:@"max_identify_id"] intValue]);
+    XCTAssertEqual(6, [mergedEvents count]);
+
+    XCTAssertEqualObjects([mergedEvents[0] objectForKey:@"event_type"], @"test_event1");
+    XCTAssertEqual([[mergedEvents[0] objectForKey:@"event_id"] intValue], 1);
+    XCTAssertEqual([[mergedEvents[0] objectForKey:@"sequence_number"] intValue], 1);
+
+    XCTAssertEqualObjects([mergedEvents[1] objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqual([[mergedEvents[1] objectForKey:@"event_id"] intValue], 1);
+    XCTAssertEqual([[mergedEvents[1] objectForKey:@"sequence_number"] intValue], 2);
+    XCTAssertEqualObjects([mergedEvents[1] objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:1] forKey:@"photoCount"] forKey:@"$add"]);
+
+    XCTAssertEqualObjects([mergedEvents[2] objectForKey:@"event_type"], @"test_event2");
+    XCTAssertEqual([[mergedEvents[2] objectForKey:@"event_id"] intValue], 2);
+    XCTAssertEqual([[mergedEvents[2] objectForKey:@"sequence_number"] intValue], 3);
+
+    XCTAssertEqualObjects([mergedEvents[3] objectForKey:@"event_type"], @"test_event3");
+    XCTAssertEqual([[mergedEvents[3] objectForKey:@"event_id"] intValue], 3);
+    XCTAssertEqual([[mergedEvents[3] objectForKey:@"sequence_number"] intValue], 4);
+
+    XCTAssertEqualObjects([mergedEvents[4] objectForKey:@"event_type"], @"test_event4");
+    XCTAssertEqual([[mergedEvents[4] objectForKey:@"event_id"] intValue], 4);
+    XCTAssertEqual([[mergedEvents[4] objectForKey:@"sequence_number"] intValue], 5);
+
+    XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqual([[mergedEvents[5] objectForKey:@"event_id"] intValue], 2);
+    XCTAssertEqual([[mergedEvents[5] objectForKey:@"sequence_number"] intValue], 6);
+    XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:@"male" forKey:@"gender"] forKey:@"$set"]);
+
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"karma"]];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+}
+
+-(void)testMergeEventsBackwardsCompatible {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"key"]];
+    [self.amplitude logEvent:@"test_event"];
+    [self.amplitude flushQueue];
+
+    // reinsert test event without sequence_number
+    NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:[self.amplitude getLastEvent]];
+    [event removeObjectForKey:@"sequence_number"];
+    long eventId = [[event objectForKey:@"event_id"] longValue];
+    [dbHelper removeEvent:eventId];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    [dbHelper addEvent:jsonString];
+    SAFE_ARC_RELEASE(jsonString);
+
+    // the event without sequence number should be ordered before the identify
+    NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
+    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
+    NSDictionary *merged = [self.amplitude mergeEventsAndIdentifys:events identifys:identifys numEvents:[dbHelper getTotalEventCount]];
+    NSArray *mergedEvents = [merged objectForKey:@"events"];
+    XCTAssertEqualObjects([mergedEvents[0] objectForKey:@"event_type"], @"test_event");
+    XCTAssertNil([mergedEvents[0] objectForKey:@"sequence_number"]);
+    XCTAssertEqualObjects([mergedEvents[1] objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqual(1, [[mergedEvents[1] objectForKey:@"sequence_number"] intValue]);
+}
+
+-(void)testTruncateLongStrings {
+    NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
+    XCTAssertEqual([longString length], kAMPMaxStringLength*2);
+    NSString *truncatedString = [self.amplitude truncate:longString];
+    XCTAssertEqual([truncatedString length], kAMPMaxStringLength);
+    XCTAssertEqualObjects(truncatedString, [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0]);
+
+    NSString *shortString = [@"" stringByPaddingToLength:kAMPMaxStringLength-1 withString: @"c" startingAtIndex:0];
+    XCTAssertEqual([shortString length], kAMPMaxStringLength-1);
+    truncatedString = [self.amplitude truncate:shortString];
+    XCTAssertEqual([truncatedString length], kAMPMaxStringLength-1);
+    XCTAssertEqualObjects(truncatedString, shortString);
+}
+
+-(void)testTruncateNullObjects {
+    XCTAssertNil([self.amplitude truncate:nil]);
+}
+
+-(void)testTruncateDictionary {
+    NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
+    NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
+    NSMutableDictionary *object = [NSMutableDictionary dictionary];
+    [object setValue:[NSNumber numberWithInt:10] forKey:@"int value"];
+    [object setValue:[NSNumber numberWithBool:NO] forKey:@"bool value"];
+    [object setValue:longString forKey:@"long string"];
+    [object setValue:[NSArray arrayWithObject:longString] forKey:@"array"];
+
+    object = [self.amplitude truncate:object];
+    XCTAssertEqual([[object objectForKey:@"int value"] intValue], 10);
+    XCTAssertFalse([[object objectForKey:@"bool value"] boolValue]);
+    XCTAssertEqual([[object objectForKey:@"long string"] length], kAMPMaxStringLength);
+    XCTAssertEqual([[object objectForKey:@"array"] count], 1);
+    XCTAssertEqualObjects([object objectForKey:@"array"][0], truncString);
+    XCTAssertEqual([[object objectForKey:@"array"][0] length], kAMPMaxStringLength);
+}
+
+-(void)testTruncateEventAndIdentify {
+    NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
+    NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
+
+    [self.amplitude logEvent:@"test" withEventProperties:[NSDictionary dictionaryWithObject:longString forKey:@"long_string"]];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"long_string" value:longString]];
+    [self.amplitude flushQueue];
+
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionaryWithObject:truncString forKey:@"long_string"]);
+
+    NSDictionary *identify = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects([identify objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqualObjects([identify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$set"]);
+}
+
+-(void)testAutoIncrementSequenceNumber {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    int limit = 10;
+    for (int i = 0; i < limit; i++) {
+        XCTAssertEqual([self.amplitude getNextSequenceNumber], i+1);
+        XCTAssertEqual([[dbHelper getLongValue:@"sequence_number"] intValue], i+1);
+    }
+}
 
 @end

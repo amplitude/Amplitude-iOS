@@ -101,6 +101,49 @@ NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
 [[Amplitude instance] setUserProperties:userProperties replace:YES];
 ```
 
+# User Property Operations #
+
+The SDK supports the operations set, setOnce, unset, and add on individual user properties. The operations are declared via a provided `AMPIdentify` interface. Multiple operations can be chained together in a single `AMPIdentify` object. The `AMPIdentify` object is then passed to the Amplitude client to send to the server. The results of the operations will be visible immediately in the dashboard, and take effect for events logged after. Note, each
+operation on the `AMPIdentify` object returns the same instance, allowing you to chain multiple operations together.
+
+1. `set`: this sets the value of a user property.
+
+    ``` objective-c
+    AMPIdentify *identify = [[[AMPIdentify identify] set:@"gender" value:@"female"] set:@"age" value:[NSNumber numberForInt:20]];
+    [[Amplitude instance] identify:identify];
+    ```
+
+2. `setOnce`: this sets the value of a user property only once. Subsequent `setOnce` operations on that user property will be ignored. In the following example, `sign_up_date` will be set once to `08/24/2015`, and the following setOnce to `09/14/2015` will be ignored:
+
+    ``` objective-c
+    AMPIdentify *identify1 = [[AMPIdentify identify] setOnce:@"sign_up_date" value:@"09/06/2015"];
+    [[Amplitude instance] identify:identify1];
+
+    AMPIdentify *identify2 = [[AMPIdentify identify] setOnce:@"sign_up_date" value:@"10/06/2015"];
+    [[Amplitude instance] identify:identify2];
+    ```
+
+3. `unset`: this will unset and remove a user property.
+
+    ``` objective-c
+    AMPIdentify *identify = [[[AMPIdentify identify] unset:@"gender"] unset:@"age"];
+    [[Amplitude instance] identify:identify];
+    ```
+
+4. `add`: this will increment a user property by some numerical value. If the user property does not have a value set yet, it will be initialized to 0 before being incremented.
+
+    ``` objective-c
+    AMPIdentify *identify = [[[AMPIdentify identify] add:@"karma" value:[NSNumber numberWithFloat:0.123]] add:@"friends" value:[NSNumber numberWithInt:1]];
+    [[Amplitude instance] identify:identify];
+    ```
+
+Note: if a user property is used in multiple operations on the same `Identify` object, only the first operation will be saved, and the rest will be ignored. In this example, only the set operation will be saved, and the add and unset will be ignored:
+
+```objective-c
+AMPIdentify *identify = [[[[AMPIdentify identify] set:@"karma" value:[NSNumber numberWithInt:10]] add:@"friends" value:[NSNumber numberWithInt:1]] unset:@"karma"];
+    [[Amplitude instance] identify:identify];
+```
+
 # Allowing Users to Opt Out
 
 To stop all event and session logging for a user, call setOptOut:

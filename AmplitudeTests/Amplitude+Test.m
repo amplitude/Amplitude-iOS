@@ -28,15 +28,18 @@
 }
 
 - (NSDictionary *)getEvent:(NSInteger) fromEnd {
-    NSDictionary *result = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
-    NSArray *events = [result objectForKey:@"events"];
+    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
     return [events objectAtIndex:[events count] - fromEnd - 1];
 }
 
 - (NSDictionary *)getLastEvent {
-    NSDictionary *result = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
-    NSArray *events = [result objectForKey:@"events"];
+    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
     return [events lastObject];
+}
+
+- (NSDictionary *)getLastIdentify {
+    NSArray *identifys = [[AMPDatabaseHelper getDatabaseHelper] getIdentifys:-1 limit:-1];
+    return [identifys lastObject];
 }
 
 - (NSUInteger)queuedEventCount {

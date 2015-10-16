@@ -20,6 +20,7 @@
 #import "AMPURLConnection.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPUtils.h"
+#import "AMPIdentify.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -44,15 +45,18 @@ NSString *const kAMPSessionStartEvent = @"session_start";
 NSString *const kAMPSessionEndEvent = @"session_end";
 NSString *const kAMPRevenueEvent = @"revenue_amount";
 
-NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
-NSString *const DATABASE_VERSION = @"database_version";
-NSString *const DEVICE_ID = @"device_id";
-NSString *const EVENTS = @"events";
-NSString *const PREVIOUS_SESSION_ID = @"previous_session_id";
-NSString *const PREVIOUS_SESSION_TIME = @"previous_session_time";
-NSString *const MAX_ID = @"max_id";
-NSString *const OPT_OUT = @"opt_out";
-NSString *const USER_ID = @"user_id";
+static NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
+static NSString *const DATABASE_VERSION = @"database_version";
+static NSString *const DEVICE_ID = @"device_id";
+static NSString *const EVENTS = @"events";
+static NSString *const EVENT_ID = @"event_id";
+static NSString *const PREVIOUS_SESSION_ID = @"previous_session_id";
+static NSString *const PREVIOUS_SESSION_TIME = @"previous_session_time";
+static NSString *const MAX_EVENT_ID = @"max_event_id";
+static NSString *const MAX_IDENTIFY_ID = @"max_identify_id";
+static NSString *const OPT_OUT = @"opt_out";
+static NSString *const USER_ID = @"user_id";
+static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 
 @implementation Amplitude {
@@ -66,7 +70,6 @@ NSString *const USER_ID = @"user_id";
 
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
-    NSDictionary *_userProperties;
 
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
@@ -350,7 +353,6 @@ NSString *const USER_ID = @"user_id";
     SAFE_ARC_RELEASE(_locationManagerDelegate);
     SAFE_ARC_RELEASE(_propertyList);
     SAFE_ARC_RELEASE(_propertyListPath);
-    SAFE_ARC_RELEASE(_userProperties);
 
     SAFE_ARC_SUPER_DEALLOC();
 }
@@ -446,10 +448,10 @@ NSString *const USER_ID = @"user_id";
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession
 {
-    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withTimestamp:nil outOfSession:outOfSession];
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withTimestamp:nil outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
@@ -470,7 +472,7 @@ NSString *const USER_ID = @"user_id";
     // Create snapshot of all event json objects, to prevent deallocation crash
     eventProperties = [eventProperties copy];
     apiProperties = [apiProperties mutableCopy];
-    NSDictionary *userProperties = [_userProperties copy];
+    userProperties = [userProperties copy];
     
     [self runOnBackgroundQueue:^{
         AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
@@ -491,9 +493,9 @@ NSString *const USER_ID = @"user_id";
         }
 
         [event setValue:eventType forKey:@"event_type"];
-        [event setValue:[self replaceWithEmptyJSON:eventProperties] forKey:@"event_properties"];
+        [event setValue:[self replaceWithEmptyJSON:[self truncate:eventProperties]] forKey:@"event_properties"];
         [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-        [event setValue:[self replaceWithEmptyJSON:userProperties] forKey:@"user_properties"];
+        [event setValue:[self replaceWithEmptyJSON:[self truncate:userProperties]] forKey:@"user_properties"];
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
         [event setValue:timestamp forKey:@"timestamp"];
 
@@ -506,7 +508,11 @@ NSString *const USER_ID = @"user_id";
         // convert event dictionary to JSON String
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [dbHelper addEvent:jsonString];
+        if ([eventType isEqualToString:IDENTIFY_EVENT]) {
+            [dbHelper addIdentify:jsonString];
+        } else {
+            [dbHelper addEvent:jsonString];
+        }
         SAFE_ARC_RELEASE(jsonString);
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
@@ -514,8 +520,11 @@ NSString *const USER_ID = @"user_id";
         if ([dbHelper getEventCount] >= self.eventMaxCount) {
             [dbHelper removeEvents:([dbHelper getNthEventId:kAMPEventRemoveBatchSize])];
         }
+        if ([dbHelper getIdentifyCount] >= self.eventMaxCount) {
+            [dbHelper removeIdentifys:([dbHelper getNthIdentifyId:kAMPEventRemoveBatchSize])];
+        }
 
-        int eventCount = [dbHelper getEventCount]; // refetch since events may have been deleted
+        int eventCount = [dbHelper getTotalEventCount]; // refetch since events may have been deleted
         if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
             [self uploadEvents];
         } else {
@@ -543,6 +552,7 @@ NSString *const USER_ID = @"user_id";
     };
     [event setValue:library forKey:@"library"];
     [event setValue:[AMPUtils generateUUID] forKey:@"uuid"];
+    [event setValue:[NSNumber numberWithLongLong:[self getNextSequenceNumber]] forKey:@"sequence_number"];
 
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
@@ -615,7 +625,7 @@ NSString *const USER_ID = @"user_id";
 #pragma clang diagnostic pop
     }
 
-    [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withTimestamp:nil outOfSession:NO];
+    [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withTimestamp:nil outOfSession:NO];
 }
 
 #pragma mark - Upload events
@@ -668,15 +678,20 @@ NSString *const USER_ID = @"user_id";
         }
 
         AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-        long eventCount = [dbHelper getEventCount];
+        long eventCount = [dbHelper getTotalEventCount];
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
         if (numEvents == 0) {
             _updatingCurrently = NO;
             return;
         }
-        NSDictionary *events = [dbHelper getEvents:-1 limit:numEvents];
-        NSArray *uploadEvents = [events objectForKey:EVENTS];
-        long lastEventIdUploaded = [[events objectForKey:MAX_ID] longValue];
+        NSMutableArray *events = [dbHelper getEvents:-1 limit:numEvents];
+        NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:numEvents];
+        NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:numEvents];
+
+        NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
+        long long maxEventId = [[merged objectForKey:MAX_EVENT_ID] longLongValue];
+        long long maxIdentifyId = [[merged objectForKey:MAX_IDENTIFY_ID] longLongValue];
+
         NSError *error = nil;
         NSData *eventsDataLocal = nil;
         @try {
@@ -694,15 +709,81 @@ NSString *const USER_ID = @"user_id";
         }
         if (eventsDataLocal) {
             NSString *eventsString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
-            [self makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString lastEventIDUploaded:lastEventIdUploaded];
+            [self makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString maxEventId:maxEventId maxIdentifyId:maxIdentifyId];
             SAFE_ARC_RELEASE(eventsString);
        }
-
-
     }];
 }
 
-- (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events lastEventIDUploaded:(long long) lastEventIdUploaded
+- (long long)getNextSequenceNumber
+{
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    NSNumber *sequenceNumberFromDB = [dbHelper getLongValue:SEQUENCE_NUMBER];
+    long long sequenceNumber = 0;
+    if (sequenceNumberFromDB != nil) {
+        sequenceNumber = [sequenceNumberFromDB longLongValue];
+    }
+
+    sequenceNumber++;
+    [dbHelper insertOrReplaceKeyLongValue:SEQUENCE_NUMBER value:[NSNumber numberWithLongLong:sequenceNumber]];
+
+    return sequenceNumber;
+}
+
+- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents
+{
+    NSMutableArray *mergedEvents = [[NSMutableArray alloc] init];
+    long long maxEventId = -1;
+    long long maxIdentifyId = -1;
+
+    // NSArrays actually have O(1) performance for push/pop
+    while ([mergedEvents count] < numEvents) {
+        NSDictionary *event = nil;
+        NSDictionary *identify = nil;
+
+        // case 1: no identifys grab from events
+        if ([identifys count] == 0) {
+            event = SAFE_ARC_RETAIN(events[0]);
+            [events removeObjectAtIndex:0];
+            maxEventId = [[event objectForKey:@"event_id"] longValue];
+
+        // case 2: no events grab from identifys
+        } else if ([events count] == 0) {
+            identify = SAFE_ARC_RETAIN(identifys[0]);
+            [identifys removeObjectAtIndex:0];
+            maxIdentifyId = [[identify objectForKey:@"event_id"] longValue];
+
+        // case 3: need to compare sequence numbers
+        } else {
+            // events logged before v3.2.0 won't have sequeunce number, put those first
+            event = SAFE_ARC_RETAIN(events[0]);
+            identify = SAFE_ARC_RETAIN(identifys[0]);
+            if ([event objectForKey:SEQUENCE_NUMBER] == nil ||
+                    ([[event objectForKey:SEQUENCE_NUMBER] longLongValue] <
+                     [[identify objectForKey:SEQUENCE_NUMBER] longLongValue])) {
+                [events removeObjectAtIndex:0];
+                maxEventId = [[event objectForKey:EVENT_ID] longValue];
+                SAFE_ARC_RELEASE(identify);
+                identify = nil;
+            } else {
+                [identifys removeObjectAtIndex:0];
+                maxIdentifyId = [[identify objectForKey:EVENT_ID] longValue];
+                SAFE_ARC_RELEASE(event);
+                event = nil;
+            }
+        }
+
+        [mergedEvents addObject: event != nil ? event : identify];
+        SAFE_ARC_RELEASE(event);
+        SAFE_ARC_RELEASE(identify);
+    }
+
+    NSDictionary *results = [[NSDictionary alloc] initWithObjectsAndKeys: mergedEvents, EVENTS, [NSNumber numberWithLongLong:maxEventId], MAX_EVENT_ID, [NSNumber numberWithLongLong:maxIdentifyId], MAX_IDENTIFY_ID, nil];
+    SAFE_ARC_RELEASE(mergedEvents);
+    return SAFE_ARC_AUTORELEASE(results);
+}
+
+- (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events maxEventId:(long long) maxEventId maxIdentifyId:(long long) maxIdentifyId
 {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
@@ -753,7 +834,12 @@ NSString *const USER_ID = @"user_id";
                 if ([result isEqualToString:@"success"]) {
                     // success, remove existing events from dictionary
                     uploadSuccessful = YES;
-                    [dbHelper removeEvents:lastEventIdUploaded];
+                    if (maxEventId >= 0) {
+                        [dbHelper removeEvents:maxEventId];
+                    }
+                    if (maxIdentifyId >= 0) {
+                        [dbHelper removeIdentifys:maxIdentifyId];
+                    }
                 } else if ([result isEqualToString:@"invalid_api_key"]) {
                     NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
                 } else if ([result isEqualToString:@"bad_checksum"]) {
@@ -767,7 +853,12 @@ NSString *const USER_ID = @"user_id";
             } else if ([httpResponse statusCode] == 413) {
                 // If blocked by one massive event, drop it
                 if (_backoffUpload && _backoffUploadBatchSize == 1) {
-                    [dbHelper removeEvent: lastEventIdUploaded];
+                    if (maxEventId >= 0) {
+                        [dbHelper removeEvent: maxEventId];
+                    }
+                    if (maxIdentifyId >= 0) {
+                        [dbHelper removeIdentifys: maxIdentifyId];
+                    }
                 }
 
                 // server complained about length of request, backoff and try again
@@ -925,7 +1016,7 @@ NSString *const USER_ID = @"user_id";
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:sessionEvent forKey:@"special"];
     NSNumber* timestamp = [self lastEventTime];
-    [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withTimestamp:timestamp outOfSession:NO];
+    [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withTimestamp:timestamp outOfSession:NO];
 }
 
 - (BOOL)inSession
@@ -991,32 +1082,37 @@ NSString *const USER_ID = @"user_id";
     return;
 }
 
+- (void)identify:(AMPIdentify *)identify
+{
+    if (identify == nil || [identify.userPropertyOperations count] == 0) {
+        return;
+    }
+    [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withTimestamp:nil outOfSession:NO];
+}
+
 #pragma mark - configurations
 
 - (void)setUserProperties:(NSDictionary*) userProperties
 {
-    [self setUserProperties:userProperties replace:NO];
-}
-
-- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
-{
-    if (![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"]) {
+    if (userProperties == nil || ![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"] || [userProperties count] == 0) {
         return;
     }
 
-    (void) SAFE_ARC_RETAIN(userProperties);
+    NSDictionary *copy = [userProperties copy];
+    [self runOnBackgroundQueue:^{
+        AMPIdentify *identify = [AMPIdentify identify];
+        for (NSString *key in copy) {
+            NSObject *value = [copy objectForKey:key];
+            [identify set:key value:value];
+        }
+        [self identify:identify];
+    }];
+}
 
-    // Merge the given properties into the existing set if not asked to replace.
-    if (!replace && _userProperties) {
-        NSMutableDictionary *mergedProperties = [_userProperties mutableCopy];
-        [mergedProperties addEntriesFromDictionary:userProperties];
-
-        (void) SAFE_ARC_AUTORELEASE(userProperties);
-        userProperties = mergedProperties;
-    }
-
-    (void) SAFE_ARC_AUTORELEASE(_userProperties);
-    _userProperties = userProperties;
+// maintain for legacy
+- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
+{
+    [self setUserProperties:userProperties];
 }
 
 - (void)setUserId:(NSString*) userId
@@ -1152,6 +1248,40 @@ NSString *const USER_ID = @"user_id";
 - (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
 {
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
+}
+
+- (id) truncate:(id) obj
+{
+    if ([obj isKindOfClass:[NSString class]]) {
+        obj = (NSString*)obj;
+        if ([obj length] > kAMPMaxStringLength) {
+            obj = [obj substringToIndex:kAMPMaxStringLength];
+        }
+    } else if ([obj isKindOfClass:[NSArray class]]) {
+        NSMutableArray *arr = [NSMutableArray array];
+        id objCopy = [obj copy];
+        for (id i in objCopy) {
+            [arr addObject:[self truncate:i]];
+        }
+        SAFE_ARC_RELEASE(objCopy);
+        obj = [NSArray arrayWithArray:arr];
+    } else if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        id objCopy = [obj copy];
+        for (id key in objCopy) {
+            NSString *coercedKey;
+            if (![key isKindOfClass:[NSString class]]) {
+                coercedKey = [key description];
+                NSLog(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
+            } else {
+                coercedKey = key;
+            }
+            dict[coercedKey] = [self truncate:objCopy[key]];
+        }
+        SAFE_ARC_RELEASE(objCopy);
+        obj = [NSDictionary dictionaryWithDictionary:dict];
+    }
+    return obj;
 }
 
 - (id) makeJSONSerializable:(id) obj
