@@ -522,6 +522,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 764FF1F5D4DC82CCE3BF4FE7 /* Pods.debug.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -536,6 +537,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 78F948F3BAF6B3E720A38B16 /* Pods.release.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
