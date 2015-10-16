@@ -368,4 +368,30 @@
     }
 }
 
+-(void)testSetOffline {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:_connectionMock response:serverResponse];
+
+    [self.amplitude setOffline:YES];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"key" value:@"value"]];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 2);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 3);
+
+    [self.amplitude setOffline:NO];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+}
+
 @end

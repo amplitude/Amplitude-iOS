@@ -2,6 +2,7 @@
 
 * Add ability to set custom deviceId.
 * Add support for user property operations (set, setOnce, add, unset).
+* Add ability to go offline (disable sending logged events to server).
 
 ## 3.1.1 (October 8, 2015)
 

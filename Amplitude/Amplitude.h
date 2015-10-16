@@ -240,6 +240,20 @@
  @method
 
  @abstract
+ Disables sending logged events to Amplitude servers.
+
+ @param offline                  Whether logged events should be sent to Amplitude servers.
+
+ @discussion
+ If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to false will allow events to be sent to server
+     and the client will attempt to send events that have been queued while offline.
+ */
+- (void)setOffline:(BOOL)offline;
+
+/*!
+ @method
+
+ @abstract
  Enables location tracking.
 
  @discussion
