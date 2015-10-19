@@ -2,6 +2,7 @@
 
 * Add ability to set custom deviceId.
 * Add support for user property operations (set, setOnce, add, unset).
+* Fix bug where fetching nil/null values from database causes crash.
 
 ## 3.1.1 (October 8, 2015)
 
