@@ -81,6 +81,7 @@
     [self.amplitude initializeApiKey:apiKey userId:nilUserId];
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nilUserId);
+    XCTAssertNil([[AMPDatabaseHelper getDatabaseHelper] getValue:@"user_id"]);
 }
 
 - (void)testInitializeWithUserId {
