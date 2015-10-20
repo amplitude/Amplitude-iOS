@@ -80,6 +80,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     BOOL _backoffUpload;
     int _backoffUploadBatchSize;
+
+    BOOL _offline;
 }
 
 #pragma clang diagnostic push
@@ -179,6 +181,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
         _backoffUpload = NO;
+        _offline = NO;
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
@@ -517,12 +520,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
-        if ([dbHelper getEventCount] >= self.eventMaxCount) {
-            [dbHelper removeEvents:([dbHelper getNthEventId:kAMPEventRemoveBatchSize])];
-        }
-        if ([dbHelper getIdentifyCount] >= self.eventMaxCount) {
-            [dbHelper removeIdentifys:([dbHelper getNthIdentifyId:kAMPEventRemoveBatchSize])];
-        }
+        [self truncateEventQueues];
 
         int eventCount = [dbHelper getTotalEventCount]; // refetch since events may have been deleted
         if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
@@ -531,6 +529,20 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
         }
     }];
+}
+
+- (void)truncateEventQueues
+{
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
+    int eventCount = [dbHelper getEventCount];
+    if (eventCount > self.eventMaxCount) {
+        [dbHelper removeEvents:([dbHelper getNthEventId:numEventsToRemove])];
+    }
+    int identifyCount = [dbHelper getIdentifyCount];
+    if (identifyCount > self.eventMaxCount) {
+        [dbHelper removeIdentifys:([dbHelper getNthIdentifyId:numEventsToRemove])];
+    }
 }
 
 - (void)annotateEvent:(NSMutableDictionary*) event
@@ -672,7 +684,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
 
         // Don't communicate with the server if the user has opted out.
-        if ([self optOut])  {
+        if ([self optOut] || _offline)  {
             _updatingCurrently = NO;
             return;
         }
@@ -1135,6 +1147,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSNumber *value = [NSNumber numberWithBool:enabled];
         [[AMPDatabaseHelper getDatabaseHelper] insertOrReplaceKeyLongValue:OPT_OUT value:value];
     }];
+}
+
+- (void)setOffline:(BOOL)offline
+{
+    _offline = offline;
+
+    if (!_offline) {
+        [self uploadEvents];
+    }
 }
 
 - (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
