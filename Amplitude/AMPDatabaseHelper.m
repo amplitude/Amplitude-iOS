@@ -39,14 +39,14 @@ static NSString *const CREATE_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ 
 static NSString *const CREATE_LONG_STORE_TABLE = @"CREATE TABLE IF NOT EXISTS %@ (%@ TEXT PRIMARY KEY NOT NULL, %@ INTEGER);";
 
 static NSString *const INSERT_EVENT = @"INSERT INTO %@ (%@) VALUES (?);";
-static NSString *const GET_EVENT_WITH_UPTOID_AND_LIMIT = @"SELECT %@, %@ FROM %@ WHERE %@ <= %li LIMIT %li;";
-static NSString *const GET_EVENT_WITH_UPTOID = @"SELECT %@, %@ FROM %@ WHERE %@ <= %li;";
-static NSString *const GET_EVENT_WITH_LIMIT = @"SELECT %@, %@ FROM %@ LIMIT %li;";
+static NSString *const GET_EVENT_WITH_UPTOID_AND_LIMIT = @"SELECT %@, %@ FROM %@ WHERE %@ <= %lli LIMIT %lli;";
+static NSString *const GET_EVENT_WITH_UPTOID = @"SELECT %@, %@ FROM %@ WHERE %@ <= %lli;";
+static NSString *const GET_EVENT_WITH_LIMIT = @"SELECT %@, %@ FROM %@ LIMIT %lli;";
 static NSString *const GET_EVENT = @"SELECT %@, %@ FROM %@;";
 static NSString *const COUNT_EVENTS = @"SELECT COUNT(*) FROM %@;";
-static NSString *const REMOVE_EVENTS = @"DELETE FROM %@ WHERE %@ <= %li;";
-static NSString *const REMOVE_EVENT = @"DELETE FROM %@ WHERE %@ = %li;";
-static NSString *const GET_NTH_EVENT_ID = @"SELECT %@ FROM %@ LIMIT 1 OFFSET %li;";
+static NSString *const REMOVE_EVENTS = @"DELETE FROM %@ WHERE %@ <= %lli;";
+static NSString *const REMOVE_EVENT = @"DELETE FROM %@ WHERE %@ = %lli;";
+static NSString *const GET_NTH_EVENT_ID = @"SELECT %@ FROM %@ LIMIT 1 OFFSET %lli;";
 
 static NSString *const INSERT_OR_REPLACE_KEY_VALUE = @"INSERT OR REPLACE INTO %@ (%@, %@) VALUES (?, ?);";
 static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
@@ -250,17 +250,17 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return success;
 }
 
-- (NSMutableArray*)getEvents:(long) upToId limit:(long) limit
+- (NSMutableArray*)getEvents:(long long) upToId limit:(long long) limit
 {
     return [self getEventsFromTable:EVENT_TABLE_NAME upToId:upToId limit:limit];
 }
 
-- (NSMutableArray*)getIdentifys:(long) upToId limit:(long) limit
+- (NSMutableArray*)getIdentifys:(long long) upToId limit:(long long) limit
 {
     return [self getEventsFromTable:IDENTIFY_TABLE_NAME upToId:upToId limit:limit];
 }
 
-- (NSMutableArray*)getEventsFromTable:(NSString*) table upToId:(long) upToId limit:(long) limit
+- (NSMutableArray*)getEventsFromTable:(NSString*) table upToId:(long long) upToId limit:(long long) limit
 {
     __block NSMutableArray *events = [[NSMutableArray alloc] init];
 
@@ -446,17 +446,17 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return count;
 }
 
-- (BOOL)removeEvents:(long) maxId
+- (BOOL)removeEvents:(long long) maxId
 {
     return [self removeEventsFromTable:EVENT_TABLE_NAME maxId:maxId];
 }
 
-- (BOOL)removeIdentifys:(long) maxIdentifyId
+- (BOOL)removeIdentifys:(long long) maxIdentifyId
 {
     return [self removeEventsFromTable:IDENTIFY_TABLE_NAME maxId:maxIdentifyId];
 }
 
-- (BOOL)removeEventsFromTable:(NSString*) table maxId:(long) maxId
+- (BOOL)removeEventsFromTable:(NSString*) table maxId:(long long) maxId
 {
     __block BOOL success = NO;
 
@@ -478,17 +478,17 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return success;
 }
 
-- (BOOL)removeEvent:(long) eventId
+- (BOOL)removeEvent:(long long) eventId
 {
     return [self removeEventFromTable:EVENT_TABLE_NAME eventId:eventId];
 }
 
-- (BOOL)removeIdentify:(long) identifyId
+- (BOOL)removeIdentify:(long long) identifyId
 {
     return [self removeEventFromTable:IDENTIFY_TABLE_NAME eventId:identifyId];
 }
 
-- (BOOL)removeEventFromTable:(NSString*) table eventId:(long) eventId
+- (BOOL)removeEventFromTable:(NSString*) table eventId:(long long) eventId
 {
     __block BOOL success = NO;
 
@@ -510,17 +510,17 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     return success;
 }
 
-- (long long)getNthEventId:(long) n
+- (long long)getNthEventId:(long long) n
 {
     return [self getNthEventIdFromTable:EVENT_TABLE_NAME n:n];
 }
 
-- (long long)getNthIdentifyId:(long) n
+- (long long)getNthIdentifyId:(long long) n
 {
     return [self getNthEventIdFromTable:IDENTIFY_TABLE_NAME n:n];
 }
 
-- (long long)getNthEventIdFromTable:(NSString*) table n:(long) n
+- (long long)getNthEventIdFromTable:(NSString*) table n:(long long) n
 {
     __block long long eventId = -1;
 
