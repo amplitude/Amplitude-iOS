@@ -463,7 +463,24 @@
 
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], eventMaxCount - kAMPEventRemoveBatchSize + 1);
+    XCTAssertEqual([dbHelper getEventCount], eventMaxCount - (eventMaxCount/10) + 1);
+}
+
+-(void)testTruncateEventsQueuesWithOneEvent {
+    int eventMaxCount = 1;
+    self.amplitude.eventMaxCount = eventMaxCount;
+
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude logEvent:@"test1"];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], eventMaxCount);
+
+    [self.amplitude logEvent:@"test2"];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], eventMaxCount);
+
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test2");
 }
 
 @end
