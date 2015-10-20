@@ -534,7 +534,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)truncateEventQueues
 {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    int numEventsToRemove = self.eventMaxCount > kAMPEventRemoveBatchSize ? kAMPEventRemoveBatchSize : self.eventMaxCount/2;
+    int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
     int eventCount = [dbHelper getEventCount];
     if (eventCount > self.eventMaxCount) {
         [dbHelper removeEvents:([dbHelper getNthEventId:numEventsToRemove])];
