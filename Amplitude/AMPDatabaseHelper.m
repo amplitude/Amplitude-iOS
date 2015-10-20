@@ -383,10 +383,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
         if ([rs next]) {
             success = YES;
-            if ([table isEqualToString:STORE_TABLE_NAME]) {
-                value = [[NSString alloc] initWithString:[rs stringForColumnIndex:1]];
-            } else {
-                value = [[NSNumber alloc] initWithLongLong:[rs longLongIntForColumnIndex:1]];
+            if (![rs columnIndexIsNull:1]) { // possible to have null values
+                if ([table isEqualToString:STORE_TABLE_NAME]) {
+                    value = [[NSString alloc] initWithString:[rs stringForColumnIndex:1]];
+                } else {
+                    value = [[NSNumber alloc] initWithLongLong:[rs longLongIntForColumnIndex:1]];
+                }
             }
         }
 

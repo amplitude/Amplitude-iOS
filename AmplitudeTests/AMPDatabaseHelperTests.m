@@ -107,6 +107,21 @@
     XCTAssert([[self.databaseHelper getValue:key] isEqualToString:value2]);
 }
 
+- (void)testInsertNilValue {
+    NSString *key = @"test_key";
+    NSString *value = nil;
+    XCTAssertNil([self.databaseHelper getValue:key]);
+
+    [self.databaseHelper insertOrReplaceKeyValue:key value:value];
+    XCTAssertNil([self.databaseHelper getValue:key]);
+
+    NSNumber *longValue = nil;
+    XCTAssertNil([self.databaseHelper getLongValue:key]);
+
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:longValue];
+    XCTAssertNil([self.databaseHelper getLongValue:key]);
+}
+
 - (void)testInsertAndReplaceKeyLongValue {
     NSString *key = @"test_key";
     NSNumber *value1 = [NSNumber numberWithLongLong:1LL];
