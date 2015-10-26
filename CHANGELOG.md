@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add helper function to toggle trackingSessionEvents.
+
 ## 3.2.0 (October 20, 2015)
 
 * Add ability to set custom deviceId.
