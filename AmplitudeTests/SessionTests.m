@@ -190,7 +190,7 @@
 - (void)testStartSessionWithTrackSessionEvents {
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     OCMStub([self.partialMockAmplitude currentTime]).andReturn(date);
-    [self.amplitude trackingSessionEvents:YES];
+    self.amplitude.trackingSessionEvents = true;
     [self.amplitude initializeApiKey:apiKey userId:nil];
 
     [self.amplitude flushQueue];
