@@ -10,7 +10,7 @@
 #import "AMPARCMacros.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPARCMacros.h"
-#import <FMDB/FMDB.h>
+#import "FMDB/FMDB.h"
 
 @interface AMPDatabaseHelper()
 @end
