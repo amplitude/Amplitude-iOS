@@ -254,17 +254,6 @@
  @method
 
  @abstract
- Enables the tracking of start and end session events.
-
- @discussion
- If you want the SDK to automatically log start and end session events, use this method to enable session tracking.
- */
-- (void)trackingSessionEvents:(BOOL)enabled;
-
-/*!
- @method
-
- @abstract
  Enables location tracking.
 
  @discussion

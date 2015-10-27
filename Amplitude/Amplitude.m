@@ -1158,11 +1158,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (void)trackingSessionEvents:(BOOL)enabled
-{
-    _trackingSessionEvents = enabled;
-}
-
 - (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
 {
     _eventUploadMaxBatchSize = eventUploadMaxBatchSize;
