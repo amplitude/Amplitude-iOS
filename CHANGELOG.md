@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Handle NaNs and exceptions from NSJSONSerialization during event data migration.
+* Fix bug where logEvent checks session when logging start/end session events.
 
 ## 3.2.0 (October 20, 2015)
 
