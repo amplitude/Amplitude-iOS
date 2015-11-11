@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Handle NaNs and exceptions from NSJSONSerialization during event data migration.
+
 ## 3.2.0 (October 20, 2015)
 
 * Add ability to set custom deviceId.
