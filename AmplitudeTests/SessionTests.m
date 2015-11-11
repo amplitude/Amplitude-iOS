@@ -200,7 +200,6 @@
     XCTAssertEqualObjects([self.amplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
 }
 
-
 - (void)testEndSessionWithTrackSessionEvents {
     __unsafe_unretained __block NSDate *date = [NSDate dateWithTimeIntervalSince1970:0];
     [[[self.partialMockAmplitude stub] andDo:^(NSInvocation *invocation) {
@@ -230,6 +229,23 @@
 
     XCTAssertEqual([[self.amplitude getLastEvent][@"session_id"] longLongValue], expectedSessionId);
     XCTAssertEqualObjects([self.amplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
+}
+
+- (void)testSkipSessionCheckWhenLoggingSessionEvents {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
+    NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970] * 1000];
+    [dbHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
+
+    self.amplitude.trackingSessionEvents = YES;
+    [self.amplitude initializeApiKey:apiKey userId:nil];
+
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], 2);
+    NSArray *events = [dbHelper getEvents:-1 limit:2];
+    XCTAssertEqualObjects(events[0][@"event_type"], kAMPSessionEndEvent);
+    XCTAssertEqualObjects(events[1][@"event_type"], kAMPSessionStartEvent);
 }
 
 @end

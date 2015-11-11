@@ -501,12 +501,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
 
-        NSMutableDictionary *event = [NSMutableDictionary dictionary];
-
-        if (!outOfSession) {
+        // skip session check if logging start_session or end_session events
+        BOOL loggingSessionEvent = _trackingSessionEvents && ([eventType isEqualToString:kAMPSessionStartEvent] || [eventType isEqualToString:kAMPSessionEndEvent]);
+        if (!loggingSessionEvent && !outOfSession) {
             [self startOrContinueSession:timestamp];
         }
 
+        NSMutableDictionary *event = [NSMutableDictionary dictionary];
         [event setValue:eventType forKey:@"event_type"];
         [event setValue:[self replaceWithEmptyJSON:[self truncate:eventProperties]] forKey:@"event_properties"];
         [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
