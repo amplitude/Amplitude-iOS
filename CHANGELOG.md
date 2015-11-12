@@ -1,7 +1,10 @@
 ## Unreleased
 
+## 3.2.1 (November 11, 2015)
+
 * Handle NaNs and exceptions from NSJSONSerialization during event data migration.
 * Fix bug where logEvent checks session when logging start/end session events.
+* Update DatabaseHelper to work with long longs instead of longs.
 
 ## 3.2.0 (October 20, 2015)
 
