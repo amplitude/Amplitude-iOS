@@ -27,9 +27,15 @@
 #import <net/if.h>
 #import <net/if_dl.h>
 #import <CommonCrypto/CommonDigest.h>
-#import <UIKit/UIKit.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif // TARGET_OS_IPHONE
+
 
 @interface Amplitude ()
 
@@ -66,8 +72,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     BOOL _updateScheduled;
     BOOL _updatingCurrently;
+#if TARGET_OS_IPHONE
     UIBackgroundTaskIdentifier _uploadTaskID;
-
+#endif
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
 
@@ -203,7 +210,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             
             _deviceInfo = [[AMPDeviceInfo alloc] init];
 
+#if TARGET_OS_IPHONE
             _uploadTaskID = UIBackgroundTaskInvalid;
+#endif
             
             NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
             _propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
@@ -334,21 +343,37 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void) addObservers
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if TARGET_OS_IPHONE
     [center addObserver:self
                selector:@selector(enterForeground)
-                   name:UIApplicationWillEnterForegroundNotification
+                   name:UIApplicationDidBecomeActiveNotification
                  object:nil];
     [center addObserver:self
                selector:@selector(enterBackground)
                    name:UIApplicationDidEnterBackgroundNotification
                  object:nil];
+#else
+    [center addObserver:self
+               selector:@selector(enterForeground)
+                   name:NSApplicationDidBecomeActiveNotification
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(enterBackground)
+                   name:NSApplicationDidResignActiveNotification
+                 object:nil];
+#endif
 }
 
 - (void) removeObservers
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if TARGET_OS_IPHONE
     [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+#else
+    [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
+    [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
+#endif
 }
 
 - (void) dealloc {
@@ -419,12 +444,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
     }];
 
+    
+#if TARGET_OS_IPHONE
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
     if (state != UIApplicationStateBackground) {
         // If this is called while the app is running in the background, for example
         // via a push notification, don't call enterForeground
         [self enterForeground];
     }
+#else
+        [self enterForeground];
+#endif
+    
     _initialized = YES;
 }
 
@@ -917,7 +948,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         if (uploadSuccessful && [dbHelper getEventCount] > self.eventUploadThreshold) {
             int limit = _backoffUpload ? _backoffUploadBatchSize : 0;
             [self uploadEventsWithLimit:limit];
-
+#if TARGET_OS_IPHONE
         } else if (_uploadTaskID != UIBackgroundTaskInvalid) {
             if (uploadSuccessful) {
                 _backoffUpload = NO;
@@ -927,6 +958,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             // Upload finished, allow background task to be ended
             [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
             _uploadTaskID = UIBackgroundTaskInvalid;
+#endif
         }
     }];
 }
@@ -936,14 +968,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)enterForeground
 {
     [self updateLocation];
-
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-
-    // Stop uploading
+    
+#if TARGET_OS_IPHONE
+     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
         _uploadTaskID = UIBackgroundTaskInvalid;
     }
+#endif
     [self runOnBackgroundQueue:^{
         [self startOrContinueSession:now];
         _inForeground = YES;
@@ -954,7 +987,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)enterBackground
 {
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-
+    
+#if TARGET_OS_IPHONE
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
@@ -966,6 +1000,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             _uploadTaskID = UIBackgroundTaskInvalid;
         }
     }];
+#endif
     [self runOnBackgroundQueue:^{
         _inForeground = NO;
         [self refreshSessionTime:now];
