@@ -343,8 +343,8 @@
     if ([platform isEqualToString:@"iPad4,3"])      return @"iPad Air";
     if ([platform isEqualToString:@"iPad5,3"])      return @"iPad Air 2";
     if ([platform isEqualToString:@"iPad5,4"])      return @"iPad Air 2";
-    if ([platform isEqualToString:@"i386"])         return @"Simulator";
-    if ([platform isEqualToString:@"x86_64"])       return @"Simulator";
+    if ([platform isEqualToString:@"i386"])         return @"i386";
+    if ([platform isEqualToString:@"x86_64"])       return @"x86_64";
     if ([platform hasPrefix:@"MacBookAir"])         return @"MacBook Air";
     if ([platform hasPrefix:@"MacBookPro"])         return @"MacBook Pro";
     if ([platform hasPrefix:@"MacBook"])            return @"MacBook";

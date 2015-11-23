@@ -3,8 +3,18 @@
 
 #import "AMPConstants.h"
 
+#if TARGET_OS_IPHONE
 NSString *const kAMPLibrary = @"amplitude-ios";
+#else
+NSString *const kAMPLibrary = @"amplitude-osx";
+#endif
+
+#if TARGET_OS_IPHONE
 NSString *const kAMPPlatform = @"iOS";
+#else
+NSString *const kAMPPlatform = @"OSX";
+#endif
+
 NSString *const kAMPVersion = @"3.2.1";
 NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
