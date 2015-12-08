@@ -45,7 +45,7 @@ You can adjust the time window for which sessions are extended by changing the v
 
 By default start and end session events are no longer sent. To renable add this line before initializing the SDK:
 ``` objective-c
-[[Amplitude instance] trackingSessionEvents:YES];
+[[Amplitude instance] setTrackingSessionEvents:YES];
 [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
 ```
 
