@@ -50,6 +50,12 @@
     return self;
 }
 
+- (AMPIdentify*)append:(NSString*) property value:(NSObject*) value
+{
+    [self addToUserProperties:AMP_OP_APPEND property:property value:value];
+    return self;
+}
+
 - (AMPIdentify*)set:(NSString*) property value:(NSObject*) value
 {
     [self addToUserProperties:AMP_OP_SET property:property value:value];
