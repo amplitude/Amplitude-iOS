@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add support for append user property operation.
+
 ## 3.2.1 (November 11, 2015)
 
 * Handle NaNs and exceptions from NSJSONSerialization during event data migration.
