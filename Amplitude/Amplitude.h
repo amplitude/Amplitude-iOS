@@ -277,6 +277,17 @@
  @method
 
  @abstract
+ Forces the SDK to update with the user's last known location if possible.
+
+ @discussion
+ If you want to manually force the SDK to update with the user's last known location, call updateLocation.
+ */
+- (void)updateLocation;
+
+/*!
+ @method
+
+ @abstract
  Uses advertisingIdentifier instead of identifierForVendor as the device ID
 
  @discussion
