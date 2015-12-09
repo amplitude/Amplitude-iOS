@@ -204,8 +204,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             _deviceInfo = [[AMPDeviceInfo alloc] init];
 
             _uploadTaskID = UIBackgroundTaskInvalid;
-            
+#if TARGET_OS_TV
+            NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+#else
             NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+#endif
             _propertyListPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"]);
             _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
 
