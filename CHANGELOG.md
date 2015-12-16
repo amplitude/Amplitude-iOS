@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.3.0 (December 15, 2015)
+
 * Add support for append user property operation.
 * Add ability to force the SDK to update with the user's latest location.
 
