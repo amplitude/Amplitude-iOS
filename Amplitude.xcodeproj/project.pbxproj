@@ -12,11 +12,11 @@
 		605E43CA1BA0D92A00FD78CE /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 605E43C91BA0D92A00FD78CE /* AMPDatabaseHelper.m */; };
 		605E43CD1BA0FEE500FD78CE /* AMPDatabaseHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 605E43CC1BA0FEE500FD78CE /* AMPDatabaseHelperTests.m */; };
 		605E43CF1BA1065D00FD78CE /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 605E43C91BA0D92A00FD78CE /* AMPDatabaseHelper.m */; };
-		608865D51BC30EBB00233023 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 608865D41BC30EBB00233023 /* AMPIdentify.m */; settings = {ASSET_TAGS = (); }; };
-		608865D71BC311D700233023 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 608865D41BC30EBB00233023 /* AMPIdentify.m */; settings = {ASSET_TAGS = (); }; };
-		608865D91BC3176600233023 /* IdentifyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 608865D81BC3176600233023 /* IdentifyTests.m */; settings = {ASSET_TAGS = (); }; };
-		60D418B41BC1BFE9006CC505 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D418B31BC1BFE9006CC505 /* AMPUtils.m */; settings = {ASSET_TAGS = (); }; };
-		60D418B51BC1C019006CC505 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D418B31BC1BFE9006CC505 /* AMPUtils.m */; settings = {ASSET_TAGS = (); }; };
+		608865D51BC30EBB00233023 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 608865D41BC30EBB00233023 /* AMPIdentify.m */; };
+		608865D71BC311D700233023 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 608865D41BC30EBB00233023 /* AMPIdentify.m */; };
+		608865D91BC3176600233023 /* IdentifyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 608865D81BC3176600233023 /* IdentifyTests.m */; };
+		60D418B41BC1BFE9006CC505 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D418B31BC1BFE9006CC505 /* AMPUtils.m */; };
+		60D418B51BC1C019006CC505 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 60D418B31BC1BFE9006CC505 /* AMPUtils.m */; };
 		9D265EF41AB3FA2500399D93 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */; };
 		9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
 		9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
@@ -527,6 +527,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
+				PODS_ROOT = "/Users/danieljih/sdk/Amplitude-iOS/Pods";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -541,6 +542,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
+				PODS_ROOT = "/Users/danieljih/sdk/Amplitude-iOS/Pods";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
