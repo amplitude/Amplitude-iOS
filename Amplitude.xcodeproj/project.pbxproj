@@ -528,7 +528,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PODS_ROOT = "/Users/danieljih/sdk/Amplitude-iOS/Pods";
+				PODS_ROOT = "${SRCROOT}/Pods";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -544,7 +544,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PODS_ROOT = "/Users/danieljih/sdk/Amplitude-iOS/Pods";
+				PODS_ROOT = "${SRCROOT}/Pods";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
