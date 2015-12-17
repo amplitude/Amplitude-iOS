@@ -50,7 +50,8 @@ static NSString *const REMOVE_EVENT = @"DELETE FROM %@ WHERE %@ = %lli;";
 static NSString *const GET_NTH_EVENT_ID = @"SELECT %@ FROM %@ LIMIT 1 OFFSET %lli;";
 
 static NSString *const INSERT_OR_REPLACE_KEY_VALUE = @"INSERT OR REPLACE INTO %@ (%@, %@) VALUES (?, ?);";
-static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
+static NSString *const DELETE_KEY = @"DELETE FROM %@ WHERE %@ = ?;";
+static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
 
 + (AMPDatabaseHelper*)getDatabaseHelper
@@ -87,6 +88,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (BOOL)openDatabase
 {
+    NSLog(@"%@", _databasePath);
     return sqlite3_open([_databasePath UTF8String], &_database) == SQLITE_OK;
 }
 
@@ -335,11 +337,13 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
 - (BOOL)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value
 {
+    if (value == nil) return [self deleteKeyFromTable:STORE_TABLE_NAME key:key];
     return [self insertOrReplaceKeyValueToTable:STORE_TABLE_NAME key:key value:value];
 }
 
 - (BOOL)insertOrReplaceKeyLongValue:(NSString *) key value:(NSNumber*) value
 {
+    if (value == nil) return [self deleteKeyFromTable:LONG_STORE_TABLE_NAME key:key];
     return [self insertOrReplaceKeyValueToTable:LONG_STORE_TABLE_NAME key:key value:value];
 }
 
@@ -364,10 +368,14 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
     }
 
     success &= sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
-    if ([table isEqualToString:STORE_TABLE_NAME]) {
-        success &= sqlite3_bind_text(stmt, 2, [(NSString *)value UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
+    if (value == nil) {
+        success &= sqlite3_bind_null(stmt, 2);
     } else {
-        success &= sqlite3_bind_int64(stmt, 2, [(NSNumber*) value integerValue]) == SQLITE_OK;
+        if ([table isEqualToString:STORE_TABLE_NAME]) {
+            success &= sqlite3_bind_text(stmt, 2, [(NSString *)value UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
+        } else {
+            success &= sqlite3_bind_int64(stmt, 2, [(NSNumber*) value integerValue]) == SQLITE_OK;
+        }
     }
 
     if (!success) {
@@ -379,6 +387,48 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
 
     if (sqlite3_step(stmt) != SQLITE_DONE) {
         NSLog(@"Failed to execute statement to insert key %@ value %@ to table %@", key, value, table);
+        success = NO;
+    }
+
+    sqlite3_finalize(stmt);
+    sqlite3_close(_database);
+
+    if (!success) {
+        [self resetDB:NO]; // not much we can do, just start fresh
+    }
+    return success;
+}
+
+- (BOOL) deleteKeyFromTable:(NSString*) table key:(NSString*) key
+{
+    __block BOOL success = YES;
+
+    if (![self openDatabase]) {
+        NSLog(@"Could not open database when deleting key %@ from table %@", key, table);
+        success = NO;
+        return success;
+    }
+
+    NSString *deleteSQL = [NSString stringWithFormat:DELETE_KEY, table, KEY_FIELD];
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(_database, [deleteSQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
+        NSLog(@"Could not prepare statement to delete key %@ from table %@", key, table);
+        sqlite3_close(_database);
+        success = NO;
+        return success;
+    }
+
+    if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
+        NSLog(@"Failed to bind key to statement to delete key %@ from table %@", key, table);
+        sqlite3_finalize(stmt);
+        sqlite3_close(_database);
+        success = NO;
+        return success;
+    }
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        NSLog(@"Failed to execute statement to delete key %@ from table %@", key, table);
         success = NO;
     }
 
@@ -419,6 +469,13 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
         return nil;
     }
 
+    if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
+        NSLog(@"Failed to bind key %@ to stmt when getValueFromTable %@", key, table);
+        sqlite3_finalize(stmt);
+        sqlite3_close(_database);
+        return nil;
+    }
+
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         if (sqlite3_column_type(stmt, 1) != SQLITE_NULL) {
             if ([table isEqualToString:STORE_TABLE_NAME]) {
@@ -428,7 +485,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = (?);";
             }
         }
     } else {
-        NSLog(@"Failed to get value for key %@ from table %@", key, table);
+        NSLog(@"Failed to get value for key %@ from table %@: %s", key, table, sqlite3_errmsg(_database));
     }
 
     sqlite3_finalize(stmt);

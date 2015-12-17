@@ -120,6 +120,19 @@
 
     [self.databaseHelper insertOrReplaceKeyLongValue:key value:longValue];
     XCTAssertNil([self.databaseHelper getLongValue:key]);
+
+    // inserting nil value should delete the key from the table
+    NSString *value2 = @"test_value";
+    [self.databaseHelper insertOrReplaceKeyValue:key value:value2];
+    XCTAssertEqualObjects([self.databaseHelper getValue:key], value2);
+    [self.databaseHelper insertOrReplaceKeyValue:key value:nil];
+    XCTAssertNil([self.databaseHelper getValue:key]);
+
+    NSNumber *longValue2 = [NSNumber numberWithLongLong:2LL];
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:longValue2];
+    XCTAssertEqualObjects([self.databaseHelper getLongValue:key], longValue2);
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:nil];
+    XCTAssertNil([self.databaseHelper getLongValue:key]);
 }
 
 - (void)testInsertAndReplaceKeyLongValue {
