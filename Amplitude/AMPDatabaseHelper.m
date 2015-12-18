@@ -19,9 +19,12 @@
 {
     NSString *_databasePath;
     BOOL _databaseCreated;
-    // background serial queue thread here
+    dispatch_queue_t _queue;
     sqlite3 *_database;
 }
+
+static NSString *const QUEUE_NAME = @"com.amplitude.db.queue";
+static const void * const kDispatchQueueKey = &kDispatchQueueKey;
 
 static NSString *const EVENT_TABLE_NAME = @"events";
 static NSString *const IDENTIFY_TABLE_NAME = @"identifys";
@@ -67,10 +70,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (id) init
 {
     if (self = [super init]) {
-
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"]);
-        // init background serial queue thread here
+        _queue = dispatch_queue_create([QUEUE_NAME UTF8String], NULL);
+        dispatch_queue_set_specific(_queue, kDispatchQueueKey, (__bridge void *)self, NULL);
         if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {
             [self createTables];
         }
@@ -80,10 +83,30 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
 - (void)dealloc
 {
-    // need to wait for queue to finish?
     SAFE_ARC_RELEASE(_databasePath);
-    // release background thread
+    if (_queue) {
+        SAFE_ARC_DISPATCH_RELEASE(_queue);
+        _queue = NULL;
+    }
     SAFE_ARC_SUPER_DEALLOC();
+}
+
+/**
+ * Run a block in the queue. Needed because sqlite is not thread-safe.
+ */
+- (void)inDatabase:(NSString*) caller block:(void (^)(sqlite3 *db))block
+{
+    AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
+    assert(currentSyncQueue != self && "runOnQueue was called reentrantly on the same queue, which would lead to a deadlock");
+
+    dispatch_sync(_queue, ^() {
+        if (![self openDatabase]) {
+            NSLog(@"Failed to open database during %@", caller);
+            return;
+        }
+        block(_database);
+        sqlite3_close(_database);
+    });
 }
 
 - (BOOL)openDatabase
@@ -290,48 +313,44 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 {
     __block NSMutableArray *events = [[NSMutableArray alloc] init];
 
-    if (![self openDatabase]) {
-        NSLog(@"Failed to open database during getEventsFromTable %@", table);
-        return SAFE_ARC_AUTORELEASE(events);
-    }
-
-    NSString *querySQL;
-    if (upToId > 0 && limit > 0) {
-        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID_AND_LIMIT, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId, limit];
-    } else if (upToId > 0) {
-        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId];
-    } else if (limit > 0) {
-        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_LIMIT, ID_FIELD, EVENT_FIELD, table, limit];
-    } else {
-        querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
-    }
-
-    sqlite3_stmt *stmt;
-    if (sqlite3_prepare_v2(_database, [querySQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-        NSLog(@"Failed to prepare select statement for getEventsFromTable %@", table);
-        sqlite3_close(_database);
-        return SAFE_ARC_AUTORELEASE(events);
-    }
-
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
-        NSInteger eventId = sqlite3_column_int64(stmt, 0);
-        NSString *eventString = [NSString stringWithUTF8String:(char *)sqlite3_column_text(stmt, 1)];
-        NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
-
-        id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
-        if (eventImmutable == nil) {
-            NSLog(@"Error JSON deserialization of event id %ld from table %@", eventId, table);
-            continue;
+    [self inDatabase:[NSString stringWithFormat:@"getEventsFromTable_%@", table] block:^(sqlite3 *db) {
+        NSString *querySQL;
+        if (upToId > 0 && limit > 0) {
+            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID_AND_LIMIT, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId, limit];
+        } else if (upToId > 0) {
+            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId];
+        } else if (limit > 0) {
+            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_LIMIT, ID_FIELD, EVENT_FIELD, table, limit];
+        } else {
+            querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
         }
 
-        NSMutableDictionary *event = [eventImmutable mutableCopy];
-        [event setValue:[NSNumber numberWithInteger:eventId] forKey:@"event_id"];
-        [events addObject:event];
-        SAFE_ARC_RELEASE(event);
-    }
+        sqlite3_stmt *stmt;
+        if (sqlite3_prepare_v2(db, [querySQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
+            NSLog(@"Failed to prepare select statement for getEventsFromTable %@", table);
+            return;
+        }
 
-    sqlite3_finalize(stmt);
-    sqlite3_close(_database);
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            NSInteger eventId = sqlite3_column_int64(stmt, 0);
+            NSString *eventString = [NSString stringWithUTF8String:(char *)sqlite3_column_text(stmt, 1)];
+            NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
+
+            id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
+            if (eventImmutable == nil) {
+                NSLog(@"Error JSON deserialization of event id %ld from table %@", eventId, table);
+                continue;
+            }
+
+            NSMutableDictionary *event = [eventImmutable mutableCopy];
+            [event setValue:[NSNumber numberWithInteger:eventId] forKey:@"event_id"];
+            [events addObject:event];
+            SAFE_ARC_RELEASE(event);
+        }
+        
+        sqlite3_finalize(stmt);
+    }];
+
     return SAFE_ARC_AUTORELEASE(events);
 }
 
