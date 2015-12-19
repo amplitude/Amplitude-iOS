@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Remove dependency on FMDB, use built-in SQLite3 library.
+
 ## 3.3.0 (December 15, 2015)
 
 * Add support for append user property operation.
