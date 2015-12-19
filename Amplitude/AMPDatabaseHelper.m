@@ -19,12 +19,12 @@
 {
     NSString *_databasePath;
     BOOL _databaseCreated;
-    dispatch_queue_t _queue;
     sqlite3 *_database;
+    dispatch_queue_t _queue;
 }
 
 static NSString *const QUEUE_NAME = @"com.amplitude.db.queue";
-static const void * const kDispatchQueueKey = &kDispatchQueueKey;
+static const void * const kDispatchQueueKey = &kDispatchQueueKey; // some unique key for dispatch queue
 
 static NSString *const EVENT_TABLE_NAME = @"events";
 static NSString *const IDENTIFY_TABLE_NAME = @"identifys";
@@ -92,13 +92,18 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 }
 
 /**
- * Run a block in the queue. Needed because sqlite is not thread-safe. Handles opening and closing of database for the block.
+ * Run queries in the queue. Needed because sqlite is not thread-safe.
+ * Handles opening and closing of database for the block.
  * Returns YES if successfully opened database, else NO.
  */
 - (BOOL)inDatabase:(void (^)(sqlite3 *db))block
 {
+    // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
     AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
-    assert(currentSyncQueue != self && "runOnQueue was called reentrantly on the same queue, which would lead to a deadlock");
+    if (currentSyncQueue == self) {
+        NSLog(@"Should not call inDatabase in block passed to inDatabase");
+        return NO;
+    }
 
     __block BOOL success = YES;
 
@@ -219,11 +224,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
 - (BOOL)deleteDB
 {
-    BOOL success = YES;
     if ([[NSFileManager defaultManager] fileExistsAtPath:_databasePath] == YES) {
-        success = [[NSFileManager defaultManager] removeItemAtPath:_databasePath error:NULL];
+        return [[NSFileManager defaultManager] removeItemAtPath:_databasePath error:NULL];
     }
-    return success;
+    return YES;
 }
 
 - (BOOL)addEvent:(NSString*) event
@@ -260,6 +264,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             NSLog(@"Failed to execute prepared statement to add event to table %@", table);
             success = NO;
         }
+
         sqlite3_finalize(stmt);
     }];
 
@@ -317,7 +322,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             [events addObject:event];
             SAFE_ARC_RELEASE(event);
         }
-        
+
         sqlite3_finalize(stmt);
     }];
 
@@ -351,14 +356,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         }
 
         success &= sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
-        if (value == nil) {
-            success &= sqlite3_bind_null(stmt, 2);
+        if ([table isEqualToString:STORE_TABLE_NAME]) {
+            success &= sqlite3_bind_text(stmt, 2, [(NSString *)value UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
         } else {
-            if ([table isEqualToString:STORE_TABLE_NAME]) {
-                success &= sqlite3_bind_text(stmt, 2, [(NSString *)value UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
-            } else {
-                success &= sqlite3_bind_int64(stmt, 2, [(NSNumber*) value integerValue]) == SQLITE_OK;
-            }
+            success &= sqlite3_bind_int64(stmt, 2, [(NSNumber*)value integerValue]) == SQLITE_OK;
         }
 
         if (!success) {
@@ -541,7 +542,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
     success &= [self inDatabase:^(sqlite3 *db) {
         NSString *removeSQL = [NSString stringWithFormat:REMOVE_EVENT, table, ID_FIELD, eventId];
-        success = [self execSQLString:db SQLString:removeSQL];
+        success &= [self execSQLString:db SQLString:removeSQL];
     }];
 
     return success;
