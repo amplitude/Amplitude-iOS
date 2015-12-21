@@ -67,7 +67,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return instance;
 }
 
-- (id) init
+- (id)init
 {
     if (self = [super init]) {
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
@@ -96,7 +96,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
  * Handles opening and closing of database for the block.
  * Returns YES if successfully opened database, else NO.
  */
-- (BOOL)inDatabase:(void (^)(sqlite3 *db))block
+- (BOOL)inDatabase:(void (^)(sqlite3 *db)) block
 {
     // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
     AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
@@ -114,6 +114,46 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             return;
         }
         block(_database);
+        sqlite3_close(_database);
+    });
+
+    return success;
+}
+
+/**
+ * Run queries in a queue. Needed because sqlite is not thread-safe.
+ * Handles opening and closing of database for the block.
+ * This version also handles preparing a statement from SQL string, and finalizing it as well.
+ * Returns YES if successfully opened database and prepared statement, else NO.
+ */
+- (BOOL)inDatabase:(NSString*) SQLString block:(void (^)(sqlite3 *db, sqlite3_stmt *stmt)) block
+{
+    // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
+    AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
+    if (currentSyncQueue == self) {
+        NSLog(@"Should not call inDatabase in block passed to inDatabase");
+        return NO;
+    }
+
+    __block BOOL success = YES;
+
+    dispatch_sync(_queue, ^() {
+        if (sqlite3_open([_databasePath UTF8String], &_database) != SQLITE_OK) {
+            NSLog(@"Failed to open database");
+            success = NO;
+            return;
+        }
+
+        sqlite3_stmt *stmt;
+        if (sqlite3_prepare_v2(_database, [SQLString UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
+            NSLog(@"Failed to prepare statement for query %@", SQLString);
+            sqlite3_close(_database);
+            success = NO;
+            return;
+        }
+
+        block(_database, stmt);
+        sqlite3_finalize(stmt);
         sqlite3_close(_database);
     });
 
@@ -243,19 +283,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (BOOL)addEventToTable:(NSString*) table event:(NSString*) event
 {
     __block BOOL success = YES;
+    NSString *insertSQL = [NSString stringWithFormat:INSERT_EVENT, table, EVENT_FIELD];
 
-    success &= [self inDatabase:^(sqlite3 *db) {
-        sqlite3_stmt *stmt;
-        NSString *insertSQL = [NSString stringWithFormat:INSERT_EVENT, table, EVENT_FIELD];
-        if (sqlite3_prepare_v2(db, [insertSQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Failed to prepare insert statement for adding event to table %@", table);
-            success = NO;
-            return;
-        }
-
+    success &= [self inDatabase:insertSQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [event UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
             NSLog(@"Failed to bind event text to insert statement for adding event to table %@", table);
-            sqlite3_finalize(stmt);
             success = NO;
             return;
         }
@@ -264,8 +296,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             NSLog(@"Failed to execute prepared statement to add event to table %@", table);
             success = NO;
         }
-
-        sqlite3_finalize(stmt);
     }];
 
     if (!success) {
@@ -287,25 +317,18 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (NSMutableArray*)getEventsFromTable:(NSString*) table upToId:(long long) upToId limit:(long long) limit
 {
     __block NSMutableArray *events = [[NSMutableArray alloc] init];
+    NSString *querySQL;
+    if (upToId > 0 && limit > 0) {
+        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID_AND_LIMIT, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId, limit];
+    } else if (upToId > 0) {
+        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId];
+    } else if (limit > 0) {
+        querySQL = [NSString stringWithFormat:GET_EVENT_WITH_LIMIT, ID_FIELD, EVENT_FIELD, table, limit];
+    } else {
+        querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
+    }
 
-    [self inDatabase:^(sqlite3 *db) {
-        NSString *querySQL;
-        if (upToId > 0 && limit > 0) {
-            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID_AND_LIMIT, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId, limit];
-        } else if (upToId > 0) {
-            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_UPTOID, ID_FIELD, EVENT_FIELD, table, ID_FIELD, upToId];
-        } else if (limit > 0) {
-            querySQL = [NSString stringWithFormat:GET_EVENT_WITH_LIMIT, ID_FIELD, EVENT_FIELD, table, limit];
-        } else {
-            querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
-        }
-
-        sqlite3_stmt *stmt;
-        if (sqlite3_prepare_v2(db, [querySQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Failed to prepare select statement for getEventsFromTable %@", table);
-            return;
-        }
-
+    [self inDatabase:querySQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             NSInteger eventId = sqlite3_column_int64(stmt, 0);
             NSString *eventString = [NSString stringWithUTF8String:(char *)sqlite3_column_text(stmt, 1)];
@@ -322,8 +345,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             [events addObject:event];
             SAFE_ARC_RELEASE(event);
         }
-
-        sqlite3_finalize(stmt);
     }];
 
     return SAFE_ARC_AUTORELEASE(events);
@@ -344,17 +365,9 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (BOOL)insertOrReplaceKeyValueToTable:(NSString*) table key:(NSString*) key value:(NSObject*) value
 {
     __block BOOL success = YES;
+    NSString *insertSQL = [NSString stringWithFormat:INSERT_OR_REPLACE_KEY_VALUE, table, KEY_FIELD, VALUE_FIELD];
 
-    success &= [self inDatabase:^(sqlite3 *db) {
-        NSString *insertSQL = [NSString stringWithFormat:INSERT_OR_REPLACE_KEY_VALUE, table, KEY_FIELD, VALUE_FIELD];
-        sqlite3_stmt *stmt;
-
-        if (sqlite3_prepare_v2(db, [insertSQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Failed to prepare insert statement for adding key %@ value %@ to table %@", key, value, table);
-            success = NO;
-            return;
-        }
-
+    success &= [self inDatabase:insertSQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
         success &= sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
         if ([table isEqualToString:STORE_TABLE_NAME]) {
             success &= sqlite3_bind_text(stmt, 2, [(NSString *)value UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
@@ -364,7 +377,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
         if (!success) {
             NSLog(@"Failed to bind key %@ value %@ to statement", key, value);
-            sqlite3_finalize(stmt);
             return;
         }
 
@@ -372,8 +384,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             NSLog(@"Failed to execute statement to insert key %@ value %@ to table %@", key, value, table);
             success = NO;
         }
-
-        sqlite3_finalize(stmt);
     }];
 
     if (!success) {
@@ -385,20 +395,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (BOOL) deleteKeyFromTable:(NSString*) table key:(NSString*) key
 {
     __block BOOL success = YES;
+    NSString *deleteSQL = [NSString stringWithFormat:DELETE_KEY, table, KEY_FIELD];
 
-    success &= [self inDatabase:^(sqlite3 *db) {
-        NSString *deleteSQL = [NSString stringWithFormat:DELETE_KEY, table, KEY_FIELD];
-        sqlite3_stmt *stmt;
-
-        if (sqlite3_prepare_v2(db, [deleteSQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Could not prepare statement to delete key %@ from table %@", key, table);
-            success = NO;
-            return;
-        }
-
+    success &= [self inDatabase:deleteSQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
             NSLog(@"Failed to bind key to statement to delete key %@ from table %@", key, table);
-            sqlite3_finalize(stmt);
             success = NO;
             return;
         }
@@ -407,8 +408,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             NSLog(@"Failed to execute statement to delete key %@ from table %@", key, table);
             success = NO;
         }
-
-        sqlite3_finalize(stmt);
     }];
 
     if (!success) {
@@ -430,19 +429,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (NSObject*)getValueFromTable:(NSString*) table key:(NSString*) key
 {
     __block NSObject *value = nil;
+    NSString *querySQL = [NSString stringWithFormat:GET_VALUE, KEY_FIELD, VALUE_FIELD, table, KEY_FIELD];
 
-    [self inDatabase:^(sqlite3 *db) {
-        NSString *querySQL = [NSString stringWithFormat:GET_VALUE, KEY_FIELD, VALUE_FIELD, table, KEY_FIELD];
-        sqlite3_stmt *stmt;
-
-        if (sqlite3_prepare_v2(db, [querySQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Failed to prepare statement to get value for key %@ from table %@", key, table);
-            return;
-        }
-
+    [self inDatabase:querySQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
             NSLog(@"Failed to bind key %@ to stmt when getValueFromTable %@", key, table);
-            sqlite3_finalize(stmt);
             return;
         }
 
@@ -457,8 +448,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         } else {
             NSLog(@"Failed to get value for key %@ from table %@", key, table);
         }
-
-        sqlite3_finalize(stmt);
     }];
 
     return SAFE_ARC_AUTORELEASE(value);
@@ -482,23 +471,14 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (int)getEventCountFromTable:(NSString*) table
 {
     __block int count = 0;
+    NSString *querySQL = [NSString stringWithFormat:COUNT_EVENTS, table];
 
-    [self inDatabase:^(sqlite3 *db) {
-        NSString *querySQL = [NSString stringWithFormat:COUNT_EVENTS, table];
-        sqlite3_stmt *stmt;
-
-        if (sqlite3_prepare_v2(db, [querySQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Failed to prepare statement to get event count from table %@", table);
-            return;
-        }
-
+    [self inDatabase:querySQL  block:^(sqlite3 *db, sqlite3_stmt *stmt) {
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             count = sqlite3_column_int(stmt, 0);
         } else {
             NSLog(@"Failed to get event count from table %@", table);
         }
-
-        sqlite3_finalize(stmt);
     }];
 
     return count;
@@ -561,23 +541,14 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (long long)getNthEventIdFromTable:(NSString*) table n:(long long) n
 {
     __block long long eventId = -1;
+    NSString *querySQL = [NSString stringWithFormat:GET_NTH_EVENT_ID, ID_FIELD, table, n-1];
 
-    [self inDatabase:^(sqlite3 *db) {
-        NSString *querySQL = [NSString stringWithFormat:GET_NTH_EVENT_ID, ID_FIELD, table, n-1];
-        sqlite3_stmt *stmt;
-
-        if (sqlite3_prepare_v2(db, [querySQL UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Failed to prepare statement to getNthEventIdFromTable");
-            return;
-        }
-
+    [self inDatabase:querySQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             eventId = sqlite3_column_int64(stmt, 0);
         } else {
             NSLog(@"Failed to getNthEventIdFromTable");
         }
-
-        sqlite3_finalize(stmt);
     }];
 
     return eventId;
