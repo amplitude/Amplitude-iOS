@@ -126,7 +126,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
  * This version also handles preparing a statement from SQL string, and finalizing it as well.
  * Returns YES if successfully opened database and prepared statement, else NO.
  */
-- (BOOL)inDatabase:(NSString*) SQLString block:(void (^)(sqlite3 *db, sqlite3_stmt *stmt)) block
+- (BOOL)inDatabaseWithStatement:(NSString*) SQLString block:(void (^)(sqlite3_stmt *stmt)) block
 {
     // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
     AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
@@ -152,7 +152,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             return;
         }
 
-        block(_database, stmt);
+        block(stmt);
         sqlite3_finalize(stmt);
         sqlite3_close(_database);
     });
@@ -285,7 +285,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block BOOL success = YES;
     NSString *insertSQL = [NSString stringWithFormat:INSERT_EVENT, table, EVENT_FIELD];
 
-    success &= [self inDatabase:insertSQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
+    success &= [self inDatabaseWithStatement:insertSQL block:^(sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [event UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
             NSLog(@"Failed to bind event text to insert statement for adding event to table %@", table);
             success = NO;
@@ -328,7 +328,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         querySQL = [NSString stringWithFormat:GET_EVENT, ID_FIELD, EVENT_FIELD, table];
     }
 
-    [self inDatabase:querySQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
+    [self inDatabaseWithStatement:querySQL block:^(sqlite3_stmt *stmt) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             NSInteger eventId = sqlite3_column_int64(stmt, 0);
             NSString *eventString = [NSString stringWithUTF8String:(char *)sqlite3_column_text(stmt, 1)];
@@ -367,7 +367,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block BOOL success = YES;
     NSString *insertSQL = [NSString stringWithFormat:INSERT_OR_REPLACE_KEY_VALUE, table, KEY_FIELD, VALUE_FIELD];
 
-    success &= [self inDatabase:insertSQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
+    success &= [self inDatabaseWithStatement:insertSQL block:^(sqlite3_stmt *stmt) {
         success &= sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
         if ([table isEqualToString:STORE_TABLE_NAME]) {
             success &= sqlite3_bind_text(stmt, 2, [(NSString *)value UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
@@ -397,7 +397,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block BOOL success = YES;
     NSString *deleteSQL = [NSString stringWithFormat:DELETE_KEY, table, KEY_FIELD];
 
-    success &= [self inDatabase:deleteSQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
+    success &= [self inDatabaseWithStatement:deleteSQL block:^(sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
             NSLog(@"Failed to bind key to statement to delete key %@ from table %@", key, table);
             success = NO;
@@ -431,7 +431,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block NSObject *value = nil;
     NSString *querySQL = [NSString stringWithFormat:GET_VALUE, KEY_FIELD, VALUE_FIELD, table, KEY_FIELD];
 
-    [self inDatabase:querySQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
+    [self inDatabaseWithStatement:querySQL block:^(sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
             NSLog(@"Failed to bind key %@ to stmt when getValueFromTable %@", key, table);
             return;
@@ -473,7 +473,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block int count = 0;
     NSString *querySQL = [NSString stringWithFormat:COUNT_EVENTS, table];
 
-    [self inDatabase:querySQL  block:^(sqlite3 *db, sqlite3_stmt *stmt) {
+    [self inDatabaseWithStatement:querySQL  block:^(sqlite3_stmt *stmt) {
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             count = sqlite3_column_int(stmt, 0);
         } else {
@@ -543,7 +543,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block long long eventId = -1;
     NSString *querySQL = [NSString stringWithFormat:GET_NTH_EVENT_ID, ID_FIELD, table, n-1];
 
-    [self inDatabase:querySQL block:^(sqlite3 *db, sqlite3_stmt *stmt) {
+    [self inDatabaseWithStatement:querySQL block:^(sqlite3_stmt *stmt) {
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             eventId = sqlite3_column_int64(stmt, 0);
         } else {
