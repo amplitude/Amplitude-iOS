@@ -51,6 +51,7 @@
     #define SAFE_ARC_BLOCK_COPY(x) (x)
     #define SAFE_ARC_BLOCK_RELEASE(x)
     #define SAFE_ARC_SUPER_DEALLOC()
+    #define SAFE_ARC_DISPATCH_RELEASE(x) (x)
     #define SAFE_ARC_AUTORELEASE_POOL_START() @autoreleasepool {
     #define SAFE_ARC_AUTORELEASE_POOL_END() }
 #else
@@ -61,6 +62,7 @@
     #define SAFE_ARC_BLOCK_COPY(x) (Block_copy(x))
     #define SAFE_ARC_BLOCK_RELEASE(x) (Block_release(x))
     #define SAFE_ARC_SUPER_DEALLOC() ([super dealloc])
+    #define SAFE_ARC_DISPATCH_RELEASE(x) (dispatch_release(x))
     #define SAFE_ARC_AUTORELEASE_POOL_START() NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     #define SAFE_ARC_AUTORELEASE_POOL_END() [pool release];
 #endif
