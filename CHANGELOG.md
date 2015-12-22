@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Remove dependency on FMDB, use built-in SQLite3 library.
+* Updated DeviceInfo platform strings, added iPhone 6s, iPhone 6s Plus, iPod Touch 6G.
 
 ## 3.3.0 (December 15, 2015)
 
