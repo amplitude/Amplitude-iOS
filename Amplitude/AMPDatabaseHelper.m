@@ -330,18 +330,18 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
     [self inDatabaseWithStatement:querySQL block:^(sqlite3_stmt *stmt) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            NSInteger eventId = sqlite3_column_int64(stmt, 0);
+            long long eventId = sqlite3_column_int64(stmt, 0);
             NSString *eventString = [NSString stringWithUTF8String:(char *)sqlite3_column_text(stmt, 1)];
             NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
 
             id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
             if (eventImmutable == nil) {
-                NSLog(@"Error JSON deserialization of event id %ld from table %@", eventId, table);
+                NSLog(@"Error JSON deserialization of event id %lld from table %@", eventId, table);
                 continue;
             }
 
             NSMutableDictionary *event = [eventImmutable mutableCopy];
-            [event setValue:[NSNumber numberWithInteger:eventId] forKey:@"event_id"];
+            [event setValue:[NSNumber numberWithLongLong:eventId] forKey:@"event_id"];
             [events addObject:event];
             SAFE_ARC_RELEASE(event);
         }
@@ -442,7 +442,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
                 if ([table isEqualToString:STORE_TABLE_NAME]) {
                     value = [[NSString alloc] initWithUTF8String:(char*)sqlite3_column_text(stmt, 1)];
                 } else {
-                    value = [[NSNumber alloc] initWithInteger:sqlite3_column_int64(stmt, 1)];
+                    value = [[NSNumber alloc] initWithLongLong:sqlite3_column_int64(stmt, 1)];
                 }
             }
         } else {
