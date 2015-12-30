@@ -10,7 +10,7 @@ A [demo application](https://github.com/amplitude/iOS-Demo) is available to show
 # Setup #
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
 
-2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file. Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.3.0'`. If you are using CocoaPods, you may skip steps 3 and 4.
+2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file. Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.4.0'`. If you are using CocoaPods, you may skip steps 3 and 4.
 
 3. Copy the `Amplitude` sub-folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".
 
@@ -88,6 +88,8 @@ NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
 [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
 [[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
 ```
+
+Note: the keys should be of type NSString, and the values should be of type NSString, NSNumber, NSArray, NSDictionary, or NSNull. You will see a warning if you try to use an unsupported type.
 
 # User Properties and User Property Operations #
 
