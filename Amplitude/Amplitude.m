@@ -291,7 +291,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSError *error = nil;
         NSData *jsonData = nil;
         @try {
-            jsonData = [NSJSONSerialization dataWithJSONObject:[self makeJSONSerializable:event] options:0 error:&error];
+            jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
         }
         @catch (NSException *exception) {
             NSLog(@"ERROR: NSJSONSerialization error: %@", exception.reason);
@@ -509,9 +509,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
         [event setValue:eventType forKey:@"event_type"];
-        [event setValue:[self replaceWithEmptyJSON:[self truncate:eventProperties]] forKey:@"event_properties"];
+        [event setValue:[self truncate:[AMPUtils makeJSONSerializable:[self replaceWithEmptyJSON:eventProperties]]] forKey:@"event_properties"];
         [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
-        [event setValue:[self replaceWithEmptyJSON:[self truncate:userProperties]] forKey:@"user_properties"];
+        [event setValue:[self truncate:[AMPUtils makeJSONSerializable:[self replaceWithEmptyJSON:userProperties]]] forKey:@"user_properties"];
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
         [event setValue:timestamp forKey:@"timestamp"];
 
@@ -522,7 +522,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self annotateEvent:event];
 
         // convert event dictionary to JSON String
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:NULL];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
             [dbHelper addIdentify:jsonString];
@@ -720,7 +720,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSError *error = nil;
         NSData *eventsDataLocal = nil;
         @try {
-            eventsDataLocal = [NSJSONSerialization dataWithJSONObject:[self makeJSONSerializable:uploadEvents] options:0 error:&error];
+            eventsDataLocal = [NSJSONSerialization dataWithJSONObject:uploadEvents options:0 error:&error];
         }
         @catch (NSException *exception) {
             NSLog(@"ERROR: NSJSONSerialization error: %@", exception.reason);
@@ -1317,56 +1317,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
     return obj;
 }
-
-- (id) makeJSONSerializable:(id) obj
-{
-    if (obj == nil) {
-        return [NSNull null];
-    }
-    if ([obj isKindOfClass:[NSString class]] ||
-        [obj isKindOfClass:[NSNull class]]) {
-        return obj;
-    }
-    if ([obj isKindOfClass:[NSNumber class]]) {
-        if (!isfinite([obj floatValue])) {
-            return [NSNull null];
-        } else {
-            return obj;
-        }
-    }
-    if ([obj isKindOfClass:[NSDate class]]) {
-        return [obj description];
-    }
-    if ([obj isKindOfClass:[NSArray class]]) {
-        NSMutableArray *arr = [NSMutableArray array];
-        id objCopy = [obj copy];
-        for (id i in objCopy) {
-            [arr addObject:[self makeJSONSerializable:i]];
-        }
-        SAFE_ARC_RELEASE(objCopy);
-        return [NSArray arrayWithArray:arr];
-    }
-    if ([obj isKindOfClass:[NSDictionary class]]) {
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        id objCopy = [obj copy];
-        for (id key in objCopy) {
-            NSString *coercedKey;
-            if (![key isKindOfClass:[NSString class]]) {
-                coercedKey = [key description];
-                NSLog(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
-            } else {
-                coercedKey = key;
-            }
-            dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
-        }
-        SAFE_ARC_RELEASE(objCopy);
-        return [NSDictionary dictionaryWithDictionary:dict];
-    }
-    NSString *str = [obj description];
-    NSLog(@"WARNING: Invalid property value type, received %@, coercing to %@", [obj class], str);
-    return str;
-}
-
 
 - (BOOL)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName
 {

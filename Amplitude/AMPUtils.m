@@ -33,4 +33,53 @@
     return SAFE_ARC_AUTORELEASE(uuidStr);
 }
 
++ (id) makeJSONSerializable:(id) obj
+{
+    if (obj == nil) {
+        return [NSNull null];
+    }
+    if ([obj isKindOfClass:[NSString class]] ||
+        [obj isKindOfClass:[NSNull class]]) {
+        return obj;
+    }
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        if (!isfinite([obj floatValue])) {
+            return [NSNull null];
+        } else {
+            return obj;
+        }
+    }
+    if ([obj isKindOfClass:[NSDate class]]) {
+        return [obj description];
+    }
+    if ([obj isKindOfClass:[NSArray class]]) {
+        NSMutableArray *arr = [NSMutableArray array];
+        id objCopy = [obj copy];
+        for (id i in objCopy) {
+            [arr addObject:[self makeJSONSerializable:i]];
+        }
+        SAFE_ARC_RELEASE(objCopy);
+        return [NSArray arrayWithArray:arr];
+    }
+    if ([obj isKindOfClass:[NSDictionary class]]) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        id objCopy = [obj copy];
+        for (id key in objCopy) {
+            NSString *coercedKey;
+            if (![key isKindOfClass:[NSString class]]) {
+                coercedKey = [key description];
+                NSLog(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
+            } else {
+                coercedKey = key;
+            }
+            dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
+        }
+        SAFE_ARC_RELEASE(objCopy);
+        return [NSDictionary dictionaryWithDictionary:dict];
+    }
+    NSString *str = [obj description];
+    NSLog(@"WARNING: Invalid property value type, received %@, coercing to %@", [obj class], str);
+    return str;
+}
+
 @end
