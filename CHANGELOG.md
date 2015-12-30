@@ -2,6 +2,7 @@
 
 * Remove dependency on FMDB, use built-in SQLite3 library.
 * Updated DeviceInfo platform strings, added iPhone 6s, iPhone 6s Plus, iPod Touch 6G.
+* Fixed bug to make sure events can be serialized before saving.
 
 ## 3.3.0 (December 15, 2015)
 
