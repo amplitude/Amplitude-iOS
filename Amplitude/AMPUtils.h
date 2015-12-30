@@ -9,5 +9,6 @@
 @interface AMPUtils : NSObject
 
 + (NSString*)generateUUID;
++ (id) makeJSONSerializable:(id) obj;
 
 @end

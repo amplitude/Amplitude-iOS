@@ -483,4 +483,12 @@
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test2");
 }
 
+-(void)testInvalidJSONEventProperties {
+    NSURL *url = [NSURL URLWithString:@"https://amplitude.com/"];
+    NSDictionary *properties = [NSDictionary dictionaryWithObjectsAndKeys:url, url, url, @"url", nil];
+    [self.amplitude logEvent:@"test" withEventProperties:properties];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([[AMPDatabaseHelper getDatabaseHelper] getEventCount], 1);
+}
+
 @end

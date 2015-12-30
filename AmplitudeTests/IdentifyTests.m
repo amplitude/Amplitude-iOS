@@ -239,4 +239,21 @@
     XCTAssertEqualObjects(identify.userPropertyOperations, expected);
 }
 
+- (void)testMakeJSONSerializableProperty {
+    NSString *urlString = @"https://amplitude.com";
+    NSString *key = @"url";
+    NSURL *url = [NSURL URLWithString:urlString];
+
+    AMPIdentify *identify = [AMPIdentify identify];
+    [identify set:key value:url]; // should coerce NSURL object into a string
+
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:urlString forKey:key];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_SET];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
 @end
