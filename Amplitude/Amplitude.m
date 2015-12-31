@@ -5,10 +5,12 @@
 #define AMPLITUDE_DEBUG 0
 #endif
 
+#ifndef AMPLITUDE_LOG
 #if AMPLITUDE_DEBUG
 #   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
 #else
 #   define AMPLITUDE_LOG(...)
+#endif
 #endif
 
 

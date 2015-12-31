@@ -6,6 +6,18 @@
 //  Copyright (c) 2015 Amplitude. All rights reserved.
 //
 
+#ifndef AMPLITUDE_DEBUG
+#define AMPLITUDE_DEBUG 0
+#endif
+
+#ifndef AMPLITUDE_LOG
+#if AMPLITUDE_DEBUG
+#   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#else
+#   define AMPLITUDE_LOG(...)
+#endif
+#endif
+
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
 #import "AMPARCMacros.h"
@@ -101,7 +113,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
     AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
     if (currentSyncQueue == self) {
-        NSLog(@"Should not call inDatabase in block passed to inDatabase");
+        AMPLITUDE_LOG(@"Should not call inDatabase in block passed to inDatabase");
         return NO;
     }
 
@@ -131,7 +143,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
     AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
     if (currentSyncQueue == self) {
-        NSLog(@"Should not call inDatabase in block passed to inDatabase");
+        AMPLITUDE_LOG(@"Should not call inDatabase in block passed to inDatabase");
         return NO;
     }
 
@@ -146,7 +158,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
         sqlite3_stmt *stmt;
         if (sqlite3_prepare_v2(_database, [SQLString UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            NSLog(@"Failed to prepare statement for query %@", SQLString);
+            AMPLITUDE_LOG(@"Failed to prepare statement for query %@", SQLString);
             sqlite3_close(_database);
             success = NO;
             return;
@@ -165,7 +177,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 {
     char *errMsg;
     if (sqlite3_exec(db, [SQLString UTF8String], NULL, NULL, &errMsg) != SQLITE_OK) {
-        NSLog(@"Failed to exec sql string %@: %s", SQLString, errMsg);
+        AMPLITUDE_LOG(@"Failed to exec sql string %@: %s", SQLString, errMsg);
         return NO;
     }
     return YES;
@@ -287,13 +299,13 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
     success &= [self inDatabaseWithStatement:insertSQL block:^(sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [event UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
-            NSLog(@"Failed to bind event text to insert statement for adding event to table %@", table);
+            AMPLITUDE_LOG(@"Failed to bind event text to insert statement for adding event to table %@", table);
             success = NO;
             return;
         }
 
         if (sqlite3_step(stmt) != SQLITE_DONE) {
-            NSLog(@"Failed to execute prepared statement to add event to table %@", table);
+            AMPLITUDE_LOG(@"Failed to execute prepared statement to add event to table %@", table);
             success = NO;
         }
     }];
@@ -376,12 +388,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         }
 
         if (!success) {
-            NSLog(@"Failed to bind key %@ value %@ to statement", key, value);
+            AMPLITUDE_LOG(@"Failed to bind key %@ value %@ to statement", key, value);
             return;
         }
 
         if (sqlite3_step(stmt) != SQLITE_DONE) {
-            NSLog(@"Failed to execute statement to insert key %@ value %@ to table %@", key, value, table);
+            AMPLITUDE_LOG(@"Failed to execute statement to insert key %@ value %@ to table %@", key, value, table);
             success = NO;
         }
     }];
@@ -399,13 +411,13 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
     success &= [self inDatabaseWithStatement:deleteSQL block:^(sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
-            NSLog(@"Failed to bind key to statement to delete key %@ from table %@", key, table);
+            AMPLITUDE_LOG(@"Failed to bind key to statement to delete key %@ from table %@", key, table);
             success = NO;
             return;
         }
 
         if (sqlite3_step(stmt) != SQLITE_DONE) {
-            NSLog(@"Failed to execute statement to delete key %@ from table %@", key, table);
+            AMPLITUDE_LOG(@"Failed to execute statement to delete key %@ from table %@", key, table);
             success = NO;
         }
     }];
@@ -433,7 +445,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
     [self inDatabaseWithStatement:querySQL block:^(sqlite3_stmt *stmt) {
         if (sqlite3_bind_text(stmt, 1, [key UTF8String], -1, SQLITE_STATIC) != SQLITE_OK) {
-            NSLog(@"Failed to bind key %@ to stmt when getValueFromTable %@", key, table);
+            AMPLITUDE_LOG(@"Failed to bind key %@ to stmt when getValueFromTable %@", key, table);
             return;
         }
 
@@ -446,7 +458,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
                 }
             }
         } else {
-            NSLog(@"Failed to get value for key %@ from table %@", key, table);
+            AMPLITUDE_LOG(@"Failed to get value for key %@ from table %@", key, table);
         }
     }];
 
@@ -477,7 +489,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             count = sqlite3_column_int(stmt, 0);
         } else {
-            NSLog(@"Failed to get event count from table %@", table);
+            AMPLITUDE_LOG(@"Failed to get event count from table %@", table);
         }
     }];
 
@@ -547,7 +559,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         if (sqlite3_step(stmt) == SQLITE_ROW) {
             eventId = sqlite3_column_int64(stmt, 0);
         } else {
-            NSLog(@"Failed to getNthEventIdFromTable");
+            AMPLITUDE_LOG(@"Failed to getNthEventIdFromTable");
         }
     }];
 
