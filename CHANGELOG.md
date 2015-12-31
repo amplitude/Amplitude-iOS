@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 3.4.1 (December 31, 2015)
+
+* Guarding AMPDatabaseHelper logging with a debug flag.
+
 ## 3.4.0 (December 29, 2015)
 
 * Remove dependency on FMDB, use built-in SQLite3 library.
