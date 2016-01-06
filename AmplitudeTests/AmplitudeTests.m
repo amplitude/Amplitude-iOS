@@ -491,4 +491,23 @@
     XCTAssertEqual([[AMPDatabaseHelper getDatabaseHelper] getEventCount], 1);
 }
 
+-(void)testClearUserProperties {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude setEventUploadThreshold:2];
+
+    [self.amplitude clearUserProperties];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+
+    NSDictionary *expected = [NSDictionary dictionaryWithObject:@"-" forKey:@"$clearAll"];
+    NSDictionary *event = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
+    XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
+    XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
+}
+
 @end

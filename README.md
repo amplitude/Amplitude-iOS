@@ -175,6 +175,14 @@ NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
 [[Amplitude instance] setUserProperties:userProperties];
 ```
 
+### Clearing User Properties with `clearUserProperties` ###
+
+You may use `clearUserProperties` to clear all user properties at once. Note: the result is irreversible!
+
+``` objective-c
+[[Amplitude instance] clearUserProperties];
+```
+
 # Allowing Users to Opt Out
 
 To stop all event and session logging for a user, call setOptOut:
