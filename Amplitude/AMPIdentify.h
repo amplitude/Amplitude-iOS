@@ -13,6 +13,7 @@
 + (instancetype)identify;
 - (AMPIdentify*)add:(NSString*) property value:(NSObject*) value;
 - (AMPIdentify*)append:(NSString*) property value:(NSObject*) value;
+- (AMPIdentify*)clearAll;
 - (AMPIdentify*)set:(NSString*) property value:(NSObject*) value;
 - (AMPIdentify*)setOnce:(NSString*) property value:(NSObject*) value;
 - (AMPIdentify*)unset:(NSString*) property;

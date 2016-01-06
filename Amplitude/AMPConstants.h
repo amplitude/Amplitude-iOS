@@ -21,6 +21,7 @@ extern const int kAMPMaxStringLength;
 extern NSString *const IDENTIFY_EVENT;
 extern NSString *const AMP_OP_ADD;
 extern NSString *const AMP_OP_APPEND;
+extern NSString *const AMP_OP_CLEAR_ALL;
 extern NSString *const AMP_OP_SET;
 extern NSString *const AMP_OP_SET_ONCE;
 extern NSString *const AMP_OP_UNSET;

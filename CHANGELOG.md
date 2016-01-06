@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add ability to clear all user properties.
+
 ## 3.4.1 (December 31, 2015)
 
 * Guarding AMPDatabaseHelper logging with a debug flag.

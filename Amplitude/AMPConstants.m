@@ -22,6 +22,7 @@ const int kAMPMaxStringLength = 1024;
 NSString *const IDENTIFY_EVENT = @"$identify";
 NSString *const AMP_OP_ADD = @"$add";
 NSString *const AMP_OP_APPEND = @"$append";
+NSString *const AMP_OP_CLEAR_ALL = @"$clearAll";
 NSString *const AMP_OP_SET = @"$set";
 NSString *const AMP_OP_SET_ONCE = @"$setOnce";
 NSString *const AMP_OP_UNSET = @"$unset";

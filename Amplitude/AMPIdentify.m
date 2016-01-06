@@ -57,6 +57,18 @@
     return self;
 }
 
+- (AMPIdentify*)clearAll
+{
+    if ([_userPropertyOperations count] > 0) {
+        if ([_userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] == nil) {
+            NSLog(@"Need to send $clearAll on its own Identify object without any other operations, skipping $clearAll");
+        }
+        return self;
+    }
+    [_userPropertyOperations setObject:@"-" forKey:AMP_OP_CLEAR_ALL];
+    return self;
+}
+
 - (AMPIdentify*)set:(NSString*) property value:(NSObject*) value
 {
     [self addToUserProperties:AMP_OP_SET property:property value:value];
@@ -77,6 +89,17 @@
 
 - (void)addToUserProperties:(NSString*)operation property:(NSString*) property value:(NSObject*) value
 {
+    if (value == nil) {
+        NSLog(@"Attempting to perform operation '%@' with nil value for property '%@', ignoring", operation, property);
+        return;
+    }
+
+    // check that clearAll wasn't already used in this Identify
+    if ([_userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] != nil) {
+        NSLog(@"This Identify already contains a $clearAll operation, ignoring operation %@", operation);
+        return;
+    }
+
     // check if property already used in a previous operation
     if ([_userProperties containsObject:property]) {
         NSLog(@"Already used property '%@' in previous operation, ignoring for operation '%@'", property, operation);
