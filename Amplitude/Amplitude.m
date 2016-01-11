@@ -1142,6 +1142,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self setUserProperties:userProperties];
 }
 
+- (void)clearUserProperties
+{
+    AMPIdentify *identify = [[AMPIdentify identify] clearAll];
+    [self identify:identify];
+}
+
 - (void)setUserId:(NSString*) userId
 {
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
