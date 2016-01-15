@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.5.0 (January 15, 2016)
+
 * Add ability to clear all user properties.
 
 ## 3.4.1 (December 31, 2015)
