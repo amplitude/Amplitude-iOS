@@ -10,7 +10,7 @@ A [demo application](https://github.com/amplitude/iOS-Demo) is available to show
 # Setup #
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
 
-2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file. Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.4.1'`. If you are using CocoaPods, you may skip steps 3 and 4.
+2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file. Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.5.0'`. If you are using CocoaPods, you may skip steps 3 and 4.
 
 3. Copy the `Amplitude` sub-folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".
 
@@ -235,7 +235,11 @@ In either case, you can call Amplitude methods with `Amplitude.instance().method
 This SDK automatically grabs useful data from the phone, including app version, phone model, operating system version, and carrier information.
 
 ### Location Tracking ###
-If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app. Amplitude only polls for a location once on startup of the app, once on each app open, and once when the permission is first granted. There is no continuous tracking of location, although you can force Amplitude to grab the latest location by calling `[[Amplitude instance] updateLocation]`. Note this does consume more resources on the user's device, so use this wisely. If you wish to disable location tracking done by the app, you can call `[[Amplitude instance] disableLocationListening]` at any point. If you want location tracking disabled on startup of the app, call disableLocationListening before you call `initializeApiKey:`. You can always reenable location tracking through Amplitude with `[[Amplitude instance] enableLocationListening]`.
+If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.
+
+Amplitude only polls for a location once on startup of the app, once on each app open, and once when the permission is first granted. There is no continuous tracking of location, although you can force Amplitude to grab the latest location by calling `[[Amplitude instance] updateLocation]`. Note this does consume more resources on the user's device, so use this wisely.
+
+If you wish to disable location tracking done by the app, you can call `[[Amplitude instance] disableLocationListening]` at any point. If you want location tracking disabled on startup of the app, call disableLocationListening before you call `initializeApiKey:`. You can always reenable location tracking through Amplitude with `[[Amplitude instance] enableLocationListening]`.
 
 ### Custom Device IDs ###
 Device IDs are randomly generated. You can, however, choose to instead use the identifierForVendor (if available) by calling `[[Amplitude instance] useAdvertisingIdForDeviceId]` before initializing with your API key. You can also retrieve the Device ID that Amplitude uses with `[[Amplitude instance] getDeviceId]`.
