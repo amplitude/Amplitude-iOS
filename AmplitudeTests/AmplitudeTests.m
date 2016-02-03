@@ -52,6 +52,27 @@
     }] sendAsynchronousRequest:OCMOCK_ANY queue:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 }
 
+- (void)testInstanceWithName {
+    Amplitude *a = [Amplitude instance];
+    Amplitude *b = [Amplitude instanceWithName:@""];
+    Amplitude *c = [Amplitude instanceWithName:nil];
+    Amplitude *d = [Amplitude instanceWithName:[NSNull null]];
+    Amplitude *e = [Amplitude instanceWithName:kAMPDefaultInstance];
+    Amplitude *f = [Amplitude instanceWithName:@"app1"];
+    Amplitude *g = [Amplitude instanceWithName:@"app2"];
+
+    XCTAssertEqual(a, b);
+    XCTAssertEqual(b, c);
+    XCTAssertEqual(c, d);
+    XCTAssertEqual(d, e);
+    XCTAssertEqual(e, a);
+    XCTAssertEqual(e, [Amplitude instance]);
+    XCTAssertNotEqual(e,f);
+    XCTAssertEqual(f, [Amplitude instanceWithName:@"app1"]);
+    XCTAssertNotEqual(f,g);
+    XCTAssertEqual(g, [Amplitude instanceWithName:@"app2"]);
+}
+
 - (void)testInitializeLoadNilUserIdFromEventData {
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nil);

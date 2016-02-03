@@ -82,6 +82,8 @@
 
 + (Amplitude *)instance;
 
++ (Amplitude *)instanceWithName:(NSString*) instanceName;
+
 /*!
  @method
 

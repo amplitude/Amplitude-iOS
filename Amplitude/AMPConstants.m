@@ -8,6 +8,7 @@ NSString *const kAMPPlatform = @"iOS";
 NSString *const kAMPVersion = @"3.5.0";
 NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
+NSString *const kAMPDefaultInstance = @"$defaultInstance";
 const int kAMPApiVersion = 3;
 const int kAMPDBVersion = 3;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
