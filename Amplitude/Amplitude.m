@@ -60,11 +60,11 @@ static NSString *const OPT_OUT = @"opt_out";
 static NSString *const USER_ID = @"user_id";
 static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
-
 @implementation Amplitude {
     NSString *_eventsDataPath;
     NSMutableDictionary *_propertyList;
     NSString *_propertyListPath;
+    NSString *_instanceName;
 
     BOOL _updateScheduled;
     BOOL _updatingCurrently;
@@ -79,10 +79,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPLocationManagerDelegate *_locationManagerDelegate;
 
     BOOL _inForeground;
-
     BOOL _backoffUpload;
     int _backoffUploadBatchSize;
-
     BOOL _offline;
 }
 
@@ -91,12 +89,31 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #pragma mark - Static methods
 
 + (Amplitude *)instance {
-    static Amplitude *_instance = nil;
+    return [Amplitude instanceWithName:nil];
+}
+
++ (Amplitude *)instanceWithName:(NSString*)instanceName {
+    static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _instance = [[self alloc] init];
+        _instances = [[NSMutableDictionary alloc] init];
     });
-    return _instance;
+
+    if (instanceName == nil || [instanceName isKindOfClass:[NSNull class]] || [instanceName length] == 0) {
+        instanceName = kAMPDefaultInstance;
+    }
+
+    Amplitude *client = nil;
+    @synchronized(_instances) {
+        client = [_instances objectForKey:instanceName];
+        if (client == nil) {
+            client = [[self alloc] initWithInstanceName:instanceName];
+            [_instances setObject:client forKey:instanceName];
+            SAFE_ARC_AUTORELEASE(client);
+        }
+    }
+
+    return client;
 }
 
 + (void)initializeApiKey:(NSString*) apiKey {
@@ -164,10 +181,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [[Amplitude instance] updateLocation];
 }
 
-
 #pragma mark - Main class methods
 - (id)init
 {
+    return [self initWithInstanceName:nil];
+}
+
+- (id)initWithInstanceName:(NSString*) instanceName
+{
+    if (instanceName == nil || [instanceName isKindOfClass:[NSNull class]] || [instanceName length] == 0) {
+        instanceName = kAMPDefaultInstance;
+    }
+
     if (self = [super init]) {
 
 #if AMPLITUDE_SSL_PINNING
@@ -184,6 +209,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _useAdvertisingIdForDeviceId = NO;
         _backoffUpload = NO;
         _offline = NO;
+        _instanceName = SAFE_ARC_RETAIN(instanceName);
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
@@ -370,6 +396,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_RELEASE(_locationManagerDelegate);
     SAFE_ARC_RELEASE(_propertyList);
     SAFE_ARC_RELEASE(_propertyListPath);
+    SAFE_ARC_RELEASE(_instanceName);
 
     SAFE_ARC_SUPER_DEALLOC();
 }
@@ -702,7 +729,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 
-    @synchronized ([Amplitude class]) {
+    @synchronized (self) {
         if (_updatingCurrently) {
             return;
         }

@@ -7,6 +7,7 @@ extern NSString *const kAMPPlatform;
 extern NSString *const kAMPVersion;
 extern NSString *const kAMPEventLogDomain;
 extern NSString *const kAMPEventLogUrl;
+extern NSString *const kAMPDefaultInstance;
 extern const int kAMPApiVersion;
 extern const int kAMPDBVersion;
 extern const int kAMPDBFirstVersion;
