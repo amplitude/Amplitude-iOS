@@ -23,6 +23,8 @@
 #import "AMPARCMacros.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPARCMacros.h"
+#import "AMPUtils.h"
+#import "AMPConstants.h"
 
 @interface AMPDatabaseHelper()
 @end
@@ -71,19 +73,51 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
 + (AMPDatabaseHelper*)getDatabaseHelper
 {
-    static AMPDatabaseHelper *instance = nil;
+    return [AMPDatabaseHelper getDatabaseHelper:nil];
+}
+
++ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName
+{
+    static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        instance = [[AMPDatabaseHelper alloc] init];
+        _instances = [[NSMutableDictionary alloc] init];
     });
-    return instance;
+
+    if (instanceName == nil || [AMPUtils isEmptyString:instanceName]) {
+        instanceName = kAMPDefaultInstance;
+    }
+
+    AMPDatabaseHelper *dbHelper = nil;
+    @synchronized(_instances) {
+        dbHelper = [_instances objectForKey:instanceName];
+        if (dbHelper == nil) {
+            dbHelper = [[AMPDatabaseHelper alloc] init];
+            [_instances setObject:dbHelper forKey:instanceName];
+            SAFE_ARC_RELEASE(dbHelper);
+        }
+    }
+    return dbHelper;
 }
 
 - (id)init
 {
+    return [self initWithInstanceName:nil];
+}
+
+- (id)initWithInstanceName:(NSString*) instanceName
+{
+    if ([AMPUtils isEmptyString:instanceName]) {
+        instanceName = kAMPDefaultInstance;
+    }
+
     if (self = [super init]) {
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-        _databasePath = SAFE_ARC_RETAIN([databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"]);
+        NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
+        if (![instanceName isEqualToString:kAMPDefaultInstance]) {
+            databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];
+        }
+        _databasePath = SAFE_ARC_RETAIN(databasePath);
         _queue = dispatch_queue_create([QUEUE_NAME UTF8String], NULL);
         dispatch_queue_set_specific(_queue, kDispatchQueueKey, (__bridge void *)self, NULL);
         if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {

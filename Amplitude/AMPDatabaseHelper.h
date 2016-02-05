@@ -9,6 +9,7 @@
 @interface AMPDatabaseHelper : NSObject
 
 + (AMPDatabaseHelper*)getDatabaseHelper;
++ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName;
 - (BOOL)createTables;
 - (BOOL)dropTables;
 - (BOOL)upgrade:(int) oldVersion newVersion:(int) newVersion;
