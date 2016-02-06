@@ -73,6 +73,19 @@
     XCTAssertEqual(g, [Amplitude instanceWithName:@"app2"]);
 }
 
+- (void)testInitWithInstanceName {
+    Amplitude *a = [Amplitude instanceWithName:@"APP1"];
+    [a flushQueueWithQueue:a.initializerQueue];
+    XCTAssertEqualObjects(a.instanceName, @"app1");
+    XCTAssertTrue([a.propertyListPath rangeOfString:@"com.amplitude.plist_app1"].location != NSNotFound);
+
+    Amplitude *b = [Amplitude instanceWithName:[kAMPDefaultInstance uppercaseString]];
+    [b flushQueueWithQueue:b.initializerQueue];
+    XCTAssertEqualObjects(b.instanceName, kAMPDefaultInstance);
+    XCTAssertTrue([b.propertyListPath rangeOfString:@"com.amplitude.plist"].location != NSNotFound);
+    XCTAssertTrue([ b.propertyListPath rangeOfString:@"com.amplitude.plist_"].location == NSNotFound);
+}
+
 - (void)testInitializeLoadNilUserIdFromEventData {
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nil);
@@ -81,6 +94,88 @@
     NSDictionary *event = [self.amplitude getLastEvent];
     XCTAssertEqual([event objectForKey:@"user_id"], nil);
     XCTAssertFalse([[event allKeys] containsObject:@"user_id"]);
+}
+
+- (void)testSeparateInstancesLogEventsSeparate {
+    NSString *newInstance1 = @"newApp1";
+    NSString *newApiKey1 = @"1234567890";
+    NSString *newInstance2 = @"newApp2";
+    NSString *newApiKey2 = @"0987654321";
+
+    AMPDatabaseHelper *oldDbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    AMPDatabaseHelper *newDBHelper1 = [AMPDatabaseHelper getDatabaseHelper:newInstance1];
+    AMPDatabaseHelper *newDBHelper2 = [AMPDatabaseHelper getDatabaseHelper:newInstance2];
+
+    // reset databases
+    [oldDbHelper resetDB:NO];
+    [newDBHelper1 resetDB:NO];
+    [newDBHelper2 resetDB:NO];
+
+    // setup existing database file, init default instance
+    [oldDbHelper insertOrReplaceKeyValue:@"device_id" value:@"oldDeviceId"];
+    [oldDbHelper insertOrReplaceKeyLongValue:@"sequence_number" value:[NSNumber numberWithLongLong:1000]];
+    [oldDbHelper addEvent:@"{\"event_type\":\"oldEvent\"}"];
+    [oldDbHelper addIdentify:@"{\"event_type\":\"$identify\"}"];
+    [oldDbHelper addIdentify:@"{\"event_type\":\"$identify\"}"];
+
+    XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
+    [[Amplitude instance] initializeApiKey:apiKey];
+    [[Amplitude instance] flushQueue];
+    XCTAssertEqualObjects([[Amplitude instance] getDeviceId], @"oldDeviceId");
+    XCTAssertEqual([[Amplitude instance] getNextSequenceNumber], 1001);
+
+    XCTAssertNil([newDBHelper1 getValue:@"device_id"]);
+    XCTAssertNil([newDBHelper2 getValue:@"device_id"]);
+    XCTAssertEqualObjects([oldDbHelper getLongValue:@"sequence_number"], [NSNumber numberWithLongLong:1001]);
+    XCTAssertNil([newDBHelper1 getLongValue:@"sequence_number"]);
+    XCTAssertNil([newDBHelper2 getLongValue:@"sequence_number"]);
+
+    // init first new app and verify separate database
+    [[Amplitude instanceWithName:newInstance1] initializeApiKey:newApiKey1];
+    [[Amplitude instanceWithName:newInstance1] flushQueue];
+    XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], @"oldDeviceId");
+    XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], [newDBHelper1 getValue:@"device_id"]);
+    XCTAssertEqual([[Amplitude instanceWithName:newInstance1] getNextSequenceNumber], 1);
+    XCTAssertEqual([newDBHelper1 getEventCount], 0);
+    XCTAssertEqual([newDBHelper1 getIdentifyCount], 0);
+
+    // init second new app and verify separate database
+    [[Amplitude instanceWithName:newInstance2] initializeApiKey:newApiKey2];
+    [[Amplitude instanceWithName:newInstance2] flushQueue];
+    XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], @"oldDeviceId");
+    XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], [newDBHelper2 getValue:@"device_id"]);
+    XCTAssertEqual([[Amplitude instanceWithName:newInstance2] getNextSequenceNumber], 1);
+    XCTAssertEqual([newDBHelper2 getEventCount], 0);
+    XCTAssertEqual([newDBHelper2 getIdentifyCount], 0);
+
+    // verify old database still intact
+    XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
+    XCTAssertEqualObjects([oldDbHelper getLongValue:@"sequence_number"], [NSNumber numberWithLongLong:1001]);
+    XCTAssertEqual([oldDbHelper getEventCount], 1);
+    XCTAssertEqual([oldDbHelper getIdentifyCount], 2);
+
+    // verify both apps can modify database independently and not affect old database
+    [newDBHelper1 insertOrReplaceKeyValue:@"device_id" value:@"fakeDeviceId"];
+    XCTAssertEqualObjects([newDBHelper1 getValue:@"device_id"], @"fakeDeviceId");
+    XCTAssertNotEqualObjects([newDBHelper2 getValue:@"device_id"], @"fakeDeviceId");
+    XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
+    [newDBHelper1 addIdentify:@"{\"event_type\":\"$identify\"}"];
+    XCTAssertEqual([newDBHelper1 getIdentifyCount], 1);
+    XCTAssertEqual([newDBHelper2 getIdentifyCount], 0);
+    XCTAssertEqual([oldDbHelper getIdentifyCount], 2);
+
+    [newDBHelper2 insertOrReplaceKeyValue:@"device_id" value:@"brandNewDeviceId"];
+    XCTAssertEqualObjects([newDBHelper1 getValue:@"device_id"], @"fakeDeviceId");
+    XCTAssertEqualObjects([newDBHelper2 getValue:@"device_id"], @"brandNewDeviceId");
+    XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
+    [newDBHelper2 addEvent:@"{\"event_type\":\"testEvent2\"}"];
+    [newDBHelper2 addEvent:@"{\"event_type\":\"testEvent3\"}"];
+    XCTAssertEqual([newDBHelper1 getEventCount], 0);
+    XCTAssertEqual([newDBHelper2 getEventCount], 2);
+    XCTAssertEqual([oldDbHelper getEventCount], 1);
+
+    [newDBHelper1 deleteDB];
+    [newDBHelper2 deleteDB];
 }
 
 - (void)testInitializeLoadUserIdFromEventData {

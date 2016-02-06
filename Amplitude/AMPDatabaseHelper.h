@@ -8,6 +8,8 @@
 
 @interface AMPDatabaseHelper : NSObject
 
+@property (nonatomic, strong, readonly) NSString *databasePath;
+
 + (AMPDatabaseHelper*)getDatabaseHelper;
 + (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName;
 - (BOOL)createTables;

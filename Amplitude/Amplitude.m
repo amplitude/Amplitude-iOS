@@ -63,8 +63,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 @implementation Amplitude {
     NSString *_eventsDataPath;
     NSMutableDictionary *_propertyList;
-    NSString *_propertyListPath;
-    NSString *_instanceName;
 
     BOOL _updateScheduled;
     BOOL _updatingCurrently;
@@ -103,6 +101,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (instanceName == nil || [AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
+    instanceName = [instanceName lowercaseString];
 
     Amplitude *client = nil;
     @synchronized(_instances) {
@@ -193,6 +192,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
+    instanceName = [instanceName lowercaseString];
 
     if (self = [super init]) {
 

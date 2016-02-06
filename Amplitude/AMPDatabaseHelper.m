@@ -31,7 +31,6 @@
 
 @implementation AMPDatabaseHelper
 {
-    NSString *_databasePath;
     BOOL _databaseCreated;
     sqlite3 *_database;
     dispatch_queue_t _queue;
@@ -87,12 +86,13 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     if (instanceName == nil || [AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
+    instanceName = [instanceName lowercaseString];
 
     AMPDatabaseHelper *dbHelper = nil;
     @synchronized(_instances) {
         dbHelper = [_instances objectForKey:instanceName];
         if (dbHelper == nil) {
-            dbHelper = [[AMPDatabaseHelper alloc] init];
+            dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName];
             [_instances setObject:dbHelper forKey:instanceName];
             SAFE_ARC_RELEASE(dbHelper);
         }
