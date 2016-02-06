@@ -215,6 +215,42 @@ Then call
 
 after a successful purchase transaction. `receipt:` takes the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
 
+# Tracking Events to Multiple Amplitude Apps #
+
+The Amplitude iOS SDK supports logging events to multiple Amplitude apps (multiple API keys). If you want to log events to multiple Amplitude apps, you need to use separate instances for each Amplitude app. Each new instance created will have its own apiKey, userId, deviceId, and settings.
+
+You will need to assign a name to each Amplitude app / instance, and use that name consistently when fetching that instance to call functions. **IMPORTANT: Once you have chosen a name for that instance you cannot change it.** Every instance's data and settings are tied to its name, and you will need to continue using that instance name for all future versions of your app to maintain data continuity, so chose your instance names carefully. Note these names do not need to correspond to the names of your apps in the Amplitude dashboards, but they need to remain consistent throughout your code. You also need to be sure that each instance is initialized with the correct apiKey.
+
+Instance names must be nonnil and nonempty strings. The names are case-insensitive. You can fetch each instance by name by calling `[Amplitude instanceWithName:@"INSTANCE_NAME"]`.
+
+As mentioned before, each new instance created will have its own apiKey, userId, deviceId, and settings. **You will have to reconfigure all the settings for each instance.** For example if you want to track session events you would have to call `setTrackingSessionEvents:YES` on each instance. This does give you the freedom to have different settings for each instance.
+
+### Backwards Compatibility - Upgrading from a Single Amplitude App to Multiple Apps ###
+
+If you were tracking users with a single app before v3.6.0, you might be wondering what will happen to existing data, existing settings, and returning users (users who already have a deviceId and/or userId). All of the historical data and settings are maintained on the `default` instance, which is fetched without an instance name: `[Amplitude instance]`. This is the way you are used to interacting with the Amplitude SDK, which means all of your existing tracking code should work as before.
+
+### Example of how to Set Up and Log Events to Two Separate Apps ###
+
+``` objective-c
+[[Amplitude instance] initializeApiKey:@"12345"]; // existing app, existing settings, and existing API key
+[[Amplitude instanceWithName:@"new_app"] initializeApiKey:@"67890"]; // new app, new API key
+
+[[Amplitude instanceWithName:@"new_app"] setUserId:@"joe@gmail.com"]; // need to reconfigure new app
+[[Amplitude instanceWithName:@"new_app"] logEvent:@"Clicked"];
+
+AMPIdentify *identify = [[AMPIdentify identify] add:@"karma" value:[NSNumber numberWithInt:1]];
+[[Amplitude instance] identify:identify];
+[[Amplitude instance] logEvent:@"Viewed Home Page"];
+```
+
+### Synchronizing Device Ids Between Apps ###
+
+As mentioned before, each new instance will have its own deviceId. If you want your apps to share the same deviceId, you can do so *after initialization* via the `getDeviceId` and `setDeviceId` methods. Here's an example of how to copy the existing deviceId to the `new_app` instance:
+``` objective-c
+NSString *deviceId = [[Amplitude instance] getDeviceId]; // existing deviceId
+[[Amplitude instanceWithName:@"new_app"] setDeviceId:deviceId]; // transferring existing deviceId to new app
+```
+
 # Swift #
 
 This SDK will work with Swift. If you are copying the source files or using CocoaPods without the `use_frameworks!` directive, you should create a bridging header as documented [here](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html) and add the following line to your bridging header:
