@@ -155,7 +155,8 @@
     XCTAssertEqual([oldDbHelper getIdentifyCount], 2);
 
     // verify both apps can modify database independently and not affect old database
-    [newDBHelper1 insertOrReplaceKeyValue:@"device_id" value:@"fakeDeviceId"];
+    [[Amplitude instanceWithName:newInstance1] setDeviceId:@"fakeDeviceId"];
+    [[Amplitude instanceWithName:newInstance1] flushQueue];
     XCTAssertEqualObjects([newDBHelper1 getValue:@"device_id"], @"fakeDeviceId");
     XCTAssertNotEqualObjects([newDBHelper2 getValue:@"device_id"], @"fakeDeviceId");
     XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
@@ -164,7 +165,8 @@
     XCTAssertEqual([newDBHelper2 getIdentifyCount], 0);
     XCTAssertEqual([oldDbHelper getIdentifyCount], 2);
 
-    [newDBHelper2 insertOrReplaceKeyValue:@"device_id" value:@"brandNewDeviceId"];
+    [[Amplitude instanceWithName:newInstance2] setDeviceId:@"brandNewDeviceId"];
+    [[Amplitude instanceWithName:newInstance2] flushQueue];
     XCTAssertEqualObjects([newDBHelper1 getValue:@"device_id"], @"fakeDeviceId");
     XCTAssertEqualObjects([newDBHelper2 getValue:@"device_id"], @"brandNewDeviceId");
     XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
