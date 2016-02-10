@@ -60,6 +60,7 @@ static NSString *const OPT_OUT = @"opt_out";
 static NSString *const USER_ID = @"user_id";
 static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
+
 @implementation Amplitude {
     NSString *_eventsDataPath;
     NSMutableDictionary *_propertyList;
