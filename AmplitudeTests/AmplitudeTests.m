@@ -56,15 +56,13 @@
     Amplitude *a = [Amplitude instance];
     Amplitude *b = [Amplitude instanceWithName:@""];
     Amplitude *c = [Amplitude instanceWithName:nil];
-    Amplitude *d = [Amplitude instanceWithName:[NSNull null]];
     Amplitude *e = [Amplitude instanceWithName:kAMPDefaultInstance];
     Amplitude *f = [Amplitude instanceWithName:@"app1"];
     Amplitude *g = [Amplitude instanceWithName:@"app2"];
 
     XCTAssertEqual(a, b);
     XCTAssertEqual(b, c);
-    XCTAssertEqual(c, d);
-    XCTAssertEqual(d, e);
+    XCTAssertEqual(c, e);
     XCTAssertEqual(e, a);
     XCTAssertEqual(e, [Amplitude instance]);
     XCTAssertNotEqual(e,f);
@@ -112,15 +110,14 @@
     [newDBHelper2 resetDB:NO];
 
     // setup existing database file, init default instance
-    [oldDbHelper insertOrReplaceKeyValue:@"device_id" value:@"oldDeviceId"];
     [oldDbHelper insertOrReplaceKeyLongValue:@"sequence_number" value:[NSNumber numberWithLongLong:1000]];
     [oldDbHelper addEvent:@"{\"event_type\":\"oldEvent\"}"];
     [oldDbHelper addIdentify:@"{\"event_type\":\"$identify\"}"];
     [oldDbHelper addIdentify:@"{\"event_type\":\"$identify\"}"];
 
-    XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
-    [[Amplitude instance] initializeApiKey:apiKey];
+    [[Amplitude instance] setDeviceId:@"oldDeviceId"];
     [[Amplitude instance] flushQueue];
+    XCTAssertEqualObjects([oldDbHelper getValue:@"device_id"], @"oldDeviceId");
     XCTAssertEqualObjects([[Amplitude instance] getDeviceId], @"oldDeviceId");
     XCTAssertEqual([[Amplitude instance] getNextSequenceNumber], 1001);
 
@@ -238,7 +235,7 @@
 
 - (void)testLogEventUploadLogic {
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                             @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
                                             }];
 
@@ -267,7 +264,7 @@
 - (void)testRequestTooLargeBackoffLogic {
     [self.amplitude setEventUploadThreshold:2];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:413 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:413 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
 
@@ -319,7 +316,7 @@
     XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
 
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];
@@ -337,7 +334,7 @@
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:7];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];
@@ -490,7 +487,7 @@
 -(void)testSetOffline {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];
@@ -519,7 +516,7 @@
 
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];

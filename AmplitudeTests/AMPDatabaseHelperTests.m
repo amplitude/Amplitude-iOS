@@ -34,7 +34,6 @@
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:nil]);
     XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:@""]);
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:[NSNull null]]);
     XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:kAMPDefaultInstance]);
 
     AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a"];
