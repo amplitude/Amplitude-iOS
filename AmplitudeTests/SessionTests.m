@@ -5,6 +5,11 @@
 //  Created by Curtis on 9/24/14.
 //  Copyright (c) 2014 Amplitude. All rights reserved.
 //
+//  NOTE: Having a lot of OCMock partialMockObjects causes tests to be flakey.
+//        Combined a lot of tests into one large test so they share a single
+//        mockAmplitude object instead creating lots of separate ones.
+//        This seems to have fixed the flakiness issue.
+//
 
 #import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>

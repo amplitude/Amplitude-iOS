@@ -208,16 +208,16 @@
 			isa = PBXGroup;
 			children = (
 				60BA927D1C23768E0043178E /* AMPDatabaseHelperTests.m */,
-				60BA927E1C23768E0043178E /* IdentifyTests.m */,
 				9DFBB9C51AB0D1DD0017F703 /* Amplitude+Test.h */,
 				9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */,
 				602A9A6A1B754E7B0067230C /* AmplitudeTests.m */,
 				E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */,
 				9DFBB9C81AB0D26E0017F703 /* BaseTestCase.h */,
 				9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */,
+				9DDE2C021AE7069200B740EC /* DeviceInfoTests.m */,
+				60BA927E1C23768E0043178E /* IdentifyTests.m */,
 				9D40E1941AB3F6550095C7C6 /* InvalidCertificationAuthority.der */,
 				9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */,
-				9DDE2C021AE7069200B740EC /* DeviceInfoTests.m */,
 				9D82D1D71AC1006600C3F321 /* SetupTests.m */,
 				9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */,
 				E98C05301A48E7FE00800C63 /* Supporting Files */,
