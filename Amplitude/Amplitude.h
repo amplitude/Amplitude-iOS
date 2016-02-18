@@ -245,7 +245,7 @@
  @param enabled                  Whether tracking opt out should be enabled or disabled.
 
  @discussion
- If the user wants to opt out of all tracking, use this method to enable opt out for them. Once opt out is enabled, no events will be saved locally or sent to the server. Calling this method again with enabled set to false will turn tracking back on for the user.
+ If the user wants to opt out of all tracking, use this method to enable opt out for them. Once opt out is enabled, no events will be saved locally or sent to the server. Calling this method again with enabled set to NO will turn tracking back on for the user.
  */
 - (void)setOptOut:(BOOL)enabled;
 
@@ -258,7 +258,7 @@
  @param offline                  Whether logged events should be sent to Amplitude servers.
 
  @discussion
- If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to false will allow events to be sent to server
+ If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server
      and the client will attempt to send events that have been queued while offline.
  */
 - (void)setOffline:(BOOL)offline;
