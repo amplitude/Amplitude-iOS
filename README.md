@@ -12,7 +12,7 @@ A [demo application](https://github.com/amplitude/iOS-Demo) is available to show
 
 2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file. Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.5.0'`. If you are using CocoaPods, you may skip steps 3 and 4.
 
-3. Copy the `Amplitude` sub-folder into the source of your project in XCode. Check "Copy items into destination group's folder (if needed)".
+3. Copy the `Amplitude` sub-folder into the source of your project in Xcode. Check "Copy items into destination group's folder (if needed)".
 
 4. Amplitude's iOS SDK requires the SQLite library, which is included in iOS but requires an additional build flag to enable. In your project's `Build Settings` and your Target's `Build Settings`, under `Linking` -> `Other Linker Flags`, add the flag `-lsqlite3`.
 
