@@ -1,7 +1,39 @@
 ## Unreleased
 
+* Add support for logging events to multiple Amplitude apps. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-events-to-multiple-amplitude-apps) for details.
+
+## 3.5.0 (January 15, 2016)
+
+* Add ability to clear all user properties.
+
+## 3.4.1 (December 31, 2015)
+
+* Guarding AMPDatabaseHelper logging with a debug flag.
+
+## 3.4.0 (December 29, 2015)
+
+* Remove dependency on FMDB, use built-in SQLite3 library.
+* Updated DeviceInfo platform strings, added iPhone 6s, iPhone 6s Plus, iPod Touch 6G.
+* Fixed bug to make sure events can be serialized before saving.
+
+## 3.3.0 (December 15, 2015)
+
+* Add support for append user property operation.
+* Add ability to force the SDK to update with the user's latest location.
+
+## 3.2.1 (November 11, 2015)
+
+* Handle NaNs and exceptions from NSJSONSerialization during event data migration.
+* Fix bug where logEvent checks session when logging start/end session events.
+* Update DatabaseHelper to work with long longs instead of longs.
+
+## 3.2.0 (October 20, 2015)
+
 * Add ability to set custom deviceId.
 * Add support for user property operations (set, setOnce, add, unset).
+* Add ability to go offline (disable sending logged events to server).
+* Fix bug where event and identify queues are not truncated if eventMaxCount is less than eventRemoveBatchSize.
+* Fix bug where fetching nil/null values from database causes crash.
 
 ## 3.1.1 (October 8, 2015)
 

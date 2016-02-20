@@ -29,11 +29,6 @@ NSString *const userId = @"userId";
     self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
     XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
-    // Mock the methods before init
-    _partialMockAmplitude = OCMPartialMock(self.amplitude);
-    OCMStub([_partialMockAmplitude archive:[OCMArg any] toFile:[OCMArg any]]).andCall(self, @selector(archive:toFile:));
-    OCMStub([_partialMockAmplitude unarchive:[OCMArg any]]).andCall(self, @selector(unarchive:));
-
     [self.amplitude init];
     self.amplitude.sslPinningEnabled = NO;
 }
@@ -42,7 +37,6 @@ NSString *const userId = @"userId";
     // Ensure all background operations are done
     [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
-    [_partialMockAmplitude stopMocking];
     SAFE_ARC_RELEASE(_amplitude);
     SAFE_ARC_RELEASE(_databaseHelper);
     [super tearDown];
@@ -50,7 +44,7 @@ NSString *const userId = @"userId";
 
 - (BOOL)archive:(id)rootObject toFile:(NSString *)path {
     _archivedObj = rootObject;
-    return TRUE;
+    return YES;
 }
 
 - (id)unarchive:(NSString *)path {

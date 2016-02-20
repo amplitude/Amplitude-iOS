@@ -8,7 +8,6 @@
 
 #import <XCTest/XCTest.h>
 #import <UIKit/UIKit.h>
-#import <OCMock/OCMock.h>
 #import "AMPLocationManagerDelegate.h"
 
 
