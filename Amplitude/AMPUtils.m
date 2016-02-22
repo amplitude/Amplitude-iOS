@@ -87,4 +87,13 @@
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
 }
 
++ (NSString*) platformDataDirectory
+{
+    #if TARGET_OS_TV
+        return [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    #else
+        return [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    #endif
+}
+
 @end
