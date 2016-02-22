@@ -239,4 +239,55 @@
     XCTAssertEqualObjects(identify.userPropertyOperations, expected);
 }
 
+- (void)testMakeJSONSerializableProperty {
+    NSString *urlString = @"https://amplitude.com";
+    NSString *key = @"url";
+    NSURL *url = [NSURL URLWithString:urlString];
+
+    AMPIdentify *identify = [AMPIdentify identify];
+    [identify set:key value:url]; // should coerce NSURL object into a string
+
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:urlString forKey:key];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_SET];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testDisallowOtherOperationsOnClearAllIdentify {
+    NSString *property = @"testProperty";
+    NSString *value1 = @"testValue";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    AMPIdentify *identify = [[AMPIdentify identify] clearAll];
+    [[[[identify setOnce:property value:value1] add:property value:value2] set:property value:value3] unset:property];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:@"-" forKey:AMP_OP_CLEAR_ALL];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testDisallowClearAllOnIdentifysWithOtherOperations {
+    NSString *property = @"testProperty";
+    NSString *value1 = @"testValue";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    AMPIdentify *identify = [AMPIdentify identify];
+    [[[[identify setOnce:property value:value1] add:property value:value2] set:property value:value3] unset:property];
+    [identify clearAll];
+
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_SET_ONCE];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
 @end
