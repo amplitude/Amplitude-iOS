@@ -183,6 +183,10 @@ You may use `clearUserProperties` to clear all user properties at once. Note: th
 [[Amplitude instance] clearUserProperties];
 ```
 
+### Clearing User Properties with `unsetUserProperties` ###
+
+You may use `unsetUserProperties` shorthand to unset multiple user properties at once. This method is simply a wrapper around `AMPIDentify unset` and `identify`.
+
 # Allowing Users to Opt Out
 
 To stop all event and session logging for a user, call setOptOut:
