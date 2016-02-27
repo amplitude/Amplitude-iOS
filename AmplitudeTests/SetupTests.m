@@ -103,6 +103,32 @@
     XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
 }
 
+- (void)testUserPropertiesUnset {
+    [self.amplitude initializeApiKey:apiKey];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    XCTAssertEqual([dbHelper getEventCount], 0);
+
+    NSDictionary *properties = @{
+         @"shoeSize": @"-",
+         @"hatSize":  @"-",
+         @"name": @"-"
+    };
+
+    [self.amplitude unsetUserProperties:[properties allKeys]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+
+    NSDictionary *expected = [NSDictionary dictionaryWithObject:properties forKey:AMP_OP_UNSET];
+
+    NSDictionary *event = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
+    XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
+    XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
+}
+
 - (void)testSetDeviceId {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
