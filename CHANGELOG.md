@@ -33,6 +33,7 @@
 * Add support for user property operations (set, setOnce, add, unset).
 * Add ability to go offline (disable sending logged events to server).
 * Fix bug where event and identify queues are not truncated if eventMaxCount is less than eventRemoveBatchSize.
+* Fix bug where fetching nil/null values from database causes crash.
 
 ## 3.1.1 (October 8, 2015)
 
