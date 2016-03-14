@@ -15,6 +15,7 @@ extern NSString *const userId;
 @interface BaseTestCase : XCTestCase
 
 @property (nonatomic, strong) Amplitude *amplitude;
+@property (nonatomic, assign) id partialMockAmplitude;
 @property (nonatomic, strong) AMPDatabaseHelper *databaseHelper;
 
 - (BOOL) archive:(id)rootObject toFile:(NSString *)path;
