@@ -10,5 +10,6 @@
 
 + (NSString*)generateUUID;
 + (id) makeJSONSerializable:(id) obj;
++ (BOOL) isEmptyString:(NSString*) str;
 
 @end
