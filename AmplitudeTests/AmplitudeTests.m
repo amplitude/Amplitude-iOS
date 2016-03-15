@@ -120,7 +120,7 @@
 
 - (void)testLogEventUploadLogic {
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                             @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
                                             }];
 
@@ -149,7 +149,7 @@
 - (void)testRequestTooLargeBackoffLogic {
     [self.amplitude setEventUploadThreshold:2];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:413 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:413 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
 
@@ -201,7 +201,7 @@
     XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
 
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];
@@ -219,7 +219,7 @@
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:7];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];
@@ -372,7 +372,7 @@
 -(void)testSetOffline {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];
@@ -401,7 +401,7 @@
 
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:_connectionMock response:serverResponse];

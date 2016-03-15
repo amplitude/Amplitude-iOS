@@ -79,10 +79,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPLocationManagerDelegate *_locationManagerDelegate;
 
     BOOL _inForeground;
-
     BOOL _backoffUpload;
     int _backoffUploadBatchSize;
-
     BOOL _offline;
 }
 
