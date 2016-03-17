@@ -168,6 +168,39 @@
     XCTAssertEqualObjects(identify.userPropertyOperations, expected);
 }
 
+- (void)testPrependProperty {
+    NSString *property1 = @"string value";
+    NSString *value1 = @"test value";
+
+    NSString *property2 = @"double value";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+
+    NSString *property3 = @"boolean value";
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    NSString *property4 = @"array value";
+    NSMutableArray *value4 = [NSMutableArray array];
+    [value4 addObject:@"test"];
+    [value4 addObject:[NSNumber numberWithInt:15]];
+
+    AMPIdentify *identify = [[AMPIdentify identify] prepend:property1 value:value1];
+    [[[identify prepend:property2 value:value2] prepend:property3 value:value3] prepend:property4 value:value4];
+
+    // identify should ignore this since duplicate key
+    [identify setOnce:property1 value:value3];
+
+    // generate expected operations
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property1];
+    [operations setObject:value2 forKey:property2];
+    [operations setObject:value3 forKey:property3];
+    [operations setObject:value4 forKey:property4];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_PREPEND];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
 
 - (void)testUnsetProperty {
     NSString *property1 = @"testProperty1";
