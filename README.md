@@ -142,7 +142,7 @@ To use the `AMPIdentify` interface, you will first need to include the header:
     [[Amplitude instance] identify:identify];
     ```
 
-6. `prepend`: this will prepend a value or values to a user property. If the user property does not have a value set yet, it will be initialized to an empty list before the new values are prepended. If the user property has an existing value and it is not a list, it will be converted into a list with the new value prepended.
+6. `prepend`: this will prepend a value or values to a user property. Prepend means inserting the value(s) at the front of a given list. If the user property does not have a value set yet, it will be initialized to an empty list before the new values are prepended. If the user property has an existing value and it is not a list, it will be converted into a list with the new value prepended.
 
     ``` objective-c
     NSMutableArray *array = [NSMutableArray array];
