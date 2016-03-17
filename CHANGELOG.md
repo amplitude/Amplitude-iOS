@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add support for prepend user property operation.
+
 ## 3.5.0 (January 15, 2016)
 
 * Add ability to clear all user properties.
