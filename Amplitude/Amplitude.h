@@ -131,6 +131,7 @@
 - (void)logEvent:(NSString*) eventType;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession;
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL) outOfSession;
 
 /*!
  @method
@@ -205,6 +206,15 @@
  */
 
 - (void)clearUserProperties;
+
+/*!
+ @method
+ 
+ @abstract
+ Sets a group for the user.
+ */
+
+- (void)setGroupType:(NSString*) groupType groupName:(NSObject*) groupName;
 
 /*!
  @method

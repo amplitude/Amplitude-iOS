@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Add support for prepend user property operation.
+* Add support for setting groups for users and events.
 
 ## 3.5.0 (January 15, 2016)
 
