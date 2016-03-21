@@ -250,14 +250,14 @@ Amplitude supports assigning users to groups, and performing queries such as cou
 
 In the above example, 'orgId' is a `groupType`, and the value 10 or 15 is the `groupName`. Another example of a `groupType` could a sport that the user participates in, and possible `groupNames` within that type would be tennis, baseball, etc.
 
-You can use `setGroupType` to designate which groups a user belongs to. Few things to note: this will also set the `groupType: groupName` as a user property. This will overwrite any existing groupName value set for that user's groupType. For example if Joe was in orgId 10, and you call `setGroupType` with groupType 'orgId' and groupName 20, then 20 would replace 10. You can also call `setGroup` multiple times with different groupTypes to add a user to different groups. For example Sue is in orgId: 15, and she also plays sport: soccer. Now when querying, you can Count By both orgId and sport. You are allowed to set up to 5 different groupTypes per user. Any more than that will be ignored from the query UI, although they will still appear as user properties.
+You can use `setGroupType` to designate which groups a user belongs to. Few things to note: this will also set the `groupType: groupName` as a user property. **This will overwrite any existing groupName value set for that user's groupType, as well as the corresponding user property value.** For example if Joe was in orgId 10, and you call `setGroupType` with groupType 'orgId' and groupName 20, then 20 would replace 10. You can also call `setGroup` multiple times with different groupTypes to add a user to different groups. For example Sue is in orgId: 15, and she also plays sport: soccer. Now when querying, you can Count By both orgId and sport. You are allowed to set up to 5 different groupTypes per user. Any more than that will be ignored from the query UI, although they will still appear as user properties.
 
 ```objective-c
 [[Amplitude instance] setGroupType:@"orgId" groupName:[NSNumber numberWithInt:15]];
 [[Amplitude instance] setGroupType:@"sport" groupName:@"tennis"];
 ```
 
-You can also use `logEvent` withGroups: to set event-level groups, meaning the group designation only applies for the specific event being logged.
+You can also use `logEvent` withGroups: to set event-level groups, meaning the group designation only applies for the specific event being logged and does not persist on the user unless you explicitly set it with `setGroupType`.
 
 ```objective-c
 NSDictionary *eventProperties = [NSDictionary dictionaryWithObjectsAndKeys: @"value", @"key", nil];
