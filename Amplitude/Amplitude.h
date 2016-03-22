@@ -119,7 +119,8 @@
  Tracks an event
 
  @param eventType                The name of the event you wish to track.
- @param eventProperties          You can attach additional data to any event by passing a NSDictionary object.
+ @param eventProperties          You can attach additional data to any event by passing a NSDictionary object with property: value pairs.
+ @param groups                   You can specify event-level groups for this user by passing a NSDictionary object with groupType: groupName pairs.
  @param outOfSession             If YES, will track the event as out of session. Useful for push notification events.
 
  @discussion
@@ -127,14 +128,15 @@
  After calling logEvent in your app, you will immediately see data appear on the Amplitude Website.
 
  It's important to think about what types of events you care about as a developer. You should aim to track
- between 10 and 100 types of events within your app. Common event types are different screens within the app,
+ between 50 and 200 types of events within your app. Common event types are different screens within the app,
  actions the user initiates (such as pressing a button), and events you want the user to complete
  (such as filling out a form, completing a level, or making a payment).
- Contact us if you want assistance determining what would be best for you to track. (contact@amplitude.com)
  */
 - (void)logEvent:(NSString*) eventType;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession;
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups;
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL) outOfSession;
 
 /*!
  @method
@@ -193,6 +195,7 @@
  Adds properties that are tracked on the user level.
 
  @param userProperties          An NSDictionary containing any additional data to be tracked.
+ @param replace                 This is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.
 
  @discussion
  Property keys must be <code>NSString</code> objects and values must be serializable.
@@ -209,6 +212,18 @@
  */
 
 - (void)clearUserProperties;
+
+/*!
+ @method
+ 
+ @abstract
+ Sets a group for the user. Can be called multiple times to set multiple groupType: groupValue pairs for a user (up to 5). For example you could call this to specify that a user is in orgId 15.
+
+ @param groupType               If you are setting a group for a user, you need to specify a group type (for example orgId to indicate user is part of a specific organization).
+ @param groupName               The value of the group name (for example for groupType orgId, the groupName would be the actual id number, like 15).
+ */
+
+- (void)setGroupType:(NSString*) groupType groupName:(NSObject*) groupName;
 
 /*!
  @method

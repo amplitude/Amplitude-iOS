@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add support for prepend user property operation.
+* Add support for setting groups for users and events.
 * Add support for logging events to multiple Amplitude apps. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-events-to-multiple-amplitude-apps) for details.
 
 ## 3.5.0 (January 15, 2016)
