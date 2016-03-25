@@ -82,4 +82,9 @@
     return str;
 }
 
++ (BOOL) isEmptyString:(NSString*) str
+{
+    return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
+}
+
 @end
