@@ -489,7 +489,8 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
                 if ([table isEqualToString:STORE_TABLE_NAME]) {
                     value = [[NSString alloc] initWithUTF8String:(char*)sqlite3_column_text(stmt, 1)];
                 } else {
-                    value = [[NSNumber alloc] initWithLongLong:sqlite3_column_int64(stmt, 1)];
+                    long long longlongValue = sqlite3_column_int64(stmt, 1);
+                    value = [[NSNumber alloc] initWithLongLong:longlongValue];
                 }
             }
         } else {
