@@ -40,7 +40,7 @@
 @property (nonatomic, strong, readonly) NSString *apiKey;
 @property (nonatomic, strong, readonly) NSString *userId;
 @property (nonatomic, strong, readonly) NSString *deviceId;
-@property (nonatomic ,strong, readonly) NSString *instanceName;
+@property (nonatomic, strong, readonly) NSString *instanceName;
 @property (nonatomic ,strong, readonly) NSString *propertyListPath;
 @property (nonatomic, assign) BOOL optOut;
 
