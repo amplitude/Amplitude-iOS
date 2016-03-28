@@ -625,40 +625,4 @@
     XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
 }
 
--(void)testSetGroupType {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    [self.amplitude setGroupType:@"orgId" groupName:[NSNumber numberWithInt:15]];
-    [self.amplitude flushQueue];
-
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
-
-    NSDictionary *groups = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:15] forKey:@"orgId"];
-    NSDictionary *userProperties = [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:15] forKey:@"orgId"] forKey:@"$set"];
-
-    NSDictionary *event = [self.amplitude getLastIdentify];
-    XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
-    XCTAssertEqualObjects([event objectForKey:@"user_properties"], userProperties);
-    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
-    XCTAssertEqualObjects([event objectForKey:@"groups"], groups);
-}
-
--(void)testLogEventWithGroups {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    NSDictionary *groups = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:10], @"orgId", @"soccer", @"sport", nil];
-    [self.amplitude logEvent:@"test" withEventProperties:nil withGroups:groups outOfSession:NO];
-    [self.amplitude flushQueue];
-
-    XCTAssertEqual([dbHelper getEventCount], 1);
-    XCTAssertEqual([dbHelper getIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
-
-    NSDictionary *event = [self.amplitude getLastEvent];
-    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
-    XCTAssertEqualObjects([event objectForKey:@"user_properties"], [NSDictionary dictionary]); // user properties should be empty
-    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
-    XCTAssertEqualObjects([event objectForKey:@"groups"], groups);
-}
-
 @end
