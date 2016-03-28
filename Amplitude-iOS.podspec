@@ -6,7 +6,8 @@ Pod::Spec.new do |s|
   s.license      = { :type => "MIT" }
   s.author       = { "Amplitude" => "dev@amplitude.com" }
   s.source       = { :git => "https://github.com/amplitude/Amplitude-iOS.git", :tag => "v3.5.0" }
-  s.platform     = :ios, '5.0'
+  s.ios.deployment_target = '5.0'
+  s.tvos.deployment_target = '9.0'
   s.source_files = 'Amplitude/*.{h,m}'
   s.requires_arc = true
   s.library 	 = 'sqlite3.0'
