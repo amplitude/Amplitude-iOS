@@ -498,15 +498,25 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties
 {
-    [self logEvent:eventType withEventProperties:eventProperties outOfSession:NO];
+    [self logEvent:eventType withEventProperties:eventProperties withGroups:nil];
 }
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession
 {
-    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withTimestamp:nil outOfSession:outOfSession];
+    [self logEvent:eventType withEventProperties:eventProperties withGroups:nil outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups
+{
+    [self logEvent:eventType withEventProperties:eventProperties withGroups:groups outOfSession:NO];
+}
+
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL)outOfSession
+{
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:groups withTimestamp:nil outOfSession:outOfSession];
+}
+
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withGroups:(NSDictionary*) groups withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
 {
     if (_apiKey == nil) {
         NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
@@ -528,6 +538,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     eventProperties = [eventProperties copy];
     apiProperties = [apiProperties mutableCopy];
     userProperties = [userProperties copy];
+    groups = [groups copy];
     
     [self runOnBackgroundQueue:^{
         // Respect the opt-out setting by not sending or storing any events.
@@ -536,6 +547,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             SAFE_ARC_RELEASE(eventProperties);
             SAFE_ARC_RELEASE(apiProperties);
             SAFE_ARC_RELEASE(userProperties);
+            SAFE_ARC_RELEASE(groups);
             return;
         }
 
@@ -550,12 +562,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [event setValue:[self truncate:[AMPUtils makeJSONSerializable:[self replaceWithEmptyJSON:eventProperties]]] forKey:@"event_properties"];
         [event setValue:[self replaceWithEmptyJSON:apiProperties] forKey:@"api_properties"];
         [event setValue:[self truncate:[AMPUtils makeJSONSerializable:[self replaceWithEmptyJSON:userProperties]]] forKey:@"user_properties"];
+        [event setValue:[self truncate:[AMPUtils makeJSONSerializable:[self replaceWithEmptyJSON:groups]]] forKey:@"groups"];
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : _sessionId] forKey:@"session_id"];
         [event setValue:timestamp forKey:@"timestamp"];
 
         SAFE_ARC_RELEASE(eventProperties);
         SAFE_ARC_RELEASE(apiProperties);
         SAFE_ARC_RELEASE(userProperties);
+        SAFE_ARC_RELEASE(groups);
 
         [self annotateEvent:event];
 
@@ -687,7 +701,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #pragma clang diagnostic pop
     }
 
-    [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withTimestamp:nil outOfSession:NO];
+    [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withTimestamp:nil outOfSession:NO];
 }
 
 #pragma mark - Upload events
@@ -1075,7 +1089,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:sessionEvent forKey:@"special"];
     NSNumber* timestamp = [self lastEventTime];
-    [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withTimestamp:timestamp outOfSession:NO];
+    [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withTimestamp:timestamp outOfSession:NO];
 }
 
 - (BOOL)inSession
@@ -1146,7 +1160,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (identify == nil || [identify.userPropertyOperations count] == 0) {
         return;
     }
-    [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withTimestamp:nil outOfSession:NO];
+    [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:nil withTimestamp:nil outOfSession:NO];
 }
 
 #pragma mark - configurations
@@ -1179,6 +1193,24 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     AMPIdentify *identify = [[AMPIdentify identify] clearAll];
     [self identify:identify];
+}
+
+- (void)setGroupType:(NSString *)groupType groupName:(NSObject *)groupName
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setGroupType");
+        return;
+    }
+
+    if (groupType == nil || [groupType isEqualToString:@""]) {
+        NSLog(@"ERROR: groupType cannot be nil or an empty string");
+        return;
+    }
+
+    NSMutableDictionary *groups = [NSMutableDictionary dictionaryWithObjectsAndKeys:groupName, groupType, nil];
+    AMPIdentify *identify = [[AMPIdentify identify] set:groupType value:groupName];
+    [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:groups withTimestamp:nil outOfSession:NO];
+
 }
 
 - (void)setUserId:(NSString*) userId

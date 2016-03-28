@@ -291,6 +291,28 @@ In either case, you can call Amplitude methods with `Amplitude.instance().method
 # Advanced #
 This SDK automatically grabs useful data from the phone, including app version, phone model, operating system version, and carrier information.
 
+### Setting Groups ###
+
+Amplitude supports assigning users to groups, and performing queries such as count by distinct on those groups. An example would be if you want to group your users based on what organization they are in (based on something like an orgId). For example you can designate user Joe to be in orgId 10, while Sue is in orgId 15. When performing an event segmentation query, you can then select Count By: orgId, to query the number of different orgIds that have performed a specific event. As long as at least one member of that group has performed the specific event, that group will be included in the count. See our help article on [Count By Distinct]() for more information.
+
+In the above example, 'orgId' is a `groupType`, and the value 10 or 15 is the `groupName`. Another example of a `groupType` could a sport that the user participates in, and possible `groupNames` within that type would be tennis, baseball, etc.
+
+You can use `setGroupType` to designate which groups a user belongs to. Few things to note: this will also set the `groupType: groupName` as a user property. **This will overwrite any existing groupName value set for that user's groupType, as well as the corresponding user property value.** For example if Joe was in orgId 10, and you call `setGroupType` with groupType 'orgId' and groupName 20, then 20 would replace 10. You can also call `setGroup` multiple times with different groupTypes to add a user to different groups. For example Sue is in orgId: 15, and she also plays sport: soccer. Now when querying, you can Count By both orgId and sport. **You are allowed to set up to 5 different groupTypes per user.** Any more than that will be ignored from the query UI, although they will still appear as user properties.
+
+```objective-c
+[[Amplitude instance] setGroupType:@"orgId" groupName:[NSNumber numberWithInt:15]];
+[[Amplitude instance] setGroupType:@"sport" groupName:@"tennis"];
+```
+
+You can also use `logEvent` withGroups: to set event-level groups, meaning the group designation only applies for the specific event being logged and does not persist on the user unless you explicitly set it with `setGroupType`.
+
+```objective-c
+NSDictionary *eventProperties = [NSDictionary dictionaryWithObjectsAndKeys: @"value", @"key", nil];
+NSDictionary *groups = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:10], @"orgId", @"soccer", @"sport", nil];
+
+[[Amplitude instance] logEvent:@"initialize_game" withEventProperties:eventProperties withGroups:groups outOfSession:NO];
+```
+
 ### Location Tracking ###
 If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.
 
