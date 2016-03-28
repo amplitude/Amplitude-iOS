@@ -120,7 +120,6 @@
 
  @param eventType                The name of the event you wish to track.
  @param eventProperties          You can attach additional data to any event by passing a NSDictionary object with property: value pairs.
- @param groups                   You can specify event-level groups for this user by passing a NSDictionary object with groupType: groupName pairs.
  @param outOfSession             If YES, will track the event as out of session. Useful for push notification events.
 
  @discussion
@@ -135,8 +134,6 @@
 - (void)logEvent:(NSString*) eventType;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession;
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups;
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL) outOfSession;
 
 /*!
  @method
@@ -212,18 +209,6 @@
  */
 
 - (void)clearUserProperties;
-
-/*!
- @method
- 
- @abstract
- Sets a group for the user. Can be called multiple times to set multiple groupType: groupValue pairs for a user (up to 5). For example you could call this to specify that a user is in orgId 15.
-
- @param groupType               If you are setting a group for a user, you need to specify a group type (for example orgId to indicate user is part of a specific organization).
- @param groupName               The value of the group name (for example for groupType orgId, the groupName would be the actual id number, like 15).
- */
-
-- (void)setGroupType:(NSString*) groupType groupName:(NSObject*) groupName;
 
 /*!
  @method
