@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.6.0 (March 28, 2016)
+
 * Add support for prepend user property operation.
 * Fix support for 32-bit devices. Switch to using sqlite3.0, and cast return values from sqlite3.
 * Add support for logging events to multiple Amplitude apps. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-events-to-multiple-amplitude-apps) for details.
