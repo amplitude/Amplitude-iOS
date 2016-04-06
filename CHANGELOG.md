@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.6.0 (March 28, 2016)
+
 * Add support for prepend user property operation.
 * Add support for setting groups for users and events.
 * Fix support for 32-bit devices. Switch to using sqlite3.0, and cast return values from sqlite3.
