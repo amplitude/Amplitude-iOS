@@ -627,14 +627,14 @@
 
 -(void)testSetGroupType {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    [self.amplitude setGroupType:@"orgId" groupName:[NSNumber numberWithInt:15]];
+    [self.amplitude setGroup:@"orgId" groupName:[NSNumber numberWithInt:15]];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 0);
     XCTAssertEqual([dbHelper getIdentifyCount], 1);
     XCTAssertEqual([dbHelper getTotalEventCount], 1);
 
-    NSDictionary *groups = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:15] forKey:@"orgId"];
+    NSDictionary *groups = [NSDictionary dictionaryWithObject:@"15" forKey:@"orgId"];
     NSDictionary *userProperties = [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:15] forKey:@"orgId"] forKey:@"$set"];
 
     NSDictionary *event = [self.amplitude getLastIdentify];
@@ -646,7 +646,14 @@
 
 -(void)testLogEventWithGroups {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    NSDictionary *groups = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:10], @"orgId", @"soccer", @"sport", nil];
+    NSMutableDictionary *groups = [NSMutableDictionary dictionary];
+
+    [groups setObject:[NSNumber numberWithInt: 10] forKey:[NSNumber numberWithFloat: 1.23]]; // validateGroups should coerce non-string values into strings
+    NSMutableArray *innerArray = [NSMutableArray arrayWithObjects:@"test", [NSNumber numberWithInt:23], nil]; // should ignore nested array
+    [groups setObject:[NSArray arrayWithObjects:@"test2", [NSNumber numberWithBool:FALSE], innerArray, [NSNull null], nil] forKey:@"array"]; // should ignore null values
+    [groups setObject:[NSDictionary dictionaryWithObject:@"test3" forKey:[NSNumber numberWithDouble:160.0]] forKey:@"dictionary"]; // should ignore dictionary values
+    [groups setObject:[NSNull null] forKey:@"null"]; // should ignore null values
+
     [self.amplitude logEvent:@"test" withEventProperties:nil withGroups:groups outOfSession:NO];
     [self.amplitude flushQueue];
 
@@ -654,11 +661,13 @@
     XCTAssertEqual([dbHelper getIdentifyCount], 0);
     XCTAssertEqual([dbHelper getTotalEventCount], 1);
 
+    NSDictionary *expectedGroups = [NSDictionary dictionaryWithObjectsAndKeys:@"10", @"1.23", @[@"test2", @"0"], @"array", nil];
+
     NSDictionary *event = [self.amplitude getLastEvent];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
     XCTAssertEqualObjects([event objectForKey:@"user_properties"], [NSDictionary dictionary]); // user properties should be empty
     XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
-    XCTAssertEqualObjects([event objectForKey:@"groups"], groups);
+    XCTAssertEqualObjects([event objectForKey:@"groups"], expectedGroups);
 }
 
 @end
