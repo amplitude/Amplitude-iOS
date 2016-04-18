@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add helper method `getSessionId` to expose the current sessionId value.
+
 ## 3.6.0 (March 28, 2016)
 
 * Add support for prepend user property operation.

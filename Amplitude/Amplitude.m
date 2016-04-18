@@ -1275,6 +1275,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return _deviceId;
 }
 
+- (long long) getSessionId
+{
+    return _sessionId;
+}
+
 - (NSString*) initializeDeviceId
 {
     if (_deviceId == nil) {
