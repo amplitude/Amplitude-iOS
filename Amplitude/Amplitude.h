@@ -330,6 +330,18 @@
  */
 - (NSString*)getDeviceId;
 
+/*!
+ @method
+
+ @abstract
+ Returns the current sessionId
+
+ @discussion
+ The sessionId is an identifier used by Amplitude to group together events performed during the same session.
+ */
+- (long long)getSessionId;
+
+
 
 #pragma mark - Deprecated methods
 

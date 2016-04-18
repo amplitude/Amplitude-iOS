@@ -70,6 +70,13 @@ You can also log events as out of session. Out of session events have a session_
 [[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE" withEventProperties:nil outOfSession:true];
 ```
 
+### Getting the Session Id ###
+
+You can use the helper method `getSessionId` to get the value of the current sessionId:
+``` objective-c
+long long sessionId = [[Amplitude instance] getSessionId];
+```
+
 # Setting Custom User IDs #
 
 If your app has its own login system that you want to track users with, you can call `setUserId:` at any time:
