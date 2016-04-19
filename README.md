@@ -225,23 +225,62 @@ out is disabled.
 
 # Tracking Revenue #
 
-To track revenue from a user, call
+The preferred method of tracking revenue for a user now is to use `logRevenueV2` in conjunction with the provided `AMPRevenue` interface. `AMPRevenue` instances will store each revenue transaction and allow you to define several special revenue properties (such as revenueType, productIdentifier, etc) that are used in Amplitude dashboard's Revenue tab. You can now also add event properties to the revenue event, via the revenueProperties field. These `AMPRevenue` instance objects are then passed into `logRevenueV2` to send as revenue events to Amplitude servers. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 1, 7, 14, 30, 60, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
 
+To use the `Revenue` interface, you will first need to import the class:
 ``` objective-c
-[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]
+#import "AMPRevenue.h"
 ```
 
-after a successful purchase transaction. `logRevenue:` takes a string to identify the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`). `quantity:` takes an integer with the quantity of product purchased. `price:` takes a NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
-
-**To enable revenue verification, copy your iTunes Connect In App Purchase Shared Secret into the manage section of your app on Amplitude. You must put a key for every single app in Amplitude where you want revenue verification.**
-
-Then call
-
+Each time a user generates revenue, you create a `AMPRevenue` object and fill out the revenue properties:
 ``` objective-c
-[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]
+AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdentifier"] setQuantity:3];
+[revenue setPrice:[NSNumber numberWithDouble:3.99]];
+[[Amplitude instance] logRevenueV2:revenue];
 ```
 
-after a successful purchase transaction. `receipt:` takes the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
+`productId`, `price`, and `quantity` are required fields. `receipt` is required if you want to verify the revenue event. Each field has a corresponding `set` method (for example `setProductId`, `setQuantity`, etc), as well as a corresponding event property key (see below for how to send revenue properties in event properties). This table describes the different fields available:
+
+| Name               | Type         | Description                                                                                                  | default | property key |
+|--------------------|--------------|--------------------------------------------------------------------------------------------------------------|---------|--------------|
+| productId          | NSString     | Required: an identifier for the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`)| nil     | $productId   |
+| quantity           | NSInteger    | Required: the quantity of products purchased. Defaults to 1 if not specified. Revenue = quantity * price     | 1       | $quantity    |
+| price              | NSNumber     | Required: the price of the products purchased. Revenue = quantity * price                                    | nil     | $price       |
+| revenueType        | NSString     | Optional: the type of revenue (ex: tax, refund, income)                                                      | nil     | $revenueType |
+| receipt            | NSData       | Optional: required if you want to verify the revenue event                                                   | nil     | $receipt     |
+| revenueProperties  | NSDictionary | Optional: a NSDictionary of event properties to include in the revenue event                                 | nil     | n/a          |
+
+### Revenue Verification ###
+
+By default Revenue events recorded on the iOS SDK appear in Amplitude dashboards as unverified revenue events. **To enable revenue verification, copy your iTunes Connect In App Purchase Shared Secret into the manage section of your app on Amplitude. You must put a key for every single app in Amplitude where you want revenue verification.**
+
+Then after a successful purchase transaction, add the receipt data to the `Revenue` object:
+
+``` objective-c
+AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdentifier"] setQuantity:1];
+[[revenue setPrice:[NSNumber numberWithDouble:3.99]] setReceipt:receiptData];
+[[Amplitude instance] logRevenueV2:revenue];
+```
+
+`receipt:` the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
+
+### Sending Revenue as Event Properties ###
+
+Instead of sending revenue through Amplitude's special revenue event, you can send revenue properties as event properties on any event you log. The `property key` column in the above table denotes the string key to use when declaring the event property. Note: you still need to set a productId and a price. If quantity is not set, it is assumed to be 1:
+
+``` objective-c
+NSMutableDictionary *event_properties = [NSMutableDictionary dictionary];
+[event_properties setObject:@"some event description" forKey:@"description"];
+[event_properties setObject:@"green" forKey:@"color"];
+[event_properties setObject:@"productIdentifier" forKey:@"$productId"];
+[event_properties setObject:[NSNumber numberWithDouble:10.99] forKey:@"$price"];
+[event_properties setObject:[NSNumber numberWithInt:2] forKey:@"$quantity"];
+[[Amplitude instance] logEvent:@"Completed Purchase" withEventProperties:event_properties];
+```
+
+### Backwards compatibility ###
+
+The existing `logRevenue` methods still work but are deprecated. Fields such as `revenueType` will be missing from events logged with the old methods, so Revenue segmentation on those events will be limited in Amplitude dashboards.
 
 # Tracking Events to Multiple Amplitude Apps #
 

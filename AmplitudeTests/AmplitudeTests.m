@@ -330,6 +330,63 @@
     XCTAssertEqual([dbHelper getTotalEventCount], 0);
 }
 
+- (void)testLogRevenueV2 {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+
+    // ignore invalid revenue objects
+    [self.amplitude logRevenueV2:nil];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], 0);
+
+    [self.amplitude logRevenueV2:[AMPRevenue revenue]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], 0);
+
+    // log valid revenue object
+    NSNumber *price = [NSNumber numberWithDouble:15.99];
+    NSInteger quantity = 15;
+    NSString *productId = @"testProductId";
+    NSString *revenueType = @"testRevenueType";
+    NSDictionary *props = [NSDictionary dictionaryWithObject:@"San Francisco" forKey:@"city"];
+    AMPRevenue *revenue = [[[[AMPRevenue revenue] setProductIdentifier:productId] setPrice:price] setQuantity:quantity];
+    [[revenue setRevenueType:revenueType] setRevenueProperties:props];
+
+    [self.amplitude logRevenueV2:revenue];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getEventCount], 1);
+
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"revenue_amount");
+
+    NSDictionary *dict = [event objectForKey:@"event_properties"];
+    XCTAssertEqualObjects([dict objectForKey:@"$productId"], productId);
+    XCTAssertEqualObjects([dict objectForKey:@"$price"], price);
+    XCTAssertEqualObjects([dict objectForKey:@"$quantity"], [NSNumber numberWithInteger:quantity]);
+    XCTAssertEqualObjects([dict objectForKey:@"$revenueType"], revenueType);
+    XCTAssertEqualObjects([dict objectForKey:@"city"], @"San Francisco");
+
+    // user properties should be empty
+    XCTAssertEqualObjects([event objectForKey:@"user_properties"], [NSDictionary dictionary]);
+
+    // api properties should not have any revenue info
+    NSDictionary *api_props = [event objectForKey:@"api_properties"];
+    XCTAssertTrue(api_props.count > 0);
+    XCTAssertNil([api_props objectForKey:@"$productId"]);
+    XCTAssertNil([api_props objectForKey:@"$price"]);
+    XCTAssertNil([api_props objectForKey:@"quantity"]);
+    XCTAssertNil([api_props objectForKey:@"revenueType"]);
+}
+
+- (void) test{
+     NSMutableDictionary *event_properties = [NSMutableDictionary dictionary];
+    [event_properties setObject:@"some event description" forKey:@"description"];
+    [event_properties setObject:@"green" forKey:@"color"];
+    [event_properties setObject:@"productIdentifier" forKey:@"$productId"];
+    [event_properties setObject:[NSNumber numberWithDouble:10.99] forKey:@"$price"];
+    [event_properties setObject:[NSNumber numberWithInt:2] forKey:@"$quantity"];
+    [[Amplitude instance] logEvent:@"Completed Purchase" withEventProperties:event_properties];
+}
+
 - (void)testMergeEventsAndIdentifys {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:7];
