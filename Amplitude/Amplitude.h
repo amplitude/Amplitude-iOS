@@ -214,6 +214,19 @@
  @method
 
  @abstract
+ Removes properties that are tracked on the user level.
+
+ @param userProperties          An NSArray containing the keys of the properties to be removed.
+
+ @discussion
+ Property keys must be <code>NSString</code> objects.
+ */
+- (void)unsetUserProperties:(NSArray*) userProperties;
+
+/*!
+ @method
+
+ @abstract
  Sets the userId.
 
  @param userId                  If your app has its own login system that you want to track users with, you can set the userId.

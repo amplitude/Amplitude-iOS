@@ -154,6 +154,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [[Amplitude instance] setUserProperties:userProperties];
 }
 
++ (void)unsetUserProperties:(NSArray*) userProperties {
+    [[Amplitude instance] unsetUserProperties:userProperties];
+}
+
 + (void)setUserId:(NSString*) userId {
     [[Amplitude instance] setUserId:userId];
 }
@@ -1179,6 +1183,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     AMPIdentify *identify = [[AMPIdentify identify] clearAll];
     [self identify:identify];
+}
+
+- (void)unsetUserProperties:(NSArray*) userProperties
+{
+    if (userProperties == nil || ![self isArgument:userProperties validType:[NSArray class] methodName:@"unsetUserProperties:"] || [userProperties count] == 0) {
+        return;
+    }
+
+    NSArray *copy = [userProperties copy];
+    [self runOnBackgroundQueue:^{
+        AMPIdentify *identify = [AMPIdentify identify];
+        for (NSString *key in copy) {
+            [identify unset:key];
+        }
+        [self identify:identify];
+    }];
 }
 
 - (void)setUserId:(NSString*) userId
