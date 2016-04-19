@@ -245,10 +245,12 @@ AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdent
 |--------------------|--------------|--------------------------------------------------------------------------------------------------------------|---------|--------------|
 | productId          | NSString     | Required: an identifier for the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`)| nil     | $productId   |
 | quantity           | NSInteger    | Required: the quantity of products purchased. Defaults to 1 if not specified. Revenue = quantity * price     | 1       | $quantity    |
-| price              | NSNumber     | Required: the price of the products purchased. Revenue = quantity * price                                    | nil     | $price       |
+| price              | NSNumber     | Required: the price of the products purchased (can be negative). Revenue = quantity * price                  | nil     | $price       |
 | revenueType        | NSString     | Optional: the type of revenue (ex: tax, refund, income)                                                      | nil     | $revenueType |
 | receipt            | NSData       | Optional: required if you want to verify the revenue event                                                   | nil     | $receipt     |
 | revenueProperties  | NSDictionary | Optional: a NSDictionary of event properties to include in the revenue event                                 | nil     | n/a          |
+
+Note: the price can be negative, which might be useful for tracking revenue lost, for example refunds or costs.
 
 ### Revenue Verification ###
 
