@@ -27,3 +27,9 @@ extern NSString *const AMP_OP_PREPEND;
 extern NSString *const AMP_OP_SET;
 extern NSString *const AMP_OP_SET_ONCE;
 extern NSString *const AMP_OP_UNSET;
+
+extern NSString *const AMP_REVENUE_PRODUCT_ID;
+extern NSString *const AMP_REVENUE_QUANTITY;
+extern NSString *const AMP_REVENUE_PRICE;
+extern NSString *const AMP_REVENUE_REVENUE_TYPE;
+extern NSString *const AMP_REVENUE_RECEIPT;

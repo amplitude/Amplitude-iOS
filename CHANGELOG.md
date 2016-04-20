@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Add helper method `getSessionId` to expose the current sessionId value.
+* Add logRevenueV2 and new Revenue class to support logging revenue events with properties, and revenue type. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-revenue) for more info.
 
 ## 3.6.0 (March 28, 2016)
 

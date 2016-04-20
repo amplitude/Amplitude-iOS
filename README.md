@@ -225,23 +225,50 @@ out is disabled.
 
 # Tracking Revenue #
 
-To track revenue from a user, call
+The preferred method of tracking revenue for a user now is to use `logRevenueV2` in conjunction with the provided `AMPRevenue` interface. `AMPRevenue` instances will store each revenue transaction and allow you to define several special revenue properties (such as revenueType, productIdentifier, etc) that are used in Amplitude dashboard's Revenue tab. You can now also add event properties to the revenue event, via the eventProperties field. These `AMPRevenue` instance objects are then passed into `logRevenueV2` to send as revenue events to Amplitude servers. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 1, 7, 14, 30, 60, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
 
+To use the `Revenue` interface, you will first need to import the class:
 ``` objective-c
-[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99]]
+#import "AMPRevenue.h"
 ```
 
-after a successful purchase transaction. `logRevenue:` takes a string to identify the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`). `quantity:` takes an integer with the quantity of product purchased. `price:` takes a NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
-
-**To enable revenue verification, copy your iTunes Connect In App Purchase Shared Secret into the manage section of your app on Amplitude. You must put a key for every single app in Amplitude where you want revenue verification.**
-
-Then call
-
+Each time a user generates revenue, you create a `AMPRevenue` object and fill out the revenue properties:
 ``` objective-c
-[[Amplitude instance] logRevenue:@"productIdentifier" quantity:1 price:[NSNumber numberWithDouble:3.99 receipt:receiptData]
+AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdentifier"] setQuantity:3];
+[revenue setPrice:[NSNumber numberWithDouble:3.99]];
+[[Amplitude instance] logRevenueV2:revenue];
 ```
 
-after a successful purchase transaction. `receipt:` takes the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
+`productId` and `price` are required fields. `quantity` defaults to 1 if not specified. `receipt` is required if you want to verify the revenue event. Each field has a corresponding `set` method (for example `setProductId`, `setQuantity`, etc). This table describes the different fields available:
+
+| Name               | Type         | Description                                                                                                  | default |
+|--------------------|--------------|--------------------------------------------------------------------------------------------------------------|---------|
+| productId          | NSString     | Required: an identifier for the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`)| nil     |
+| quantity           | NSInteger    | Required: the quantity of products purchased. Defaults to 1 if not specified. Revenue = quantity * price     | 1       |
+| price              | NSNumber     | Required: the price of the products purchased (can be negative). Revenue = quantity * price                  | nil     |
+| revenueType        | NSString     | Optional: the type of revenue (ex: tax, refund, income)                                                      | nil     |
+| receipt            | NSData       | Optional: required if you want to verify the revenue event                                                   | nil     |
+| eventProperties    | NSDictionary | Optional: a NSDictionary of event properties to include in the revenue event                                 | nil     |
+
+Note: the price can be negative, which might be useful for tracking revenue lost, for example refunds or costs. Also note, you can set event properties on the revenue event just like you would with logEvent by passing in an NSDictionary of string key value pairs. These event properties, however, will only appear in the Event Segmentation tab, not in the Revenue tab.
+
+### Revenue Verification ###
+
+By default Revenue events recorded on the iOS SDK appear in Amplitude dashboards as unverified revenue events. **To enable revenue verification, copy your iTunes Connect In App Purchase Shared Secret into the manage section of your app on Amplitude. You must put a key for every single app in Amplitude where you want revenue verification.**
+
+Then after a successful purchase transaction, add the receipt data to the `Revenue` object:
+
+``` objective-c
+AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdentifier"] setQuantity:1];
+[[revenue setPrice:[NSNumber numberWithDouble:3.99]] setReceipt:receiptData];
+[[Amplitude instance] logRevenueV2:revenue];
+```
+
+`receipt:` the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
+
+### Backwards compatibility ###
+
+The existing `logRevenue` methods still work but are deprecated. Fields such as `revenueType` will be missing from events logged with the old methods, so Revenue segmentation on those events will be limited in Amplitude dashboards.
 
 # Tracking Events to Multiple Amplitude Apps #
 
