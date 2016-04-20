@@ -75,6 +75,8 @@
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
     XCTAssertEqual([mockAmplitude sessionId], 1000000);
 
+    // also test getSessionId
+    XCTAssertEqual([mockAmplitude getSessionId], 1000000);
 
     // A new session should start on UIApplicationWillEnterForeground after minTimeBetweenSessionsMillis
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];

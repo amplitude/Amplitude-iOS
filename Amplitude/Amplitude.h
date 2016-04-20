@@ -3,6 +3,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AMPIdentify.h"
+#import "AMPRevenue.h"
 
 
 /*!
@@ -157,6 +158,24 @@
 - (void)logRevenue:(NSNumber*) amount;
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price;
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt;
+
+/*!
+ @method
+ 
+ @abstract
+ Tracks revenue - API v2.
+ 
+ @param AMPRevenue object       revenue object contains all revenue information
+ 
+ @discussion
+ To track revenue from a user, create an AMPRevenue object each time the user generates revenue, and set the revenue properties (productIdentifier, price, quantity).
+ logRevenuev2: takes in an AMPRevenue object. This allows us to automatically display data relevant to revenue on the Amplitude website, including average
+ revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and
+ daily/weekly/monthly cohorts.
+ 
+ For validating revenue, make sure the receipt data is set on the AMPRevenue object.
+ */
+- (void)logRevenueV2:(AMPRevenue*) revenue;
 
 /*!
  @method
@@ -342,6 +361,18 @@
  The deviceId is an identifier used by Amplitude to determine unique users when no userId has been set.
  */
 - (NSString*)getDeviceId;
+
+/*!
+ @method
+
+ @abstract
+ Returns the current sessionId
+
+ @discussion
+ The sessionId is an identifier used by Amplitude to group together events performed during the same session.
+ */
+- (long long)getSessionId;
+
 
 
 #pragma mark - Deprecated methods

@@ -23,6 +23,7 @@
 #import "AMPDatabaseHelper.h"
 #import "AMPUtils.h"
 #import "AMPIdentify.h"
+#import "AMPRevenue.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -704,6 +705,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withTimestamp:nil outOfSession:NO];
 }
 
+- (void)logRevenueV2:(AMPRevenue*) revenue
+{
+    if (_apiKey == nil) {
+        NSLog(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenueV2");
+        return;
+    }
+    if (revenue == nil || ![revenue isValidRevenue]) {
+        return;
+    }
+
+    [self logEvent:kAMPRevenueEvent withEventProperties:[revenue toNSDictionary]];
+}
+
 #pragma mark - Upload events
 
 - (void)uploadEventsWithDelay:(int) delay
@@ -1305,6 +1319,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSString*) getDeviceId
 {
     return _deviceId;
+}
+
+- (long long) getSessionId
+{
+    return _sessionId;
 }
 
 - (NSString*) initializeDeviceId
