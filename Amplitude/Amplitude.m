@@ -197,7 +197,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
     instanceName = [instanceName lowercaseString];
 
-    if (self = [super init]) {
+    if ((self = [super init])) {
 
 #if AMPLITUDE_SSL_PINNING
         _sslPinningEnabled = YES;
@@ -578,9 +578,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:NULL];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
-            [self.dbHelper addIdentify:jsonString];
+            (void) [self.dbHelper addIdentify:jsonString];
         } else {
-            [self.dbHelper addEvent:jsonString];
+            (void) [self.dbHelper addEvent:jsonString];
         }
         SAFE_ARC_RELEASE(jsonString);
 
@@ -829,14 +829,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSDictionary *event = nil;
         NSDictionary *identify = nil;
 
+        BOOL noIdentifies = [identifys count] == 0;
+        BOOL noEvents = [events count] == 0;
+
+        // case 0: no events or identifies, should not happen - means less events / identifies than expected
+        if (noEvents && noIdentifies) {
+            break;
+        }
+
         // case 1: no identifys grab from events
-        if ([identifys count] == 0) {
+        if (noIdentifies) {
             event = SAFE_ARC_RETAIN(events[0]);
             [events removeObjectAtIndex:0];
             maxEventId = [[event objectForKey:@"event_id"] longValue];
 
         // case 2: no events grab from identifys
-        } else if ([events count] == 0) {
+        } else if (noEvents) {
             identify = SAFE_ARC_RETAIN(identifys[0]);
             [identifys removeObjectAtIndex:0];
             maxIdentifyId = [[identify objectForKey:@"event_id"] longValue];
@@ -922,10 +930,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                     // success, remove existing events from dictionary
                     uploadSuccessful = YES;
                     if (maxEventId >= 0) {
-                        [self.dbHelper removeEvents:maxEventId];
+                        (void) [self.dbHelper removeEvents:maxEventId];
                     }
                     if (maxIdentifyId >= 0) {
-                        [self.dbHelper removeIdentifys:maxIdentifyId];
+                        (void) [self.dbHelper removeIdentifys:maxIdentifyId];
                     }
                 } else if ([result isEqualToString:@"invalid_api_key"]) {
                     NSLog(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
@@ -941,10 +949,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 // If blocked by one massive event, drop it
                 if (_backoffUpload && _backoffUploadBatchSize == 1) {
                     if (maxEventId >= 0) {
-                        [self.dbHelper removeEvent: maxEventId];
+                        (void) [self.dbHelper removeEvent: maxEventId];
                     }
                     if (maxIdentifyId >= 0) {
-                        [self.dbHelper removeIdentifys: maxIdentifyId];
+                        (void) [self.dbHelper removeIdentifys: maxIdentifyId];
                     }
                 }
 
@@ -1142,7 +1150,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)setPreviousSessionId:(long long) previousSessionId
 {
     NSNumber *value = [NSNumber numberWithLongLong:previousSessionId];
-    [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:value];
+    (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:value];
 }
 
 - (long long)previousSessionId
@@ -1156,7 +1164,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setLastEventTime:(NSNumber*) timestamp
 {
-    [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
+    (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
 }
 
 - (NSNumber*)lastEventTime
@@ -1237,7 +1245,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
-        [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
+        (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
     }];
 }
 
@@ -1245,7 +1253,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     [self runOnBackgroundQueue:^{
         NSNumber *value = [NSNumber numberWithBool:enabled];
-        [self.dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:value];
+        (void) [self.dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:value];
     }];
 }
 
@@ -1279,7 +1287,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         SAFE_ARC_RETAIN(deviceId);
         SAFE_ARC_RELEASE(_deviceId);
         _deviceId = deviceId;
-        [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
+        (void) [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
     }];
 }
 
@@ -1334,7 +1342,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             NSString *newDeviceId = SAFE_ARC_RETAIN([self _getDeviceId]);
             SAFE_ARC_RELEASE(_deviceId);
             _deviceId = newDeviceId;
-            [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:newDeviceId];
+            (void) [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:newDeviceId];
         }
     }
     return _deviceId;

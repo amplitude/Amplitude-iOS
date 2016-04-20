@@ -22,7 +22,7 @@
 
 - (id)init
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _userPropertyOperations = [[NSMutableDictionary alloc] init];
         _userProperties = [[NSMutableSet alloc] init];
     }
