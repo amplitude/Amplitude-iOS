@@ -682,7 +682,7 @@
     XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
 }
 
--(void)testSetGroupType {
+-(void)testSetGroup {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setGroup:@"orgId" groupName:[NSNumber numberWithInt:15]];
     [self.amplitude flushQueue];
