@@ -93,7 +93,7 @@
     XCTAssertNil(revenue.properties);
 
     NSDictionary *props = [NSDictionary dictionaryWithObject:@"Boston" forKey:@"city"];
-    [revenue setRevenueProperties:props];
+    [revenue setEventProperties:props];
     XCTAssertEqualObjects(revenue.properties, props);
 
     NSDictionary *dict = [revenue toNSDictionary];
@@ -129,7 +129,7 @@
     NSDictionary *props = [NSDictionary dictionaryWithObject:@"San Francisco" forKey:@"city"];
 
     AMPRevenue *revenue = [[[[AMPRevenue revenue] setProductIdentifier:productId] setPrice:price] setQuantity:quantity];
-    [[revenue setRevenueType:revenueType] setRevenueProperties:props];
+    [[revenue setRevenueType:revenueType] setEventProperties:props];
 
     NSDictionary *dict = [revenue toNSDictionary];
     XCTAssertEqualObjects([dict objectForKey:@"$productId"], productId);

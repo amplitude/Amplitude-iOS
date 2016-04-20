@@ -25,7 +25,7 @@
 - (AMPRevenue*)setPrice:(NSNumber*) price;
 - (AMPRevenue*)setRevenueType:(NSString*) revenueType;
 - (AMPRevenue*)setReceipt:(NSData*) receipt;
-- (AMPRevenue*)setRevenueProperties:(NSDictionary*) revenueProperties;
+- (AMPRevenue*)setEventProperties:(NSDictionary*) eventProperties;
 - (NSDictionary*)toNSDictionary;
 
 @end

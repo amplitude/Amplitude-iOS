@@ -225,7 +225,7 @@ out is disabled.
 
 # Tracking Revenue #
 
-The preferred method of tracking revenue for a user now is to use `logRevenueV2` in conjunction with the provided `AMPRevenue` interface. `AMPRevenue` instances will store each revenue transaction and allow you to define several special revenue properties (such as revenueType, productIdentifier, etc) that are used in Amplitude dashboard's Revenue tab. You can now also add event properties to the revenue event, via the revenueProperties field. These `AMPRevenue` instance objects are then passed into `logRevenueV2` to send as revenue events to Amplitude servers. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 1, 7, 14, 30, 60, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
+The preferred method of tracking revenue for a user now is to use `logRevenueV2` in conjunction with the provided `AMPRevenue` interface. `AMPRevenue` instances will store each revenue transaction and allow you to define several special revenue properties (such as revenueType, productIdentifier, etc) that are used in Amplitude dashboard's Revenue tab. You can now also add event properties to the revenue event, via the eventProperties field. These `AMPRevenue` instance objects are then passed into `logRevenueV2` to send as revenue events to Amplitude servers. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 1, 7, 14, 30, 60, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
 
 To use the `Revenue` interface, you will first need to import the class:
 ``` objective-c
@@ -248,9 +248,9 @@ AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdent
 | price              | NSNumber     | Required: the price of the products purchased (can be negative). Revenue = quantity * price                  | nil     |
 | revenueType        | NSString     | Optional: the type of revenue (ex: tax, refund, income)                                                      | nil     |
 | receipt            | NSData       | Optional: required if you want to verify the revenue event                                                   | nil     |
-| revenueProperties  | NSDictionary | Optional: a NSDictionary of event properties to include in the revenue event                                 | nil     |
+| eventProperties    | NSDictionary | Optional: a NSDictionary of event properties to include in the revenue event                                 | nil     |
 
-Note: the price can be negative, which might be useful for tracking revenue lost, for example refunds or costs.
+Note: the price can be negative, which might be useful for tracking revenue lost, for example refunds or costs. Also note, you can set event properties on the revenue event just like you would with logEvent by passing in an NSDictionary of string key value pairs. These event properties, however, will only appear in the Event Segmentation tab, not in the Revenue tab.
 
 ### Revenue Verification ###
 

@@ -96,11 +96,11 @@
     return self;
 }
 
-- (AMPRevenue*)setRevenueProperties:(NSDictionary*) revenueProperties
+- (AMPRevenue*)setEventProperties:(NSDictionary*) eventProperties
 {
-    revenueProperties = [revenueProperties copy];
+    eventProperties = [eventProperties copy];
     SAFE_ARC_RELEASE(_properties);
-    _properties = revenueProperties;
+    _properties = eventProperties;
     return self;
 }
 
