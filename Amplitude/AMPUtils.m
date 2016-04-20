@@ -65,13 +65,7 @@
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         id objCopy = [obj copy];
         for (id key in objCopy) {
-            NSString *coercedKey;
-            if (![key isKindOfClass:[NSString class]]) {
-                coercedKey = [key description];
-                NSLog(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
-            } else {
-                coercedKey = key;
-            }
+            NSString *coercedKey = [self coerceToString:key withName:@"property key"];
             dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
         }
         SAFE_ARC_RELEASE(objCopy);
@@ -85,6 +79,54 @@
 + (BOOL) isEmptyString:(NSString*) str
 {
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
+}
+
++ (NSString *) coerceToString: (id) obj withName:(NSString *) name
+{
+    NSString *coercedString;
+    if (![obj isKindOfClass:[NSString class]]) {
+        coercedString = [obj description];
+        NSLog(@"WARNING: Non-string %@, received %@, coercing to %@", name, [obj class], coercedString);
+    } else {
+        coercedString = obj;
+    }
+    return coercedString;
+}
+
++ (NSDictionary *) validateGroups:(NSDictionary *) obj
+{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    id objCopy = [obj copy];
+    for (id key in objCopy) {
+        NSString *coercedKey = [self coerceToString:key withName:@"groupType"];
+
+        id value = objCopy[key];
+        if ([value isKindOfClass:[NSString class]]) {
+            dict[coercedKey] = value;
+        } else if ([value isKindOfClass:[NSArray class]]) {
+            NSMutableArray *arr = [NSMutableArray array];
+            for (id i in value) {
+                if ([i isKindOfClass:[NSArray class]]) {
+                    NSLog(@"WARNING: Skipping nested NSArray in groupName value for groupType %@", coercedKey);
+                    continue;
+                } else if ([i isKindOfClass:[NSDictionary class]]) {
+                    NSLog(@"WARNING: Skipping nested NSDictionary in groupName value for groupType %@", coercedKey);
+                    continue;
+                } else if ([i isKindOfClass:[NSString class]] || [i isKindOfClass:[NSNumber class]] || [i isKindOfClass:[NSDate class]]) {
+                    [arr addObject:[self coerceToString:i withName:@"groupType"]];
+                } else {
+                    NSLog(@"WARNING: Invalid groupName value in array for groupType %@ (received class %@). Please use NSStrings", coercedKey, [i class]);
+                }
+            }
+            dict[coercedKey] = [NSArray arrayWithArray:arr];
+        } else if ([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSDate class]]){
+            dict[coercedKey] = [self coerceToString:value withName:@"groupName"];
+        } else {
+            NSLog(@"WARNING: Invalid groupName value for groupType %@ (received class %@). Please use NSString or NSArray of NSStrings", coercedKey, [value class]);
+        }
+    }
+    SAFE_ARC_RELEASE(objCopy);
+    return [NSDictionary dictionaryWithDictionary:dict];
 }
 
 @end

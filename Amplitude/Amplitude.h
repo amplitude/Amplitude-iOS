@@ -121,6 +121,7 @@
 
  @param eventType                The name of the event you wish to track.
  @param eventProperties          You can attach additional data to any event by passing a NSDictionary object with property: value pairs.
+ @param groups                   You can specify event-level groups for this user by passing a NSDictionary object with groupType: groupName pairs. Note the keys need to be strings, and the values can either be strings or an array of strings.
  @param outOfSession             If YES, will track the event as out of session. Useful for push notification events.
 
  @discussion
@@ -135,6 +136,8 @@
 - (void)logEvent:(NSString*) eventType;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession;
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups;
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL) outOfSession;
 
 /*!
  @method
@@ -233,6 +236,17 @@
  @method
 
  @abstract
+ Adds a user to a group or groups. You need to specify a groupType and groupName(s). For example you can group people by their organization. In that case groupType is "orgId", and groupName would be the actual ID(s). groupName can be a string or an array of strings to indicate a user in multiple groups. You can also call setGroup multiple times with different groupTypes to track multiple types of groups (up to 5 per app). Note: this will also set groupType: groupName as a user property.
+ @param groupType               You need to specify a group type (for example "orgId").
+ @param groupName               The value for the group name, can be a string or an array of strings, (for example for groupType orgId, the groupName would be the actual id number, like 15).
+ */
+
+- (void)setGroup:(NSString*) groupType groupName:(NSObject*) groupName;
+
+/*!
+ @method
+
+ @abstract
  Sets the userId.
 
  @param userId                  If your app has its own login system that you want to track users with, you can set the userId.
@@ -277,8 +291,7 @@
  @param offline                  Whether logged events should be sent to Amplitude servers.
 
  @discussion
- If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server
-     and the client will attempt to send events that have been queued while offline.
+ If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server and the client will attempt to send events that have been queued while offline.
  */
 - (void)setOffline:(BOOL)offline;
 

@@ -325,6 +325,30 @@ In either case, you can call Amplitude methods with `Amplitude.instance().method
 # Advanced #
 This SDK automatically grabs useful data from the phone, including app version, phone model, operating system version, and carrier information.
 
+### Setting Groups ###
+
+Amplitude supports assigning users to groups, and performing queries such as Count by Distinct on those groups. An example would be if you want to group your users based on what organization they are in by using an orgId. You can designate Joe to be in orgId 10, while Sue is in orgId 15. When performing an event segmentation query, you can then select Count by Distinct orgIds to query the number of different orgIds that have performed a specific event. As long as at least one member of that group has performed the specific event, that group will be included in the count. See our help article on [Count By Distinct]() for more information.
+
+When setting groups you need to define a `groupType` and `groupName`(s). In the above example, 'orgId' is a `groupType`, and the value 10 or 15 is the `groupName`. Another example of a `groupType` could be 'sport' with `groupNames` like 'tennis', 'baseball', etc.
+
+You can use `setGroup` to designate which groups a user belongs to. Note: this will also set the `groupType`: `groupName` as a user property. **This will overwrite any existing groupName value set for that user's groupType, as well as the corresponding user property value.** `groupType` is a string, and `groupName` can be either a string or an array of strings to indicate a user being in multiple groups (for example Joe is in orgId 10 and 16, so the `groupName` would be [10, 16]).
+
+You can also call `setGroup` multiple times with different groupTypes to track multiple types of groups. **You are allowed to track up to 5 different groupTypes per app.** For example Sue is in orgId: 15, and she also plays sport: soccer. Now when querying, you can Count by Distinct on both orgId and sport (although as separate queries). Any additional groupTypes after the limit will be ignored from the Count By Distinct query UI, although they will still be saved as user properties.
+
+```objective-c
+[[Amplitude instance] setGroup:@"orgId" groupName:[NSNumber numberWithInt:15]];
+[[Amplitude instance] setGroup:@"sport" groupName:[NSArray arrayWithObjects: @"tennis", @"soccer", nil];
+```
+
+You can also use `logEvent` withGroups: to set event-level groups, meaning the group designation only applies for the specific event being logged and does not persist on the user (unless you explicitly set it with `setGroupType`). The group input is a dictionary of groupType: groupName pairs, where groupTypes are strings and groupName can either be strings or array of strings.
+
+```objective-c
+NSDictionary *eventProperties = [NSDictionary dictionaryWithObjectsAndKeys: @"value", @"key", nil];
+NSDictionary *groups = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:10], @"orgId", @"soccer", @"sport", nil];
+
+[[Amplitude instance] logEvent:@"initialize_game" withEventProperties:eventProperties withGroups:groups];
+```
+
 ### Location Tracking ###
 If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.
 
