@@ -239,16 +239,16 @@ AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdent
 [[Amplitude instance] logRevenueV2:revenue];
 ```
 
-`productId`, `price`, and `quantity` are required fields. `receipt` is required if you want to verify the revenue event. Each field has a corresponding `set` method (for example `setProductId`, `setQuantity`, etc), as well as a corresponding event property key (see below for how to send revenue properties in event properties). This table describes the different fields available:
+`productId` and `price` are required fields. `quantity` defaults to 1 if not specified. `receipt` is required if you want to verify the revenue event. Each field has a corresponding `set` method (for example `setProductId`, `setQuantity`, etc). This table describes the different fields available:
 
-| Name               | Type         | Description                                                                                                  | default | property key |
-|--------------------|--------------|--------------------------------------------------------------------------------------------------------------|---------|--------------|
-| productId          | NSString     | Required: an identifier for the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`)| nil     | $productId   |
-| quantity           | NSInteger    | Required: the quantity of products purchased. Defaults to 1 if not specified. Revenue = quantity * price     | 1       | $quantity    |
-| price              | NSNumber     | Required: the price of the products purchased (can be negative). Revenue = quantity * price                  | nil     | $price       |
-| revenueType        | NSString     | Optional: the type of revenue (ex: tax, refund, income)                                                      | nil     | $revenueType |
-| receipt            | NSData       | Optional: required if you want to verify the revenue event                                                   | nil     | $receipt     |
-| revenueProperties  | NSDictionary | Optional: a NSDictionary of event properties to include in the revenue event                                 | nil     | n/a          |
+| Name               | Type         | Description                                                                                                  | default |
+|--------------------|--------------|--------------------------------------------------------------------------------------------------------------|---------|
+| productId          | NSString     | Required: an identifier for the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`)| nil     |
+| quantity           | NSInteger    | Required: the quantity of products purchased. Defaults to 1 if not specified. Revenue = quantity * price     | 1       |
+| price              | NSNumber     | Required: the price of the products purchased (can be negative). Revenue = quantity * price                  | nil     |
+| revenueType        | NSString     | Optional: the type of revenue (ex: tax, refund, income)                                                      | nil     |
+| receipt            | NSData       | Optional: required if you want to verify the revenue event                                                   | nil     |
+| revenueProperties  | NSDictionary | Optional: a NSDictionary of event properties to include in the revenue event                                 | nil     |
 
 Note: the price can be negative, which might be useful for tracking revenue lost, for example refunds or costs.
 
@@ -265,20 +265,6 @@ AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdent
 ```
 
 `receipt:` the receipt NSData from the app store. For details on how to obtain the receipt data, see [Apple's guide on Receipt Validation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1).
-
-### Sending Revenue as Event Properties ###
-
-Instead of sending revenue through Amplitude's special revenue event, you can send revenue properties as event properties on any event you log. The `property key` column in the above table denotes the string key to use when declaring the event property. Note: you still need to set a productId and a price. If quantity is not set, it is assumed to be 1:
-
-``` objective-c
-NSMutableDictionary *event_properties = [NSMutableDictionary dictionary];
-[event_properties setObject:@"some event description" forKey:@"description"];
-[event_properties setObject:@"green" forKey:@"color"];
-[event_properties setObject:@"productIdentifier" forKey:@"$productId"];
-[event_properties setObject:[NSNumber numberWithDouble:10.99] forKey:@"$price"];
-[event_properties setObject:[NSNumber numberWithInt:2] forKey:@"$quantity"];
-[[Amplitude instance] logEvent:@"Completed Purchase" withEventProperties:event_properties];
-```
 
 ### Backwards compatibility ###
 
