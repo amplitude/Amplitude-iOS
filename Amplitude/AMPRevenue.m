@@ -35,6 +35,9 @@
     return self;
 }
 
+/*
+ * Create an AMPRevenue object
+ */
 + (instancetype)revenue
 {
     return SAFE_ARC_AUTORELEASE([[self alloc] init]);
