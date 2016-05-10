@@ -6,43 +6,61 @@
 #import "AMPRevenue.h"
 
 
-/*!
- @class
- Amplitude API.
+/**
+ Amplitude iOS SDK.
 
- @abstract
- The interface for integrating Amplitude with your application.
+ Use the Amplitude SDK to track events in your application.
 
- @discussion
- Use the Amplitude class to track events in your application.
+ Setup:
 
- <pre>
- // In every file that uses analytics, import Amplitude.h at the top
- #import "Amplitude.h"
+ 1. In every file that uses analytics, import Amplitude.h at the top `#import "Amplitude.h"`
+ 2. Be sure to initialize the API in your didFinishLaunchingWithOptions delegate `[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];`
+ 3. Track an event anywhere in the app `[[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];`
+ 4. You can attach additional data to any event by passing a NSDictionary object:
 
- // First, be sure to initialize the API in your didFinishLaunchingWithOptions delegate
- [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
+        NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+        [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+        [[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
 
- // Track an event anywhere in the app
- [[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];
+ **Note:** you should call SDK methods on an Amplitude instance, for example logging events with the default instance: `[[Amplitude instance] logEvent:@"testEvent"];`
 
- // You can attach additional data to any event by passing a NSDictionary object
- NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
- [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
- [[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
- </pre>
+ **Note:** the SDK supports tracking data to multiple Amplitude apps, via separate named instances. For example: `[[Amplitude instanceWithName:@"app1"] logEvent:@"testEvent"];` See [Tracking Events to Multiple Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps).
 
- For more details on the setup and usage, be sure to check out the docs here:
- https://github.com/amplitude/Amplitude-iOS#setup
+ For more details on the setup and usage, be sure to checkout the [README](https://github.com/amplitude/Amplitude-iOS#amplitude-ios-sdk)
  */
 @interface Amplitude : NSObject
 
 #pragma mark - Properties
+
+ /**-----------------------------------------------------------------------------
+ * @name Instance Properties
+ * -----------------------------------------------------------------------------
+ */
+
+ /**
+  API key for your Amplitude App.
+  */
 @property (nonatomic, strong, readonly) NSString *apiKey;
+
+/**
+ Identifier for the current user.
+ */
 @property (nonatomic, strong, readonly) NSString *userId;
+
+/**
+ Identifier for the current device.
+ */
 @property (nonatomic, strong, readonly) NSString *deviceId;
+
+/**
+ Name of the SDK instance (ex: no name for default instance, or custom name for a named instance)
+ */
 @property (nonatomic, strong, readonly) NSString *instanceName;
 @property (nonatomic ,strong, readonly) NSString *propertyListPath;
+
+/**
+ Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.
+ */
 @property (nonatomic, assign) BOOL optOut;
 
 
@@ -51,73 +69,97 @@
  * -----------------------------------------------------------------------------
  */
 
-/*!
- The maximum number of events that can be stored locally before forcing an upload.
- The default is 30 events.
+/**
+ The maximum number of events that can be stored locally before forcing an upload. The default is 30 events.
  */
 @property (nonatomic, assign) int eventUploadThreshold;
 
-/*!
- The maximum number of events that can be uploaded in a single request.
- The default is 100 events.
+/**
+ The maximum number of events that can be uploaded in a single request. The default is 100 events.
  */
 @property (nonatomic, assign) int eventUploadMaxBatchSize;
 
-/*!
- The maximum number of events that can be stored lcoally.
- The default is 1000 events.
+/**
+ The maximum number of events that can be stored lcoally. The default is 1000 events.
  */
 @property (nonatomic, assign) int eventMaxCount;
 
-/*!
- The amount of time after an event is logged that events will be batched before being uploaded to the server.
- The default is 30 seconds.
+/**
+ The amount of time after an event is logged that events will be batched before being uploaded to the server. The default is 30 seconds.
  */
 @property (nonatomic, assign) int eventUploadPeriodSeconds;
 
-/*!
- When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created.
- The default is 15 minutes.
+/**
+ When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created. The default is 15 minutes.
  */
 @property (nonatomic, assign) long minTimeBetweenSessionsMillis;
 
-/*!
- Whether to track start and end of session events
+/**
+ Whether to automatically log start and end session events corresponding to the start and end of a user's session.
  */
 @property (nonatomic, assign) BOOL trackingSessionEvents;
 
 
 #pragma mark - Methods
 
+/**-----------------------------------------------------------------------------
+ * @name Fetching Amplitude SDK instance
+ * -----------------------------------------------------------------------------
+ */
+
+/**
+ This fetches the default SDK instance. Recommended if you are only logging events to a single app.
+
+ @returns the default Amplitude SDK instance
+ */
 + (Amplitude *)instance;
 
+/**
+ This fetches a named SDK instance. Use this if logging events to multiple Amplitude apps.
+
+ @param instanceName the name of the SDK instance to fetch.
+
+ @returns the Amplitude SDK instance corresponding to `instanceName`
+
+ @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
+ */
 + (Amplitude *)instanceWithName:(NSString*) instanceName;
 
-/*!
- @method
+/**-----------------------------------------------------------------------------
+ * @name Initialize the Amplitude SDK with your Amplitude API Key
+ * -----------------------------------------------------------------------------
+ */
 
- @abstract
- Initializes the Amplitude static class with your Amplitude api key.
+/**
+ Initializes the Amplitude instance with your Amplitude API key
 
- @param apiKey                 Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
- @param userId                 If your app has its own login system that you want to track users with, you can set the userId.
-
- @discussion
  We recommend you first initialize your class within your "didFinishLaunchingWithOptions" method inside your app delegate.
 
- - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
- {
- // Initialize your shared Analytics instance.
- [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
+ **Note:** this is required before you can log any events.
 
- // YOUR OTHER APP LAUNCH CODE HERE....
-
- return YES;
- }
+ @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
  */
 - (void)initializeApiKey:(NSString*) apiKey;
+
+/**
+ Initializes the Amplitude instance with your Amplitude API key and sets a user identifier for the current user.
+
+ We recommend you first initialize your class within your "didFinishLaunchingWithOptions" method inside your app delegate.
+
+ **Note:** this is required before you can log any events.
+
+ @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
+
+ @param userId If your app has its own login system that you want to track users with, you can set the userId.
+
+*/
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
 
+
+/**-----------------------------------------------------------------------------
+ * @name Logging Events
+ * -----------------------------------------------------------------------------
+ */
 
 /*!
  @method
@@ -167,18 +209,18 @@
 
 /*!
  @method
- 
+
  @abstract
  Tracks revenue - API v2.
- 
+
  @param AMPRevenue object       revenue object contains all revenue information
- 
+
  @discussion
  To track revenue from a user, create an AMPRevenue object each time the user generates revenue, and set the revenue properties (productIdentifier, price, quantity).
  logRevenuev2: takes in an AMPRevenue object. This allows us to automatically display data relevant to revenue on the Amplitude website, including average
  revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and
  daily/weekly/monthly cohorts.
- 
+
  For validating revenue, make sure the receipt data is set on the AMPRevenue object.
  */
 - (void)logRevenueV2:(AMPRevenue*) revenue;

@@ -56,6 +56,10 @@
 	
 	<optgroup label="Properties">
 		
+		<option value="//api/name/apiKey">apiKey</option>
+		
+		<option value="//api/name/deviceId">deviceId</option>
+		
 		<option value="//api/name/eventMaxCount">eventMaxCount</option>
 		
 		<option value="//api/name/eventUploadMaxBatchSize">eventUploadMaxBatchSize</option>
@@ -64,13 +68,27 @@
 		
 		<option value="//api/name/eventUploadThreshold">eventUploadThreshold</option>
 		
+		<option value="//api/name/instanceName">instanceName</option>
+		
 		<option value="//api/name/minTimeBetweenSessionsMillis">minTimeBetweenSessionsMillis</option>
 		
+		<option value="//api/name/optOut">optOut</option>
+		
 		<option value="//api/name/trackingSessionEvents">trackingSessionEvents</option>
+		
+		<option value="//api/name/userId">userId</option>
 		
 	</optgroup>
 	
 
+	
+	<optgroup label="Class Methods">
+		
+		<option value="//api/name/instance">+ instance</option>
+		
+		<option value="//api/name/instanceWithName:">+ instanceWithName:</option>
+		
+	</optgroup>
 	
 
 	
@@ -164,34 +182,30 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p>@class
-Amplitude API.</p>
+						<p>Amplitude iOS SDK.</p>
 
-<p>@abstract
-The interface for integrating Amplitude with your application.</p>
+<p>Use the Amplitude SDK to track events in your application.</p>
 
-<p>@discussion
-Use the Amplitude class to track events in your application.</p>
+<p>Setup:</p>
 
-<pre>
-// In every file that uses analytics, import Amplitude.h at the top
-#import "Amplitude.h"
+<ol>
+<li>In every file that uses analytics, import Amplitude.h at the top <code>#import "Amplitude.h"</code></li>
+<li>Be sure to initialize the API in your didFinishLaunchingWithOptions delegate <code>[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];</code></li>
+<li>Track an event anywhere in the app <code>[[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];</code></li>
+<li><p>You can attach additional data to any event by passing a NSDictionary object:</p>
 
-// First, be sure to initialize the API in your didFinishLaunchingWithOptions delegate
-[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
-
-// Track an event anywhere in the app
-[[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];
-
-// You can attach additional data to any event by passing a NSDictionary object
-NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
-[eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
-[[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
-</pre>
+<pre><code> NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+ [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
+ [[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
+</code></pre></li>
+</ol>
 
 
-<p>For more details on the setup and usage, be sure to check out the docs here:
-<a href="https://github.com/amplitude/Amplitude-iOS">https://github.com/amplitude/Amplitude-iOS</a>#setup</p>
+<p><strong>Note:</strong> you should call SDK methods on an Amplitude instance, for example logging events with the default instance: <code>[[Amplitude instance] logEvent:@"testEvent"];</code></p>
+
+<p><strong>Note:</strong> the SDK supports tracking data to multiple Amplitude apps, via separate named instances. For example: <code>[[Amplitude instanceWithName:@"app1"] logEvent:@"testEvent"];</code> See <a href="https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps">Tracking Events to Multiple Apps</a>.</p>
+
+<p>For more details on the setup and usage, be sure to checkout the <a href="https://github.com/amplitude/Amplitude-iOS#amplitude-ios-sdk">README</a></p>
 					</div>
 					
 					
@@ -200,6 +214,244 @@ NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
 					
 					<div class="section section-tasks">
 						<a title="Tasks" name="tasks"></a>
+						
+
+						<a title="Instance Properties" name="task_Instance Properties"></a>
+						<h2 class="task-title">Instance Properties</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/apiKey" title="apiKey"></a>
+	<h3 class="method-title"><code><a href="#//api/name/apiKey">&nbsp;&nbsp;apiKey</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>  API key for your Amplitude App.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSString *apiKey</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>  API key for your Amplitude App.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/userId" title="userId"></a>
+	<h3 class="method-title"><code><a href="#//api/name/userId">&nbsp;&nbsp;userId</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Identifier for the current user.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSString *userId</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Identifier for the current user.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/deviceId" title="deviceId"></a>
+	<h3 class="method-title"><code><a href="#//api/name/deviceId">&nbsp;&nbsp;deviceId</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Identifier for the current device.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSString *deviceId</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Identifier for the current device.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/instanceName" title="instanceName"></a>
+	<h3 class="method-title"><code><a href="#//api/name/instanceName">&nbsp;&nbsp;instanceName</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Name of the SDK <a href="#//api/name/instance">instance</a> (ex: no name for default <a href="#//api/name/instance">instance</a>, or custom name for a named <a href="#//api/name/instance">instance</a>)</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSString *instanceName</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Name of the SDK <a href="#//api/name/instance">instance</a> (ex: no name for default <a href="#//api/name/instance">instance</a>, or custom name for a named <a href="#//api/name/instance">instance</a>)</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/optOut" title="optOut"></a>
+	<h3 class="method-title"><code><a href="#//api/name/optOut">&nbsp;&nbsp;optOut</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL optOut</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
 						
 
 						<a title="Configurable SDK thresholds and parameters" name="task_Configurable SDK thresholds and parameters"></a>
@@ -218,8 +470,7 @@ NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
 			
 			
 			<div class="method-subsection brief-description">
-				<p>The maximum number of events that can be stored locally before forcing an upload.
-The default is 30 events.</p>
+				<p>The maximum number of events that can be stored locally before forcing an upload. The default is 30 events.</p>
 			</div>
 			
 		    
@@ -236,8 +487,7 @@ The default is 30 events.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>The maximum number of events that can be stored locally before forcing an upload.
-The default is 30 events.</p>
+				<p>The maximum number of events that can be stored locally before forcing an upload. The default is 30 events.</p>
 			</div>
 			
 
@@ -266,8 +516,7 @@ The default is 30 events.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>The maximum number of events that can be uploaded in a single request.
-The default is 100 events.</p>
+				<p>The maximum number of events that can be uploaded in a single request. The default is 100 events.</p>
 			</div>
 			
 		    
@@ -284,8 +533,7 @@ The default is 100 events.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>The maximum number of events that can be uploaded in a single request.
-The default is 100 events.</p>
+				<p>The maximum number of events that can be uploaded in a single request. The default is 100 events.</p>
 			</div>
 			
 
@@ -314,8 +562,7 @@ The default is 100 events.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>The maximum number of events that can be stored lcoally.
-The default is 1000 events.</p>
+				<p>The maximum number of events that can be stored lcoally. The default is 1000 events.</p>
 			</div>
 			
 		    
@@ -332,8 +579,7 @@ The default is 1000 events.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>The maximum number of events that can be stored lcoally.
-The default is 1000 events.</p>
+				<p>The maximum number of events that can be stored lcoally. The default is 1000 events.</p>
 			</div>
 			
 
@@ -362,8 +608,7 @@ The default is 1000 events.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>The amount of time after an event is logged that events will be batched before being uploaded to the server.
-The default is 30 seconds.</p>
+				<p>The amount of time after an event is logged that events will be batched before being uploaded to the server. The default is 30 seconds.</p>
 			</div>
 			
 		    
@@ -380,8 +625,7 @@ The default is 30 seconds.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>The amount of time after an event is logged that events will be batched before being uploaded to the server.
-The default is 30 seconds.</p>
+				<p>The amount of time after an event is logged that events will be batched before being uploaded to the server. The default is 30 seconds.</p>
 			</div>
 			
 
@@ -410,8 +654,7 @@ The default is 30 seconds.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created.
-The default is 15 minutes.</p>
+				<p>When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created. The default is 15 minutes.</p>
 			</div>
 			
 		    
@@ -428,8 +671,7 @@ The default is 15 minutes.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created.
-The default is 15 minutes.</p>
+				<p>When a user closes and reopens the app within minTimeBetweenSessionsMillis milliseconds, the reopen is considered part of the same session and the session continues. Otherwise, a new session is created. The default is 15 minutes.</p>
 			</div>
 			
 
@@ -458,7 +700,7 @@ The default is 15 minutes.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>Whether to track start and end of session events</p>
+				<p>Whether to automatically log start and end session events corresponding to the start and end of a user&rsquo;s session.</p>
 			</div>
 			
 		    
@@ -475,7 +717,66 @@ The default is 15 minutes.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>Whether to track start and end of session events</p>
+				<p>Whether to automatically log start and end session events corresponding to the start and end of a user&rsquo;s session.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="Fetching Amplitude SDK instance" name="task_Fetching Amplitude SDK instance"></a>
+						<h2 class="task-title">Fetching Amplitude SDK instance</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/instance" title="instance"></a>
+	<h3 class="method-title"><code><a href="#//api/name/instance">+&nbsp;instance</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>This fetches the default SDK instance. Recommended if you are only logging events to a single app.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (Amplitude *)instance</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the default Amplitude SDK instance</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>This fetches the default SDK instance. Recommended if you are only logging events to a single app.</p>
 			</div>
 			
 
@@ -493,6 +794,86 @@ The default is 15 minutes.</p>
 		</div>
 	</div>
 </div><div class="section-method">
+	<a name="//api/name/instanceWithName:" title="instanceWithName:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/instanceWithName:">+&nbsp;instanceWithName:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>This fetches a named SDK <a href="#//api/name/instance">instance</a>. Use this if logging events to multiple Amplitude apps.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (Amplitude *)instanceWithName:(NSString *)<em>instanceName</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>instanceName</code></th>
+						<td><p>the name of the SDK <a href="#//api/name/instance">instance</a> to fetch.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the Amplitude SDK <a href="#//api/name/instance">instance</a> corresponding to <a href="#//api/name/instanceName"><code>instanceName</code></a></p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>This fetches a named SDK <a href="#//api/name/instance">instance</a>. Use this if logging events to multiple Amplitude apps.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps">Tracking Events to Multiple Amplitude Apps</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="Initialize the Amplitude SDK with your Amplitude API Key" name="task_Initialize the Amplitude SDK with your Amplitude API Key"></a>
+						<h2 class="task-title">Initialize the Amplitude SDK with your Amplitude API Key</h2>
+
+						<div class="task-list">
+							<div class="section-method">
 	<a name="//api/name/initializeApiKey:" title="initializeApiKey:"></a>
 	<h3 class="method-title"><code><a href="#//api/name/initializeApiKey:">&ndash;&nbsp;initializeApiKey:</a></code>
 </h3>
@@ -504,7 +885,7 @@ The default is 15 minutes.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Initializes the Amplitude <a href="#//api/name/instance">instance</a> with your Amplitude API key</p>
 			</div>
 			
 		    
@@ -522,27 +903,6 @@ The default is 15 minutes.</p>
 						<td><p>Your Amplitude key obtained from your dashboard at <a href="https://amplitude.com/settings">https://amplitude.com/settings</a></p></td>
 					</tr>
 				
-					<tr>
-						<th scope="row" class="argument-name"><code>userId</code></th>
-						<td><p>If your app has its own login system that you want to track users with, you can set the userId.</p>
-
-<p>@discussion
-We recommend you first initialize your class within your &ldquo;didFinishLaunchingWithOptions&rdquo; method inside your app delegate.</p>
-
-<ul>
-<li>(BOOL)application:(UIApplication <em>)application didFinishLaunchingWithOptions:(NSDictionary </em>)launchOptions
-{
-// Initialize your shared Analytics instance.
-[[Amplitude instance] initializeApiKey:@&ldquo;YOUR_API_KEY_HERE&rdquo;];</li>
-</ul>
-
-
-<p>// YOUR OTHER APP LAUNCH CODE HERE&hellip;.</p>
-
-<p>return YES;
-}</p></td>
-					</tr>
-				
 				</table>
 			</div>
 			
@@ -554,10 +914,11 @@ We recommend you first initialize your class within your &ldquo;didFinishLaunchi
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Initializes the Amplitude <a href="#//api/name/instance">instance</a> with your Amplitude API key</p>
 
-<p>@abstract
-Initializes the Amplitude static class with your Amplitude api key.</p>
+<p>We recommend you first initialize your class within your &ldquo;didFinishLaunchingWithOptions&rdquo; method inside your app delegate.</p>
+
+<p><strong>Note:</strong> this is required before you can log any events.</p>
 			</div>
 			
 
@@ -586,7 +947,7 @@ Initializes the Amplitude static class with your Amplitude api key.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>Initialize Amplitude with a given apiKey and userId.</p>
+				<p>Initializes the Amplitude <a href="#//api/name/instance">instance</a> with your Amplitude API key and sets a user identifier for the current user.</p>
 			</div>
 			
 		    
@@ -594,6 +955,23 @@ Initializes the Amplitude static class with your Amplitude api key.</p>
 			<div class="method-subsection method-declaration"><code>- (void)initializeApiKey:(NSString *)<em>apiKey</em> userId:(NSString *)<em>userId</em></code></div>
 
 		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>apiKey</code></th>
+						<td><p>Your Amplitude key obtained from your dashboard at <a href="https://amplitude.com/settings">https://amplitude.com/settings</a></p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>userId</code></th>
+						<td><p>If your app has its own login system that you want to track users with, you can set the <a href="#//api/name/userId">userId</a>.</p></td>
+					</tr>
+				
+				</table>
+			</div>
 			
 
 			
@@ -603,7 +981,11 @@ Initializes the Amplitude static class with your Amplitude api key.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>Initialize Amplitude with a given apiKey and userId.</p>
+				<p>Initializes the Amplitude <a href="#//api/name/instance">instance</a> with your Amplitude API key and sets a user identifier for the current user.</p>
+
+<p>We recommend you first initialize your class within your &ldquo;didFinishLaunchingWithOptions&rdquo; method inside your app delegate.</p>
+
+<p><strong>Note:</strong> this is required before you can log any events.</p>
 			</div>
 			
 
@@ -614,13 +996,21 @@ Initializes the Amplitude static class with your Amplitude api key.</p>
 			
 			<div class="method-subsection declared-in-section">
 				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
 			</div>
 			
 			
 		</div>
 	</div>
-</div><div class="section-method">
+</div>
+						</div>
+						
+
+						<a title="Logging Events" name="task_Logging Events"></a>
+						<h2 class="task-title">Logging Events</h2>
+
+						<div class="task-list">
+							<div class="section-method">
 	<a name="//api/name/logEvent:" title="logEvent:"></a>
 	<h3 class="method-title"><code><a href="#//api/name/logEvent:">&ndash;&nbsp;logEvent:</a></code>
 </h3>
@@ -1175,10 +1565,10 @@ Adds a user to a group or groups. You need to specify a groupType and groupName(
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>userId</code></th>
-						<td><p>If your app has its own login system that you want to track users with, you can set the userId.</p>
+						<td><p>If your app has its own login system that you want to track users with, you can set the <a href="#//api/name/userId">userId</a>.</p>
 
 <p>@discussion
-If your app has its own login system that you want to track users with, you can set the userId.</p></td>
+If your app has its own login system that you want to track users with, you can set the <a href="#//api/name/userId">userId</a>.</p></td>
 					</tr>
 				
 				</table>
@@ -1195,7 +1585,7 @@ If your app has its own login system that you want to track users with, you can 
 				<p>@method</p>
 
 <p>@abstract
-Sets the userId.</p>
+Sets the <a href="#//api/name/userId">userId</a>.</p>
 			</div>
 			
 
@@ -1239,10 +1629,10 @@ Sets the userId.</p>
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>deviceId</code></th>
-						<td><p>If your app has its own system for tracking devices, you can set the deviceId.</p>
+						<td><p>If your app has its own system for tracking devices, you can set the <a href="#//api/name/deviceId">deviceId</a>.</p>
 
 <p>@discussion
-If your app has its own system for tracking devices, you can set the deviceId.</p></td>
+If your app has its own system for tracking devices, you can set the <a href="#//api/name/deviceId">deviceId</a>.</p></td>
 					</tr>
 				
 				</table>
@@ -1259,7 +1649,7 @@ If your app has its own system for tracking devices, you can set the deviceId.</
 				<p>@method</p>
 
 <p>@abstract
-Sets the deviceId.</p>
+Sets the <a href="#//api/name/deviceId">deviceId</a>.</p>
 			</div>
 			
 
@@ -1697,10 +2087,10 @@ Debugging method to find out how many events are being stored locally on the dev
 				<p>@method</p>
 
 <p>@abstract
-Returns deviceId</p>
+Returns <a href="#//api/name/deviceId">deviceId</a></p>
 
 <p>@discussion
-The deviceId is an identifier used by Amplitude to determine unique users when no userId has been set.</p>
+The <a href="#//api/name/deviceId">deviceId</a> is an identifier used by Amplitude to determine unique users when no <a href="#//api/name/userId">userId</a> has been set.</p>
 			</div>
 			
 
@@ -1789,8 +2179,8 @@ The <a href="#//api/name/sessionId">sessionId</a> is an identifier used by Ampli
 			
 			
 			<div class="method-subsection brief-description">
-				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a userId (can be nil).
-If setUserId is NO, then attempt to load userId from saved eventsData.</p>
+				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a <a href="#//api/name/userId">userId</a> (can be nil).
+If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a> from saved eventsData.</p>
 			</div>
 			
 		    
@@ -1807,8 +2197,8 @@ If setUserId is NO, then attempt to load userId from saved eventsData.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a userId (can be nil).
-If setUserId is NO, then attempt to load userId from saved eventsData.</p>
+				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a <a href="#//api/name/userId">userId</a> (can be nil).
+If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a> from saved eventsData.</p>
 			</div>
 			
 

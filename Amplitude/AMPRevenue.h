@@ -7,7 +7,7 @@
 //
 
 /**
- `AMPRevenue` objects are a wrapper for revenue data, which get passed to the `logRevenueV2` method to send to Amplitude servers. 
+ `AMPRevenue` objects are a wrapper for revenue data, which get passed to the `logRevenueV2` method to send to Amplitude servers.
 
  **Note:** productId and price are required fields. If quantity is not specified, then defaults to 1.
 
