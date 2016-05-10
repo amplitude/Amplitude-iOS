@@ -128,7 +128,7 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p><code>AMPRevenue</code> objects are a wrapper for <a href="#//api/name/revenue">revenue</a> data, which get passed to <code>logRevenueV2</code> to send to <a href="../Classes/Amplitude.html">Amplitude</a> servers.</p>
+						<p><code>AMPRevenue</code> objects are a wrapper for <a href="#//api/name/revenue">revenue</a> data, which get passed to the <code>logRevenueV2</code> method to send to <a href="../Classes/Amplitude.html">Amplitude</a> servers.</p>
 
 <p><strong>Note:</strong> <a href="#//api/name/productId">productId</a> and <a href="#//api/name/price">price</a> are required fields. If <a href="#//api/name/quantity">quantity</a> is not specified, then defaults to 1.</p>
 
@@ -142,6 +142,8 @@
 [revenue setPrice:[NSNumber numberWithDouble:3.99]];
 [[Amplitude instance] logRevenueV2:revenue];
 </code></pre>
+
+<p>See <a href="https://github.com/amplitude/Amplitude-iOS#tracking-revenue">Tracking Revenue</a> for more information about logging Revenue.</p>
 					</div>
 					
 					
@@ -544,7 +546,7 @@
 			
 			<div class="method-subsection return">
 				<h4 class="method-subtitle parameter-title">Return Value</h4>
-				<p>the same <a href="#">AMPRevenue object</a>, allowing you to chain multiple method calls together.</p>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
 			</div>
 			
 
@@ -607,7 +609,7 @@
 			
 			<div class="method-subsection return">
 				<h4 class="method-subtitle parameter-title">Return Value</h4>
-				<p>the same <a href="#">AMPRevenue object</a>, allowing you to chain multiple method calls together.</p>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
 			</div>
 			
 
@@ -672,7 +674,7 @@
 			
 			<div class="method-subsection return">
 				<h4 class="method-subtitle parameter-title">Return Value</h4>
-				<p>the same <a href="#">AMPRevenue object</a>, allowing you to chain multiple method calls together.</p>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
 			</div>
 			
 
@@ -737,7 +739,7 @@
 			
 			<div class="method-subsection return">
 				<h4 class="method-subtitle parameter-title">Return Value</h4>
-				<p>the same <a href="#">AMPRevenue object</a>, allowing you to chain multiple method calls together.</p>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
 			</div>
 			
 
@@ -800,7 +802,7 @@
 			
 			<div class="method-subsection return">
 				<h4 class="method-subtitle parameter-title">Return Value</h4>
-				<p>the same <a href="#">AMPRevenue object</a>, allowing you to chain multiple method calls together.</p>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
 			</div>
 			
 
@@ -874,7 +876,7 @@
 			
 			<div class="method-subsection return">
 				<h4 class="method-subtitle parameter-title">Return Value</h4>
-				<p>the same <a href="#">AMPRevenue object</a>, allowing you to chain multiple method calls together.</p>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
 			</div>
 			
 
