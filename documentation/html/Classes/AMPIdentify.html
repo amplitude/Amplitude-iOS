@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>AMPIdentify Class Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">Amplitude-iOS </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">Amplitude</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+
+	
+	<optgroup label="Class Methods">
+		
+		<option value="//api/name/identify">+ identify</option>
+		
+	</optgroup>
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/add:value:">- add:value:</option>
+		
+		<option value="//api/name/append:value:">- append:value:</option>
+		
+		<option value="//api/name/prepend:value:">- prepend:value:</option>
+		
+		<option value="//api/name/set:value:">- set:value:</option>
+		
+		<option value="//api/name/setOnce:value:">- setOnce:value:</option>
+		
+		<option value="//api/name/unset:">- unset:</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">AMPIdentify Class Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Inherits from</th>
+	<td>NSObject</td>
+</tr><tr>
+	<th>Declared in</th>
+	<td>AMPIdentify.h<br />AMPIdentify.m</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p><code>AMPIdentify</code> objects are a wrapper for user property operations, which get passed to the <a href="#//api/name/identify"><code>identify</code></a> method to send to <a href="../Classes/Amplitude.html">Amplitude</a> servers.</p>
+
+<p><strong>Note:</strong> if a user property is used in multiple operations on the same Identify object, only the first operation will be saved, and the rest will be ignored.</p>
+
+<p>Each method adds a user property operation to the Identify object, and returns the same Identify object, allowing you to chain multiple method calls together.</p>
+
+<p>Here is an example of how to use <code>AMPIdentify</code> to send user property operations:</p>
+
+<pre><code>AMPIdentify *identify = [[AMPIdentify identify] add:@"karma" value:[NSNumber numberWithInt:1]];
+[[identify set:@"colors" value:@[@"rose", @"gold"]] append:@"ab-tests" value:@"campaign_a"];
+[[Amplitude instance] identify:identify];
+</code></pre>
+
+<p>See <a href="https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						<a title="Creating an AMPIdentify Object" name="task_Creating an AMPIdentify Object"></a>
+						<h2 class="task-title">Creating an AMPIdentify Object</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/identify" title="identify"></a>
+	<h3 class="method-title"><code><a href="#//api/name/identify">+&nbsp;identify</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Creates a nwe <a href="#">AMPIdentify</a> object.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (instancetype)identify</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>a new <a href="#">AMPIdentify</a> object.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Creates a nwe <a href="#">AMPIdentify</a> object.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPIdentify.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="User Property Operations via Identify API" name="task_User Property Operations via Identify API"></a>
+						<h2 class="task-title">User Property Operations via Identify API</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/add:value:" title="add:value:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/add:value:">&ndash;&nbsp;add:value:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Increment a user property by a given value (can also be negative to decrement).</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPIdentify *)add:(NSString *)<em>property</em> value:(NSObject *)<em>value</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>property</code></th>
+						<td><p>The user property key</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>value</code></th>
+						<td><p>The amount by which to increment the user property.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPIdentify</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Increment a user property by a given value (can also be negative to decrement).</p>
+
+<p>If the user property does not have a value set yet, it will be initialized to 0 before being incremented.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPIdentify.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/append:value:" title="append:value:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/append:value:">&ndash;&nbsp;append:value:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Append a value or values to a user property.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPIdentify *)append:(NSString *)<em>property</em> value:(NSObject *)<em>value</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>property</code></th>
+						<td><p>The user property key</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>value</code></th>
+						<td><p>A value or values to append.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPIdentify</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Append a value or values to a user property.</p>
+
+<p>If the user property does not have a value set yet, it will be initialized to an empty list before the new values are appended. If the user property has an existing value and it is not a list, the existing value will be converted into a list with the new values appended.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPIdentify.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/prepend:value:" title="prepend:value:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/prepend:value:">&ndash;&nbsp;prepend:value:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Prepend a value or values to a user property. Prepend means inserting the value or values at the front of a list.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPIdentify *)prepend:(NSString *)<em>property</em> value:(NSObject *)<em>value</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>property</code></th>
+						<td><p>The user property key</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>value</code></th>
+						<td><p>A value or values to prepend.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPIdentify</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Prepend a value or values to a user property. Prepend means inserting the value or values at the front of a list.</p>
+
+<p>If the user property does not have a value set yet, it will be initialized to an empty list before the new values are prepended. If the user property has an existing value and it is not a list, the existing value will be converted into a list with the new values prepended.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPIdentify.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/set:value:" title="set:value:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/set:value:">&ndash;&nbsp;set:value:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets the value of a given user property. If the value already exists, it will be overwritten with the new value.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPIdentify *)set:(NSString *)<em>property</em> value:(NSObject *)<em>value</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>property</code></th>
+						<td><p>The user property key</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>value</code></th>
+						<td><p>A value or values to set.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPIdentify</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets the value of a given user property. If the value already exists, it will be overwritten with the new value.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPIdentify.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setOnce:value:" title="setOnce:value:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setOnce:value:">&ndash;&nbsp;setOnce:value:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets the value of a given user property only once. Subsequent <code>setOnce</code> operations on that user property will be ignored; however, that user property can still be modified through any of the other operations.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPIdentify *)setOnce:(NSString *)<em>property</em> value:(NSObject *)<em>value</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>property</code></th>
+						<td><p>The user property key</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>value</code></th>
+						<td><p>A value or values to set once.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPIdentify</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets the value of a given user property only once. Subsequent <code>setOnce</code> operations on that user property will be ignored; however, that user property can still be modified through any of the other operations.</p>
+
+<p>This is useful for capturing properties such as initial_signup_date, initial_referrer, etc.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPIdentify.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/unset:" title="unset:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/unset:">&ndash;&nbsp;unset:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Unset and remove user property. This user property will no longer show up in that user&rsquo;s profile.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPIdentify *)unset:(NSString *)<em>property</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>property</code></th>
+						<td><p>The user property key to unset.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPIdentify</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Unset and remove user property. This user property will no longer show up in that user&rsquo;s profile.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPIdentify.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 Amplitude. All rights reserved. Updated: 2016-05-09</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>

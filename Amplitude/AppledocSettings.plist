@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>--ignore</key>
+    <array>
+        <string>Amplitude.m</string>
+        <string>AMPARCMacros.h</string>
+        <string>AMPConstants.h</string>
+        <string>AMPConstants.m</string>
+        <string>AMPDatabaseHelper.h</string>
+        <string>AMPDatabaseHelper.m</string>
+        <string>AMPDeviceInfo.h</string>
+        <string>AMPDeviceInfo.m</string>
+        <string>AMPLocationManagerDelegate.h</string>
+        <string>AMPLocationManagerDelegate.m</string>
+        <string>AMPURLConnection.h</string>
+        <string>AMPURLConnection.m</string>
+        <string>AMPUtils.h</string>
+        <string>AMPUtils.m</string>
+        <string>SSLCertificatePinning</string>
+    </array>
+    <key>--output</key>
+    <string>./documentation/</string>
+    <key>--project-company</key>
+    <string>Amplitude</string>
+    <key>--project-name</key>
+    <string>Amplitude-iOS</string>
+    <key>--company-id</key>
+    <string>com.amplitude</string>
+    <key>--create-docset</key>
+    <false/>
+    <key>--create-html</key>
+    <true/>
+    <key>--install-docset</key>
+    <false/>
+    <key>--verbose</key>
+    <string>4</string>
+    <key>--logformat</key>
+    <integer>1</integer>
+</dict>
+</plist>
