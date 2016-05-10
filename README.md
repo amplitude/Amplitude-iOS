@@ -7,6 +7,8 @@ An iOS SDK for tracking events and revenue to [Amplitude](http://www.amplitude.c
 
 A [demo application](https://github.com/amplitude/iOS-Demo) is available to show a simple integration.
 
+See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/index.html) for a description of all available SDK methods and classes.
+
 # Setup #
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
 
