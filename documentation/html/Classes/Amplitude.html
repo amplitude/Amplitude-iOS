@@ -110,19 +110,25 @@
 		
 		<option value="//api/name/initializeApiKey:userId:">- initializeApiKey:userId:</option>
 		
-		<option value="//api/name/initializeApiKey:userId:setUserId:">- initializeApiKey:userId:setUserId:</option>
-		
 		<option value="//api/name/logEvent:">- logEvent:</option>
 		
+		<option value="//api/name/logEvent:withEventProperties:">- logEvent:withEventProperties:</option>
+		
+		<option value="//api/name/logEvent:withEventProperties:outOfSession:">- logEvent:withEventProperties:outOfSession:</option>
+		
+		<option value="//api/name/logEvent:withEventProperties:withGroups:">- logEvent:withEventProperties:withGroups:</option>
+		
+		<option value="//api/name/logEvent:withEventProperties:withGroups:outOfSession:">- logEvent:withEventProperties:withGroups:outOfSession:</option>
+		
 		<option value="//api/name/logRevenue:">- logRevenue:</option>
+		
+		<option value="//api/name/logRevenue:quantity:price:">- logRevenue:quantity:price:</option>
+		
+		<option value="//api/name/logRevenue:quantity:price:receipt:">- logRevenue:quantity:price:receipt:</option>
 		
 		<option value="//api/name/logRevenueV2:">- logRevenueV2:</option>
 		
 		<option value="//api/name/printEventsCount">- printEventsCount</option>
-		
-		<option value="//api/name/refreshSessionTime:">- refreshSessionTime:</option>
-		
-		<option value="//api/name/runOnBackgroundQueue:">- runOnBackgroundQueue:</option>
 		
 		<option value="//api/name/setDeviceId:">- setDeviceId:</option>
 		
@@ -132,17 +138,13 @@
 		
 		<option value="//api/name/setOptOut:">- setOptOut:</option>
 		
-		<option value="//api/name/setSessionId:">- setSessionId:</option>
-		
 		<option value="//api/name/setUserId:">- setUserId:</option>
 		
 		<option value="//api/name/setUserProperties:">- setUserProperties:</option>
 		
-		<option value="//api/name/startOrContinueSession:">- startOrContinueSession:</option>
+		<option value="//api/name/setUserProperties:replace:">- setUserProperties:replace:</option>
 		
 		<option value="//api/name/updateLocation">- updateLocation</option>
-		
-		<option value="//api/name/upgradePrefs">- upgradePrefs</option>
 		
 		<option value="//api/name/uploadEvents">- uploadEvents</option>
 		
@@ -172,7 +174,7 @@
 	<td>NSObject</td>
 </tr><tr>
 	<th>Declared in</th>
-	<td>Amplitude.h<br />Amplitude.m</td>
+	<td>Amplitude.h</td>
 </tr>
 						</tbody></table></div>
 					
@@ -1022,12 +1024,317 @@
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Tracks an event. Events are saved locally.</p>
 			</div>
 			
 		    
 
 			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventType</code></th>
+						<td><p>The name of the event you wish to track.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Tracks an event. Events are saved locally.</p>
+
+<p>Uploads are batched to occur every 30 events or every 30 seconds (whichever comes first), as well as on app close.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events">Tracking Events</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/logEvent:withEventProperties:" title="logEvent:withEventProperties:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logEvent:withEventProperties:">&ndash;&nbsp;logEvent:withEventProperties:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Tracks an event. Events are saved locally.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventType</code></th>
+						<td><p>The name of the event you wish to track.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventProperties</code></th>
+						<td><p>You can attach additional data to any event by passing a NSDictionary object with property: value pairs.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Tracks an event. Events are saved locally.</p>
+
+<p>Uploads are batched to occur every 30 events or every 30 seconds (whichever comes first), as well as on app close.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events">Tracking Events</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/logEvent:withEventProperties:outOfSession:" title="logEvent:withEventProperties:outOfSession:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logEvent:withEventProperties:outOfSession:">&ndash;&nbsp;logEvent:withEventProperties:outOfSession:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Tracks an event. Events are saved locally.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventType</code></th>
+						<td><p>The name of the event you wish to track.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventProperties</code></th>
+						<td><p>You can attach additional data to any event by passing a NSDictionary object with property: value pairs.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>outOfSession</code></th>
+						<td><p>If YES, will track the event as out of session. Useful for push notification events.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Tracks an event. Events are saved locally.</p>
+
+<p>Uploads are batched to occur every 30 events or every 30 seconds (whichever comes first), as well as on app close.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events">Tracking Events</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-sessions">Tracking Sessions</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/logEvent:withEventProperties:withGroups:" title="logEvent:withEventProperties:withGroups:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logEvent:withEventProperties:withGroups:">&ndash;&nbsp;logEvent:withEventProperties:withGroups:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Tracks an event. Events are saved locally.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventType</code></th>
+						<td><p>The name of the event you wish to track.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventProperties</code></th>
+						<td><p>You can attach additional data to any event by passing a NSDictionary object with property: value pairs.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>groups</code></th>
+						<td><p>You can specify event-level groups for this user by passing a NSDictionary object with groupType: groupName pairs. Note the keys need to be strings, and the values can either be strings or an array of strings.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Tracks an event. Events are saved locally.</p>
+
+<p>Uploads are batched to occur every 30 events or every 30 seconds (whichever comes first), as well as on app close.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events">Tracking Events</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-groups">Setting Groups</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/logEvent:withEventProperties:withGroups:outOfSession:" title="logEvent:withEventProperties:withGroups:outOfSession:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logEvent:withEventProperties:withGroups:outOfSession:">&ndash;&nbsp;logEvent:withEventProperties:withGroups:outOfSession:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Tracks an event. Events are saved locally.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
 
 		    
 			
@@ -1052,16 +1359,7 @@
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>outOfSession</code></th>
-						<td><p>If YES, will track the event as out of session. Useful for push notification events.</p>
-
-<p>@discussion
-Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close.
-After calling logEvent in your app, you will immediately see data appear on the Amplitude Website.</p>
-
-<p>It&rsquo;s important to think about what types of events you care about as a developer. You should aim to track
-between 50 and 200 types of events within your app. Common event types are different screens within the app,
-actions the user initiates (such as pressing a button), and events you want the user to complete
-(such as filling out a form, completing a level, or making a payment).</p></td>
+						<td><p>If YES, will track the event as out of session. Useful for push notification events.</p></td>
 					</tr>
 				
 				</table>
@@ -1075,15 +1373,27 @@ actions the user initiates (such as pressing a button), and events you want the 
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Tracks an event. Events are saved locally.</p>
 
-<p>@abstract
-Tracks an event</p>
+<p>Uploads are batched to occur every 30 events or every 30 seconds (whichever comes first), as well as on app close.</p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events">Tracking Events</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-groups">Setting Groups</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-sessions">Tracking Sessions</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1095,7 +1405,15 @@ Tracks an event</p>
 			
 		</div>
 	</div>
-</div><div class="section-method">
+</div>
+						</div>
+						
+
+						<a title="Logging Revenue" name="task_Logging Revenue"></a>
+						<h2 class="task-title">Logging Revenue</h2>
+
+						<div class="task-list">
+							<div class="section-method">
 	<a name="//api/name/logRevenue:" title="logRevenue:"></a>
 	<h3 class="method-title"><code><a href="#//api/name/logRevenue:">&ndash;&nbsp;logRevenue:</a></code>
 </h3>
@@ -1107,7 +1425,7 @@ Tracks an event</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
 			</div>
 			
 		    
@@ -1122,15 +1440,7 @@ Tracks an event</p>
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>amount</code></th>
-						<td><p>The amount of revenue to track, e.g. &ldquo;3.99&rdquo;.</p>
-
-<p>@discussion
-To track revenue from a user, call [[Amplitude instance] logRevenue:[NSNumber numberWithDouble:3.99]] each time the user generates revenue.
-logRevenue: takes in an NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display
-data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue,
-lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
-
-<p>For validating revenue, use [[Amplitude instance] logRevenue:@&ldquo;com.company.app.productId&rdquo; quantity:1 price:[NSNumber numberWithDouble:3.99] receipt:transactionReceipt]</p></td>
+						<td><p>The amount of revenue to track, e.g. &ldquo;3.99&rdquo;.</p></td>
 					</tr>
 				
 				</table>
@@ -1144,15 +1454,196 @@ lifetime value (LTV) estimates, and revenue by advertising campaign cohort and d
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
 
-<p>@abstract
-Tracks revenue.</p>
+<p>Tracks revenue.</p>
+
+<p>To track revenue from a user, call [[Amplitude instance] logRevenue:[NSNumber numberWithDouble:3.99]] each time the user generates revenue. logRevenue: takes in an NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#backwards-compatibility">LogRevenue Backwards Compatability</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/logRevenue:quantity:price:" title="logRevenue:quantity:price:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logRevenue:quantity:price:">&ndash;&nbsp;logRevenue:quantity:price:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>quantity</code></th>
+						<td><p>The number of products in the transaction. Revenue amount is calculated as quantity * price</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>price</code></th>
+						<td><p>The price of the products in the transaction. Revenue amount is calculated as quantity * price</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>productidentifier</code></th>
+						<td><p>The identifier for the product in the transaction, e.g. &ldquo;com.amplitude.productId&rdquo;</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
+
+<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-revenue">LogRevenueV2</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#backwards-compatibility">LogRevenue Backwards Compatability</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/logRevenue:quantity:price:receipt:" title="logRevenue:quantity:price:receipt:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logRevenue:quantity:price:receipt:">&ndash;&nbsp;logRevenue:quantity:price:receipt:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em> receipt:(NSData *)<em>receipt</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>quantity</code></th>
+						<td><p>The number of products in the transaction. Revenue amount is calculated as quantity * price</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>price</code></th>
+						<td><p>The price of the products in the transaction. Revenue amount is calculated as quantity * price</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>receipt</code></th>
+						<td><p>The receipt data from the App Store. Required if you want to verify this revenue event.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>productidentifier</code></th>
+						<td><p>The identifier for the product in the transaction, e.g. &ldquo;com.amplitude.productId&rdquo;</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
+
+<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
+
+<p>For validating revenue, use [[Amplitude instance] logRevenue:@&ldquo;com.company.app.productId&rdquo; quantity:1 price:[NSNumber numberWithDouble:3.99] receipt:transactionReceipt]</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-revenue">LogRevenueV2</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#backwards-compatibility">LogRevenue Backwards Compatability</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#revenue-verification">Revenue Verification</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1176,7 +1667,7 @@ Tracks revenue.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Tracks revenue - API v2. This uses the <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a> object to store transaction properties such as quantity, price, and revenue type. This is the recommended method for tracking revenue in Amplitude.</p>
 			</div>
 			
 		    
@@ -1191,15 +1682,7 @@ Tracks revenue.</p>
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>AMPRevenue</code></th>
-						<td><p>object       revenue object contains all revenue information</p>
-
-<p>@discussion
-To track revenue from a user, create an <a href="../Classes/AMPRevenue.html">AMPRevenue</a> object each time the user generates revenue, and set the revenue properties (productIdentifier, price, quantity).
-logRevenuev2: takes in an <a href="../Classes/AMPRevenue.html">AMPRevenue</a> object. This allows us to automatically display data relevant to revenue on the Amplitude website, including average
-revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and
-daily/weekly/monthly cohorts.</p>
-
-<p>For validating revenue, make sure the receipt data is set on the <a href="../Classes/AMPRevenue.html">AMPRevenue</a> object.</p></td>
+						<td><p>object       revenue object contains all revenue information</p></td>
 					</tr>
 				
 				</table>
@@ -1213,15 +1696,25 @@ daily/weekly/monthly cohorts.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Tracks revenue - API v2. This uses the <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a> object to store transaction properties such as quantity, price, and revenue type. This is the recommended method for tracking revenue in Amplitude.</p>
 
-<p>@abstract
-Tracks revenue - API v2.</p>
+<p>For validating revenue, make sure the receipt data is set on the <a href="../Classes/AMPRevenue.html">AMPRevenue</a> object.</p>
+
+<p>To track revenue from a user, create an <a href="../Classes/AMPRevenue.html">AMPRevenue</a> object each time the user generates revenue, and set the revenue properties (productIdentifier, price, quantity). logRevenuev2: takes in an <a href="../Classes/AMPRevenue.html">AMPRevenue</a> object. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-revenue">Tracking Revenue</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1233,7 +1726,15 @@ Tracks revenue - API v2.</p>
 			
 		</div>
 	</div>
-</div><div class="section-method">
+</div>
+						</div>
+						
+
+						<a title="User Properties and User Property Operations" name="task_User Properties and User Property Operations"></a>
+						<h2 class="task-title">User Properties and User Property Operations</h2>
+
+						<div class="task-list">
+							<div class="section-method">
 	<a name="//api/name/identify:" title="identify:"></a>
 	<h3 class="method-title"><code><a href="#//api/name/identify:">&ndash;&nbsp;identify:</a></code>
 </h3>
@@ -1245,7 +1746,7 @@ Tracks revenue - API v2.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Update user properties using operations provided via Identify API.</p>
 			</div>
 			
 		    
@@ -1260,14 +1761,7 @@ Tracks revenue - API v2.</p>
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>identify</code></th>
-						<td><p>An AMPIdentify object with the intended user property operations</p>
-
-<p>@discussion
-To update user properties, first create an AMPIdentify object. For example if you wanted to set a user&rsquo;s gender, and then increment their
-karma count by 1, you would do:
-AMPIdentify *identify = [[[AMPIdentify identify] set:@&ldquo;gender&rdquo; value:@&ldquo;male&rdquo;] add:@&ldquo;karma&rdquo; value:[NSNumber numberWithInt:1]];
-Then you would pass this AMPIdentify object to the identify function to send to the server: [[Amplitude instance] identify:identify];
-The Identify API supports add, set, setOnce, unset operations. See the <a href="../Classes/AMPIdentify.html">AMPIdentify</a>.h header file for the method signatures.</p></td>
+						<td><p>An <a href="../Classes/AMPIdentify.html">AMPIdentify</a> object with the intended user property operations</p></td>
 					</tr>
 				
 				</table>
@@ -1281,68 +1775,31 @@ The Identify API supports add, set, setOnce, unset operations. See the <a href="
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Update user properties using operations provided via Identify API.</p>
 
-<p>@abstract
-Update user properties using operations provided via Identify API.</p>
+<p>To update user properties, first create an AMPIdentify object. For example if you wanted to set a user&rsquo;s gender, and then increment their karma count by 1, you would do:</p>
+
+<pre><code>AMPIdentify *identify = [[[AMPIdentify identify] set:@"gender" value:@"male"] add:@"karma" value:[NSNumber numberWithInt:1]];
+</code></pre>
+
+<p>Then you would pass this AMPIdentify object to the identify function to send to the server:</p>
+
+<pre><code>[[Amplitude instance] identify:identify];
+</code></pre>
 			</div>
 			
 
 			
 
 			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
 			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
-	<a name="//api/name/uploadEvents" title="uploadEvents"></a>
-	<h3 class="method-title"><code><a href="#//api/name/uploadEvents">&ndash;&nbsp;uploadEvents</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>@method</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)uploadEvents</code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
-
-<p>@abstract
-Manually forces the class to immediately upload all queued events.</p>
-
-<p>@discussion
-Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close.
-Use this method to force the class to immediately upload all queued events.</p>
-			</div>
-			
-
-			
-
 			
 
 			
@@ -1366,7 +1823,7 @@ Use this method to force the class to immediately upload all queued events.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Adds properties that are tracked on the user level.</p>
 			</div>
 			
 		    
@@ -1384,12 +1841,78 @@ Use this method to force the class to immediately upload all queued events.</p>
 						<td><p>An NSDictionary containing any additional data to be tracked.</p></td>
 					</tr>
 				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Adds properties that are tracked on the user level.</p>
+
+<p><strong>Note:</strong> Property keys must be <code>NSString</code> objects and values must be serializable.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-multiple-properties-with-setuserproperties">Setting Multiple Properties with setUserProperties</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setUserProperties:replace:" title="setUserProperties:replace:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setUserProperties:replace:">&ndash;&nbsp;setUserProperties:replace:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p><strong>NOTE: this method is deprecated</strong> - use <code>setUserProperties</code> instead. In earlier versions of the SDK, replace = YES replaced the in-memory userProperties dictionary with the input; however, now userProperties are no longer stored in memory, so the flag does nothing.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setUserProperties:(NSDictionary *)<em>userProperties</em> replace:(BOOL)<em>replace</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>userProperties</code></th>
+						<td><p>An NSDictionary containing any additional data to be tracked.</p></td>
+					</tr>
+				
 					<tr>
 						<th scope="row" class="argument-name"><code>replace</code></th>
-						<td><p>This is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.</p>
-
-<p>@discussion
-Property keys must be <code>NSString</code> objects and values must be serializable.</p></td>
+						<td><p>This is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.</p></td>
 					</tr>
 				
 				</table>
@@ -1403,15 +1926,25 @@ Property keys must be <code>NSString</code> objects and values must be serializa
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p><strong>NOTE: this method is deprecated</strong> - use <code>setUserProperties</code> instead. In earlier versions of the SDK, replace = YES replaced the in-memory userProperties dictionary with the input; however, now userProperties are no longer stored in memory, so the flag does nothing.</p>
 
-<p>@abstract
-Adds properties that are tracked on the user level.</p>
+<p>Adds properties that are tracked on the user level.</p>
+
+<p><strong>Note:</strong> Property keys must be <code>NSString</code> objects and values must be serializable.</p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-multiple-properties-with-setuserproperties">Setting Multiple Properties with setUserProperties</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1435,7 +1968,7 @@ Adds properties that are tracked on the user level.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Clears all properties that are tracked on the user level.</p>
 			</div>
 			
 		    
@@ -1452,15 +1985,23 @@ Adds properties that are tracked on the user level.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Clears all properties that are tracked on the user level.</p>
 
-<p>@abstract
-Clears all properties that are tracked on the user level.</p>
+<p><strong>Note: the result is irreversible!</strong></p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#clearing-user-properties-with-clearuserproperties">Clearing user properties</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1484,7 +2025,7 @@ Clears all properties that are tracked on the user level.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Adds a user to a group or groups. You need to specify a groupType and groupName(s).</p>
 			</div>
 			
 		    
@@ -1518,15 +2059,27 @@ Clears all properties that are tracked on the user level.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Adds a user to a group or groups. You need to specify a groupType and groupName(s).</p>
 
-<p>@abstract
-Adds a user to a group or groups. You need to specify a groupType and groupName(s). For example you can group people by their organization. In that case groupType is &ldquo;orgId&rdquo;, and groupName would be the actual ID(s). groupName can be a string or an array of strings to indicate a user in multiple groups. You can also call setGroup multiple times with different groupTypes to track multiple types of groups (up to 5 per app). Note: this will also set groupType: groupName as a user property.</p>
+<p>For example you can group people by their organization. In that case groupType is &ldquo;orgId&rdquo;, and groupName would be the actual ID(s). groupName can be a string or an array of strings to indicate a user in multiple groups.</p>
+
+<p>You can also call setGroup multiple times with different groupTypes to track multiple types of groups (up to 5 per app).</p>
+
+<p><strong>Note:</strong> this will also set groupType: groupName as a user property.</p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-groups">Setting Groups</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1538,7 +2091,15 @@ Adds a user to a group or groups. You need to specify a groupType and groupName(
 			
 		</div>
 	</div>
-</div><div class="section-method">
+</div>
+						</div>
+						
+
+						<a title="Setting User and Device Identifiers" name="task_Setting User and Device Identifiers"></a>
+						<h2 class="task-title">Setting User and Device Identifiers</h2>
+
+						<div class="task-list">
+							<div class="section-method">
 	<a name="//api/name/setUserId:" title="setUserId:"></a>
 	<h3 class="method-title"><code><a href="#//api/name/setUserId:">&ndash;&nbsp;setUserId:</a></code>
 </h3>
@@ -1550,7 +2111,7 @@ Adds a user to a group or groups. You need to specify a groupType and groupName(
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Sets the <a href="#//api/name/userId">userId</a>.</p>
 			</div>
 			
 		    
@@ -1565,10 +2126,7 @@ Adds a user to a group or groups. You need to specify a groupType and groupName(
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>userId</code></th>
-						<td><p>If your app has its own login system that you want to track users with, you can set the <a href="#//api/name/userId">userId</a>.</p>
-
-<p>@discussion
-If your app has its own login system that you want to track users with, you can set the <a href="#//api/name/userId">userId</a>.</p></td>
+						<td><p>If your app has its own login system that you want to track users with, you can set the <a href="#//api/name/userId">userId</a>.</p></td>
 					</tr>
 				
 				</table>
@@ -1582,15 +2140,21 @@ If your app has its own login system that you want to track users with, you can 
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
-
-<p>@abstract
-Sets the <a href="#//api/name/userId">userId</a>.</p>
+				<p>Sets the <a href="#//api/name/userId">userId</a>.</p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-custom-user-ids">Setting Custom UserIds</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1614,7 +2178,7 @@ Sets the <a href="#//api/name/userId">userId</a>.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Sets the <a href="#//api/name/deviceId">deviceId</a>.</p>
 			</div>
 			
 		    
@@ -1629,10 +2193,7 @@ Sets the <a href="#//api/name/userId">userId</a>.</p>
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>deviceId</code></th>
-						<td><p>If your app has its own system for tracking devices, you can set the <a href="#//api/name/deviceId">deviceId</a>.</p>
-
-<p>@discussion
-If your app has its own system for tracking devices, you can set the <a href="#//api/name/deviceId">deviceId</a>.</p></td>
+						<td><p>If your app has its own system for tracking devices, you can set the <a href="#//api/name/deviceId">deviceId</a>.</p></td>
 					</tr>
 				
 				</table>
@@ -1646,15 +2207,23 @@ If your app has its own system for tracking devices, you can set the <a href="#/
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Sets the <a href="#//api/name/deviceId">deviceId</a>.</p>
 
-<p>@abstract
-Sets the <a href="#//api/name/deviceId">deviceId</a>.</p>
+<p><strong>NOTE: not recommended unless you know what you are doing</strong></p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#custom-device-ids">Setting Custom Device Ids</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -1666,7 +2235,15 @@ Sets the <a href="#//api/name/deviceId">deviceId</a>.</p>
 			
 		</div>
 	</div>
-</div><div class="section-method">
+</div>
+						</div>
+						
+
+						<a title="Configuring the SDK instance" name="task_Configuring the SDK instance"></a>
+						<h2 class="task-title">Configuring the SDK instance</h2>
+
+						<div class="task-list">
+							<div class="section-method">
 	<a name="//api/name/setOptOut:" title="setOptOut:"></a>
 	<h3 class="method-title"><code><a href="#//api/name/setOptOut:">&ndash;&nbsp;setOptOut:</a></code>
 </h3>
@@ -1678,7 +2255,7 @@ Sets the <a href="#//api/name/deviceId">deviceId</a>.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Enables tracking opt out.</p>
 			</div>
 			
 		    
@@ -1693,10 +2270,7 @@ Sets the <a href="#//api/name/deviceId">deviceId</a>.</p>
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>enabled</code></th>
-						<td><p>Whether tracking opt out should be enabled or disabled.</p>
-
-<p>@discussion
-If the user wants to opt out of all tracking, use this method to enable opt out for them. Once opt out is enabled, no events will be saved locally or sent to the server. Calling this method again with enabled set to NO will turn tracking back on for the user.</p></td>
+						<td><p>Whether tracking opt out should be enabled or disabled.</p></td>
 					</tr>
 				
 				</table>
@@ -1710,10 +2284,9 @@ If the user wants to opt out of all tracking, use this method to enable opt out 
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Enables tracking opt out.</p>
 
-<p>@abstract
-Enables tracking opt out.</p>
+<p>If the user wants to opt out of all tracking, use this method to enable opt out for them. Once opt out is enabled, no events will be saved locally or sent to the server. Calling this method again with enabled set to NO will turn tracking back on for the user.</p>
 			</div>
 			
 
@@ -1742,7 +2315,7 @@ Enables tracking opt out.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Disables sending logged events to Amplitude servers.</p>
 			</div>
 			
 		    
@@ -1757,10 +2330,7 @@ Enables tracking opt out.</p>
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>offline</code></th>
-						<td><p>Whether logged events should be sent to Amplitude servers.</p>
-
-<p>@discussion
-If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server and the client will attempt to send events that have been queued while offline.</p></td>
+						<td><p>Whether logged events should be sent to Amplitude servers.</p></td>
 					</tr>
 				
 				</table>
@@ -1774,10 +2344,9 @@ If you want to stop logged events from being sent to Amplitude severs, use this 
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Disables sending logged events to Amplitude servers.</p>
 
-<p>@abstract
-Disables sending logged events to Amplitude servers.</p>
+<p>If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server and the client will attempt to send events that have been queued while offline.</p>
 			</div>
 			
 
@@ -1806,7 +2375,7 @@ Disables sending logged events to Amplitude servers.</p>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Enables location tracking.</p>
 			</div>
 			
 		    
@@ -1823,14 +2392,11 @@ Disables sending logged events to Amplitude servers.</p>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Enables location tracking.</p>
 
-<p>@abstract
-Enables location tracking.</p>
+<p>If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.</p>
 
-<p>@discussion
-If the user has granted your app location permissions, the SDK will also grab the location of the user.
-Amplitude will never prompt the user for location permissions itself, this must be done by your app.</p>
+<p><strong>Note:</strong> the user&rsquo;s location is only fetched once per session. Use <a href="#//api/name/updateLocation"><code>updateLocation</code></a> to force the SDK to fetch the user&rsquo;s latest location.</p>
 			</div>
 			
 
@@ -1859,7 +2425,7 @@ Amplitude will never prompt the user for location permissions itself, this must 
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Disables location tracking. If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.</p>
 			</div>
 			
 		    
@@ -1876,13 +2442,7 @@ Amplitude will never prompt the user for location permissions itself, this must 
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
-
-<p>@abstract
-Disables location tracking.</p>
-
-<p>@discussion
-If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.</p>
+				<p>Disables location tracking. If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.</p>
 			</div>
 			
 
@@ -1911,7 +2471,7 @@ If you want location tracking disabled on startup of the app, call disableLocati
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Forces the SDK to update with the user&rsquo;s last known location if possible.</p>
 			</div>
 			
 		    
@@ -1928,13 +2488,9 @@ If you want location tracking disabled on startup of the app, call disableLocati
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Forces the SDK to update with the user&rsquo;s last known location if possible.</p>
 
-<p>@abstract
-Forces the SDK to update with the user&rsquo;s last known location if possible.</p>
-
-<p>@discussion
-If you want to manually force the SDK to update with the user&rsquo;s last known location, call updateLocation.</p>
+<p>If you want to manually force the SDK to update with the user&rsquo;s last known location, call updateLocation.</p>
 			</div>
 			
 
@@ -1963,7 +2519,7 @@ If you want to manually force the SDK to update with the user&rsquo;s last known
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Uses advertisingIdentifier instead of identifierForVendor as the device ID</p>
 			</div>
 			
 		    
@@ -1980,13 +2536,11 @@ If you want to manually force the SDK to update with the user&rsquo;s last known
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Uses advertisingIdentifier instead of identifierForVendor as the device ID</p>
 
-<p>@abstract
-Uses advertisingIdentifier instead of identifierForVendor as the device ID</p>
+<p>Apple prohibits the use of advertisingIdentifier if your app does not have advertising. Useful for tying together data from advertising campaigns to anlaytics data.</p>
 
-<p>@discussion
-Apple prohibits the use of advertisingIdentifier if your app does not have advertising. Useful for tying together data from advertising campaigns to anlaytics data. Must be called before <a href="#//api/name/initializeApiKey:">initializeApiKey:</a> is called to function.</p>
+<p><strong>NOTE:</strong> Must be called before <a href="#//api/name/initializeApiKey:">initializeApiKey:</a> is called to function.</p>
 			</div>
 			
 
@@ -2003,7 +2557,15 @@ Apple prohibits the use of advertisingIdentifier if your app does not have adver
 			
 		</div>
 	</div>
-</div><div class="section-method">
+</div>
+						</div>
+						
+
+						<a title="Other Methods" name="task_Other Methods"></a>
+						<h2 class="task-title">Other Methods</h2>
+
+						<div class="task-list">
+							<div class="section-method">
 	<a name="//api/name/printEventsCount" title="printEventsCount"></a>
 	<h3 class="method-title"><code><a href="#//api/name/printEventsCount">&ndash;&nbsp;printEventsCount</a></code>
 </h3>
@@ -2015,7 +2577,7 @@ Apple prohibits the use of advertisingIdentifier if your app does not have adver
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Prints the number of events in the queue.</p>
 			</div>
 			
 		    
@@ -2032,13 +2594,9 @@ Apple prohibits the use of advertisingIdentifier if your app does not have adver
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
+				<p>Prints the number of events in the queue.</p>
 
-<p>@abstract
-Prints the number of events in the queue.</p>
-
-<p>@discussion
-Debugging method to find out how many events are being stored locally on the device.</p>
+<p>Debugging method to find out how many events are being stored locally on the device.</p>
 			</div>
 			
 
@@ -2067,7 +2625,7 @@ Debugging method to find out how many events are being stored locally on the dev
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Fetches the <a href="#//api/name/deviceId">deviceId</a>, a unique identifier shared between multiple users using the same app on the same device.</p>
 			</div>
 			
 		    
@@ -2078,19 +2636,18 @@ Debugging method to find out how many events are being stored locally on the dev
 			
 
 			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the <a href="#//api/name/deviceId">deviceId</a>.</p>
+			</div>
+			
 
 			
 
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
-
-<p>@abstract
-Returns <a href="#//api/name/deviceId">deviceId</a></p>
-
-<p>@discussion
-The <a href="#//api/name/deviceId">deviceId</a> is an identifier used by Amplitude to determine unique users when no <a href="#//api/name/userId">userId</a> has been set.</p>
+				<p>Fetches the <a href="#//api/name/deviceId">deviceId</a>, a unique identifier shared between multiple users using the same app on the same device.</p>
 			</div>
 			
 
@@ -2119,7 +2676,7 @@ The <a href="#//api/name/deviceId">deviceId</a> is an identifier used by Amplitu
 			
 			
 			<div class="method-subsection brief-description">
-				<p>@method</p>
+				<p>Fetches the current sessionId, an identifier used by Amplitude to group together events tracked during the same session.</p>
 			</div>
 			
 		    
@@ -2130,24 +2687,32 @@ The <a href="#//api/name/deviceId">deviceId</a> is an identifier used by Amplitu
 			
 
 			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the current session id</p>
+			</div>
+			
 
 			
 
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>@method</p>
-
-<p>@abstract
-Returns the current <a href="#//api/name/sessionId">sessionId</a></p>
-
-<p>@discussion
-The <a href="#//api/name/sessionId">sessionId</a> is an identifier used by Amplitude to group together events performed during the same session.</p>
+				<p>Fetches the current sessionId, an identifier used by Amplitude to group together events tracked during the same session.</p>
 			</div>
 			
 
 			
 
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-sessions">Tracking Sessions</a></p></code></li>
+					
+				</ul>
+			</div>
 			
 
 			
@@ -2159,65 +2724,9 @@ The <a href="#//api/name/sessionId">sessionId</a> is an identifier used by Ampli
 			
 		</div>
 	</div>
-</div>
-						</div>
-						
-
-						
-						<h2 class="task-title">Other Methods</h2>
-
-						<div class="task-list">
-							<div class="section-method">
-	<a name="//api/name/initializeApiKey:userId:setUserId:" title="initializeApiKey:userId:setUserId:"></a>
-	<h3 class="method-title"><code><a href="#//api/name/initializeApiKey:userId:setUserId:">&ndash;&nbsp;initializeApiKey:userId:setUserId:</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a <a href="#//api/name/userId">userId</a> (can be nil).
-If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a> from saved eventsData.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)initializeApiKey:(NSString *)<em>apiKey</em> userId:(NSString *)<em>userId</em> setUserId:(BOOL)<em>setUserId</em></code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a <a href="#//api/name/userId">userId</a> (can be nil).
-If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a> from saved eventsData.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
 </div><div class="section-method">
-	<a name="//api/name/runOnBackgroundQueue:" title="runOnBackgroundQueue:"></a>
-	<h3 class="method-title"><code><a href="#//api/name/runOnBackgroundQueue:">&ndash;&nbsp;runOnBackgroundQueue:</a></code>
+	<a name="//api/name/uploadEvents" title="uploadEvents"></a>
+	<h3 class="method-title"><code><a href="#//api/name/uploadEvents">&ndash;&nbsp;uploadEvents</a></code>
 </h3>
 
 	<div class="method-info">
@@ -2227,12 +2736,12 @@ If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a>
 			
 			
 			<div class="method-subsection brief-description">
-				<p>Run a block in the background. If already in the background, run immediately.</p>
+				<p>Manually forces the <a href="#//api/name/instance">instance</a> to immediately upload all unsent events.</p>
 			</div>
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (BOOL)runOnBackgroundQueue:(void ( ^ ) ( void ))<em>block</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)uploadEvents</code></div>
 
 		    
 			
@@ -2244,7 +2753,9 @@ If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a>
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>Run a block in the background. If already in the background, run immediately.</p>
+				<p>Manually forces the <a href="#//api/name/instance">instance</a> to immediately upload all unsent events.</p>
+
+<p>Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close. Use this method to force the class to immediately upload all queued events.</p>
 			</div>
 			
 
@@ -2255,201 +2766,7 @@ If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a>
 			
 			<div class="method-subsection declared-in-section">
 				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
-	<a name="//api/name/startOrContinueSession:" title="startOrContinueSession:"></a>
-	<h3 class="method-title"><code><a href="#//api/name/startOrContinueSession:">&ndash;&nbsp;startOrContinueSession:</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Creates a new session if we are in the background and
-the current session is expired or if there is no current session ID].
-Otherwise extends the session.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (BOOL)startOrContinueSession:(NSNumber *)<em>timestamp</em></code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Creates a new session if we are in the background and
-the current session is expired or if there is no current session ID].
-Otherwise extends the session.</p>
-
-<p>Returns YES if a new session was created.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
-	<a name="//api/name/setSessionId:" title="setSessionId:"></a>
-	<h3 class="method-title"><code><a href="#//api/name/setSessionId:">&ndash;&nbsp;setSessionId:</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Sets the session ID in memory and persists it to disk.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)setSessionId:(long long)<em>timestamp</em></code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Sets the session ID in memory and persists it to disk.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
-	<a name="//api/name/refreshSessionTime:" title="refreshSessionTime:"></a>
-	<h3 class="method-title"><code><a href="#//api/name/refreshSessionTime:">&ndash;&nbsp;refreshSessionTime:</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Update the session timer if there&rsquo;s a running session.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)refreshSessionTime:(NSNumber *)<em>timestamp</em></code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Update the session timer if there&rsquo;s a running session.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
-	<a name="//api/name/upgradePrefs" title="upgradePrefs"></a>
-	<h3 class="method-title"><code><a href="#//api/name/upgradePrefs">&ndash;&nbsp;upgradePrefs</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Move all preference data from the legacy name to the new, static name if needed.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (BOOL)upgradePrefs</code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Move all preference data from the legacy name to the new, static name if needed.</p>
-
-<p>Data used to be in the NSCachesDirectory, which would sometimes be cleared unexpectedly,
-resulting in data loss. We move the data from NSCachesDirectory to the current
-location in NSLibraryDirectory.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
 			</div>
 			
 			
