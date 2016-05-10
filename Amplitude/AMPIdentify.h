@@ -25,12 +25,22 @@
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *userPropertyOperations;
 
+/**-----------------------------------------------------------------------------
+ * @name Creating an AMPIdentify Object
+ * -----------------------------------------------------------------------------
+ */
+
 /**
  Creates a nwe [AMPIdentify](#) object.
 
  @returns a new [AMPIdentify](#) object.
  */
 + (instancetype)identify;
+
+/**-----------------------------------------------------------------------------
+ * @name User Property Operations via Identify API
+ * -----------------------------------------------------------------------------
+ */
 
 /**
  Increment a user property by a given value (can also be negative to decrement).

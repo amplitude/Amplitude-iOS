@@ -26,6 +26,11 @@
 
 @interface AMPRevenue : NSObject
 
+/**-----------------------------------------------------------------------------
+ * @name Required Revenue Fields
+ * -----------------------------------------------------------------------------
+ */
+
 /**
  The product identifier for the transaction.
 
@@ -34,18 +39,23 @@
 @property (nonatomic, strong, readonly) NSString *productId;
 
 /**
- The quantity of product(s) purchased in the transaction.
-
- @warning: defaults to 1
- */
-@property (nonatomic, readonly) NSInteger quantity;
-
-/**
  The price of product(s) in the transaction.
 
  @warning: required field
  */
 @property (nonatomic, strong, readonly) NSNumber *price;
+
+/**-----------------------------------------------------------------------------
+ * @name Optional Revenue Fields
+ * -----------------------------------------------------------------------------
+ */
+
+/**
+ The quantity of product(s) purchased in the transaction.
+
+ @warning: defaults to 1
+ */
+@property (nonatomic, readonly) NSInteger quantity;
 
 /**
  The revenue type for the transaction (optional).
@@ -66,6 +76,11 @@
  */
 @property (nonatomic, strong, readonly) NSDictionary *properties;
 
+/**-----------------------------------------------------------------------------
+ * @name Creating an AMPRevenue Object
+ * -----------------------------------------------------------------------------
+ */
+
 /**
  Creates a new [AMPRevenue](#) object.
 
@@ -77,6 +92,11 @@
  private internal method to verify that all required revenue fields are set
  */
 - (BOOL) isValidRevenue;
+
+/**-----------------------------------------------------------------------------
+ * @name Setter Methods for Revenue Fields
+ * -----------------------------------------------------------------------------
+ */
 
 /**
  Set a value for the product identifier. This field is required for all revenue being logged.

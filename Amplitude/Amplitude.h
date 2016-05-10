@@ -45,6 +45,12 @@
 @property (nonatomic ,strong, readonly) NSString *propertyListPath;
 @property (nonatomic, assign) BOOL optOut;
 
+
+/**-----------------------------------------------------------------------------
+ * @name Configurable SDK thresholds and parameters
+ * -----------------------------------------------------------------------------
+ */
+
 /*!
  The maximum number of events that can be stored locally before forcing an upload.
  The default is 30 events.

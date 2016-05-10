@@ -12,6 +12,7 @@
         <string>AMPLocationManagerDelegate.m</string>
         <string>AMPURLConnection.m</string>
         <string>AMPUtils.m</string>
+        <string>SSLCertificatePinning</string>
     </array>
     <key>--output</key>
     <string>./documentation/</string>
