@@ -768,7 +768,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
 
         long eventCount = [self.dbHelper getTotalEventCount];
-        long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
+        long numEvents = limit > 0 ? MIN(eventCount, limit) : eventCount;
         if (numEvents == 0) {
             _updatingCurrently = NO;
             return;
@@ -958,7 +958,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
                 // server complained about length of request, backoff and try again
                 _backoffUpload = YES;
-                int numEvents = fminl([self.dbHelper getEventCount], _backoffUploadBatchSize);
+                int numEvents = MIN([self.dbHelper getEventCount], _backoffUploadBatchSize);
                 _backoffUploadBatchSize = (int)ceilf(numEvents / 2.0f);
                 AMPLITUDE_LOG(@"Request too large, will decrease size and attempt to reupload");
                 _updatingCurrently = NO;
