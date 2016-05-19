@@ -310,7 +310,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self addObservers];
     }
     return self;
-};
+}
 
 // maintain backwards compatibility on default instance
 - (BOOL) migrateEventsDataToDB
@@ -532,7 +532,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     if (timestamp == nil) {
-        timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+        timestamp = [NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000];
     }
 
     // Create snapshot of all event json objects, to prevent deallocation crash
@@ -768,7 +768,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
 
         long eventCount = [self.dbHelper getTotalEventCount];
-        long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
+        long numEvents = limit > 0 ? MIN(eventCount, limit) : eventCount;
         if (numEvents == 0) {
             _updatingCurrently = NO;
             return;
@@ -818,7 +818,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return sequenceNumber;
 }
 
-- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents
+- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(NSUInteger) numEvents
 {
     NSMutableArray *mergedEvents = [[NSMutableArray alloc] init];
     long long maxEventId = -1;
@@ -896,7 +896,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     // Add timestamp of upload
     [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *timestampString = [[NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000] stringValue];
+    NSString *timestampString = [[NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000] stringValue];
     [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
 
     // Add checksum
@@ -958,7 +958,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
                 // server complained about length of request, backoff and try again
                 _backoffUpload = YES;
-                int numEvents = fminl([self.dbHelper getEventCount], _backoffUploadBatchSize);
+                int numEvents = MIN([self.dbHelper getEventCount], _backoffUploadBatchSize);
                 _backoffUploadBatchSize = (int)ceilf(numEvents / 2.0f);
                 AMPLITUDE_LOG(@"Request too large, will decrease size and attempt to reupload");
                 _updatingCurrently = NO;
@@ -1007,7 +1007,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     [self updateLocation];
 
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    NSNumber* now = [NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
@@ -1023,7 +1023,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterBackground
 {
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    NSNumber* now = [NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
