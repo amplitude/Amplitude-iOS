@@ -532,7 +532,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     if (timestamp == nil) {
-        timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+        timestamp = [NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000];
     }
 
     // Create snapshot of all event json objects, to prevent deallocation crash
@@ -896,7 +896,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     // Add timestamp of upload
     [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *timestampString = [[NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000] stringValue];
+    NSString *timestampString = [[NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000] stringValue];
     [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
 
     // Add checksum
@@ -1007,7 +1007,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     [self updateLocation];
 
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    NSNumber* now = [NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
@@ -1023,7 +1023,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterBackground
 {
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    NSNumber* now = [NSNumber numberWithDouble:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
