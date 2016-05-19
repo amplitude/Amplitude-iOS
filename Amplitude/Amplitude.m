@@ -818,7 +818,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return sequenceNumber;
 }
 
-- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents
+- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(NSUInteger) numEvents
 {
     NSMutableArray *mergedEvents = [[NSMutableArray alloc] init];
     long long maxEventId = -1;
