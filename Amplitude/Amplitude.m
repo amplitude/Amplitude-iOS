@@ -310,7 +310,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self addObservers];
     }
     return self;
-};
+}
 
 // maintain backwards compatibility on default instance
 - (BOOL) migrateEventsDataToDB
