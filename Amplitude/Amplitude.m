@@ -644,20 +644,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     
     if (_lastKnownLocation != nil) {
         @synchronized (_locationManager) {
-            NSMutableDictionary *location = [NSMutableDictionary dictionary];
-
-            // Need to use NSInvocation because coordinate selector returns a C struct
-            SEL coordinateSelector = NSSelectorFromString(@"coordinate");
-            NSMethodSignature *coordinateMethodSignature = [_lastKnownLocation methodSignatureForSelector:coordinateSelector];
-            NSInvocation *coordinateInvocation = [NSInvocation invocationWithMethodSignature:coordinateMethodSignature];
-            [coordinateInvocation setTarget:_lastKnownLocation];
-            [coordinateInvocation setSelector:coordinateSelector];
-            [coordinateInvocation invoke];
-            CLLocationCoordinate2D lastKnownLocationCoordinate;
-            [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
-
-            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
-            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
+            NSDictionary *location = @{
+                                       @"lat" : @(_lastKnownLocation.coordinate.latitude),
+                                       @"lng" : @(_lastKnownLocation.coordinate.longitude)
+                                       };
 
             [apiProperties setValue:location forKey:@"location"];
         }
