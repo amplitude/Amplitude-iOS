@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Add documentation for SDK functions. You can take a look [here](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/index.html). A link has also been added to the Readme.
+* Updated device mapping with iPhone SE, iPad Mini 4, and iPad Pro.
 
 ## 3.7.0 (April 20, 2016)
 
