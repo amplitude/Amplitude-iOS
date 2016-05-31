@@ -460,13 +460,25 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
     }];
 
-    UIApplicationState state = [UIApplication sharedApplication].applicationState;
-    if (state != UIApplicationStateBackground) {
-        // If this is called while the app is running in the background, for example
-        // via a push notification, don't call enterForeground
-        [self enterForeground];
+    UIApplication *app = [self getSharedApplication];
+    if (app) {
+        UIApplicationState state = app.applicationState;
+        if (state != UIApplicationStateBackground) {
+            // If this is called while the app is running in the background, for example
+            // via a push notification, don't call enterForeground
+            [self enterForeground];
+        }
     }
     _initialized = YES;
+}
+
+- (UIApplication *)getSharedApplication
+{
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return [UIApplication performSelector:@selector(sharedApplication)];
+    }
+    return nil;
 }
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession
@@ -995,8 +1007,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
 
             // Upload finished, allow background task to be ended
-            [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
-            _uploadTaskID = UIBackgroundTaskInvalid;
+            UIApplication *app = [self getSharedApplication];
+            if (app) {
+                [app endBackgroundTask:_uploadTaskID];
+                _uploadTaskID = UIBackgroundTaskInvalid;
+            }
         }
     }];
 }
@@ -1005,13 +1020,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterForeground
 {
+    UIApplication *app = [self getSharedApplication];
+    if (!app) {
+        return;
+    }
+
     [self updateLocation];
 
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
+        [app endBackgroundTask:_uploadTaskID];
         _uploadTaskID = UIBackgroundTaskInvalid;
     }
     [self runOnBackgroundQueue:^{
@@ -1023,16 +1043,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterBackground
 {
+    UIApplication *app = [self getSharedApplication];
+    if (!app) {
+        return;
+    }
+
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
+        [app endBackgroundTask:_uploadTaskID];
     }
-    _uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+    _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         if (_uploadTaskID != UIBackgroundTaskInvalid) {
-            [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
+            [app endBackgroundTask:_uploadTaskID];
             _uploadTaskID = UIBackgroundTaskInvalid;
         }
     }];
