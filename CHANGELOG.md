@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Add documentation for SDK functions. You can take a look [here](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/index.html). A link has also been added to the Readme.
+* Add support for iOS Extensions. See the [Readme]() for instructions, or check out our [iOS-Extension-Demo](https://github.com/amplitude/iOS-Extension-Demo).
 
 ## 3.7.0 (April 20, 2016)
 

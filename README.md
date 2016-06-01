@@ -7,6 +7,8 @@ An iOS SDK for tracking events and revenue to [Amplitude](http://www.amplitude.c
 
 A [demo application](https://github.com/amplitude/iOS-Demo) is available to show a simple integration.
 
+A [demo application](https://github.com/amplitude/iOS-Extension-Demo) is available to show a simple integration in iOS extensions.
+
 See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/index.html) for a description of all available SDK methods and classes.
 
 # Setup #
@@ -362,3 +364,10 @@ This code will work with both ARC and non-ARC projects. Preprocessor macros are 
 
 ### SSL pinning ###
 The SDK includes support for SSL pinning, but it is undocumented and recommended against unless you have a specific need. Please contact Amplitude support before you ship any products with SSL pinning enabled so that we are aware and can provide documentation and implementation help.
+
+### iOS Extensions ###
+The SDK allows for tracking in iOS Extensions. Follow the [Setup instructions](https://github.com/amplitude/amplitude-ios#setup). In Step 6, instead of initializing the SDK in `application:didFinishLaunchingWithOptions:`, you initialize the SDK in your extension's `viewDidLoad` method.
+
+Note: our definition of sessions was intended for an iOS application use case. Depending on your expected extension use case, you might want to not enable `trackingSessionEvents`, or extend the `minTimeBetweenSessionsMillis` to be longer than 5 minutes. You should experiment with these 2 settings to get your desired session definition. Also, you may want to decrease `eventUploadPeriodSeconds` to something shorter than 30 seconds to upload events at shorter intervals if you don't expect users to keep your extension open that long.
+
+Here is a simple [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing how to instrument the iOS SDK in an extension.
