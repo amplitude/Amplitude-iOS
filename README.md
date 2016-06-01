@@ -368,6 +368,11 @@ The SDK includes support for SSL pinning, but it is undocumented and recommended
 ### iOS Extensions ###
 The SDK allows for tracking in iOS Extensions. Follow the [Setup instructions](https://github.com/amplitude/amplitude-ios#setup). In Step 6, instead of initializing the SDK in `application:didFinishLaunchingWithOptions:`, you initialize the SDK in your extension's `viewDidLoad` method.
 
-Note: our definition of sessions was intended for an iOS application use case. Depending on your expected extension use case, you might want to not enable `trackingSessionEvents`, or extend the `minTimeBetweenSessionsMillis` to be longer than 5 minutes. You should experiment with these 2 settings to get your desired session definition. Also, you may want to decrease `eventUploadPeriodSeconds` to something shorter than 30 seconds to upload events at shorter intervals if you don't expect users to keep your extension open that long.
+Couple of things to note:
+1. The `viewDidLoad` method will get called every time your extension is opened. This means that our SDK's `initializeApiKey` method will get called every single time; however, that's okay since it will safely ignore subsequent calls after the first one. If you want you can protect the initialization with something like a dispatch_once block.
+
+2. Our definition of sessions was intended for an application use case. Depending on your expected extension use case, you might want to not enable `trackingSessionEvents`, or extend the `minTimeBetweenSessionsMillis` to be longer than 5 minutes. You should experiment with these 2 settings to get your desired session definition.
+
+3. Also, you may want to decrease `eventUploadPeriodSeconds` to something shorter than 30 seconds to upload events at shorter intervals if you don't expect users to keep your extension open that long. You can also manually call `[[Amplitude instance] uploadEvents];` to manually force an upload.
 
 Here is a simple [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing how to instrument the iOS SDK in an extension.
