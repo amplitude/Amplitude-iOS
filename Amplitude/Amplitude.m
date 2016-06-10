@@ -244,7 +244,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, _instanceName]; // namespace pList with instance name
             }
             _propertyListPath = SAFE_ARC_RETAIN(propertyListPath);
-
+            _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
             [self upgradePrefs];
 
             // Load propertyList object
@@ -277,15 +277,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
             // only on default instance, migrate all of old _eventsData object to database store if database just created
             if ([_instanceName isEqualToString:kAMPDefaultInstance] && oldDBVersion < kAMPDBFirstVersion) {
-                _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
                 if ([self migrateEventsDataToDB]) {
                     // delete events data so don't need to migrate next time
                     if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
                         [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
                     }
                 }
-                SAFE_ARC_RELEASE(_eventsDataPath);
             }
+            SAFE_ARC_RELEASE(_eventsDataPath);
 
             // try to restore previous session
             long long previousSessionId = [self previousSessionId];
