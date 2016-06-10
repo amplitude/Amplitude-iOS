@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.7.1 (June 10, 2016)
+
 * Add documentation for SDK functions. You can take a look [here](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/index.html). A link has also been added to the Readme.
 * Updated device mapping with iPhone SE, iPad Mini 4, and iPad Pro.
 * Fix crash during upgradePrefs in the init method. This bug affected app users who were upgrading from an old version of an app using Amplitude iOS v2.1.1 or earlier straight to a version of the app using Amplitude iOS v3.6.0 or later.
