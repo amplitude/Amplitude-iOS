@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.8.0 (June 13, 2016)
+
 * Add support for iOS Extensions. See the [Readme](https://github.com/amplitude/amplitude-ios#ios-extensions) for instructions, or check out our [iOS-Extension-Demo](https://github.com/amplitude/iOS-Extension-Demo). Credit to @andyyc for the original PR.
 * Fix bug where subsequent calls to `initializeApiKey` after the first were not being ignored.
 * Guard debug log statements with a debug flag (disabled by default). To enable debug logging, change `AMPLITUDE_DEBUG` from `0` to `1` at the top of the Objective-C file you wish to examine.
