@@ -447,25 +447,40 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSLog(@"ERROR: apiKey cannot be blank in initializeApiKey:");
         return;
     }
-    SAFE_ARC_RETAIN(apiKey);
-    SAFE_ARC_RELEASE(_apiKey);
-    _apiKey = apiKey;
 
-    [self runOnBackgroundQueue:^{
-        if (setUserId) {
-            [self setUserId:userId];
-        } else {
-            _userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
+    if (!_initialized) {
+        SAFE_ARC_RETAIN(apiKey);
+        SAFE_ARC_RELEASE(_apiKey);
+        _apiKey = apiKey;
+
+        [self runOnBackgroundQueue:^{
+            if (setUserId) {
+                [self setUserId:userId];
+            } else {
+                _userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
+            }
+        }];
+
+        UIApplication *app = [self getSharedApplication];
+        if (app != nil) {
+            UIApplicationState state = app.applicationState;
+            if (state != UIApplicationStateBackground) {
+                // If this is called while the app is running in the background, for example
+                // via a push notification, don't call enterForeground
+                [self enterForeground];
+            }
         }
-    }];
-
-    UIApplicationState state = [UIApplication sharedApplication].applicationState;
-    if (state != UIApplicationStateBackground) {
-        // If this is called while the app is running in the background, for example
-        // via a push notification, don't call enterForeground
-        [self enterForeground];
+        _initialized = YES;
     }
-    _initialized = YES;
+}
+
+- (UIApplication *)getSharedApplication
+{
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return [UIApplication performSelector:@selector(sharedApplication)];
+    }
+    return nil;
 }
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession
@@ -994,8 +1009,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
 
             // Upload finished, allow background task to be ended
-            [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
-            _uploadTaskID = UIBackgroundTaskInvalid;
+            UIApplication *app = [self getSharedApplication];
+            if (app != nil) {
+                [app endBackgroundTask:_uploadTaskID];
+                _uploadTaskID = UIBackgroundTaskInvalid;
+            }
         }
     }];
 }
@@ -1004,13 +1022,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterForeground
 {
+    UIApplication *app = [self getSharedApplication];
+    if (app == nil) {
+        return;
+    }
+
     [self updateLocation];
 
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
+        [app endBackgroundTask:_uploadTaskID];
         _uploadTaskID = UIBackgroundTaskInvalid;
     }
     [self runOnBackgroundQueue:^{
@@ -1022,16 +1045,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterBackground
 {
+    UIApplication *app = [self getSharedApplication];
+    if (app == nil) {
+        return;
+    }
+
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
+        [app endBackgroundTask:_uploadTaskID];
     }
-    _uploadTaskID = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+    _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         if (_uploadTaskID != UIBackgroundTaskInvalid) {
-            [[UIApplication sharedApplication] endBackgroundTask:_uploadTaskID];
+            [app endBackgroundTask:_uploadTaskID];
             _uploadTaskID = UIBackgroundTaskInvalid;
         }
     }];

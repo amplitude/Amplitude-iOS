@@ -178,14 +178,17 @@
 }
 
 - (void)testInitializeLoadUserIdFromEventData {
-    [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude userId], nil);
+    NSString *instanceName = @"testInitialize";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client flushQueue];
+    XCTAssertEqual([client userId], nil);
 
     NSString *testUserId = @"testUserId";
-    [self.databaseHelper insertOrReplaceKeyValue:@"user_id" value:testUserId];
-    [self.amplitude initializeApiKey:apiKey];
-    [self.amplitude flushQueue];
-    XCTAssertTrue([[self.amplitude userId] isEqualToString:testUserId]);
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"user_id" value:testUserId];
+    [client initializeApiKey:apiKey];
+    [client flushQueue];
+    XCTAssertTrue([[client userId] isEqualToString:testUserId]);
 }
 
 - (void)testInitializeWithNilUserId {
@@ -200,13 +203,25 @@
 }
 
 - (void)testInitializeWithUserId {
+    NSString *instanceName = @"testInitializeWithUserId";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client flushQueue];
+    XCTAssertEqual([client userId], nil);
+
+    NSString *testUserId = @"testUserId";
+    [client initializeApiKey:apiKey userId:testUserId];
+    [client flushQueue];
+    XCTAssertEqual([client userId], testUserId);
+}
+
+- (void)testSkipReinitialization {
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nil);
 
     NSString *testUserId = @"testUserId";
     [self.amplitude initializeApiKey:apiKey userId:testUserId];
     [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude userId], testUserId);
+    XCTAssertEqual([self.amplitude userId], nil);
 }
 
 - (void)testClearUserId {
