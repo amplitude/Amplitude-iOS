@@ -383,7 +383,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
             id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
             if (eventImmutable == nil) {
-                NSLog(@"Error JSON deserialization of event id %lld from table %@", eventId, table);
+                AMPLITUDE_LOG(@"Error JSON deserialization of event id %lld from table %@", eventId, table);
                 continue;
             }
 

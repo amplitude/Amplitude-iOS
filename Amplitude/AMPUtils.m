@@ -6,6 +6,18 @@
 //
 //
 
+#ifndef AMPLITUDE_DEBUG
+#define AMPLITUDE_DEBUG 0
+#endif
+
+#ifndef AMPLITUDE_LOG
+#if AMPLITUDE_DEBUG
+#   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#else
+#   define AMPLITUDE_LOG(...)
+#endif
+#endif
+
 #import <Foundation/Foundation.h>
 #import "AMPUtils.h"
 #import "AMPARCMacros.h"
@@ -72,7 +84,7 @@
         return [NSDictionary dictionaryWithDictionary:dict];
     }
     NSString *str = [obj description];
-    NSLog(@"WARNING: Invalid property value type, received %@, coercing to %@", [obj class], str);
+    AMPLITUDE_LOG(@"WARNING: Invalid property value type, received %@, coercing to %@", [obj class], str);
     return str;
 }
 
@@ -86,7 +98,7 @@
     NSString *coercedString;
     if (![obj isKindOfClass:[NSString class]]) {
         coercedString = [obj description];
-        NSLog(@"WARNING: Non-string %@, received %@, coercing to %@", name, [obj class], coercedString);
+        AMPLITUDE_LOG(@"WARNING: Non-string %@, received %@, coercing to %@", name, [obj class], coercedString);
     } else {
         coercedString = obj;
     }
@@ -107,22 +119,22 @@
             NSMutableArray *arr = [NSMutableArray array];
             for (id i in value) {
                 if ([i isKindOfClass:[NSArray class]]) {
-                    NSLog(@"WARNING: Skipping nested NSArray in groupName value for groupType %@", coercedKey);
+                    AMPLITUDE_LOG(@"WARNING: Skipping nested NSArray in groupName value for groupType %@", coercedKey);
                     continue;
                 } else if ([i isKindOfClass:[NSDictionary class]]) {
-                    NSLog(@"WARNING: Skipping nested NSDictionary in groupName value for groupType %@", coercedKey);
+                    AMPLITUDE_LOG(@"WARNING: Skipping nested NSDictionary in groupName value for groupType %@", coercedKey);
                     continue;
                 } else if ([i isKindOfClass:[NSString class]] || [i isKindOfClass:[NSNumber class]] || [i isKindOfClass:[NSDate class]]) {
                     [arr addObject:[self coerceToString:i withName:@"groupType"]];
                 } else {
-                    NSLog(@"WARNING: Invalid groupName value in array for groupType %@ (received class %@). Please use NSStrings", coercedKey, [i class]);
+                    AMPLITUDE_LOG(@"WARNING: Invalid groupName value in array for groupType %@ (received class %@). Please use NSStrings", coercedKey, [i class]);
                 }
             }
             dict[coercedKey] = [NSArray arrayWithArray:arr];
         } else if ([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSDate class]]){
             dict[coercedKey] = [self coerceToString:value withName:@"groupName"];
         } else {
-            NSLog(@"WARNING: Invalid groupName value for groupType %@ (received class %@). Please use NSString or NSArray of NSStrings", coercedKey, [value class]);
+            AMPLITUDE_LOG(@"WARNING: Invalid groupName value for groupType %@ (received class %@). Please use NSString or NSArray of NSStrings", coercedKey, [value class]);
         }
     }
     SAFE_ARC_RELEASE(objCopy);

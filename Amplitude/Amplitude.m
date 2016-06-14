@@ -558,7 +558,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
         // Respect the opt-out setting by not sending or storing any events.
         if ([self optOut])  {
-            NSLog(@"User has opted out of tracking. Event %@ not logged.", eventType);
+            AMPLITUDE_LOG(@"User has opted out of tracking. Event %@ not logged.", eventType);
             SAFE_ARC_RELEASE(eventProperties);
             SAFE_ARC_RELEASE(apiProperties);
             SAFE_ARC_RELEASE(userProperties);
@@ -1252,7 +1252,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     if (groupType == nil || [groupType isEqualToString:@""]) {
-        NSLog(@"ERROR: groupType cannot be nil or an empty string");
+        AMPLITUDE_LOG(@"ERROR: groupType cannot be nil or an empty string");
         return;
     }
 
@@ -1432,7 +1432,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             NSString *coercedKey;
             if (![key isKindOfClass:[NSString class]]) {
                 coercedKey = [key description];
-                NSLog(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
+                AMPLITUDE_LOG(@"WARNING: Non-string property key, received %@, coercing to %@", [key class], coercedKey);
             } else {
                 coercedKey = key;
             }
@@ -1498,7 +1498,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)printEventsCount
 {
-    NSLog(@"Events count:%ld", (long) [self.dbHelper getEventCount]);
+    AMPLITUDE_LOG(@"Events count:%ld", (long) [self.dbHelper getEventCount]);
 }
 
 #pragma mark - Compatibility

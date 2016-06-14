@@ -377,3 +377,6 @@ Couple of things to note:
 3. Also, you may want to decrease `eventUploadPeriodSeconds` to something shorter than 30 seconds to upload events at shorter intervals if you don't expect users to keep your extension open that long. You can also manually call `[[Amplitude instance] uploadEvents];` to manually force an upload.
 
 Here is a simple [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing how to instrument the iOS SDK in an extension.
+
+### Debug Logging ###
+By default only critical errors are logged to console. To enable debug logging, change `AMPLITUDE_DEBUG` from `0` to `1` at the top of the Objective-C file you wish to examine.
