@@ -6,6 +6,18 @@
 //  Copyright © 2015 Amplitude. All rights reserved.
 //
 
+#ifndef AMPLITUDE_DEBUG
+#define AMPLITUDE_DEBUG 0
+#endif
+
+#ifndef AMPLITUDE_LOG
+#if AMPLITUDE_DEBUG
+#   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#else
+#   define AMPLITUDE_LOG(...)
+#endif
+#endif
+
 #import <Foundation/Foundation.h>
 #import "AMPIdentify.h"
 #import "AMPARCMacros.h"
@@ -46,7 +58,7 @@
     if ([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSString class]]) {
         [self addToUserProperties:AMP_OP_ADD property:property value:value];
     } else {
-        NSLog(@"Unsupported value type for ADD operation, expecting NSNumber or NSString");
+        AMPLITUDE_LOG(@"Unsupported value type for ADD operation, expecting NSNumber or NSString");
     }
     return self;
 }
@@ -61,7 +73,7 @@
 {
     if ([_userPropertyOperations count] > 0) {
         if ([_userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] == nil) {
-            NSLog(@"Need to send $clearAll on its own Identify object without any other operations, skipping $clearAll");
+            AMPLITUDE_LOG(@"Need to send $clearAll on its own Identify object without any other operations, skipping $clearAll");
         }
         return self;
     }
@@ -96,19 +108,19 @@
 - (void)addToUserProperties:(NSString*)operation property:(NSString*) property value:(NSObject*) value
 {
     if (value == nil) {
-        NSLog(@"Attempting to perform operation '%@' with nil value for property '%@', ignoring", operation, property);
+        AMPLITUDE_LOG(@"Attempting to perform operation '%@' with nil value for property '%@', ignoring", operation, property);
         return;
     }
 
     // check that clearAll wasn't already used in this Identify
     if ([_userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] != nil) {
-        NSLog(@"This Identify already contains a $clearAll operation, ignoring operation %@", operation);
+        AMPLITUDE_LOG(@"This Identify already contains a $clearAll operation, ignoring operation %@", operation);
         return;
     }
 
     // check if property already used in a previous operation
     if ([_userProperties containsObject:property]) {
-        NSLog(@"Already used property '%@' in previous operation, ignoring for operation '%@'", property, operation);
+        AMPLITUDE_LOG(@"Already used property '%@' in previous operation, ignoring for operation '%@'", property, operation);
         return;
     }
 

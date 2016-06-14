@@ -6,6 +6,18 @@
 //  Copyright © 2016 Amplitude. All rights reserved.
 //
 
+#ifndef AMPLITUDE_DEBUG
+#define AMPLITUDE_DEBUG 0
+#endif
+
+#ifndef AMPLITUDE_LOG
+#if AMPLITUDE_DEBUG
+#   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#else
+#   define AMPLITUDE_LOG(...)
+#endif
+#endif
+
 #import <Foundation/Foundation.h>
 #import "AMPRevenue.h"
 #import "AMPARCMacros.h"
@@ -59,7 +71,7 @@
 - (AMPRevenue*)setProductIdentifier:(NSString *) productIdentifier
 {
     if ([AMPUtils isEmptyString:productIdentifier]) {
-        NSLog(@"Invalid empty productIdentifier");
+        AMPLITUDE_LOG(@"Invalid empty productIdentifier");
         return self;
     }
 
