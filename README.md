@@ -362,3 +362,6 @@ This code will work with both ARC and non-ARC projects. Preprocessor macros are 
 
 ### SSL pinning ###
 The SDK includes support for SSL pinning, but it is undocumented and recommended against unless you have a specific need. Please contact Amplitude support before you ship any products with SSL pinning enabled so that we are aware and can provide documentation and implementation help.
+
+### Debug Logging ###
+By default only critical errors are logged to console. To enable debug logging, change `AMPLITUDE_DEBUG` from `0` to `1` at the top of the Objective-C file you wish to examine.
