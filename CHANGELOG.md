@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 3.8.1 (June 14, 2016)
+
 * Allow ability to silence error messages. Note error messages are printed by default. To disable error logging, change `AMPLITUDE_LOG_ERRORS` from `1` to `0` in `Amplitude.m`.
 
 ## 3.8.0 (June 13, 2016)
