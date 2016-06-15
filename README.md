@@ -380,3 +380,5 @@ Here is a simple [demo application](https://github.com/amplitude/iOS-Extension-D
 
 ### Debug Logging ###
 By default only critical errors are logged to console. To enable debug logging, change `AMPLITUDE_DEBUG` from `0` to `1` at the top of the Objective-C file you wish to examine.
+
+Error messages are printed by default. To disable error logging, change `AMPLITUDE_LOG_ERRORS` from `1` to `0` in `Amplitude.m`.
