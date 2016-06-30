@@ -1,5 +1,8 @@
 ## Unreleased
 
+* Added support for integration via Carthage. Thanks to @mpurland for the original PR.
+* Cleaned up warnings for expression result unused.
+
 ## 3.8.1 (June 14, 2016)
 
 * Allow ability to silence error messages. Note error messages are printed by default. To disable error logging, change `AMPLITUDE_LOG_ERRORS` from `1` to `0` in `Amplitude.m`.
