@@ -57,10 +57,6 @@
 
 - (BOOL)isValidRevenue
 {
-    if ([AMPUtils isEmptyString:_productId]) {
-        NSLog(@"Invalid revenue, need to set productId field");
-        return NO;
-    }
     if (_price == nil) {
         NSLog(@"Invalid revenue, need to set price field");
         return NO;

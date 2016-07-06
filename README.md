@@ -237,11 +237,11 @@ AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdent
 [[Amplitude instance] logRevenueV2:revenue];
 ```
 
-`productId` and `price` are required fields. `quantity` defaults to 1 if not specified. `receipt` is required if you want to verify the revenue event. Each field has a corresponding `set` method (for example `setProductId`, `setQuantity`, etc). This table describes the different fields available:
+`price` is a required field. `quantity` defaults to 1 if not specified. `receipt` is required if you want to verify the revenue event. Each field has a corresponding `set` method (for example `setProductId`, `setQuantity`, etc). This table describes the different fields available:
 
 | Name               | Type         | Description                                                                                                  | default |
 |--------------------|--------------|--------------------------------------------------------------------------------------------------------------|---------|
-| productId          | NSString     | Required: an identifier for the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`)| nil     |
+| productId          | NSString     | Optional: an identifier for the product (can be pulled from `SKPaymentTransaction.payment.productIdentifier`)| nil     |
 | quantity           | NSInteger    | Required: the quantity of products purchased. Defaults to 1 if not specified. Revenue = quantity * price     | 1       |
 | price              | NSNumber     | Required: the price of the products purchased (can be negative). Revenue = quantity * price                  | nil     |
 | revenueType        | NSString     | Optional: the type of revenue (ex: tax, refund, income)                                                      | nil     |
