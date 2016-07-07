@@ -520,6 +520,7 @@
     [object setValue:[NSNumber numberWithBool:NO] forKey:@"bool value"];
     [object setValue:longString forKey:@"long string"];
     [object setValue:[NSArray arrayWithObject:longString] forKey:@"array"];
+    [object setValue:longString forKey:AMP_REVENUE_RECEIPT];
 
     object = [self.amplitude truncate:object];
     XCTAssertEqual([[object objectForKey:@"int value"] intValue], 10);
@@ -528,6 +529,9 @@
     XCTAssertEqual([[object objectForKey:@"array"] count], 1);
     XCTAssertEqualObjects([object objectForKey:@"array"][0], truncString);
     XCTAssertEqual([[object objectForKey:@"array"][0] length], kAMPMaxStringLength);
+
+    // receipt field should not be truncated
+    XCTAssertEqualObjects([object objectForKey:AMP_REVENUE_RECEIPT], longString);
 }
 
 -(void)testTruncateEventAndIdentify {

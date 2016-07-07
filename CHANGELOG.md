@@ -1,6 +1,7 @@
 ## Unreleased
 
 * `productId` is no longer a required field for `Revenue` logged via `logRevenueV2`.
+* Fix bug where revenue receipt was being truncated if it was too long (exceeded 1024 characters);
 
 ## 3.8.1 (June 14, 2016)
 
