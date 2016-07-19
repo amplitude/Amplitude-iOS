@@ -185,6 +185,40 @@
     XCTAssertEqualObjects([self.amplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
 }
 
+- (void)testSessionEventsOn32BitDevices {
+    id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:21474836470];
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
+    [mockAmplitude setTrackingSessionEvents:YES];
+
+    [mockAmplitude initializeApiKey:apiKey userId:nil];
+    [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
+    [mockAmplitude flushQueue];
+
+    XCTAssertEqual([mockAmplitude queuedEventCount], 1);
+    XCTAssertEqual([[mockAmplitude getLastEvent][@"session_id"] longLongValue], 21474836470000);
+    XCTAssertEqualObjects([mockAmplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
+
+
+    // test end session with tracking session events
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
+    [mockAmplitude enterBackground]; // simulate app entering background
+
+    NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:214748364700];
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)] currentTime];
+    [mockAmplitude enterForeground]; // simulate app entering foreground
+    [self.amplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 3);
+
+    XCTAssertEqual([mockAmplitude sessionId], 214748364700000);
+
+    XCTAssertEqual([[self.amplitude getEvent:1][@"session_id"] longLongValue], 21474836470000);
+    XCTAssertEqualObjects([self.amplitude getEvent:1][@"event_type"], kAMPSessionEndEvent);
+
+    XCTAssertEqual([[self.amplitude getLastEvent][@"session_id"] longLongValue], 214748364700000);
+    XCTAssertEqualObjects([self.amplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
+}
+
 - (void)testSkipSessionCheckWhenLoggingSessionEvents {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 

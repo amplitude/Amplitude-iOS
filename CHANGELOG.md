@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Fix overflow bug for long long values saved to Sqlite DB on 32-bit devices.
+
 ### 3.8.2 (July 11, 2016)
 
 * `productId` is no longer a required field for `Revenue` logged via `logRevenueV2`.
