@@ -419,7 +419,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         if ([table isEqualToString:STORE_TABLE_NAME]) {
             success &= sqlite3_bind_text(stmt, 2, [(NSString *)value UTF8String], -1, SQLITE_STATIC) == SQLITE_OK;
         } else {
-            success &= sqlite3_bind_int64(stmt, 2, [(NSNumber*)value integerValue]) == SQLITE_OK;
+            success &= sqlite3_bind_int64(stmt, 2, [(NSNumber*)value longLongValue]) == SQLITE_OK;
         }
 
         if (!success) {
