@@ -15,9 +15,10 @@ NSString *const kAMPPlatform = @"iOS";
 NSString *const kAMPPlatform = @"OSX";
 #endif
 
-NSString *const kAMPVersion = @"3.2.1";
+NSString *const kAMPVersion = @"3.8.3";
 NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
+NSString *const kAMPDefaultInstance = @"$default_instance";
 const int kAMPApiVersion = 3;
 const int kAMPDBVersion = 3;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
@@ -31,6 +32,15 @@ const int kAMPMaxStringLength = 1024;
 
 NSString *const IDENTIFY_EVENT = @"$identify";
 NSString *const AMP_OP_ADD = @"$add";
+NSString *const AMP_OP_APPEND = @"$append";
+NSString *const AMP_OP_CLEAR_ALL = @"$clearAll";
+NSString *const AMP_OP_PREPEND = @"$prepend";
 NSString *const AMP_OP_SET = @"$set";
 NSString *const AMP_OP_SET_ONCE = @"$setOnce";
 NSString *const AMP_OP_UNSET = @"$unset";
+
+NSString *const AMP_REVENUE_PRODUCT_ID = @"$productId";
+NSString *const AMP_REVENUE_QUANTITY = @"$quantity";
+NSString *const AMP_REVENUE_PRICE = @"$price";
+NSString *const AMP_REVENUE_REVENUE_TYPE = @"$revenueType";
+NSString *const AMP_REVENUE_RECEIPT = @"$receipt";

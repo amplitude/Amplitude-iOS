@@ -29,6 +29,63 @@
     self.databaseHelper = nil;
 }
 
+- (void)testGetDatabaseHelper {
+    // test backwards compatibility on default instance
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:nil]);
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:@""]);
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:kAMPDefaultInstance]);
+
+    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a"];
+    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b"];
+    XCTAssertNotEqual(dbHelper, a);
+    XCTAssertNotEqual(dbHelper, b);
+    XCTAssertNotEqual(a, b);
+    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"a"]);
+    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"b"]);
+
+    // test case insensitive instance name
+    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"A"]);
+    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"B"]);
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:[kAMPDefaultInstance uppercaseString]]);
+
+    // test each instance maintains separate database files
+    XCTAssertTrue([a.databasePath rangeOfString:@"com.amplitude.database_a"].location != NSNotFound);
+    XCTAssertTrue([b.databasePath rangeOfString:@"com.amplitude.database_b"].location != NSNotFound);
+    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database"].location != NSNotFound);
+    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database_"].location == NSNotFound);
+
+    [a deleteDB];
+    [b deleteDB];
+}
+
+- (void)testSeparateInstances {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a"];
+    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b"];
+
+    [a resetDB:NO];
+    [b resetDB:NO];
+
+    [dbHelper insertOrReplaceKeyValue:@"device_id" value:@"test_device_id"];
+    XCTAssertEqualObjects([dbHelper getValue:@"device_id"], @"test_device_id");
+    XCTAssertNil([a getValue:@"device_id"]);
+    XCTAssertNil([b getValue:@"device_id"]);
+
+    [a addEvent:@"test_event"];
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([a getEventCount], 1);
+    XCTAssertEqual([b getEventCount], 0);
+
+    [b addIdentify:@"test_identify"];
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+    XCTAssertEqual([a getIdentifyCount], 0);
+    XCTAssertEqual([b getIdentifyCount], 1);
+
+    [a deleteDB];
+    [b deleteDB];
+}
+
 - (void)testCreate {
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
@@ -119,6 +176,19 @@
     XCTAssertNil([self.databaseHelper getLongValue:key]);
 
     [self.databaseHelper insertOrReplaceKeyLongValue:key value:longValue];
+    XCTAssertNil([self.databaseHelper getLongValue:key]);
+
+    // inserting nil value should delete the key from the table
+    NSString *value2 = @"test_value";
+    [self.databaseHelper insertOrReplaceKeyValue:key value:value2];
+    XCTAssertEqualObjects([self.databaseHelper getValue:key], value2);
+    [self.databaseHelper insertOrReplaceKeyValue:key value:nil];
+    XCTAssertNil([self.databaseHelper getValue:key]);
+
+    NSNumber *longValue2 = [NSNumber numberWithLongLong:2LL];
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:longValue2];
+    XCTAssertEqualObjects([self.databaseHelper getLongValue:key], longValue2);
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:nil];
     XCTAssertNil([self.databaseHelper getLongValue:key]);
 }
 
@@ -382,6 +452,19 @@
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
     XCTAssertTrue([self.databaseHelper addIdentify:@"test"]);
+}
+
+- (void)testInsertAndReplaceKeyLargeLongValue {
+    NSString *key = @"test_key";
+    NSNumber *value1 = [NSNumber numberWithLongLong:214748364700000LL];
+    NSNumber *value2 = [NSNumber numberWithLongLong:2147483647000000LL];
+    XCTAssertNil([self.databaseHelper getLongValue:key]);
+
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:value1];
+    XCTAssert([[self.databaseHelper getLongValue:key] isEqualToNumber:value1]);
+
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:value2];
+    XCTAssert([[self.databaseHelper getLongValue:key] isEqualToNumber:value2]);
 }
 
 @end

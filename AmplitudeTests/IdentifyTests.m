@@ -134,6 +134,74 @@
     XCTAssertEqualObjects(identify.userPropertyOperations, expected);
 }
 
+- (void)testAppendProperty {
+    NSString *property1 = @"string value";
+    NSString *value1 = @"test value";
+
+    NSString *property2 = @"double value";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+
+    NSString *property3 = @"boolean value";
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    NSString *property4 = @"array value";
+    NSMutableArray *value4 = [NSMutableArray array];
+    [value4 addObject:@"test"];
+    [value4 addObject:[NSNumber numberWithInt:15]];
+
+    AMPIdentify *identify = [[AMPIdentify identify] append:property1 value:value1];
+    [[[identify append:property2 value:value2] append:property3 value:value3] append:property4 value:value4];
+
+    // identify should ignore this since duplicate key
+    [identify setOnce:property1 value:value3];
+
+    // generate expected operations
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property1];
+    [operations setObject:value2 forKey:property2];
+    [operations setObject:value3 forKey:property3];
+    [operations setObject:value4 forKey:property4];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_APPEND];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testPrependProperty {
+    NSString *property1 = @"string value";
+    NSString *value1 = @"test value";
+
+    NSString *property2 = @"double value";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+
+    NSString *property3 = @"boolean value";
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    NSString *property4 = @"array value";
+    NSMutableArray *value4 = [NSMutableArray array];
+    [value4 addObject:@"test"];
+    [value4 addObject:[NSNumber numberWithInt:15]];
+
+    AMPIdentify *identify = [[AMPIdentify identify] prepend:property1 value:value1];
+    [[[identify prepend:property2 value:value2] prepend:property3 value:value3] prepend:property4 value:value4];
+
+    // identify should ignore this since duplicate key
+    [identify setOnce:property1 value:value3];
+
+    // generate expected operations
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property1];
+    [operations setObject:value2 forKey:property2];
+    [operations setObject:value3 forKey:property3];
+    [operations setObject:value4 forKey:property4];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_PREPEND];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
 - (void)testUnsetProperty {
     NSString *property1 = @"testProperty1";
     NSString *property2 = @"testProperty2";
@@ -163,8 +231,13 @@
 
     NSString *property4 = @"array value";
 
+    NSString *property5 = @"list value";
+    NSMutableArray *value5 = [NSMutableArray array];
+    [value5 addObject:@"test"];
+    [value5 addObject:[NSNumber numberWithFloat:14.23456]];
+
     AMPIdentify *identify = [[AMPIdentify identify] setOnce:property1 value:value1];
-    [[[identify add:property2 value:value2] set:property3 value:value3] unset:property4];
+    [[[[identify add:property2 value:value2] set:property3 value:value3] unset:property4] append:property5 value:value5];
 
     // identify should ignore this since duplicate key
     [identify set:property4 value:value3];
@@ -174,8 +247,9 @@
     NSDictionary *add = [NSDictionary dictionaryWithObject:value2 forKey:property2];
     NSDictionary *set = [NSDictionary dictionaryWithObject:value3 forKey:property3];
     NSDictionary *unset = [NSDictionary dictionaryWithObject:@"-" forKey:property4];
+    NSDictionary *append = [NSDictionary dictionaryWithObject:value5 forKey:property5];
 
-    NSDictionary *expected = [NSDictionary dictionaryWithObjectsAndKeys:setOnce, AMP_OP_SET_ONCE, add, AMP_OP_ADD, set, AMP_OP_SET, unset, AMP_OP_UNSET, nil];
+    NSDictionary *expected = [NSDictionary dictionaryWithObjectsAndKeys:setOnce, AMP_OP_SET_ONCE, add, AMP_OP_ADD, set, AMP_OP_SET, unset, AMP_OP_UNSET, append, AMP_OP_APPEND, nil];
 
     XCTAssertEqualObjects(identify.userPropertyOperations, expected);
 }
@@ -188,6 +262,57 @@
 
     AMPIdentify *identify = [AMPIdentify identify];
     [[[[identify setOnce:property value:value1] add:property value:value2] set:property value:value3] unset:property];
+
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_SET_ONCE];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testMakeJSONSerializableProperty {
+    NSString *urlString = @"https://amplitude.com";
+    NSString *key = @"url";
+    NSURL *url = [NSURL URLWithString:urlString];
+
+    AMPIdentify *identify = [AMPIdentify identify];
+    [identify set:key value:url]; // should coerce NSURL object into a string
+
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:urlString forKey:key];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_SET];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testDisallowOtherOperationsOnClearAllIdentify {
+    NSString *property = @"testProperty";
+    NSString *value1 = @"testValue";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    AMPIdentify *identify = [[AMPIdentify identify] clearAll];
+    [[[[identify setOnce:property value:value1] add:property value:value2] set:property value:value3] unset:property];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:@"-" forKey:AMP_OP_CLEAR_ALL];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testDisallowClearAllOnIdentifysWithOtherOperations {
+    NSString *property = @"testProperty";
+    NSString *value1 = @"testValue";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    AMPIdentify *identify = [AMPIdentify identify];
+    [[[[identify setOnce:property value:value1] add:property value:value2] set:property value:value3] unset:property];
+    [identify clearAll];
 
     NSMutableDictionary *operations = [NSMutableDictionary dictionary];
     [operations setObject:value1 forKey:property];

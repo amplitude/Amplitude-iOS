@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>AMPRevenue Class Reference</title>
+
+	<link rel="stylesheet" href="../css/style.css">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+</head>
+<body class="appledoc">
+	<header>
+		<div class="container" class="hide-in-xcode">
+			
+			<h1 id="library-title">
+				<a href="../index.html">Amplitude-iOS </a>
+			</h1>
+
+			<p id="developer-home">
+				<a href="../index.html">Amplitude</a>
+			</p>
+			
+		</div>
+	</header>
+
+	<aside>
+		<div class="container">
+			<nav>
+				<ul id="header-buttons" role="toolbar">
+					<li><a href="../index.html">Index</a></li>
+<li><a href="../hierarchy.html">Hierarchy</a></li>
+
+					<li id="on-this-page" role="navigation">
+						<label>
+							On This Page
+
+							<div class="chevron">
+								<div class="chevy chevron-left"></div>
+								<div class="chevy chevron-right"></div>
+							</div>
+
+							<select id="jump-to">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+
+	
+	
+	<optgroup label="Properties">
+		
+		<option value="//api/name/price">price</option>
+		
+		<option value="//api/name/productId">productId</option>
+		
+		<option value="//api/name/properties">properties</option>
+		
+		<option value="//api/name/quantity">quantity</option>
+		
+		<option value="//api/name/receipt">receipt</option>
+		
+		<option value="//api/name/revenueType">revenueType</option>
+		
+	</optgroup>
+	
+
+	
+	<optgroup label="Class Methods">
+		
+		<option value="//api/name/revenue">+ revenue</option>
+		
+	</optgroup>
+	
+
+	
+	<optgroup label="Instance Methods">
+		
+		<option value="//api/name/setEventProperties:">- setEventProperties:</option>
+		
+		<option value="//api/name/setPrice:">- setPrice:</option>
+		
+		<option value="//api/name/setProductIdentifier:">- setProductIdentifier:</option>
+		
+		<option value="//api/name/setQuantity:">- setQuantity:</option>
+		
+		<option value="//api/name/setReceipt:">- setReceipt:</option>
+		
+		<option value="//api/name/setRevenueType:">- setRevenueType:</option>
+		
+	</optgroup>
+	
+	
+</select>
+						</label>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</aside>
+
+	<article>
+		<div id="overview_contents" class="container">
+			<div id="content">
+				<main role="main">
+					<h1 class="title">AMPRevenue Class Reference</h1>
+
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<th>Inherits from</th>
+	<td>NSObject</td>
+</tr><tr>
+	<th>Declared in</th>
+	<td>AMPRevenue.h<br />AMPRevenue.m</td>
+</tr>
+						</tbody></table></div>
+					
+
+                    
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p><code>AMPRevenue</code> objects are a wrapper for <a href="#//api/name/revenue">revenue</a> data, which get passed to the <code>logRevenueV2</code> method to send to <a href="../Classes/Amplitude.html">Amplitude</a> servers.</p>
+
+<p><strong>Note:</strong> <a href="#//api/name/productId">productId</a> and <a href="#//api/name/price">price</a> are required fields. If <a href="#//api/name/quantity">quantity</a> is not specified, then defaults to 1.</p>
+
+<p><strong>Note:</strong> Revenue amount is calculated as <a href="#//api/name/price">price</a> * <a href="#//api/name/quantity">quantity</a>.</p>
+
+<p>Each method updates a <a href="#//api/name/revenue">revenue</a> property in the Revenue object, and returns the same Revenue object, allowing you to chain multiple method calls together.</p>
+
+<p>Here is an example of how to use <code>AMPRevenue</code> to send <a href="#//api/name/revenue">revenue</a> data:</p>
+
+<pre><code>AMPRevenue *revenue = [[[AMPRevenue revenue] setProductIdentifier:@"productIdentifier"] setQuantity:3];
+[revenue setPrice:[NSNumber numberWithDouble:3.99]];
+[[Amplitude instance] logRevenueV2:revenue];
+</code></pre>
+
+<p>See <a href="https://github.com/amplitude/Amplitude-iOS#tracking-revenue">Tracking Revenue</a> for more information about logging Revenue.</p>
+					</div>
+					
+					
+
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						
+
+						<a title="Required Revenue Fields" name="task_Required Revenue Fields"></a>
+						<h2 class="task-title">Required Revenue Fields</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/productId" title="productId"></a>
+	<h3 class="method-title"><code><a href="#//api/name/productId">&nbsp;&nbsp;productId</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The product identifier for the transaction.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSString *productId</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The product identifier for the transaction.</p>
+
+<p>@warning: required field</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/price" title="price"></a>
+	<h3 class="method-title"><code><a href="#//api/name/price">&nbsp;&nbsp;price</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The price of product(s) in the transaction.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSNumber *price</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The price of product(s) in the transaction.</p>
+
+<p>@warning: required field</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="Optional Revenue Fields" name="task_Optional Revenue Fields"></a>
+						<h2 class="task-title">Optional Revenue Fields</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/quantity" title="quantity"></a>
+	<h3 class="method-title"><code><a href="#//api/name/quantity">&nbsp;&nbsp;quantity</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The quantity of product(s) purchased in the transaction.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, readonly) NSInteger quantity</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The quantity of product(s) purchased in the transaction.</p>
+
+<p>@warning: defaults to 1</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/revenueType" title="revenueType"></a>
+	<h3 class="method-title"><code><a href="#//api/name/revenueType">&nbsp;&nbsp;revenueType</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The <a href="#//api/name/revenue">revenue</a> type for the transaction (optional).</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSString *revenueType</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The <a href="#//api/name/revenue">revenue</a> type for the transaction (optional).</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/receipt" title="receipt"></a>
+	<h3 class="method-title"><code><a href="#//api/name/receipt">&nbsp;&nbsp;receipt</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>The receipt data for the transaction. Required if you want to verify the <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSData *receipt</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>The receipt data for the transaction. Required if you want to verify the <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#revenue-verification">Revenue Validation</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/properties" title="properties"></a>
+	<h3 class="method-title"><code><a href="#//api/name/properties">&nbsp;&nbsp;properties</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Event properties for the <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSDictionary *properties</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Event properties for the <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#setting-event-properties">Setting Event Properties</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="Creating an AMPRevenue Object" name="task_Creating an AMPRevenue Object"></a>
+						<h2 class="task-title">Creating an AMPRevenue Object</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/revenue" title="revenue"></a>
+	<h3 class="method-title"><code><a href="#//api/name/revenue">+&nbsp;revenue</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Creates a new <a href="#">AMPRevenue</a> object.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>+ (instancetype)revenue</code></div>
+
+		    
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>a new <a href="#">AMPRevenue</a> object.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Creates a new <a href="#">AMPRevenue</a> object.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+
+						<a title="Setter Methods for Revenue Fields" name="task_Setter Methods for Revenue Fields"></a>
+						<h2 class="task-title">Setter Methods for Revenue Fields</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/setProductIdentifier:" title="setProductIdentifier:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setProductIdentifier:">&ndash;&nbsp;setProductIdentifier:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set a value for the product identifier. This field is required for all <a href="#//api/name/revenue">revenue</a> being logged.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPRevenue *)setProductIdentifier:(NSString *)<em>productIdentifier</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>productIdentifier</code></th>
+						<td><p>The value for the product identifier. Empty strings are ignored.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set a value for the product identifier. This field is required for all <a href="#//api/name/revenue">revenue</a> being logged.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setQuantity:" title="setQuantity:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setQuantity:">&ndash;&nbsp;setQuantity:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set a value for the <a href="#//api/name/quantity">quantity</a>.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPRevenue *)setQuantity:(NSInteger)<em>quantity</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>quantity</code></th>
+						<td><p>Integer value for the <a href="#//api/name/quantity">quantity</a>. Defaults to 1 if not specified.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set a value for the <a href="#//api/name/quantity">quantity</a>.</p>
+
+<p><strong>Note</strong> <a href="#//api/name/revenue">revenue</a> amount is calculated as <a href="#//api/name/price">price</a> * <a href="#//api/name/quantity">quantity</a>.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setPrice:" title="setPrice:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setPrice:">&ndash;&nbsp;setPrice:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set a value for the <a href="#//api/name/price">price</a>.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPRevenue *)setPrice:(NSNumber *)<em>price</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>price</code></th>
+						<td><p>The value for the <a href="#//api/name/price">price</a>.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set a value for the <a href="#//api/name/price">price</a>.</p>
+
+<p><strong>Note</strong> <a href="#//api/name/revenue">revenue</a> amount is calculated as <a href="#//api/name/price">price</a> * <a href="#//api/name/quantity">quantity</a>.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setRevenueType:" title="setRevenueType:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setRevenueType:">&ndash;&nbsp;setRevenueType:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set a value for the <a href="#//api/name/revenueType">revenueType</a> (for example purchase, cost, tax, refund, etc).</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPRevenue *)setRevenueType:(NSString *)<em>revenueType</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>revenueType</code></th>
+						<td><p>String value for the <a href="#//api/name/revenue">revenue</a> type.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set a value for the <a href="#//api/name/revenueType">revenueType</a> (for example purchase, cost, tax, refund, etc).</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setReceipt:" title="setReceipt:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setReceipt:">&ndash;&nbsp;setReceipt:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Add the <a href="#//api/name/receipt">receipt</a> data for the transaction. Reequired if you want to verify this <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPRevenue *)setReceipt:(NSData *)<em>receipt</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>receipt</code></th>
+						<td><p>The <a href="#//api/name/receipt">receipt</a> data from the App Store.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Add the <a href="#//api/name/receipt">receipt</a> data for the transaction. Reequired if you want to verify this <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#revenue-verification">Revenue Validation</a></p></code></li>
+					
+					<li><code><p><a href="https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1">Validating Receipts with the App Store</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setEventProperties:" title="setEventProperties:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setEventProperties:">&ndash;&nbsp;setEventProperties:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Set event <a href="#//api/name/properties">properties</a> for the <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (AMPRevenue *)setEventProperties:(NSDictionary *)<em>eventProperties</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventProperties</code></th>
+						<td><p>An <code>NSDictionary</code> of event <a href="#//api/name/properties">properties</a> to set for the <a href="#//api/name/revenue">revenue</a> event.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+			<div class="method-subsection return">
+				<h4 class="method-subtitle parameter-title">Return Value</h4>
+				<p>the same <a href="#">AMPRevenue</a> object, allowing you to chain multiple method calls together.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Set event <a href="#//api/name/properties">properties</a> for the <a href="#//api/name/revenue">revenue</a> event.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#setting-event-properties">Setting Event Properties</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">AMPRevenue.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
+					</div>
+					
+					
+
+                    
+                    
+          
+				</main>
+
+				<footer>
+					<div class="footer-copyright">
+						
+						<p class="copyright">Copyright &copy; 2016 Amplitude. All rights reserved. Updated: 2016-05-09</p>
+						
+						
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						
+					</div>
+				</footer>
+			</div>
+		</div>
+	</article>
+
+	<script src="../js/script.js"></script>
+</body>
+</html>

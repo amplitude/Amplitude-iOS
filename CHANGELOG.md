@@ -1,5 +1,61 @@
 ## Unreleased
 
+### 3.8.3 (July 18, 2016)
+
+* Fix overflow bug for long long values saved to Sqlite DB on 32-bit devices.
+
+### 3.8.2 (July 11, 2016)
+
+* `productId` is no longer a required field for `Revenue` logged via `logRevenueV2`.
+* Fix bug where revenue receipt was being truncated if it was too long (exceeded 1024 characters);
+
+## 3.8.1 (June 14, 2016)
+
+* Allow ability to silence error messages. Note error messages are printed by default. To disable error logging, change `AMPLITUDE_LOG_ERRORS` from `1` to `0` in `Amplitude.m`.
+
+## 3.8.0 (June 13, 2016)
+
+* Add support for iOS Extensions. See the [Readme](https://github.com/amplitude/amplitude-ios#ios-extensions) for instructions, or check out our [iOS-Extension-Demo](https://github.com/amplitude/iOS-Extension-Demo). Credit to @andyyc for the original PR.
+* Fix bug where subsequent calls to `initializeApiKey` after the first were not being ignored.
+* Guard debug log statements with a debug flag (disabled by default). To enable debug logging, change `AMPLITUDE_DEBUG` from `0` to `1` at the top of the Objective-C file you wish to examine.
+
+## 3.7.1 (June 10, 2016)
+
+* Add documentation for SDK functions. You can take a look [here](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/index.html). A link has also been added to the Readme.
+* Updated device mapping with iPhone SE, iPad Mini 4, and iPad Pro.
+* Fix crash during upgradePrefs in the init method. This bug affected app users who were upgrading from an old version of an app using Amplitude iOS v2.1.1 or earlier straight to a version of the app using Amplitude iOS v3.6.0 or later.
+
+## 3.7.0 (April 20, 2016)
+
+* Add helper method `getSessionId` to expose the current sessionId value.
+* Add support for setting groups for users and events. See [Readme](https://github.com/amplitude/Amplitude-iOS#setting-groups) for more information.
+* Add logRevenueV2 and new Revenue class to support logging revenue events with properties, and revenue type. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-revenue) for more info.
+
+## 3.6.0 (March 28, 2016)
+
+* Add support for prepend user property operation.
+* Fix support for 32-bit devices. Switch to using sqlite3.0, and cast return values from sqlite3.
+* Add support for logging events to multiple Amplitude apps. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-events-to-multiple-amplitude-apps) for details.
+
+## 3.5.0 (January 15, 2016)
+
+* Add ability to clear all user properties.
+
+## 3.4.1 (December 31, 2015)
+
+* Guarding AMPDatabaseHelper logging with a debug flag.
+
+## 3.4.0 (December 29, 2015)
+
+* Remove dependency on FMDB, use built-in SQLite3 library.
+* Updated DeviceInfo platform strings, added iPhone 6s, iPhone 6s Plus, iPod Touch 6G.
+* Fix bug to make sure events can be serialized before saving.
+
+## 3.3.0 (December 15, 2015)
+
+* Add support for append user property operation.
+* Add ability to force the SDK to update with the user's latest location.
+
 ## 3.2.1 (November 11, 2015)
 
 * Handle NaNs and exceptions from NSJSONSerialization during event data migration.

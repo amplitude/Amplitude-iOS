@@ -9,5 +9,8 @@
 @interface AMPUtils : NSObject
 
 + (NSString*)generateUUID;
++ (id) makeJSONSerializable:(id) obj;
++ (BOOL) isEmptyString:(NSString*) str;
++ (NSDictionary*) validateGroups:(NSDictionary*) obj;
 
 @end
