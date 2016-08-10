@@ -73,12 +73,12 @@
 
 - (void)testInitWithInstanceName {
     Amplitude *a = [Amplitude instanceWithName:@"APP1"];
-    [a flushQueueWithQueue:a.initializerQueue];
+    [a flushQueue];
     XCTAssertEqualObjects(a.instanceName, @"app1");
     XCTAssertTrue([a.propertyListPath rangeOfString:@"com.amplitude.plist_app1"].location != NSNotFound);
 
     Amplitude *b = [Amplitude instanceWithName:[kAMPDefaultInstance uppercaseString]];
-    [b flushQueueWithQueue:b.initializerQueue];
+    [b flushQueue];
     XCTAssertEqualObjects(b.instanceName, kAMPDefaultInstance);
     XCTAssertTrue([b.propertyListPath rangeOfString:@"com.amplitude.plist"].location != NSNotFound);
     XCTAssertTrue([ b.propertyListPath rangeOfString:@"com.amplitude.plist_"].location == NSNotFound);
@@ -110,6 +110,8 @@
     [newDBHelper2 resetDB:NO];
 
     // setup existing database file, init default instance
+    [[Amplitude instance] initializeApiKey:apiKey];
+    [[Amplitude instance] flushQueue];
     [oldDbHelper insertOrReplaceKeyLongValue:@"sequence_number" value:[NSNumber numberWithLongLong:1000]];
     [oldDbHelper addEvent:@"{\"event_type\":\"oldEvent\"}"];
     [oldDbHelper addIdentify:@"{\"event_type\":\"$identify\"}"];

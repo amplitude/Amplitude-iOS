@@ -49,7 +49,6 @@
 @interface Amplitude ()
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
-@property (nonatomic, strong) NSOperationQueue *initializerQueue;
 @property (nonatomic, strong) AMPDatabaseHelper *dbHelper;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
@@ -226,7 +225,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _backoffUpload = NO;
         _offline = NO;
         _instanceName = SAFE_ARC_RETAIN(instanceName);
-        _dbHelper = SAFE_ARC_RETAIN([AMPDatabaseHelper getDatabaseHelper:instanceName]);
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
@@ -235,21 +233,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
         _backoffUploadBatchSize = self.eventUploadMaxBatchSize;
 
-        _initializerQueue = [[NSOperationQueue alloc] init];
         _backgroundQueue = [[NSOperationQueue alloc] init];
         // Force method calls to happen in FIFO order by only allowing 1 concurrent operation
         [_backgroundQueue setMaxConcurrentOperationCount:1];
-        // Ensure initialize finishes running asynchronously before other calls are run
-        [_backgroundQueue setSuspended:YES];
         // Name the queue so runOnBackgroundQueue can tell which queue an operation is running
         _backgroundQueue.name = BACKGROUND_QUEUE_NAME;
         
-        [_initializerQueue addOperationWithBlock:^{
+        [_backgroundQueue addOperationWithBlock:^{
             
             _deviceInfo = [[AMPDeviceInfo alloc] init];
-
             _uploadTaskID = UIBackgroundTaskInvalid;
-            
+
+            // resolve path strings
             NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
             if (![_instanceName isEqualToString:kAMPDefaultInstance]) {
@@ -257,9 +252,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             _propertyListPath = SAFE_ARC_RETAIN(propertyListPath);
             _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
-            [self upgradePrefs];
+            [self upgradePrefs]; // migrate legacy prefs file
 
-            // Load propertyList object
+            // Load propertyList object, which contains current db version
             _propertyList = SAFE_ARC_RETAIN([self deserializePList:_propertyListPath]);
             if (!_propertyList) {
                 _propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
@@ -271,42 +266,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else {
                 AMPLITUDE_LOG(@"Loaded from %@", _propertyListPath);
             }
-
-            // update database if necessary
-            int oldDBVersion = 1;
-            NSNumber *oldDBVersionSaved = [_propertyList objectForKey:DATABASE_VERSION];
-            if (oldDBVersionSaved != nil) {
-                oldDBVersion = [oldDBVersionSaved intValue];
-            }
-
-            // update the database
-            if (oldDBVersion < kAMPDBVersion) {
-                if ([self.dbHelper upgrade:oldDBVersion newVersion:kAMPDBVersion]) {
-                    [_propertyList setObject:[NSNumber numberWithInt:kAMPDBVersion] forKey:DATABASE_VERSION];
-                    [self savePropertyList];
-                }
-            }
-
-            // only on default instance, migrate all of old _eventsData object to database store if database just created
-            if ([_instanceName isEqualToString:kAMPDefaultInstance] && oldDBVersion < kAMPDBFirstVersion) {
-                if ([self migrateEventsDataToDB]) {
-                    // delete events data so don't need to migrate next time
-                    if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
-                        [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
-                    }
-                }
-            }
-            SAFE_ARC_RELEASE(_eventsDataPath);
-
-            // try to restore previous session
-            long long previousSessionId = [self previousSessionId];
-            if (previousSessionId >= 0) {
-                _sessionId = previousSessionId;
-            }
-
-            [self initializeDeviceId];
-
-            [_backgroundQueue setSuspended:NO];
         }];
 
         // CLLocationManager must be created on the main thread
@@ -317,8 +276,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             SEL setDelegate = NSSelectorFromString(@"setDelegate:");
             [_locationManager performSelector:setDelegate withObject:_locationManagerDelegate];
         });
-
-        [self addObservers];
     }
     return self;
 }
@@ -411,12 +368,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     // Release instance variables
     SAFE_ARC_RELEASE(_deviceInfo);
-    SAFE_ARC_RELEASE(_initializerQueue);
     SAFE_ARC_RELEASE(_lastKnownLocation);
     SAFE_ARC_RELEASE(_locationManager);
     SAFE_ARC_RELEASE(_locationManagerDelegate);
     SAFE_ARC_RELEASE(_propertyList);
     SAFE_ARC_RELEASE(_propertyListPath);
+    SAFE_ARC_RELEASE(_eventsDataPath);
     SAFE_ARC_RELEASE(_dbHelper);
     SAFE_ARC_RELEASE(_instanceName);
 
@@ -464,14 +421,50 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         SAFE_ARC_RETAIN(apiKey);
         SAFE_ARC_RELEASE(_apiKey);
         _apiKey = apiKey;
+        _dbHelper = SAFE_ARC_RETAIN([AMPDatabaseHelper getDatabaseHelper:_instanceName]);
 
         [self runOnBackgroundQueue:^{
+            // update database if necessary
+            int oldDBVersion = 1;
+            NSNumber *oldDBVersionSaved = [_propertyList objectForKey:DATABASE_VERSION];
+            if (oldDBVersionSaved != nil) {
+                oldDBVersion = [oldDBVersionSaved intValue];
+            }
+
+            // update the database
+            if (oldDBVersion < kAMPDBVersion) {
+                if ([self.dbHelper upgrade:oldDBVersion newVersion:kAMPDBVersion]) {
+                    [_propertyList setObject:[NSNumber numberWithInt:kAMPDBVersion] forKey:DATABASE_VERSION];
+                    [self savePropertyList];
+                }
+            }
+
+            // only on default instance, migrate all of old _eventsData object to database store if database just created
+            if ([_instanceName isEqualToString:kAMPDefaultInstance] && oldDBVersion < kAMPDBFirstVersion) {
+                if ([self migrateEventsDataToDB]) {
+                    // delete events data so don't need to migrate next time
+                    if ([[NSFileManager defaultManager] fileExistsAtPath:_eventsDataPath]) {
+                        [[NSFileManager defaultManager] removeItemAtPath:_eventsDataPath error:NULL];
+                    }
+                }
+            }
+
+            // try to restore previous session
+            long long previousSessionId = [self previousSessionId];
+            if (previousSessionId >= 0) {
+                _sessionId = previousSessionId;
+            }
+            [self initializeDeviceId];
+
             if (setUserId) {
                 [self setUserId:userId];
             } else {
                 _userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
             }
         }];
+
+        // now we can add observers after setting apikey since enterBackground saves timestamp to DB
+        [self addObservers];
 
         UIApplication *app = [self getSharedApplication];
         if (app != nil) {
@@ -1218,6 +1211,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)identify:(AMPIdentify *)identify
 {
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling identify");
+        return;
+    }
+
     if (identify == nil || [identify.userPropertyOperations count] == 0) {
         return;
     }
@@ -1228,6 +1226,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setUserProperties:(NSDictionary*) userProperties
 {
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setUserProperties");
+        return;
+    }
+
     if (userProperties == nil || ![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"] || [userProperties count] == 0) {
         return;
     }
@@ -1252,6 +1255,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)clearUserProperties
 {
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling clearUserProperties");
+        return;
+    }
+
     AMPIdentify *identify = [[AMPIdentify identify] clearAll];
     [self identify:identify];
 }
@@ -1276,6 +1284,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setUserId:(NSString*) userId
 {
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setUserId");
+        return;
+    }
+
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
         return;
     }
@@ -1290,6 +1303,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setOptOut:(BOOL)enabled
 {
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setOptOut");
+        return;
+    }
+
     [self runOnBackgroundQueue:^{
         NSNumber *value = [NSNumber numberWithBool:enabled];
         (void) [self.dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:value];
@@ -1300,7 +1318,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     _offline = offline;
 
-    if (!_offline) {
+    if (!_offline && _apiKey != nil) {
         [self uploadEvents];
     }
 }
@@ -1313,12 +1331,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (BOOL)optOut
 {
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before toggling and fetching optOut");
+        return NO;
+    }
     return [[self.dbHelper getLongValue:OPT_OUT] boolValue];
 }
 
 - (void)setDeviceId:(NSString*)deviceId
 {
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setDeviceId");
+        return;
+    }
+
     if (![self isValidDeviceId:deviceId]) {
+        AMPLITUDE_ERROR(@"ERROR: invalid deviceId '%@', skipping setDeviceId", deviceId);
         return;
     }
 
