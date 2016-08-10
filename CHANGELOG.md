@@ -1,5 +1,8 @@
 ## Unreleased
 
+* Migrate all database logic from `init` to `initializeApiKey`.
+* Run `init` logic on `backgroundQueue`, removing need for separate `initializerQueue`.
+
 ### 3.8.3 (July 18, 2016)
 
 * Fix overflow bug for long long values saved to Sqlite DB on 32-bit devices.

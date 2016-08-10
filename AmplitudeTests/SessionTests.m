@@ -42,7 +42,6 @@
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [[mockAmplitude reject] enterForeground];
     [mockAmplitude initializeApiKey:apiKey];
-    [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
     [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
@@ -56,7 +55,6 @@
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [[mockAmplitude expect] enterForeground];
     [mockAmplitude initializeApiKey:apiKey];
-    [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
     [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
@@ -70,7 +68,6 @@
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
 
     [mockAmplitude initializeApiKey:apiKey userId:nil];
-    [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
     XCTAssertEqual([mockAmplitude sessionId], 1000000);
@@ -140,7 +137,7 @@
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
     [self.amplitude initializeApiKey:apiKey userId:nil];
-    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
+    [self.amplitude flushQueue];
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil userInfo:nil];
@@ -156,7 +153,6 @@
     [mockAmplitude setTrackingSessionEvents:YES];
 
     [mockAmplitude initializeApiKey:apiKey userId:nil];
-    [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
@@ -192,7 +188,6 @@
     [mockAmplitude setTrackingSessionEvents:YES];
 
     [mockAmplitude initializeApiKey:apiKey userId:nil];
-    [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
