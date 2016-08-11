@@ -226,6 +226,25 @@
     XCTAssertEqual([self.amplitude userId], nil);
 }
 
+- (void)testDatabaseScopeMigration {
+    NSString *migrationInstanceName = @"testMigrationInstance";
+    NSString *migrationApiKey = @"testMigrationInstanceApiKey";
+    NSString *deviceId = @"testMigrationDeviceId";
+
+    // create old database file
+    AMPDatabaseHelper *oldDbHelper = [AMPDatabaseHelper getDatabaseHelperWithInstanceName:migrationInstanceName];
+    [oldDbHelper insertOrReplaceKeyValue:@"device_id" value:deviceId];
+
+    // init new client, verify migration
+    Amplitude *client = [Amplitude instanceWithName:migrationInstanceName];
+    [client initializeApiKey:migrationApiKey];
+    [client flushQueue];
+    XCTAssertEqualObjects([client getDeviceId], deviceId);
+
+    AMPDatabaseHelper *newDbHelper = [AMPDatabaseHelper getDatabaseHelper:migrationInstanceName apiKey:migrationApiKey];
+    XCTAssertEqualObjects([newDbHelper getValue:@"device_id"], deviceId);
+}
+
 - (void)testClearUserId {
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nil);

@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Migrate Sqlite database file to new filename with apiKey.
 * Migrate all database logic from `init` to `initializeApiKey`.
 * Run `init` logic on `backgroundQueue`, removing need for separate `initializerQueue`.
 

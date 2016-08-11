@@ -31,7 +31,6 @@
 
 @implementation AMPDatabaseHelper
 {
-    BOOL _databaseCreated;
     sqlite3 *_database;
     dispatch_queue_t _queue;
 }
@@ -95,6 +94,13 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return dbHelper;
 }
 
+// for testing only
++ (AMPDatabaseHelper*)getDatabaseHelperWithInstanceName:(NSString*) instanceName
+{
+    AMPDatabaseHelper *dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName andApiKey:nil];
+    return SAFE_ARC_AUTORELEASE(dbHelper);
+}
+
 // instanceName should not be null, getDatabaseHelper will guard
 // apiKey should only be null for testing - Amplitude client will guard
 - (id)initWithInstanceName:(NSString*) instanceName andApiKey:(NSString*) apiKey
@@ -107,11 +113,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         }
 
         // migrate to new db filename
-//        if (![AMPUtils isEmptyString:apiKey]) {
-//            NSString *newDatabasePath = [NSString stringWithFormat:@"%@_%@", databasePath, apiKey];
-////            [AMPUtils moveFileIfNotExists:databasePath to:newDatabasePath];
-////            databasePath = newDatabasePath;
-//        }
+        if (![AMPUtils isEmptyString:apiKey]) {
+            NSString *newDatabasePath = [NSString stringWithFormat:@"%@_%@", databasePath, apiKey];
+            [AMPUtils moveFileIfNotExists:databasePath to:newDatabasePath];
+            databasePath = newDatabasePath;
+        }
 
         _databasePath = SAFE_ARC_RETAIN(databasePath);
         _queue = dispatch_queue_create([QUEUE_NAME UTF8String], NULL);

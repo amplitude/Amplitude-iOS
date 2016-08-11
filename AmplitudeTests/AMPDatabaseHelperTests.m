@@ -35,6 +35,22 @@ NSString *const apiKey2 = @"222222";
     self.databaseHelper = nil;
 }
 
+- (void)testScopeMigration {
+    // use separate instance/apiKey from test default to prevent overlap of data
+    NSString *instanceName = @"migrationInstance";
+    NSString *apiKey = @"migrationApiKey";
+
+    // initialize dbHelper with old filename
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelperWithInstanceName:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"migrationTestKey" value:@"migrationTestValue"];
+
+    // force migration
+    AMPDatabaseHelper *newDbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName apiKey:apiKey];
+    XCTAssertEqualObjects([newDbHelper getValue:@"migrationTestKey"], @"migrationTestValue");
+
+    [newDbHelper deleteDB];
+}
+
 - (void)testGetDatabaseHelper {
     // test backwards compatibility on default instance
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:testApiKey];
@@ -56,9 +72,12 @@ NSString *const apiKey2 = @"222222";
 
     // test each instance maintains separate database files
     XCTAssertTrue([a.databasePath rangeOfString:@"com.amplitude.database_a"].location != NSNotFound);
+    XCTAssertTrue([a.databasePath rangeOfString:@"com.amplitude.database_a_111111"].location != NSNotFound);
     XCTAssertTrue([b.databasePath rangeOfString:@"com.amplitude.database_b"].location != NSNotFound);
+    XCTAssertTrue([b.databasePath rangeOfString:@"com.amplitude.database_b_222222"].location != NSNotFound);
     XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database"].location != NSNotFound);
-    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database_"].location == NSNotFound);
+    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database_$default_instance"].location == NSNotFound);
+    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database_000000"].location != NSNotFound);
 
     [a deleteDB];
     [b deleteDB];
