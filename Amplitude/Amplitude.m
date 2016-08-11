@@ -288,7 +288,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return NO;
     }
 
-    AMPDatabaseHelper *defaultDbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    AMPDatabaseHelper *defaultDbHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:_apiKey];
     BOOL success = YES;
 
     // migrate events
@@ -421,7 +421,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         SAFE_ARC_RETAIN(apiKey);
         SAFE_ARC_RELEASE(_apiKey);
         _apiKey = apiKey;
-        _dbHelper = SAFE_ARC_RETAIN([AMPDatabaseHelper getDatabaseHelper:_instanceName]);
+        _dbHelper = SAFE_ARC_RETAIN([AMPDatabaseHelper getDatabaseHelper:_instanceName apiKey:_apiKey]);
 
         [self runOnBackgroundQueue:^{
             // update database if necessary
@@ -1563,8 +1563,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     NSString *oldPropertyListPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
     NSString *oldEventsDataPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
-    BOOL success = [self moveFileIfNotExists:oldPropertyListPath to:_propertyListPath];
-    success &= [self moveFileIfNotExists:oldEventsDataPath to:_eventsDataPath];
+    BOOL success = [AMPUtils moveFileIfNotExists:oldPropertyListPath to:_propertyListPath];
+    success &= [AMPUtils moveFileIfNotExists:oldEventsDataPath to:_eventsDataPath];
     return success;
 }
 
@@ -1647,23 +1647,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (BOOL)archive:(id) obj toFile:(NSString*)path {
     return [NSKeyedArchiver archiveRootObject:obj toFile:path];
-}
-
-- (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to
-{
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
-    if (![fileManager fileExistsAtPath:to] &&
-        [fileManager fileExistsAtPath:from]) {
-        if ([fileManager copyItemAtPath:from toPath:to error:&error]) {
-            AMPLITUDE_LOG(@"INFO: copied %@ to %@", from, to);
-            [fileManager removeItemAtPath:from error:NULL];
-        } else {
-            AMPLITUDE_LOG(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
-            return NO;
-        }
-    }
-    return YES;
 }
 
 #pragma clang diagnostic pop

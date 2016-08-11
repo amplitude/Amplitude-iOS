@@ -19,6 +19,8 @@
 @dynamic sessionId;
 @dynamic lastEventTime;
 
+NSString *const newTestApiKey = @"000000";
+
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
 }
@@ -28,22 +30,22 @@
 }
 
 - (NSDictionary *)getEvent:(NSInteger) fromEnd {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper:nil apiKey:newTestApiKey] getEvents:-1 limit:-1];
     return [events objectAtIndex:[events count] - fromEnd - 1];
 }
 
 - (NSDictionary *)getLastEvent {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper:nil apiKey:newTestApiKey] getEvents:-1 limit:-1];
     return [events lastObject];
 }
 
 - (NSDictionary *)getLastIdentify {
-    NSArray *identifys = [[AMPDatabaseHelper getDatabaseHelper] getIdentifys:-1 limit:-1];
+    NSArray *identifys = [[AMPDatabaseHelper getDatabaseHelper:nil apiKey:newTestApiKey] getIdentifys:-1 limit:-1];
     return [identifys lastObject];
 }
 
 - (NSUInteger)queuedEventCount {
-    return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
+    return [[AMPDatabaseHelper getDatabaseHelper:nil apiKey:newTestApiKey] getEventCount];
 }
 
 - (void)flushUploads:(void (^)())handler {

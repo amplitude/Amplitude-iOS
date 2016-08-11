@@ -141,4 +141,21 @@
     return [NSDictionary dictionaryWithDictionary:dict];
 }
 
++ (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    if (![fileManager fileExistsAtPath:to] &&
+        [fileManager fileExistsAtPath:from]) {
+        if ([fileManager copyItemAtPath:from toPath:to error:&error]) {
+            AMPLITUDE_LOG(@"INFO: copied %@ to %@", from, to);
+            [fileManager removeItemAtPath:from error:NULL];
+        } else {
+            AMPLITUDE_LOG(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
+            return NO;
+        }
+    }
+    return YES;
+}
+
 @end

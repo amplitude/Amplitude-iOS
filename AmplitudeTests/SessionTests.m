@@ -215,18 +215,16 @@
 }
 
 - (void)testSkipSessionCheckWhenLoggingSessionEvents {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970] * 1000];
-    [dbHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
+    [self.databaseHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
 
     self.amplitude.trackingSessionEvents = YES;
     [self.amplitude initializeApiKey:apiKey userId:nil];
 
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], 2);
-    NSArray *events = [dbHelper getEvents:-1 limit:2];
+    XCTAssertEqual([self.databaseHelper getEventCount], 2);
+    NSArray *events = [self.databaseHelper getEvents:-1 limit:2];
     XCTAssertEqualObjects(events[0][@"event_type"], kAMPSessionEndEvent);
     XCTAssertEqualObjects(events[1][@"event_type"], kAMPSessionStartEvent);
 }

@@ -26,7 +26,7 @@ NSString *const userId = @"userId";
 - (void)setUp {
     [super setUp];
     self.amplitude = [Amplitude alloc];
-    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
+    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:apiKey];
     XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
     [self.amplitude init];

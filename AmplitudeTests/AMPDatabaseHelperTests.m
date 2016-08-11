@@ -17,9 +17,15 @@
 
 @implementation AMPDatabaseHelperTests {}
 
+
+NSString *const testApiKey = @"000000";
+NSString *const apiKey1 = @"111111";
+NSString *const apiKey2 = @"222222";
+
+
 - (void)setUp {
     [super setUp];
-    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
+    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:testApiKey];
     [self.databaseHelper resetDB:NO];
 }
 
@@ -31,23 +37,22 @@
 
 - (void)testGetDatabaseHelper {
     // test backwards compatibility on default instance
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:nil]);
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:@""]);
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:kAMPDefaultInstance]);
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:testApiKey];
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:@"" apiKey:testApiKey]);
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:kAMPDefaultInstance apiKey:testApiKey]);
 
-    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a"];
-    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b"];
+    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a" apiKey:apiKey1];
+    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b" apiKey:apiKey2];
     XCTAssertNotEqual(dbHelper, a);
     XCTAssertNotEqual(dbHelper, b);
     XCTAssertNotEqual(a, b);
-    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"a"]);
-    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"b"]);
+    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"a" apiKey:apiKey1]);
+    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"b" apiKey:apiKey2]);
 
     // test case insensitive instance name
-    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"A"]);
-    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"B"]);
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:[kAMPDefaultInstance uppercaseString]]);
+    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"A" apiKey:apiKey1]);
+    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"B" apiKey:apiKey2]);
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:[kAMPDefaultInstance uppercaseString] apiKey:testApiKey]);
 
     // test each instance maintains separate database files
     XCTAssertTrue([a.databasePath rangeOfString:@"com.amplitude.database_a"].location != NSNotFound);
@@ -60,9 +65,9 @@
 }
 
 - (void)testSeparateInstances {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a"];
-    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b"];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:testApiKey];
+    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a" apiKey:apiKey1];
+    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b" apiKey:apiKey2];
 
     [a resetDB:NO];
     [b resetDB:NO];
