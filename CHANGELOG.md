@@ -1,5 +1,8 @@
 ## Unreleased
 
+* Added support for integration via Carthage. Thanks to @mpurland for the original PR.
+* Cleaned up warnings for expression result unused.
+
 ### 3.8.3 (July 18, 2016)
 
 * Fix overflow bug for long long values saved to Sqlite DB on 32-bit devices.
