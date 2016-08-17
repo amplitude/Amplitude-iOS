@@ -5,3 +5,4 @@
 /Build/
 /DerivedData/
 *.xcworkspace/xcshareddata/*.xcscmblueprint
+Carthage/Build

@@ -133,7 +133,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 {
     SAFE_ARC_RELEASE(_databasePath);
     if (_queue) {
-        SAFE_ARC_DISPATCH_RELEASE(_queue);
+        (void) SAFE_ARC_DISPATCH_RELEASE(_queue);
         _queue = NULL;
     }
     SAFE_ARC_SUPER_DEALLOC();
