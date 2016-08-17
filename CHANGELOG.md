@@ -1,5 +1,7 @@
 ## Unreleased
 
+### 3.8.4 (August 18, 2016)
+
 * Added support for integration via Carthage. Thanks to @mpurland for the original PR.
 * Cleaned up warnings for expression result unused.
 
