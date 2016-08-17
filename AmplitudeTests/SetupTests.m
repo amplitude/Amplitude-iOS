@@ -30,12 +30,12 @@
 }
 
 - (void)testApiKeySet {
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
     XCTAssertEqual(self.amplitude.apiKey, apiKey);
 }
 
 - (void)testDeviceIdSet {
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
     [self.amplitude flushQueue];
     XCTAssertNotNil([self.amplitude deviceId]);
     XCTAssertEqual([self.amplitude deviceId].length, 36);
@@ -43,24 +43,26 @@
 }
 
 - (void)testUserIdNotSet {
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
     [self.amplitude flushQueue];
     XCTAssertNil([self.amplitude userId]);
 }
 
 - (void)testUserIdSet {
-    [self.amplitude initializeApiKey:apiKey userId:userId];
+    [[self.amplitude setApiKey:apiKey] setUserId:userId];
+    [self.amplitude initialize];
     [self.amplitude flushQueue];
     XCTAssertEqualObjects([self.amplitude userId], userId);
 }
 
 - (void)testInitializedSet {
-    [self.amplitude initializeApiKey:apiKey];
-    XCTAssert([self.amplitude initialized]);
+    [[self.amplitude setApiKey:apiKey] initialize];
+    [self.amplitude flushQueue];
+    XCTAssert([self.amplitude initializedDatabase]);
 }
 
 - (void)testOptOut {
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
 
     [self.amplitude setOptOut:YES];
     [self.amplitude logEvent:@"Opted Out"];
@@ -78,7 +80,7 @@
 }
 
 - (void)testUserPropertiesSet {
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
     XCTAssertEqual([self.databaseHelper getEventCount], 0);
 
     NSDictionary *properties = @{
@@ -103,7 +105,7 @@
 }
 
 - (void)testSetDeviceId {
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
     [self.amplitude flushQueue];
     NSString *generatedDeviceId = [self.amplitude getDeviceId];
     XCTAssertNotNil(generatedDeviceId);

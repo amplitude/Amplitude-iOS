@@ -41,7 +41,7 @@
     // mock amplitude object and verify enterForeground not called
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [[mockAmplitude reject] enterForeground];
-    [mockAmplitude initializeApiKey:apiKey];
+    [[mockAmplitude setApiKey:apiKey] initialize];
     [mockAmplitude flushQueue];
     [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
@@ -54,7 +54,7 @@
 
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [[mockAmplitude expect] enterForeground];
-    [mockAmplitude initializeApiKey:apiKey];
+    [[mockAmplitude setApiKey:apiKey] initialize];
     [mockAmplitude flushQueue];
     [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
@@ -67,7 +67,8 @@
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
 
-    [mockAmplitude initializeApiKey:apiKey userId:nil];
+    [[mockAmplitude setApiKey:apiKey] setUserId:nil];
+    [mockAmplitude initialize];
     [mockAmplitude flushQueue];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
     XCTAssertEqual([mockAmplitude sessionId], 1000000);
@@ -136,7 +137,8 @@
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
-    [self.amplitude initializeApiKey:apiKey userId:nil];
+    [[self.amplitude setApiKey:apiKey] setUserId:nil];
+    [self.amplitude initialize];
     [self.amplitude flushQueue];
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -152,7 +154,8 @@
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude setTrackingSessionEvents:YES];
 
-    [mockAmplitude initializeApiKey:apiKey userId:nil];
+    [[mockAmplitude setApiKey:apiKey] setUserId:nil];
+    [mockAmplitude initialize];
     [mockAmplitude flushQueue];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
@@ -187,7 +190,8 @@
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude setTrackingSessionEvents:YES];
 
-    [mockAmplitude initializeApiKey:apiKey userId:nil];
+    [[mockAmplitude setApiKey:apiKey] setUserId:nil];
+    [mockAmplitude initialize];
     [mockAmplitude flushQueue];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
@@ -220,8 +224,8 @@
     [self.databaseHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
 
     self.amplitude.trackingSessionEvents = YES;
-    [self.amplitude initializeApiKey:apiKey userId:nil];
-
+    [[self.amplitude setApiKey:apiKey] setUserId:nil];
+    [self.amplitude initialize];
     [self.amplitude flushQueue];
     XCTAssertEqual([self.databaseHelper getEventCount], 2);
     NSArray *events = [self.databaseHelper getEvents:-1 limit:2];

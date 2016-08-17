@@ -147,11 +147,10 @@
     NSError *error;
     if (![fileManager fileExistsAtPath:to] &&
         [fileManager fileExistsAtPath:from]) {
-        if ([fileManager copyItemAtPath:from toPath:to error:&error]) {
-            AMPLITUDE_LOG(@"INFO: copied %@ to %@", from, to);
-            [fileManager removeItemAtPath:from error:NULL];
+        if ([fileManager moveItemAtPath:from toPath:to error:&error]) {
+            AMPLITUDE_LOG(@"INFO: moved %@ to %@", from, to);
         } else {
-            AMPLITUDE_LOG(@"WARN: Copy from %@ to %@ failed: %@", from, to, error);
+            AMPLITUDE_LOG(@"WARN: Move from %@ to %@ failed: %@", from, to, error);
             return NO;
         }
     }

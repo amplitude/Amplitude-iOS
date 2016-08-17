@@ -13,7 +13,7 @@
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) NSOperationQueue *initializerQueue;
 @property (nonatomic, strong) NSMutableDictionary *eventsData;
-@property (nonatomic, assign) BOOL initialized;
+@property (nonatomic, assign) BOOL initializedDatabase;
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, strong) NSNumber* lastEventTime;
 

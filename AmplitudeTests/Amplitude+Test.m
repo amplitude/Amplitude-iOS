@@ -15,7 +15,7 @@
 @dynamic backgroundQueue;
 @dynamic initializerQueue;
 @dynamic eventsData;
-@dynamic initialized;
+@dynamic initializedDatabase;
 @dynamic sessionId;
 @dynamic lastEventTime;
 

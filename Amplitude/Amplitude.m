@@ -50,7 +50,7 @@
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) AMPDatabaseHelper *dbHelper;
-@property (nonatomic, assign) BOOL initialized;
+@property (nonatomic, assign) BOOL initializedDatabase;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 @property (nonatomic, assign) long long sessionId;
 
@@ -128,14 +128,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     return client;
-}
-
-+ (void)initializeApiKey:(NSString*) apiKey {
-    [[Amplitude instance] initializeApiKey:apiKey];
-}
-
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId {
-    [[Amplitude instance] initializeApiKey:apiKey userId:userId];
 }
 
 + (void)logEvent:(NSString*) eventType {
@@ -216,7 +208,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _sslPinningEnabled = NO;
 #endif
 
-        _initialized = NO;
+        _initializedDatabase = NO;
         _locationListeningEnabled = YES;
         _sessionId = -1;
         _updateScheduled = NO;
@@ -252,7 +244,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             _propertyListPath = SAFE_ARC_RETAIN(propertyListPath);
             _eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
-            [self upgradePrefs]; // migrate legacy prefs file
+
+            if ([_instanceName isEqualToString:kAMPDefaultInstance]) {
+                [self upgradePrefs]; // migrate legacy prefs file for the default instance
+            }
 
             // Load propertyList object, which contains current db version
             _propertyList = SAFE_ARC_RETAIN([self deserializePList:_propertyListPath]);
@@ -381,43 +376,23 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_SUPER_DEALLOC();
 }
 
-- (void)initializeApiKey:(NSString*) apiKey
-{
-    [self initializeApiKey:apiKey userId:nil setUserId: NO];
-}
-
-/**
- * Initialize Amplitude with a given apiKey and userId.
- */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
-{
-    [self initializeApiKey:apiKey userId:userId setUserId: YES];
-}
-
-/**
- * SetUserId: client explicitly initialized with a userId (can be nil).
- * If setUserId is NO, then attempt to load userId from saved eventsData.
- */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId setUserId:(BOOL) setUserId
+- (Amplitude *)setApiKey:(NSString*) apiKey
 {
     if (apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil in initializeApiKey:");
-        return;
+        return self;
     }
 
     if (![self isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
-        return;
-    }
-    if (userId != nil && ![self isArgument:userId validType:[NSString class] methodName:@"initializeApiKey:"]) {
-        return;
+        return self;
     }
 
     if ([apiKey length] == 0) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be blank in initializeApiKey:");
-        return;
+        return self;
     }
 
-    if (!_initialized) {
+    if (!_initializedDatabase) {
         SAFE_ARC_RETAIN(apiKey);
         SAFE_ARC_RELEASE(_apiKey);
         _apiKey = apiKey;
@@ -455,27 +430,40 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 _sessionId = previousSessionId;
             }
             [self initializeDeviceId];
-
-            if (setUserId) {
-                [self setUserId:userId];
-            } else {
-                _userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
-            }
+            _userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
         }];
 
         // now we can add observers after setting apikey since enterBackground saves timestamp to DB
         [self addObservers];
+        _initializedDatabase = YES;
+    }
 
-        UIApplication *app = [self getSharedApplication];
-        if (app != nil) {
-            UIApplicationState state = app.applicationState;
-            if (state != UIApplicationStateBackground) {
-                // If this is called while the app is running in the background, for example
-                // via a push notification, don't call enterForeground
-                [self enterForeground];
-            }
+    return self;
+}
+
+- (BOOL)checkApiKeyForMethod:(NSString*) methodName
+{
+    if (_apiKey == nil) {
+        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with setApiKey before calling %@", methodName);
+        return NO;
+    }
+    return YES;
+}
+
+- (void)initialize
+{
+    if (![self checkApiKeyForMethod:@"initialize"]) {
+        return;
+    }
+
+    UIApplication *app = [self getSharedApplication];
+    if (app != nil) {
+        UIApplicationState state = app.applicationState;
+        if (state != UIApplicationStateBackground) {
+            // If this is called while the app is running in the background, for example
+            // via a push notification, don't call enterForeground
+            [self enterForeground];
         }
-        _initialized = YES;
     }
 }
 
@@ -486,11 +474,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return [UIApplication performSelector:@selector(sharedApplication)];
     }
     return nil;
-}
-
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession
-{
-    [self initializeApiKey:apiKey userId:userId];
 }
 
 /**
@@ -538,8 +521,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withGroups:(NSDictionary*) groups withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
+    if (![self checkApiKeyForMethod:@"logEvent"]) {
         return;
     }
 
@@ -699,8 +681,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
+    if (![self checkApiKeyForMethod:@"logRevenue"]) {
         return;
     }
     if (![self isArgument:price validType:[NSNumber class] methodName:@"logRevenue:"]) {
@@ -726,8 +707,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)logRevenueV2:(AMPRevenue*) revenue
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenueV2");
+    if (![self checkApiKeyForMethod:@"logRevenueV2"]) {
         return;
     }
     if (revenue == nil || ![revenue isValidRevenue]) {
@@ -766,8 +746,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)uploadEventsWithLimit:(int) limit
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
+    if (![self checkApiKeyForMethod:@"uploadEvents"]) {
         return;
     }
 
@@ -1131,11 +1110,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)sendSessionEvent:(NSString*) sessionEvent
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before sending session event");
-        return;
-    }
-
     if (![self inSession]) {
         return;
     }
@@ -1211,8 +1185,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)identify:(AMPIdentify *)identify
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling identify");
+    if (![self checkApiKeyForMethod:@"identify"]) {
         return;
     }
 
@@ -1226,8 +1199,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setUserProperties:(NSDictionary*) userProperties
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setUserProperties");
+    if (![self checkApiKeyForMethod:@"setUserProperties"]) {
         return;
     }
 
@@ -1255,19 +1227,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)clearUserProperties
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling clearUserProperties");
+    if (![self checkApiKeyForMethod:@"clearUserProperties"]) {
         return;
     }
-
     AMPIdentify *identify = [[AMPIdentify identify] clearAll];
     [self identify:identify];
 }
 
 - (void)setGroup:(NSString *)groupType groupName:(NSObject *)groupName
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setGroupType");
+    if (![self checkApiKeyForMethod:@"setGroup"]) {
         return;
     }
 
@@ -1284,8 +1253,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setUserId:(NSString*) userId
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setUserId");
+    if (![self checkApiKeyForMethod:@"setUserId"]) {
         return;
     }
 
@@ -1303,8 +1271,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setOptOut:(BOOL)enabled
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setOptOut");
+    if (![self checkApiKeyForMethod:@"setOptOut"]) {
         return;
     }
 
@@ -1331,8 +1298,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (BOOL)optOut
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before toggling and fetching optOut");
+    if (![self checkApiKeyForMethod:@"optOut"]) {
         return NO;
     }
     return [[self.dbHelper getLongValue:OPT_OUT] boolValue];
@@ -1340,8 +1306,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setDeviceId:(NSString*)deviceId
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setDeviceId");
+    if (![self checkApiKeyForMethod:@"setDeviceId"]) {
         return;
     }
 

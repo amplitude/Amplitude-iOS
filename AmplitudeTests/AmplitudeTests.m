@@ -36,7 +36,7 @@
     [super setUp];
     _connectionMock = [OCMockObject mockForClass:NSURLConnection.class];
     _connectionCallCount = 0;
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
 }
 
 - (void)tearDown {
@@ -110,7 +110,7 @@
     [newDBHelper2 resetDB:NO];
 
     // setup existing database file, init default instance
-    [[Amplitude instance] initializeApiKey:apiKey];
+    [[[Amplitude instance] setApiKey:apiKey] initialize];
     [[Amplitude instance] flushQueue];
     [oldDbHelper insertOrReplaceKeyLongValue:@"sequence_number" value:[NSNumber numberWithLongLong:1000]];
     [oldDbHelper addEvent:@"{\"event_type\":\"oldEvent\"}"];
@@ -130,7 +130,7 @@
     XCTAssertNil([newDBHelper2 getLongValue:@"sequence_number"]);
 
     // init first new app and verify separate database
-    [[Amplitude instanceWithName:newInstance1] initializeApiKey:newApiKey1];
+    [[[Amplitude instanceWithName:newInstance1] setApiKey:newApiKey1] initialize];
     [[Amplitude instanceWithName:newInstance1] flushQueue];
     XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], @"oldDeviceId");
     XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], [newDBHelper1 getValue:@"device_id"]);
@@ -139,7 +139,7 @@
     XCTAssertEqual([newDBHelper1 getIdentifyCount], 0);
 
     // init second new app and verify separate database
-    [[Amplitude instanceWithName:newInstance2] initializeApiKey:newApiKey2];
+    [[[Amplitude instanceWithName:newInstance2] setApiKey:newApiKey2] initialize];
     [[Amplitude instanceWithName:newInstance2] flushQueue];
     XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], @"oldDeviceId");
     XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], [newDBHelper2 getValue:@"device_id"]);
@@ -188,7 +188,7 @@
     NSString *testUserId = @"testUserId";
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName apiKey:apiKey];
     [dbHelper insertOrReplaceKeyValue:@"user_id" value:testUserId];
-    [client initializeApiKey:apiKey];
+    [[client setApiKey:apiKey] initialize];
     [client flushQueue];
     XCTAssertTrue([[client userId] isEqualToString:testUserId]);
 }
@@ -198,7 +198,8 @@
     XCTAssertEqual([self.amplitude userId], nil);
 
     NSString *nilUserId = nil;
-    [self.amplitude initializeApiKey:apiKey userId:nilUserId];
+    [[self.amplitude setApiKey:apiKey] setUserId:nilUserId];
+    [self.amplitude initialize];
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nilUserId);
     XCTAssertNil([self.databaseHelper getValue:@"user_id"]);
@@ -211,7 +212,8 @@
     XCTAssertEqual([client userId], nil);
 
     NSString *testUserId = @"testUserId";
-    [client initializeApiKey:apiKey userId:testUserId];
+    [[client setApiKey:apiKey] setUserId:testUserId];
+    [client initialize];
     [client flushQueue];
     XCTAssertEqual([client userId], testUserId);
 }
@@ -221,9 +223,11 @@
     XCTAssertEqual([self.amplitude userId], nil);
 
     NSString *testUserId = @"testUserId";
-    [self.amplitude initializeApiKey:apiKey userId:testUserId];
+    [[self.amplitude setApiKey:apiKey] setUserId:testUserId];
+    [self.amplitude initialize];
     [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude userId], nil);
+    // since setUserId is called explicitly now, will override existing value even though reinitialization skipped
+    XCTAssertEqualObjects([self.amplitude userId], testUserId);
 }
 
 - (void)testDatabaseScopeMigration {
@@ -237,7 +241,7 @@
 
     // init new client, verify migration
     Amplitude *client = [Amplitude instanceWithName:migrationInstanceName];
-    [client initializeApiKey:migrationApiKey];
+    [[client setApiKey:migrationApiKey] initialize];
     [client flushQueue];
     XCTAssertEqualObjects([client getDeviceId], deviceId);
 

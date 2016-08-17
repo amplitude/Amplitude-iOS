@@ -139,21 +139,8 @@
 
  @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
  */
-- (void)initializeApiKey:(NSString*) apiKey;
-
-/**
- Initializes the Amplitude instance with your Amplitude API key and sets a user identifier for the current user.
-
- We recommend you first initialize your class within your "didFinishLaunchingWithOptions" method inside your app delegate.
-
- **Note:** this is required before you can log any events.
-
- @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
-
- @param userId If your app has its own login system that you want to track users with, you can set the userId.
-
-*/
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
+- (Amplitude *)setApiKey:(NSString*) apiKey;
+- (void)initialize;
 
 
 /**-----------------------------------------------------------------------------
@@ -490,13 +477,7 @@
 
 #pragma mark - Deprecated methods
 
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession __attribute((deprecated()));
-
 - (void)startSession __attribute((deprecated()));
-
-+ (void)initializeApiKey:(NSString*) apiKey __attribute((deprecated()));
-
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId __attribute((deprecated()));
 
 + (void)logEvent:(NSString*) eventType __attribute((deprecated()));
 
