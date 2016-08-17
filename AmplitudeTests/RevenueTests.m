@@ -116,7 +116,7 @@
     XCTAssertFalse([revenue2 isValidRevenue]);
     [revenue2 setPrice:[NSNumber numberWithDouble:10.99]];
     [revenue2 setQuantity:10];
-    XCTAssertFalse([revenue2 isValidRevenue]);
+    XCTAssertTrue([revenue2 isValidRevenue]);
     [revenue2 setProductIdentifier:@"testProductId"];
     XCTAssertTrue([revenue2 isValidRevenue]);
 }

@@ -520,6 +520,7 @@
     [object setValue:[NSNumber numberWithBool:NO] forKey:@"bool value"];
     [object setValue:longString forKey:@"long string"];
     [object setValue:[NSArray arrayWithObject:longString] forKey:@"array"];
+    [object setValue:longString forKey:AMP_REVENUE_RECEIPT];
 
     object = [self.amplitude truncate:object];
     XCTAssertEqual([[object objectForKey:@"int value"] intValue], 10);
@@ -528,19 +529,24 @@
     XCTAssertEqual([[object objectForKey:@"array"] count], 1);
     XCTAssertEqualObjects([object objectForKey:@"array"][0], truncString);
     XCTAssertEqual([[object objectForKey:@"array"][0] length], kAMPMaxStringLength);
+
+    // receipt field should not be truncated
+    XCTAssertEqualObjects([object objectForKey:AMP_REVENUE_RECEIPT], longString);
 }
 
 -(void)testTruncateEventAndIdentify {
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
     NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
 
-    [self.amplitude logEvent:@"test" withEventProperties:[NSDictionary dictionaryWithObject:longString forKey:@"long_string"]];
+    NSDictionary *props = [NSDictionary dictionaryWithObjectsAndKeys:longString, @"long_string", longString, AMP_REVENUE_RECEIPT, nil];
+    [self.amplitude logEvent:@"test" withEventProperties:props];
     [self.amplitude identify:[[AMPIdentify identify] set:@"long_string" value:longString]];
     [self.amplitude flushQueue];
 
     NSDictionary *event = [self.amplitude getLastEvent];
+    NSDictionary *expected = [NSDictionary dictionaryWithObjectsAndKeys:truncString, @"long_string", longString, AMP_REVENUE_RECEIPT, nil];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
-    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionaryWithObject:truncString forKey:@"long_string"]);
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], expected);
 
     NSDictionary *identify = [self.amplitude getLastIdentify];
     XCTAssertEqualObjects([identify objectForKey:@"event_type"], @"$identify");

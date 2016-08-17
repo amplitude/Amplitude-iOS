@@ -454,4 +454,17 @@
     XCTAssertTrue([self.databaseHelper addIdentify:@"test"]);
 }
 
+- (void)testInsertAndReplaceKeyLargeLongValue {
+    NSString *key = @"test_key";
+    NSNumber *value1 = [NSNumber numberWithLongLong:214748364700000LL];
+    NSNumber *value2 = [NSNumber numberWithLongLong:2147483647000000LL];
+    XCTAssertNil([self.databaseHelper getLongValue:key]);
+
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:value1];
+    XCTAssert([[self.databaseHelper getLongValue:key] isEqualToNumber:value1]);
+
+    [self.databaseHelper insertOrReplaceKeyLongValue:key value:value2];
+    XCTAssert([[self.databaseHelper getLongValue:key] isEqualToNumber:value2]);
+}
+
 @end

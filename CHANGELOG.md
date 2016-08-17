@@ -3,6 +3,15 @@
 * Added support for integration via Carthage. Thanks to @mpurland for the original PR.
 * Cleaned up warnings for expression result unused.
 
+### 3.8.3 (July 18, 2016)
+
+* Fix overflow bug for long long values saved to Sqlite DB on 32-bit devices.
+
+### 3.8.2 (July 11, 2016)
+
+* `productId` is no longer a required field for `Revenue` logged via `logRevenueV2`.
+* Fix bug where revenue receipt was being truncated if it was too long (exceeded 1024 characters);
+
 ## 3.8.1 (June 14, 2016)
 
 * Allow ability to silence error messages. Note error messages are printed by default. To disable error logging, change `AMPLITUDE_LOG_ERRORS` from `1` to `0` in `Amplitude.m`.

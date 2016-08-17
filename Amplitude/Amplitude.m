@@ -1448,7 +1448,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else {
                 coercedKey = key;
             }
-            dict[coercedKey] = [self truncate:objCopy[key]];
+            // do not truncate revenue receipt field
+            if ([coercedKey isEqualToString:AMP_REVENUE_RECEIPT]) {
+                dict[coercedKey] = objCopy[key];
+            } else {
+                dict[coercedKey] = [self truncate:objCopy[key]];
+            }
         }
         SAFE_ARC_RELEASE(objCopy);
         obj = [NSDictionary dictionaryWithDictionary:dict];

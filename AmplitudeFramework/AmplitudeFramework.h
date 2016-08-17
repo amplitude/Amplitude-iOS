@@ -19,6 +19,6 @@ FOUNDATION_EXPORT const unsigned char AmplitudeFrameworkVersionString[];
 #import <AmplitudeFramework/AMPRevenue.h>
 #import <AmplitudeFramework/AMPURLConnection.h>
 #import <AmplitudeFramework/AMPUtils.h>
-#import <AmplitudeFramework/ISPCertificatePinning.h>
-#import <AmplitudeFramework/ISPPinnedNSURLConnectionDelegate.h>
-#import <AmplitudeFramework/ISPPinnedNSURLSessionDelegate.h>
+#import <AmplitudeFramework/SSLCertificatePinning/ISPCertificatePinning.h>
+#import <AmplitudeFramework/SSLCertificatePinning/ISPPinnedNSURLConnectionDelegate.h>
+#import <AmplitudeFramework/SSLCertificatePinning/ISPPinnedNSURLSessionDelegate.h>
