@@ -88,7 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		343AB4171CC99F4F00962943 /* AmplitudeFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AmplitudeFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		343AB4171CC99F4F00962943 /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		343AB4191CC99F4F00962943 /* AmplitudeFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		343AB41B1CC99F4F00962943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		60227C091CC5AB8A007C117B /* AMPRevenue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPRevenue.h; sourceTree = "<group>"; };
@@ -225,7 +225,7 @@
 			children = (
 				E98C05231A48E7FE00800C63 /* libAmplitude.a */,
 				E98C052E1A48E7FE00800C63 /* AmplitudeTests.xctest */,
-				343AB4171CC99F4F00962943 /* AmplitudeFramework.framework */,
+				343AB4171CC99F4F00962943 /* Amplitude.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -333,7 +333,7 @@
 			);
 			name = AmplitudeFramework;
 			productName = AmplitudeFramework;
-			productReference = 343AB4171CC99F4F00962943 /* AmplitudeFramework.framework */;
+			productReference = 343AB4171CC99F4F00962943 /* Amplitude.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		E98C05221A48E7FE00800C63 /* Amplitude */ = {
@@ -570,7 +570,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Amplitude;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -598,7 +598,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Amplitude;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
