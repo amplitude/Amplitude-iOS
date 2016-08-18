@@ -1,24 +1,24 @@
 #import <UIKit/UIKit.h>
 
-//! Project version number for AmplitudeFramework.
-FOUNDATION_EXPORT double AmplitudeFrameworkVersionNumber;
+//! Project version number for Amplitude.
+FOUNDATION_EXPORT double AmplitudeVersionNumber;
 
-//! Project version string for AmplitudeFramework.
-FOUNDATION_EXPORT const unsigned char AmplitudeFrameworkVersionString[];
+//! Project version string for Amplitude.
+FOUNDATION_EXPORT const unsigned char AmplitudeVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <AmplitudeFramework/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <Amplitude/PublicHeader.h>
 
-#import <AmplitudeFramework/AMPARCMacros.h>
-#import <AmplitudeFramework/AMPConstants.h>
-#import <AmplitudeFramework/AMPDatabaseHelper.h>
-#import <AmplitudeFramework/AMPDeviceInfo.h>
-#import <AmplitudeFramework/AMPIdentify.h>
-#import <AmplitudeFramework/Amplitude.h>
-#import <AmplitudeFramework/Amplitude+SSLPinning.h>
-#import <AmplitudeFramework/AMPLocationManagerDelegate.h>
-#import <AmplitudeFramework/AMPRevenue.h>
-#import <AmplitudeFramework/AMPURLConnection.h>
-#import <AmplitudeFramework/AMPUtils.h>
-#import <AmplitudeFramework/SSLCertificatePinning/ISPCertificatePinning.h>
-#import <AmplitudeFramework/SSLCertificatePinning/ISPPinnedNSURLConnectionDelegate.h>
-#import <AmplitudeFramework/SSLCertificatePinning/ISPPinnedNSURLSessionDelegate.h>
+#import <Amplitude/AMPARCMacros.h>
+#import <Amplitude/AMPConstants.h>
+#import <Amplitude/AMPDatabaseHelper.h>
+#import <Amplitude/AMPDeviceInfo.h>
+#import <Amplitude/AMPIdentify.h>
+#import <Amplitude/Amplitude.h>
+#import <Amplitude/Amplitude+SSLPinning.h>
+#import <Amplitude/AMPLocationManagerDelegate.h>
+#import <Amplitude/AMPRevenue.h>
+#import <Amplitude/AMPURLConnection.h>
+#import <Amplitude/AMPUtils.h>
+#import <Amplitude/ISPCertificatePinning.h>
+#import <Amplitude/ISPPinnedNSURLConnectionDelegate.h>
+#import <Amplitude/ISPPinnedNSURLSessionDelegate.h>
