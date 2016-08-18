@@ -450,10 +450,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return YES;
 }
 
-- (void)initialize
+- (Amplitude *)initialize
 {
     if (![self checkApiKeyForMethod:@"initialize"]) {
-        return;
+        return self;
     }
 
     UIApplication *app = [self getSharedApplication];
@@ -465,6 +465,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self enterForeground];
         }
     }
+    return self;
 }
 
 - (UIApplication *)getSharedApplication
@@ -1197,14 +1198,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 #pragma mark - configurations
 
-- (void)setUserProperties:(NSDictionary*) userProperties
+- (Amplitude *)setUserProperties:(NSDictionary*) userProperties
 {
     if (![self checkApiKeyForMethod:@"setUserProperties"]) {
-        return;
+        return self;
     }
 
     if (userProperties == nil || ![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"] || [userProperties count] == 0) {
-        return;
+        return self;
     }
 
     NSDictionary *copy = [userProperties copy];
@@ -1216,49 +1217,51 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
         [self identify:identify];
     }];
+    return self;
 }
 
 // maintain for legacy
 // replace argument is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.
-- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
+- (Amplitude *)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
 {
-    [self setUserProperties:userProperties];
+    return [self setUserProperties:userProperties];
 }
 
-- (void)clearUserProperties
+- (Amplitude *)clearUserProperties
 {
     if (![self checkApiKeyForMethod:@"clearUserProperties"]) {
-        return;
+        return self;
     }
     AMPIdentify *identify = [[AMPIdentify identify] clearAll];
     [self identify:identify];
+    return self;
 }
 
-- (void)setGroup:(NSString *)groupType groupName:(NSObject *)groupName
+- (Amplitude *)setGroup:(NSString *)groupType groupName:(NSObject *)groupName
 {
     if (![self checkApiKeyForMethod:@"setGroup"]) {
-        return;
+        return self;
     }
 
     if (groupType == nil || [groupType isEqualToString:@""]) {
         AMPLITUDE_LOG(@"ERROR: groupType cannot be nil or an empty string");
-        return;
+        return self;
     }
 
     NSMutableDictionary *groups = [NSMutableDictionary dictionaryWithObjectsAndKeys:groupName, groupType, nil];
     AMPIdentify *identify = [[AMPIdentify identify] set:groupType value:groupName];
     [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:groups withTimestamp:nil outOfSession:NO];
-
+    return self;
 }
 
-- (void)setUserId:(NSString*) userId
+- (Amplitude *)setUserId:(NSString*) userId
 {
     if (![self checkApiKeyForMethod:@"setUserId"]) {
-        return;
+        return self;
     }
 
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
-        return;
+        return self;
     }
     
     [self runOnBackgroundQueue:^{
@@ -1267,27 +1270,30 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _userId = userId;
         (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
     }];
+    return self;
 }
 
-- (void)setOptOut:(BOOL)enabled
+- (Amplitude *)setOptOut:(BOOL)enabled
 {
     if (![self checkApiKeyForMethod:@"setOptOut"]) {
-        return;
+        return self;
     }
 
     [self runOnBackgroundQueue:^{
         NSNumber *value = [NSNumber numberWithBool:enabled];
         (void) [self.dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:value];
     }];
+    return self;
 }
 
-- (void)setOffline:(BOOL)offline
+- (Amplitude *)setOffline:(BOOL)offline
 {
     _offline = offline;
 
     if (!_offline && _apiKey != nil) {
         [self uploadEvents];
     }
+    return self;
 }
 
 - (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
@@ -1304,15 +1310,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [[self.dbHelper getLongValue:OPT_OUT] boolValue];
 }
 
-- (void)setDeviceId:(NSString*)deviceId
+- (Amplitude *)setDeviceId:(NSString*)deviceId
 {
     if (![self checkApiKeyForMethod:@"setDeviceId"]) {
-        return;
+        return self;
     }
 
     if (![self isValidDeviceId:deviceId]) {
         AMPLITUDE_ERROR(@"ERROR: invalid deviceId '%@', skipping setDeviceId", deviceId);
-        return;
+        return self;
     }
 
     [self runOnBackgroundQueue:^{
@@ -1321,6 +1327,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _deviceId = deviceId;
         (void) [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
     }];
+    return self;
 }
 
 #pragma mark - location methods
@@ -1339,20 +1346,23 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (void)enableLocationListening
+- (Amplitude *)enableLocationListening
 {
     _locationListeningEnabled = YES;
     [self updateLocation];
+    return self;
 }
 
-- (void)disableLocationListening
+- (Amplitude *)disableLocationListening
 {
     _locationListeningEnabled = NO;
+    return self;
 }
 
-- (void)useAdvertisingIdForDeviceId
+- (Amplitude *)useAdvertisingIdForDeviceId
 {
     _useAdvertisingIdForDeviceId = YES;
+    return self;
 }
 
 #pragma mark - Getters for device data

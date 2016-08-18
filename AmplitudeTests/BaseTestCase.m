@@ -29,8 +29,7 @@ NSString *const userId = @"userId";
     self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:apiKey];
     XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
-    [self.amplitude init];
-    [self.amplitude flushQueue];
+    [[self.amplitude init] flushQueue]; 
     self.amplitude.sslPinningEnabled = NO;
 }
 

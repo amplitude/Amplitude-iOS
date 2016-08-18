@@ -41,8 +41,7 @@
     // mock amplitude object and verify enterForeground not called
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [[mockAmplitude reject] enterForeground];
-    [[mockAmplitude setApiKey:apiKey] initialize];
-    [mockAmplitude flushQueue];
+    [[[mockAmplitude setApiKey:apiKey] initialize] flushQueue];
     [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
 }
@@ -54,8 +53,7 @@
 
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [[mockAmplitude expect] enterForeground];
-    [[mockAmplitude setApiKey:apiKey] initialize];
-    [mockAmplitude flushQueue];
+    [[[mockAmplitude setApiKey:apiKey] initialize] flushQueue];
     [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
 }
@@ -67,9 +65,7 @@
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
 
-    [[mockAmplitude setApiKey:apiKey] setUserId:nil];
-    [mockAmplitude initialize];
-    [mockAmplitude flushQueue];
+    [[[[mockAmplitude setApiKey:apiKey] setUserId:nil] initialize] flushQueue];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
     XCTAssertEqual([mockAmplitude sessionId], 1000000);
 
@@ -137,10 +133,7 @@
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
-    [[self.amplitude setApiKey:apiKey] setUserId:nil];
-    [self.amplitude initialize];
-    [self.amplitude flushQueue];
-
+    [[[[self.amplitude setApiKey:apiKey] setUserId:nil] initialize] flushQueue];
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil userInfo:nil];
 
@@ -154,10 +147,7 @@
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude setTrackingSessionEvents:YES];
 
-    [[mockAmplitude setApiKey:apiKey] setUserId:nil];
-    [mockAmplitude initialize];
-    [mockAmplitude flushQueue];
-
+    [[[[mockAmplitude setApiKey:apiKey] setUserId:nil] initialize] flushQueue];
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
     XCTAssertEqual([[mockAmplitude getLastEvent][@"session_id"] longLongValue], 1000000);
     XCTAssertEqualObjects([mockAmplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
@@ -190,10 +180,7 @@
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude setTrackingSessionEvents:YES];
 
-    [[mockAmplitude setApiKey:apiKey] setUserId:nil];
-    [mockAmplitude initialize];
-    [mockAmplitude flushQueue];
-
+    [[[[mockAmplitude setApiKey:apiKey] setUserId:nil] initialize] flushQueue];
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
     XCTAssertEqual([[mockAmplitude getLastEvent][@"session_id"] longLongValue], 21474836470000);
     XCTAssertEqualObjects([mockAmplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
@@ -224,9 +211,7 @@
     [self.databaseHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
 
     self.amplitude.trackingSessionEvents = YES;
-    [[self.amplitude setApiKey:apiKey] setUserId:nil];
-    [self.amplitude initialize];
-    [self.amplitude flushQueue];
+    [[[[self.amplitude setApiKey:apiKey] setUserId:nil] initialize] flushQueue];
     XCTAssertEqual([self.databaseHelper getEventCount], 2);
     NSArray *events = [self.databaseHelper getEvents:-1 limit:2];
     XCTAssertEqualObjects(events[0][@"event_type"], kAMPSessionEndEvent);

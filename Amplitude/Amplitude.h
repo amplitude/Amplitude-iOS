@@ -14,13 +14,15 @@
  Setup:
 
  1. In every file that uses analytics, import Amplitude.h at the top `#import "Amplitude.h"`
- 2. Be sure to initialize the API in your didFinishLaunchingWithOptions delegate `[[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];`
- 3. Track an event anywhere in the app `[[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];`
+ 2. Be sure to set the API key and initialize the SDK in your app's didFinishLaunchingWithOptions delegate `[[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] initialize];`
+ 3. Track an event anywhere in the app with `[[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE"];`
  4. You can attach additional data to any event by passing a NSDictionary object:
 
         NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
         [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
         [[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
+
+ 5. You can configure the SDK via configurable properties and public set methods such as `setUserId`. You can modify the instance properties at any time, for example `[Amplitude instance].trackingSessionEvents = YES;`. The public set methods should be called after setting the apiKey and before calling initialize. For example `[[[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] setUserId:"@userId"] initialize];`, otherwise you can call them when appropriate, for example calling `setUserId` after the user logs in, etc.
 
  **Note:** you should call SDK methods on an Amplitude instance, for example logging events with the default instance: `[[Amplitude instance] logEvent:@"testEvent"];`
 
@@ -57,11 +59,6 @@
  */
 @property (nonatomic, strong, readonly) NSString *instanceName;
 @property (nonatomic ,strong, readonly) NSString *propertyListPath;
-
-/**
- Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.
- */
-@property (nonatomic, assign) BOOL optOut;
 
 
 /**-----------------------------------------------------------------------------
@@ -126,21 +123,40 @@
 + (Amplitude *)instanceWithName:(NSString*) instanceName;
 
 /**-----------------------------------------------------------------------------
- * @name Initialize the Amplitude SDK with your Amplitude API Key
+ * @name Set your Amplitude API Key
  * -----------------------------------------------------------------------------
  */
 
 /**
- Initializes the Amplitude instance with your Amplitude API key
+ Set your Amplitude API key in the Amplitude instance.
 
- We recommend you first initialize your class within your "didFinishLaunchingWithOptions" method inside your app delegate.
+ We recommend you set the api key in your app's "didFinishLaunchingWithOptions" method inside your app delegate.
 
  **Note:** this is required before you can log any events.
 
  @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together like `[[[Amplitude instance] setApiKey:@"YOUR_API_KEY"] initialize];`
  */
 - (Amplitude *)setApiKey:(NSString*) apiKey;
-- (void)initialize;
+
+/**-----------------------------------------------------------------------------
+ * @name Initialize the SDK
+ * -----------------------------------------------------------------------------
+ */
+
+/**
+ After you set the API key call this to enable event tracking.
+
+ **Note:** If you are configuring the SDK before tracking (either by modifying the configurable properties or calling any public set methods), do so before calling initialize. For example: `[[[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] setUserId:"@userId"] initialize];`.
+
+ **Note:** this is required before you can log any events.
+
+ @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
+ */
+- (Amplitude *)initialize;
 
 
 /**-----------------------------------------------------------------------------
@@ -314,9 +330,11 @@
 
  @param userProperties          An NSDictionary containing any additional data to be tracked.
 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
+
  @see [Setting Multiple Properties with setUserProperties](https://github.com/amplitude/Amplitude-iOS#setting-multiple-properties-with-setuserproperties)
  */
-- (void)setUserProperties:(NSDictionary*) userProperties;
+- (Amplitude *)setUserProperties:(NSDictionary*) userProperties;
 
 /**
 
@@ -328,20 +346,24 @@
 
  @param userProperties          An NSDictionary containing any additional data to be tracked.
  @param replace                 This is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
 
  @see [Setting Multiple Properties with setUserProperties](https://github.com/amplitude/Amplitude-iOS#setting-multiple-properties-with-setuserproperties)
  */
-- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace;
+- (Amplitude *)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace;
 
 /**
  Clears all properties that are tracked on the user level.
 
  **Note: the result is irreversible!**
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
 
  @see [Clearing user properties](https://github.com/amplitude/Amplitude-iOS#clearing-user-properties-with-clearuserproperties)
  */
 
-- (void)clearUserProperties;
+- (Amplitude *)clearUserProperties;
 
 /**
  Adds a user to a group or groups. You need to specify a groupType and groupName(s).
@@ -353,13 +375,14 @@
  **Note:** this will also set groupType: groupName as a user property.
 
  @param groupType               You need to specify a group type (for example "orgId").
-
  @param groupName               The value for the group name, can be a string or an array of strings, (for example for groupType orgId, the groupName would be the actual id number, like 15).
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
 
  @see [Setting Groups](https://github.com/amplitude/Amplitude-iOS#setting-groups)
  */
 
-- (void)setGroup:(NSString*) groupType groupName:(NSObject*) groupName;
+- (Amplitude *)setGroup:(NSString*) groupType groupName:(NSObject*) groupName;
 
 /**-----------------------------------------------------------------------------
  * @name Setting User and Device Identifiers
@@ -370,10 +393,12 @@
  Sets the userId.
 
  @param userId                  If your app has its own login system that you want to track users with, you can set the userId.
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
 
  @see [Setting Custom UserIds](https://github.com/amplitude/Amplitude-iOS#setting-custom-user-ids)
  */
-- (void)setUserId:(NSString*) userId;
+- (Amplitude *)setUserId:(NSString*) userId;
 
 /**
  Sets the deviceId.
@@ -381,10 +406,12 @@
  **NOTE: not recommended unless you know what you are doing**
 
  @param deviceId                  If your app has its own system for tracking devices, you can set the deviceId.
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
 
  @see [Setting Custom Device Ids](https://github.com/amplitude/Amplitude-iOS#custom-device-ids)
  */
-- (void)setDeviceId:(NSString*) deviceId;
+- (Amplitude *)setDeviceId:(NSString*) deviceId;
 
 /**-----------------------------------------------------------------------------
  * @name Configuring the SDK instance
@@ -397,8 +424,10 @@
  If the user wants to opt out of all tracking, use this method to enable opt out for them. Once opt out is enabled, no events will be saved locally or sent to the server. Calling this method again with enabled set to NO will turn tracking back on for the user.
 
  @param enabled                  Whether tracking opt out should be enabled or disabled.
+
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
  */
-- (void)setOptOut:(BOOL)enabled;
+- (Amplitude *)setOptOut:(BOOL)enabled;
 
 /**
  Disables sending logged events to Amplitude servers.
@@ -406,22 +435,28 @@
  If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server and the client will attempt to send events that have been queued while offline.
 
  @param offline                  Whether logged events should be sent to Amplitude servers.
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
  */
-- (void)setOffline:(BOOL)offline;
+- (Amplitude *)setOffline:(BOOL)offline;
 
 /**
  Enables location tracking.
 
  If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.
 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
+
  **Note:** the user's location is only fetched once per session. Use `updateLocation` to force the SDK to fetch the user's latest location.
  */
-- (void)enableLocationListening;
+- (Amplitude *)enableLocationListening;
 
 /**
  Disables location tracking. If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
  */
-- (void)disableLocationListening;
+- (Amplitude *)disableLocationListening;
 
 /**
  Forces the SDK to update with the user's last known location if possible.
@@ -434,15 +469,22 @@
  Uses advertisingIdentifier instead of identifierForVendor as the device ID
 
  Apple prohibits the use of advertisingIdentifier if your app does not have advertising. Useful for tying together data from advertising campaigns to anlaytics data.
+ 
+ @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
 
- **NOTE:** Must be called before initializeApiKey: is called to function.
+ **NOTE:** Must be called before initialize is called.
  */
-- (void)useAdvertisingIdForDeviceId;
+- (Amplitude *)useAdvertisingIdForDeviceId;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods
  * -----------------------------------------------------------------------------
  */
+
+/**
+ Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.
+ */
+- (BOOL)optOut;
 
 /**
  Prints the number of events in the queue.
