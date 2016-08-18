@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "343AB4161CC99F4F00962943"
-               BuildableName = "AmplitudeFramework.framework"
+               BuildableName = "Amplitude.framework"
                BlueprintName = "AmplitudeFramework"
                ReferencedContainer = "container:Amplitude.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "343AB4161CC99F4F00962943"
-            BuildableName = "AmplitudeFramework.framework"
+            BuildableName = "Amplitude.framework"
             BlueprintName = "AmplitudeFramework"
             ReferencedContainer = "container:Amplitude.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "343AB4161CC99F4F00962943"
-            BuildableName = "AmplitudeFramework.framework"
+            BuildableName = "Amplitude.framework"
             BlueprintName = "AmplitudeFramework"
             ReferencedContainer = "container:Amplitude.xcodeproj">
          </BuildableReference>
