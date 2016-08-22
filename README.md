@@ -29,9 +29,9 @@ See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/do
     #import "Amplitude.h"
     ```
 
-6. In the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file, initialize the SDK:
+6. In the application:didFinishLaunchingWithOptions: method of your YourAppNameAppDelegate.m file, set the API key you received from Step 1. Then call `initialize` to initialize the event tracking:
     ``` objective-c
-    [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE"];
+    [[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] initialize];
     ```
 
 7. To track an event anywhere in the app, call:
@@ -40,6 +40,25 @@ See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/do
     ```
 
 8. Events are saved locally. Uploads are batched to occur every 30 events and every 30 seconds, as well as on app close. After calling logEvent in your app, you will immediately see data appear on the Amplitude Website.
+
+# 4.0.0 Update and API-breaking changes to SDK initialization #
+
+Version 4.0.0 is a major update that simplifies how you configure the SDK during initialization. Before v4.0.0 you would initialize the SDK with your API key by calling `initializeApiKey:@"YOUR_API_KEY"`. In v4.0.0 that method has been removed and replace with two new methods `setApiKey:@"YOUR_API_KEY"` to set your API key and `initialize` to initialize the event tracking.
+
+**NOTE** Since `initialize` starts the event tracking logic, any SDK configuration that you want to do before the first event is logged needs to be done AFTER calling `setApiKey` and BEFORE calling `initialize`. This includes modifying any of the SDK's configurable properties and calling any of the helper methods such as `setUserId`, `setUserProperties`, `useAdvertisingIdForDeviceId`, `enableLocationListening`, etc.
+
+The helper methods now return the Amplitude instance, allowing you to easily chain multiple method calls together. Example:
+
+``` objective-c
+[[[[[[Amplitude instance] setApiKey:@"API_KEY"] setUserId:userId] useAdvertisingIdForDeviceId] enableLocationListening] initialize];
+```
+
+If you track session events you might do something like this:
+``` objective-c
+[[Amplitude instance] setApiKey:@"API_KEY"];
+[Amplitude instance].trackingSessionEvents = YES;
+[[[Amplitude instance] setUserId:userId] initialize];
+```
 
 # Tracking Events #
 
