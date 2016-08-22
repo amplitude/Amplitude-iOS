@@ -141,7 +141,7 @@
     return [NSDictionary dictionaryWithDictionary:dict];
 }
 
-+ (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to
++ (BOOL) moveFileIfNotExists:(NSString*)from to:(NSString*)to
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error;

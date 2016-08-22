@@ -3,6 +3,7 @@
 * Migrate Sqlite database file to new filename with apiKey.
 * Migrate all database logic from `init` to `initializeApiKey`.
 * Run `init` logic on `backgroundQueue`, removing need for separate `initializerQueue`.
+* Many methods (such as `setApiKey`, `setUserId`, `setUserProperties`, etc) now return the Amplitude instance, allowing you to chain multiple method calls together.
 
 ### 3.8.4 Re-release (August 19, 2016)
 

@@ -58,7 +58,7 @@
 - (void)testInitializedSet {
     [[self.amplitude setApiKey:apiKey] initialize];
     [self.amplitude flushQueue];
-    XCTAssert([self.amplitude initializedDatabase]);
+    XCTAssertEqual(self.amplitude.apiKey, apiKey);
 }
 
 - (void)testOptOut {

@@ -226,7 +226,7 @@
     NSString *deviceId = @"testMigrationDeviceId";
 
     // create old database file
-    AMPDatabaseHelper *oldDbHelper = [AMPDatabaseHelper getDatabaseHelperWithInstanceName:migrationInstanceName];
+    AMPDatabaseHelper *oldDbHelper = [AMPDatabaseHelper getTestDatabaseHelper:migrationInstanceName];
     [oldDbHelper insertOrReplaceKeyValue:@"device_id" value:deviceId];
 
     // init new client, verify migration

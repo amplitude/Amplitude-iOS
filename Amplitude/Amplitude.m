@@ -50,7 +50,6 @@
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) AMPDatabaseHelper *dbHelper;
-@property (nonatomic, assign) BOOL initializedDatabase;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 @property (nonatomic, assign) long long sessionId;
 
@@ -208,7 +207,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _sslPinningEnabled = NO;
 #endif
 
-        _initializedDatabase = NO;
         _locationListeningEnabled = YES;
         _sessionId = -1;
         _updateScheduled = NO;
@@ -392,7 +390,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return self;
     }
 
-    if (!_initializedDatabase) {
+    if (!_apiKey) {
         SAFE_ARC_RETAIN(apiKey);
         SAFE_ARC_RELEASE(_apiKey);
         _apiKey = apiKey;
@@ -435,7 +433,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         // now we can add observers after setting apikey since enterBackground saves timestamp to DB
         [self addObservers];
-        _initializedDatabase = YES;
     }
 
     return self;
@@ -1362,6 +1359,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (Amplitude *)useAdvertisingIdForDeviceId
 {
     _useAdvertisingIdForDeviceId = YES;
+
+    // if called after setApiKey, then deviceId will already be initialized, need to overwrite with IDFA
+    if (_apiKey && ![AMPUtils isEmptyString:_deviceInfo.advertiserID]) {
+        (void) [self setDeviceId:_deviceInfo.advertiserID];
+    }
+
     return self;
 }
 

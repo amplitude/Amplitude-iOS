@@ -12,6 +12,6 @@
 + (id) makeJSONSerializable:(id) obj;
 + (BOOL) isEmptyString:(NSString*) str;
 + (NSDictionary*) validateGroups:(NSDictionary*) obj;
-+ (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to;
++ (BOOL) moveFileIfNotExists:(NSString*)from to:(NSString*)to;
 
 @end

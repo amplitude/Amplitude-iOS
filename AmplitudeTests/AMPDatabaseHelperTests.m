@@ -41,7 +41,7 @@ NSString *const apiKey2 = @"222222";
     NSString *apiKey = @"migrationApiKey";
 
     // initialize dbHelper with old filename
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelperWithInstanceName:instanceName];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getTestDatabaseHelper:instanceName];
     [dbHelper insertOrReplaceKeyValue:@"migrationTestKey" value:@"migrationTestValue"];
 
     // force migration

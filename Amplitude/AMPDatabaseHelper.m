@@ -86,7 +86,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     @synchronized(_instances) {
         dbHelper = [_instances objectForKey:instanceName];
         if (dbHelper == nil) {
-            dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName andApiKey:apiKey];
+            dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName apiKey:apiKey];
             [_instances setObject:dbHelper forKey:instanceName];
             SAFE_ARC_RELEASE(dbHelper);
         }
@@ -94,16 +94,16 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return dbHelper;
 }
 
-// for testing only
-+ (AMPDatabaseHelper*)getDatabaseHelperWithInstanceName:(NSString*) instanceName
+// for testing only, returns an instance with legacy filename
++ (AMPDatabaseHelper*)getTestDatabaseHelper:(NSString*) instanceName
 {
-    AMPDatabaseHelper *dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName andApiKey:nil];
+    AMPDatabaseHelper *dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName apiKey:nil];
     return SAFE_ARC_AUTORELEASE(dbHelper);
 }
 
 // instanceName should not be null, getDatabaseHelper will guard
 // apiKey should only be null for testing - Amplitude client will guard
-- (id)initWithInstanceName:(NSString*) instanceName andApiKey:(NSString*) apiKey
+- (id)initWithInstanceName:(NSString*) instanceName apiKey:(NSString*) apiKey
 {
     if ((self = [super init])) {
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];

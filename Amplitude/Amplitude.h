@@ -22,7 +22,7 @@
         [eventProperties setValue:@"VALUE_GOES_HERE" forKey:@"KEY_GOES_HERE"];
         [[Amplitude instance] logEvent:@"Compute Hash" withEventProperties:eventProperties];
 
- 5. You can configure the SDK via configurable properties and public set methods such as `setUserId`. You can modify the instance properties at any time, for example `[Amplitude instance].trackingSessionEvents = YES;`. The public set methods should be called after setting the apiKey and before calling initialize. For example `[[[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] setUserId:"@userId"] initialize];`, otherwise you can call them when appropriate, for example calling `setUserId` after the user logs in, etc.
+ 5. You can configure the SDK via configurable properties and helper methods. You can modify the instance properties at any time, for example `[Amplitude instance].trackingSessionEvents = YES;`. If you plan to call any helper methods to configure the SDK before the first event is logged (for example `setUserId`, or `enableLocationListening`, or `userAdvertisingIdForDeviceId`), you need to do so after calling setApiKey and before calling initialize. For example `[[[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] setUserId:"@userId"] initialize];`, otherwise you can call them when appropriate, for example calling `setUserId` after the user logs in, etc.
 
  **Note:** you should call SDK methods on an Amplitude instance, for example logging events with the default instance: `[[Amplitude instance] logEvent:@"testEvent"];`
 
@@ -132,7 +132,7 @@
 
  We recommend you set the api key in your app's "didFinishLaunchingWithOptions" method inside your app delegate.
 
- **Note:** this is required before you can log any events.
+ **Note:** this is required before you can log any events as well as configure the SDK with any of the helper methods.
 
  @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
  
@@ -148,7 +148,7 @@
 /**
  After you set the API key call this to enable event tracking.
 
- **Note:** If you are configuring the SDK before tracking (either by modifying the configurable properties or calling any public set methods), do so before calling initialize. For example: `[[[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] setUserId:"@userId"] initialize];`.
+ **Note:** If you are configuring the SDK before tracking the first event, do so before calling initialize. For example: `[[[[Amplitude instance] setApiKey:@"YOUR_API_KEY_HERE"] setUserId:"@userId"] initialize];`.
 
  **Note:** this is required before you can log any events.
 
@@ -472,7 +472,7 @@
  
  @returns the same [Amplitude](#) instance, allowing you to chain multiple method calls together.
 
- **NOTE:** Must be called before initialize is called.
+ **NOTE:** If the current device already has a deviceId, calling useAdvertisingIdForDeviceId will override it with the advertisingIdentifier.
  */
 - (Amplitude *)useAdvertisingIdForDeviceId;
 
