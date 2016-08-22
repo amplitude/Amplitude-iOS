@@ -88,7 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		343AB4171CC99F4F00962943 /* AmplitudeFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AmplitudeFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		343AB4171CC99F4F00962943 /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		343AB4191CC99F4F00962943 /* AmplitudeFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		343AB41B1CC99F4F00962943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		60227C091CC5AB8A007C117B /* AMPRevenue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPRevenue.h; sourceTree = "<group>"; };
@@ -128,6 +128,7 @@
 		9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTestCase.m; sourceTree = "<group>"; };
 		9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SessionTests.m; sourceTree = "<group>"; };
 		C671D5C7AB6BB2A4B86F6EDF /* Pods-test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-test.release.xcconfig"; path = "Pods/Target Support Files/Pods-test/Pods-test.release.xcconfig"; sourceTree = "<group>"; };
+		D7280F441D655B9900CF13D4 /* Amplitude.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = Amplitude.modulemap; sourceTree = "<group>"; };
 		E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPLocationManagerDelegateTests.m; sourceTree = "<group>"; };
 		E96785E11A48E93F00887CCD /* AMPARCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPARCMacros.h; sourceTree = "<group>"; };
 		E96785E21A48E93F00887CCD /* AMPConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPConstants.h; sourceTree = "<group>"; };
@@ -172,6 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				343AB4191CC99F4F00962943 /* AmplitudeFramework.h */,
+				D7280F441D655B9900CF13D4 /* Amplitude.modulemap */,
 				343AB41B1CC99F4F00962943 /* Info.plist */,
 			);
 			path = AmplitudeFramework;
@@ -225,7 +227,7 @@
 			children = (
 				E98C05231A48E7FE00800C63 /* libAmplitude.a */,
 				E98C052E1A48E7FE00800C63 /* AmplitudeTests.xctest */,
-				343AB4171CC99F4F00962943 /* AmplitudeFramework.framework */,
+				343AB4171CC99F4F00962943 /* Amplitude.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -297,6 +299,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				343AB4321CC9A1EA00962943 /* Amplitude.h in Headers */,
 				343AB4351CC9A1EA00962943 /* AMPRevenue.h in Headers */,
 				343AB4341CC9A1EA00962943 /* AMPLocationManagerDelegate.h in Headers */,
 				343AB42F1CC9A1EA00962943 /* AMPDatabaseHelper.h in Headers */,
@@ -310,7 +313,6 @@
 				343AB4311CC9A1EA00962943 /* AMPIdentify.h in Headers */,
 				343AB4361CC9A1EA00962943 /* AMPURLConnection.h in Headers */,
 				343AB4391CC9A1EA00962943 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
-				343AB4321CC9A1EA00962943 /* Amplitude.h in Headers */,
 				343AB4371CC9A1EA00962943 /* AMPUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,7 +335,7 @@
 			);
 			name = AmplitudeFramework;
 			productName = AmplitudeFramework;
-			productReference = 343AB4171CC99F4F00962943 /* AmplitudeFramework.framework */;
+			productReference = 343AB4171CC99F4F00962943 /* Amplitude.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		E98C05221A48E7FE00800C63 /* Amplitude */ = {
@@ -569,8 +571,9 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = AmplitudeFramework/Amplitude.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Amplitude;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -597,8 +600,9 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = AmplitudeFramework/Amplitude.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Amplitude;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";

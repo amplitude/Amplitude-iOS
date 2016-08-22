@@ -18,7 +18,7 @@ See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/do
 
     Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.8.4'`. If you are using CocoaPods, you may skip steps 3 and 4.
 
-    You also have the option to install using Carthage. If you are using Carthage, add the following line to your Cartfile: `github "amplitude/Amplitude-iOS"`. Just add `#import "AmplitudeFramework/Amplitude.h"` to import all of the Amplitude header files.
+    You also have the option to install using Carthage. If you are using Carthage, add the following line to your Cartfile: `github "amplitude/Amplitude-iOS"`. Just add `#import "Amplitude/Amplitude.h"` to import all of the Amplitude header files.
 
 3. Copy the `Amplitude` sub-folder into the source of your project in Xcode. Check "Copy items into destination group's folder (if needed)".
 

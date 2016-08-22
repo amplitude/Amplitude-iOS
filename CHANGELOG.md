@@ -4,10 +4,11 @@
 * Migrate all database logic from `init` to `initializeApiKey`.
 * Run `init` logic on `backgroundQueue`, removing need for separate `initializerQueue`.
 
-### 3.8.4 (August 18, 2016)
+### 3.8.4 Re-release (August 19, 2016)
 
-* Added support for integration via Carthage. Thanks to @mpurland for the original PR.
+* Added support for integration via Carthage. Thanks to @mpurland for the original PR. Thanks to @lexrus for follow up PR to fix framework naming.
 * Cleaned up warnings for expression result unused.
+* Note if you installed 3.8.4 on August 18, just rerun `pod install` or `carthage update` to pull in the new changes. The re-release was to fix the Carthage framework naming.
 
 ### 3.8.3 (July 18, 2016)
 
