@@ -1,5 +1,11 @@
 ## Unreleased
 
+* This is an API-breaking change that replaces `initializeApiKey` with two new methods `setApiKey` and `initialize`. See [Readme](https://github.com/amplitude/Amplitude-iOS#400-update-and-api-breaking-changes-to-SDK-initialization) for details.
+* Migrate Sqlite database file to new filename with apiKey.
+* Migrate all database logic from `init` to `setApiKey`.
+* Run `init` logic on `backgroundQueue`, removing need for separate `initializerQueue`.
+* Many methods (such as `setApiKey`, `setUserId`, `setUserProperties`, etc) now return the Amplitude instance, allowing you to chain multiple method calls together.
+
 ### 3.8.4 Re-release (August 19, 2016)
 
 * Added support for integration via Carthage. Thanks to @mpurland for the original PR. Thanks to @lexrus for follow up PR to fix framework naming.

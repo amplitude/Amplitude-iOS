@@ -7,15 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AMPDatabaseHelper.h"
 
 @interface Amplitude (Test)
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) NSOperationQueue *initializerQueue;
 @property (nonatomic, strong) NSMutableDictionary *eventsData;
-@property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) long long sessionId;
-@property (nonatomic, strong) NSNumber* lastEventTime;
+@property (nonatomic, strong) NSNumber *lastEventTime;
+@property (nonatomic, strong) AMPDatabaseHelper *dbHelper;
 
 - (void)flushQueue;
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;

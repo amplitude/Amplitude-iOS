@@ -31,7 +31,6 @@
 
 @implementation AMPDatabaseHelper
 {
-    BOOL _databaseCreated;
     sqlite3 *_database;
     dispatch_queue_t _queue;
 }
@@ -70,12 +69,7 @@ static NSString *const DELETE_KEY = @"DELETE FROM %@ WHERE %@ = ?;";
 static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
 
-+ (AMPDatabaseHelper*)getDatabaseHelper
-{
-    return [AMPDatabaseHelper getDatabaseHelper:nil];
-}
-
-+ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName
++ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName apiKey:(NSString*) apiKey
 {
     static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
@@ -92,7 +86,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     @synchronized(_instances) {
         dbHelper = [_instances objectForKey:instanceName];
         if (dbHelper == nil) {
-            dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName];
+            dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName apiKey:apiKey];
             [_instances setObject:dbHelper forKey:instanceName];
             SAFE_ARC_RELEASE(dbHelper);
         }
@@ -100,24 +94,31 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return dbHelper;
 }
 
-- (id)init
+// for testing only, returns an instance with legacy filename
++ (AMPDatabaseHelper*)getTestDatabaseHelper:(NSString*) instanceName
 {
-    return [self initWithInstanceName:nil];
+    AMPDatabaseHelper *dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName apiKey:nil];
+    return SAFE_ARC_AUTORELEASE(dbHelper);
 }
 
-- (id)initWithInstanceName:(NSString*) instanceName
+// instanceName should not be null, getDatabaseHelper will guard
+// apiKey should only be null for testing - Amplitude client will guard
+- (id)initWithInstanceName:(NSString*) instanceName apiKey:(NSString*) apiKey
 {
-    if ([AMPUtils isEmptyString:instanceName]) {
-        instanceName = kAMPDefaultInstance;
-    }
-    instanceName = [instanceName lowercaseString];
-
     if ((self = [super init])) {
         NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
         if (![instanceName isEqualToString:kAMPDefaultInstance]) {
             databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];
         }
+
+        // migrate to new db filename
+        if (![AMPUtils isEmptyString:apiKey]) {
+            NSString *newDatabasePath = [NSString stringWithFormat:@"%@_%@", databasePath, apiKey];
+            [AMPUtils moveFileIfNotExists:databasePath to:newDatabasePath];
+            databasePath = newDatabasePath;
+        }
+
         _databasePath = SAFE_ARC_RETAIN(databasePath);
         _queue = dispatch_queue_create([QUEUE_NAME UTF8String], NULL);
         dispatch_queue_set_specific(_queue, kDispatchQueueKey, (__bridge void *)self, NULL);

@@ -17,9 +17,15 @@
 
 @implementation AMPDatabaseHelperTests {}
 
+
+NSString *const testApiKey = @"000000";
+NSString *const apiKey1 = @"111111";
+NSString *const apiKey2 = @"222222";
+
+
 - (void)setUp {
     [super setUp];
-    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
+    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:testApiKey];
     [self.databaseHelper resetDB:NO];
 }
 
@@ -29,40 +35,58 @@
     self.databaseHelper = nil;
 }
 
+- (void)testScopeMigration {
+    // use separate instance/apiKey from test default to prevent overlap of data
+    NSString *instanceName = @"migrationInstance";
+    NSString *apiKey = @"migrationApiKey";
+
+    // initialize dbHelper with old filename
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getTestDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"migrationTestKey" value:@"migrationTestValue"];
+
+    // force migration
+    AMPDatabaseHelper *newDbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName apiKey:apiKey];
+    XCTAssertEqualObjects([newDbHelper getValue:@"migrationTestKey"], @"migrationTestValue");
+
+    [newDbHelper deleteDB];
+}
+
 - (void)testGetDatabaseHelper {
     // test backwards compatibility on default instance
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:nil]);
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:@""]);
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:kAMPDefaultInstance]);
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:testApiKey];
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:@"" apiKey:testApiKey]);
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:kAMPDefaultInstance apiKey:testApiKey]);
 
-    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a"];
-    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b"];
+    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a" apiKey:apiKey1];
+    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b" apiKey:apiKey2];
     XCTAssertNotEqual(dbHelper, a);
     XCTAssertNotEqual(dbHelper, b);
     XCTAssertNotEqual(a, b);
-    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"a"]);
-    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"b"]);
+    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"a" apiKey:apiKey1]);
+    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"b" apiKey:apiKey2]);
 
     // test case insensitive instance name
-    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"A"]);
-    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"B"]);
-    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:[kAMPDefaultInstance uppercaseString]]);
+    XCTAssertEqual(a, [AMPDatabaseHelper getDatabaseHelper:@"A" apiKey:apiKey1]);
+    XCTAssertEqual(b, [AMPDatabaseHelper getDatabaseHelper:@"B" apiKey:apiKey2]);
+    XCTAssertEqual(dbHelper, [AMPDatabaseHelper getDatabaseHelper:[kAMPDefaultInstance uppercaseString] apiKey:testApiKey]);
 
     // test each instance maintains separate database files
     XCTAssertTrue([a.databasePath rangeOfString:@"com.amplitude.database_a"].location != NSNotFound);
+    XCTAssertTrue([a.databasePath rangeOfString:@"com.amplitude.database_a_111111"].location != NSNotFound);
     XCTAssertTrue([b.databasePath rangeOfString:@"com.amplitude.database_b"].location != NSNotFound);
+    XCTAssertTrue([b.databasePath rangeOfString:@"com.amplitude.database_b_222222"].location != NSNotFound);
     XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database"].location != NSNotFound);
-    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database_"].location == NSNotFound);
+    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database_$default_instance"].location == NSNotFound);
+    XCTAssertTrue([dbHelper.databasePath rangeOfString:@"com.amplitude.database_000000"].location != NSNotFound);
 
     [a deleteDB];
     [b deleteDB];
 }
 
 - (void)testSeparateInstances {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a"];
-    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b"];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:testApiKey];
+    AMPDatabaseHelper *a = [AMPDatabaseHelper getDatabaseHelper:@"a" apiKey:apiKey1];
+    AMPDatabaseHelper *b = [AMPDatabaseHelper getDatabaseHelper:@"b" apiKey:apiKey2];
 
     [a resetDB:NO];
     [b resetDB:NO];

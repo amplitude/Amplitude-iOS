@@ -10,8 +10,8 @@
 
 @property (nonatomic, strong, readonly) NSString *databasePath;
 
-+ (AMPDatabaseHelper*)getDatabaseHelper;
-+ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName;
++ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName apiKey:(NSString*) apiKey;
++ (AMPDatabaseHelper*)getTestDatabaseHelper:(NSString*) instanceName; // for testing only
 - (BOOL)createTables;
 - (BOOL)dropTables;
 - (BOOL)upgrade:(int) oldVersion newVersion:(int) newVersion;

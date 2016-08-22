@@ -36,7 +36,7 @@
     [super setUp];
     _connectionMock = [OCMockObject mockForClass:NSURLConnection.class];
     _connectionCallCount = 0;
-    [self.amplitude initializeApiKey:apiKey];
+    [[self.amplitude setApiKey:apiKey] initialize];
 }
 
 - (void)tearDown {
@@ -73,12 +73,12 @@
 
 - (void)testInitWithInstanceName {
     Amplitude *a = [Amplitude instanceWithName:@"APP1"];
-    [a flushQueueWithQueue:a.initializerQueue];
+    [a flushQueue];
     XCTAssertEqualObjects(a.instanceName, @"app1");
     XCTAssertTrue([a.propertyListPath rangeOfString:@"com.amplitude.plist_app1"].location != NSNotFound);
 
     Amplitude *b = [Amplitude instanceWithName:[kAMPDefaultInstance uppercaseString]];
-    [b flushQueueWithQueue:b.initializerQueue];
+    [b flushQueue];
     XCTAssertEqualObjects(b.instanceName, kAMPDefaultInstance);
     XCTAssertTrue([b.propertyListPath rangeOfString:@"com.amplitude.plist"].location != NSNotFound);
     XCTAssertTrue([ b.propertyListPath rangeOfString:@"com.amplitude.plist_"].location == NSNotFound);
@@ -100,9 +100,9 @@
     NSString *newInstance2 = @"newApp2";
     NSString *newApiKey2 = @"0987654321";
 
-    AMPDatabaseHelper *oldDbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    AMPDatabaseHelper *newDBHelper1 = [AMPDatabaseHelper getDatabaseHelper:newInstance1];
-    AMPDatabaseHelper *newDBHelper2 = [AMPDatabaseHelper getDatabaseHelper:newInstance2];
+    AMPDatabaseHelper *oldDbHelper = self.databaseHelper;
+    AMPDatabaseHelper *newDBHelper1 = [AMPDatabaseHelper getDatabaseHelper:newInstance1 apiKey:newApiKey1];
+    AMPDatabaseHelper *newDBHelper2 = [AMPDatabaseHelper getDatabaseHelper:newInstance2 apiKey:newApiKey2];
 
     // reset databases
     [oldDbHelper resetDB:NO];
@@ -110,6 +110,7 @@
     [newDBHelper2 resetDB:NO];
 
     // setup existing database file, init default instance
+    [[[[Amplitude instance] setApiKey:apiKey] initialize] flushQueue];
     [oldDbHelper insertOrReplaceKeyLongValue:@"sequence_number" value:[NSNumber numberWithLongLong:1000]];
     [oldDbHelper addEvent:@"{\"event_type\":\"oldEvent\"}"];
     [oldDbHelper addIdentify:@"{\"event_type\":\"$identify\"}"];
@@ -128,8 +129,7 @@
     XCTAssertNil([newDBHelper2 getLongValue:@"sequence_number"]);
 
     // init first new app and verify separate database
-    [[Amplitude instanceWithName:newInstance1] initializeApiKey:newApiKey1];
-    [[Amplitude instanceWithName:newInstance1] flushQueue];
+    [[[[Amplitude instanceWithName:newInstance1] setApiKey:newApiKey1] initialize] flushQueue];
     XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], @"oldDeviceId");
     XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], [newDBHelper1 getValue:@"device_id"]);
     XCTAssertEqual([[Amplitude instanceWithName:newInstance1] getNextSequenceNumber], 1);
@@ -137,8 +137,7 @@
     XCTAssertEqual([newDBHelper1 getIdentifyCount], 0);
 
     // init second new app and verify separate database
-    [[Amplitude instanceWithName:newInstance2] initializeApiKey:newApiKey2];
-    [[Amplitude instanceWithName:newInstance2] flushQueue];
+    [[[[Amplitude instanceWithName:newInstance2] setApiKey:newApiKey2] initialize] flushQueue];
     XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], @"oldDeviceId");
     XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], [newDBHelper2 getValue:@"device_id"]);
     XCTAssertEqual([[Amplitude instanceWithName:newInstance2] getNextSequenceNumber], 1);
@@ -184,10 +183,9 @@
     XCTAssertEqual([client userId], nil);
 
     NSString *testUserId = @"testUserId";
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName apiKey:apiKey];
     [dbHelper insertOrReplaceKeyValue:@"user_id" value:testUserId];
-    [client initializeApiKey:apiKey];
-    [client flushQueue];
+    [[[client setApiKey:apiKey] initialize] flushQueue];
     XCTAssertTrue([[client userId] isEqualToString:testUserId]);
 }
 
@@ -196,10 +194,9 @@
     XCTAssertEqual([self.amplitude userId], nil);
 
     NSString *nilUserId = nil;
-    [self.amplitude initializeApiKey:apiKey userId:nilUserId];
-    [self.amplitude flushQueue];
+    [[[[self.amplitude setApiKey:apiKey] setUserId:nilUserId] initialize] flushQueue];
     XCTAssertEqual([self.amplitude userId], nilUserId);
-    XCTAssertNil([[AMPDatabaseHelper getDatabaseHelper] getValue:@"user_id"]);
+    XCTAssertNil([self.databaseHelper getValue:@"user_id"]);
 }
 
 - (void)testInitializeWithUserId {
@@ -209,8 +206,7 @@
     XCTAssertEqual([client userId], nil);
 
     NSString *testUserId = @"testUserId";
-    [client initializeApiKey:apiKey userId:testUserId];
-    [client flushQueue];
+    [[[[client setApiKey:apiKey] setUserId:testUserId] initialize] flushQueue];
     XCTAssertEqual([client userId], testUserId);
 }
 
@@ -219,9 +215,27 @@
     XCTAssertEqual([self.amplitude userId], nil);
 
     NSString *testUserId = @"testUserId";
-    [self.amplitude initializeApiKey:apiKey userId:testUserId];
-    [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude userId], nil);
+    [[[[self.amplitude setApiKey:apiKey] setUserId:testUserId] initialize] flushQueue];
+    // since setUserId is called explicitly now, will override existing value even though reinitialization skipped
+    XCTAssertEqualObjects([self.amplitude userId], testUserId);
+}
+
+- (void)testDatabaseScopeMigration {
+    NSString *migrationInstanceName = @"testMigrationInstance";
+    NSString *migrationApiKey = @"testMigrationInstanceApiKey";
+    NSString *deviceId = @"testMigrationDeviceId";
+
+    // create old database file
+    AMPDatabaseHelper *oldDbHelper = [AMPDatabaseHelper getTestDatabaseHelper:migrationInstanceName];
+    [oldDbHelper insertOrReplaceKeyValue:@"device_id" value:deviceId];
+
+    // init new client, verify migration
+    Amplitude *client = [Amplitude instanceWithName:migrationInstanceName];
+    [[[client setApiKey:migrationApiKey] initialize] flushQueue];
+    XCTAssertEqualObjects([client getDeviceId], deviceId);
+
+    AMPDatabaseHelper *newDbHelper = [AMPDatabaseHelper getDatabaseHelper:migrationInstanceName apiKey:migrationApiKey];
+    XCTAssertEqualObjects([newDbHelper getValue:@"device_id"], deviceId);
 }
 
 - (void)testClearUserId {
@@ -229,8 +243,7 @@
     XCTAssertEqual([self.amplitude userId], nil);
 
     NSString *testUserId = @"testUserId";
-    [self.amplitude setUserId:testUserId];
-    [self.amplitude flushQueue];
+    [[self.amplitude setUserId:testUserId] flushQueue];
     XCTAssertEqual([self.amplitude userId], testUserId);
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
@@ -238,8 +251,7 @@
     XCTAssert([[event1 objectForKey:@"user_id"] isEqualToString:testUserId]);
 
     NSString *nilUserId = nil;
-    [self.amplitude setUserId:nilUserId];
-    [self.amplitude flushQueue];
+    [[self.amplitude setUserId:nilUserId] flushQueue];
     XCTAssertEqual([self.amplitude userId], nilUserId);
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
@@ -303,7 +315,7 @@
     [self.amplitude flushQueue];
 
     XCTAssertEqual([self.amplitude queuedEventCount], 2);
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    NSArray *events = [self.databaseHelper getEvents:-1 limit:-1];
     XCTAssertEqual(2, [[events[1] objectForKey:@"event_id"] intValue]);
     XCTAssertNotNil([events[0] objectForKey:@"uuid"]);
     XCTAssertNotNil([events[1] objectForKey:@"uuid"]);
@@ -311,16 +323,15 @@
 }
 
 - (void)testIdentify {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:2];
 
     AMPIdentify *identify = [[AMPIdentify identify] set:@"key1" value:@"value1"];
     [self.amplitude identify:identify];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 1);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
 
     NSDictionary *operations = [NSDictionary dictionaryWithObject:@"value1" forKey:@"key1"];
     NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$set"];
@@ -340,22 +351,20 @@
     SAFE_ARC_RELEASE(identify2);
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 0);
 }
 
 - (void)testLogRevenueV2 {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-
     // ignore invalid revenue objects
     [self.amplitude logRevenueV2:nil];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
 
     [self.amplitude logRevenueV2:[AMPRevenue revenue]];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
 
     // log valid revenue object
     NSNumber *price = [NSNumber numberWithDouble:15.99];
@@ -368,7 +377,7 @@
 
     [self.amplitude logRevenueV2:revenue];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
 
     NSDictionary *event = [self.amplitude getLastEvent];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"revenue_amount");
@@ -403,7 +412,6 @@
 }
 
 - (void)testMergeEventsAndIdentifys {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:7];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
@@ -419,14 +427,14 @@
     [self.amplitude identify:[[AMPIdentify identify] set:@"gender" value:@"male"]];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 4);
-    XCTAssertEqual([dbHelper getIdentifyCount], 2);
-    XCTAssertEqual([dbHelper getTotalEventCount], 6);
+    XCTAssertEqual([self.databaseHelper getEventCount], 4);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 2);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 6);
 
     // verify merging
-    NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
-    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
-    NSDictionary *merged = [self.amplitude mergeEventsAndIdentifys:events identifys:identifys numEvents:[dbHelper getTotalEventCount]];
+    NSMutableArray *events = [self.databaseHelper getEvents:-1 limit:-1];
+    NSMutableArray *identifys = [self.databaseHelper getIdentifys:-1 limit:-1];
+    NSDictionary *merged = [self.amplitude mergeEventsAndIdentifys:events identifys:identifys numEvents:[self.databaseHelper getTotalEventCount]];
     NSArray *mergedEvents = [merged objectForKey:@"events"];
 
     XCTAssertEqual(4, [[merged objectForKey:@"max_event_id"] intValue]);
@@ -462,13 +470,12 @@
     [self.amplitude identify:[[AMPIdentify identify] unset:@"karma"]];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 0);
 }
 
 -(void)testMergeEventsBackwardsCompatible {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude identify:[[AMPIdentify identify] unset:@"key"]];
     [self.amplitude logEvent:@"test_event"];
     [self.amplitude flushQueue];
@@ -477,16 +484,16 @@
     NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:[self.amplitude getLastEvent]];
     [event removeObjectForKey:@"sequence_number"];
     long eventId = [[event objectForKey:@"event_id"] longValue];
-    [dbHelper removeEvent:eventId];
+    [self.databaseHelper removeEvent:eventId];
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    [dbHelper addEvent:jsonString];
+    [self.databaseHelper addEvent:jsonString];
     SAFE_ARC_RELEASE(jsonString);
 
     // the event without sequence number should be ordered before the identify
-    NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
-    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
-    NSDictionary *merged = [self.amplitude mergeEventsAndIdentifys:events identifys:identifys numEvents:[dbHelper getTotalEventCount]];
+    NSMutableArray *events = [self.databaseHelper getEvents:-1 limit:-1];
+    NSMutableArray *identifys = [self.databaseHelper getIdentifys:-1 limit:-1];
+    NSDictionary *merged = [self.amplitude mergeEventsAndIdentifys:events identifys:identifys numEvents:[self.databaseHelper getTotalEventCount]];
     NSArray *mergedEvents = [merged objectForKey:@"events"];
     XCTAssertEqualObjects([mergedEvents[0] objectForKey:@"event_type"], @"test_event");
     XCTAssertNil([mergedEvents[0] objectForKey:@"sequence_number"]);
@@ -554,16 +561,14 @@
 }
 
 -(void)testAutoIncrementSequenceNumber {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     int limit = 10;
     for (int i = 0; i < limit; i++) {
         XCTAssertEqual([self.amplitude getNextSequenceNumber], i+1);
-        XCTAssertEqual([[dbHelper getLongValue:@"sequence_number"] intValue], i+1);
+        XCTAssertEqual([[self.databaseHelper getLongValue:@"sequence_number"] intValue], i+1);
     }
 }
 
 -(void)testSetOffline {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
@@ -576,23 +581,22 @@
     [self.amplitude identify:[[AMPIdentify identify] set:@"key" value:@"value"]];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 2);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 3);
+    XCTAssertEqual([self.databaseHelper getEventCount], 2);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 1);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 3);
 
     [self.amplitude setOffline:NO];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 0);
 }
 
 -(void)testSetOfflineTruncate {
     int eventMaxCount = 3;
     self.amplitude.eventMaxCount = eventMaxCount;
 
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
@@ -608,25 +612,25 @@
     [self.amplitude identify:[[AMPIdentify identify] unset:@"key3"]];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 3);
-    XCTAssertEqual([dbHelper getIdentifyCount], 3);
-    XCTAssertEqual([dbHelper getTotalEventCount], 6);
+    XCTAssertEqual([self.databaseHelper getEventCount], 3);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 3);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 6);
 
     [self.amplitude logEvent:@"test4"];
     [self.amplitude identify:[[AMPIdentify identify] unset:@"key4"]];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 3);
-    XCTAssertEqual([dbHelper getIdentifyCount], 3);
-    XCTAssertEqual([dbHelper getTotalEventCount], 6);
+    XCTAssertEqual([self.databaseHelper getEventCount], 3);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 3);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 6);
 
-    NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
+    NSMutableArray *events = [self.databaseHelper getEvents:-1 limit:-1];
     XCTAssertEqual([events count], 3);
     XCTAssertEqualObjects([events[0] objectForKey:@"event_type"], @"test2");
     XCTAssertEqualObjects([events[1] objectForKey:@"event_type"], @"test3");
     XCTAssertEqualObjects([events[2] objectForKey:@"event_type"], @"test4");
 
-    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
+    NSMutableArray *identifys = [self.databaseHelper getIdentifys:-1 limit:-1];
     XCTAssertEqual([identifys count], 3);
     XCTAssertEqualObjects([[[identifys[0] objectForKey:@"user_properties"] objectForKey:@"$unset"] objectForKey:@"key2"], @"-");
     XCTAssertEqualObjects([[[identifys[1] objectForKey:@"user_properties"] objectForKey:@"$unset"] objectForKey:@"key3"], @"-");
@@ -636,9 +640,9 @@
     [self.amplitude setOffline:NO];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 0);
 }
 
 -(void)testTruncateEventsQueues {
@@ -646,31 +650,29 @@
     XCTAssertGreaterThanOrEqual(eventMaxCount, kAMPEventRemoveBatchSize);
     self.amplitude.eventMaxCount = eventMaxCount;
 
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setOffline:YES];
     for (int i = 0; i < eventMaxCount; i++) {
         [self.amplitude logEvent:@"test"];
     }
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], eventMaxCount);
+    XCTAssertEqual([self.databaseHelper getEventCount], eventMaxCount);
 
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], eventMaxCount - (eventMaxCount/10) + 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], eventMaxCount - (eventMaxCount/10) + 1);
 }
 
 -(void)testTruncateEventsQueuesWithOneEvent {
     int eventMaxCount = 1;
     self.amplitude.eventMaxCount = eventMaxCount;
 
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude logEvent:@"test1"];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], eventMaxCount);
+    XCTAssertEqual([self.databaseHelper getEventCount], eventMaxCount);
 
     [self.amplitude logEvent:@"test2"];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], eventMaxCount);
+    XCTAssertEqual([self.databaseHelper getEventCount], eventMaxCount);
 
     NSDictionary *event = [self.amplitude getLastEvent];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test2");
@@ -681,19 +683,18 @@
     NSDictionary *properties = [NSDictionary dictionaryWithObjectsAndKeys:url, url, url, @"url", nil];
     [self.amplitude logEvent:@"test" withEventProperties:properties];
     [self.amplitude flushQueue];
-    XCTAssertEqual([[AMPDatabaseHelper getDatabaseHelper] getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
 }
 
 -(void)testClearUserProperties {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:2];
 
     [self.amplitude clearUserProperties];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 1);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
 
     NSDictionary *expected = [NSDictionary dictionaryWithObject:@"-" forKey:@"$clearAll"];
     NSDictionary *event = [self.amplitude getLastIdentify];
@@ -704,13 +705,12 @@
 }
 
 -(void)testSetGroup {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setGroup:@"orgId" groupName:[NSNumber numberWithInt:15]];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 1);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
 
     NSDictionary *groups = [NSDictionary dictionaryWithObject:@"15" forKey:@"orgId"];
     NSDictionary *userProperties = [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:15] forKey:@"orgId"] forKey:@"$set"];
@@ -723,7 +723,6 @@
 }
 
 -(void)testLogEventWithGroups {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSMutableDictionary *groups = [NSMutableDictionary dictionary];
 
     [groups setObject:[NSNumber numberWithInt: 10] forKey:[NSNumber numberWithFloat: 1.23]]; // validateGroups should coerce non-string values into strings
@@ -735,9 +734,9 @@
     [self.amplitude logEvent:@"test" withEventProperties:nil withGroups:groups outOfSession:NO];
     [self.amplitude flushQueue];
 
-    XCTAssertEqual([dbHelper getEventCount], 1);
-    XCTAssertEqual([dbHelper getIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
 
     NSDictionary *expectedGroups = [NSDictionary dictionaryWithObjectsAndKeys:@"10", @"1.23", @[@"test2", @"0"], @"array", nil];
 

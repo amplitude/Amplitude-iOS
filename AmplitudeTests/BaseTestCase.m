@@ -26,16 +26,15 @@ NSString *const userId = @"userId";
 - (void)setUp {
     [super setUp];
     self.amplitude = [Amplitude alloc];
-    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
+    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper:nil apiKey:apiKey];
     XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
-    [self.amplitude init];
+    [[self.amplitude init] flushQueue]; 
     self.amplitude.sslPinningEnabled = NO;
 }
 
 - (void)tearDown {
     // Ensure all background operations are done
-    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
     SAFE_ARC_RELEASE(_amplitude);
     SAFE_ARC_RELEASE(_databaseHelper);

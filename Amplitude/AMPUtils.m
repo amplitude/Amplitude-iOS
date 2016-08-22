@@ -141,4 +141,20 @@
     return [NSDictionary dictionaryWithDictionary:dict];
 }
 
++ (BOOL) moveFileIfNotExists:(NSString*)from to:(NSString*)to
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    if (![fileManager fileExistsAtPath:to] &&
+        [fileManager fileExistsAtPath:from]) {
+        if ([fileManager moveItemAtPath:from toPath:to error:&error]) {
+            AMPLITUDE_LOG(@"INFO: moved %@ to %@", from, to);
+        } else {
+            AMPLITUDE_LOG(@"WARN: Move from %@ to %@ failed: %@", from, to, error);
+            return NO;
+        }
+    }
+    return YES;
+}
+
 @end

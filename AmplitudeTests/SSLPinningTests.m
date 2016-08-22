@@ -40,7 +40,7 @@
 
     self.amplitude.sslPinningEnabled = NO;
 
-    [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
+    [[self.amplitude setApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"] initialize];
     [self.amplitude logEvent:@"Test without SSL Pinning"];
     [self.amplitude flushUploads:^() {
         NSDictionary *event = [self.amplitude getLastEvent];
@@ -61,7 +61,7 @@
     self.amplitude.sslPinningEnabled = YES;
     [AMPURLConnection pinSSLCertificate:@[@"InvalidCertificationAuthority"]];
 
-    [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
+    [[self.amplitude setApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"] initialize];
     [self.amplitude logEvent:@"Test Invalid SSL Pinning"];
 
     [self.amplitude flushUploads:^() {
@@ -83,7 +83,7 @@
     self.amplitude.sslPinningEnabled = YES;
     [AMPURLConnection pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
 
-    [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
+    [[self.amplitude setApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"] initialize];
     [self.amplitude logEvent:@"Test SSL Pinning"];
     [self.amplitude flushUploads:^() {
         NSDictionary *event = [self.amplitude getLastEvent];
