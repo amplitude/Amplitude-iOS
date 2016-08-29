@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Fix crash by handling NULL events saved to and fetched from the database.
+
 ### 3.8.4 Re-release (August 19, 2016)
 
 * Added support for integration via Carthage. Thanks to @mpurland for the original PR. Thanks to @lexrus for follow up PR to fix framework naming.

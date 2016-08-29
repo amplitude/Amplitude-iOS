@@ -467,4 +467,16 @@
     XCTAssert([[self.databaseHelper getLongValue:key] isEqualToNumber:value2]);
 }
 
+- (void)testInsertNullEventString {
+    [self.databaseHelper addEvent:nil];
+    [self.databaseHelper addEvent:@"{\"event_type\":\"test1\"}"];
+    XCTAssertEqual(2, [self.databaseHelper getEventCount]);
+
+    NSArray *events = [self.databaseHelper getEvents:-1 limit:-1];  // this should not crash
+    // verify that the null event is filtered out
+    XCTAssertEqual([events count], 1);
+    XCTAssert([[[events objectAtIndex:0] objectForKey:@"event_type"] isEqualToString:@"test1"]);
+    XCTAssertEqualObjects([[events objectAtIndex:0] objectForKey:@"event_id"], [NSNumber numberWithInt:2]);
+}
+
 @end
