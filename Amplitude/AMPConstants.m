@@ -5,7 +5,7 @@
 
 NSString *const kAMPLibrary = @"amplitude-ios";
 NSString *const kAMPPlatform = @"iOS";
-NSString *const kAMPVersion = @"3.8.4";
+NSString *const kAMPVersion = @"3.8.5";
 NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";

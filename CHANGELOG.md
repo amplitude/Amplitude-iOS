@@ -1,5 +1,7 @@
 ## Unreleased
 
+### 3.8.5 (August 29, 2016)
+
 * Fix crash by handling NULL events saved to and fetched from the database.
 
 ### 3.8.4 Re-release (August 19, 2016)
