@@ -359,7 +359,7 @@ Amplitude only polls for a location once on startup of the app, once on each app
 If you wish to disable location tracking done by the app, you can call `[[Amplitude instance] disableLocationListening]` at any point. If you want location tracking disabled on startup of the app, call disableLocationListening before you call `initializeApiKey:`. You can always reenable location tracking through Amplitude with `[[Amplitude instance] enableLocationListening]`.
 
 ### Custom Device IDs ###
-Device IDs are randomly generated. You can, however, choose to instead use the identifierForVendor (if available) by calling `[[Amplitude instance] useAdvertisingIdForDeviceId]` before initializing with your API key. You can also retrieve the Device ID that Amplitude uses with `[[Amplitude instance] getDeviceId]`.
+Device IDs are set to the Identifier for Vendor (IDFV) if available, otherwise they are randomly generated. You can, however, choose to instead use the Advertising Identifier (IDFA) if available by calling `[[Amplitude instance] useAdvertisingIdForDeviceId]` before initializing with your API key. You can also retrieve the Device ID that Amplitude uses with `[[Amplitude instance] getDeviceId]`.
 
 If you have your own system for tracking device IDs and would like to set a custom device ID, you can do so with `[[Amplitude instance] setDeviceId:@"CUSTOM_DEVICE_ID"];` **Note: this is not recommended unless you really know what you are doing.** Make sure the device ID you set is sufficiently unique (we recommend something like a UUID - see `[AMPUtils generateUUID]` for an example on how to generate) to prevent conflicts with other devices in our system.
 
