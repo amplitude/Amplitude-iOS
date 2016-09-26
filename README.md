@@ -343,7 +343,7 @@ You can also call `setGroup` multiple times with different groupTypes to track m
 [[Amplitude instance] setGroup:@"sport" groupName:[NSArray arrayWithObjects: @"tennis", @"soccer", nil];
 ```
 
-You can also use `logEvent` withGroups: to set event-level groups, meaning the group designation only applies for the specific event being logged and does not persist on the user (unless you explicitly set it with `setGroupType`). The group input is a dictionary of groupType: groupName pairs, where groupTypes are strings and groupName can either be strings or array of strings.
+You can also use `logEvent` withGroups: to set event-level groups, meaning the group designation only applies for the specific event being logged and does not persist on the user (unless you explicitly set it with `setGroup`). The group input is a dictionary of groupType: groupName pairs, where groupTypes are strings and groupName can either be strings or array of strings.
 
 ```objective-c
 NSDictionary *eventProperties = [NSDictionary dictionaryWithObjectsAndKeys: @"value", @"key", nil];
