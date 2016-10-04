@@ -1605,17 +1605,17 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (id)unarchive:(NSString*)path {
-    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        @try {
-            id data = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
-            return data;
-        }
-        @catch (NSException *e) {
-            AMPLITUDE_ERROR(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
-            NSError *error = nil;
-            [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
-            if (error != nil) {
-                AMPLITUDE_ERROR(@"ERROR: Can't remove corrupt archiveDict file:%@", error);
+    // unarchive using new NSKeyedUnarchiver method from iOS 9.0 that doesn't throw exceptions
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if ([fileManager fileExistsAtPath:path]) {
+            NSData *inputData = [fileManager contentsAtPath:path];
+            if (inputData != nil) {
+                NSError *error = nil;
+                id data = [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:inputData error:&error];
+                if (error == nil && data != nil) {
+                    return data;
+                }
             }
         }
     }

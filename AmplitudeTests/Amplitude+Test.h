@@ -27,5 +27,7 @@
 - (void)enterForeground;
 - (void)enterBackground;
 - (NSDate*)currentTime;
+- (id)unarchive:(NSString*)path;
+- (BOOL)archive:(id) obj toFile:(NSString*)path;
 
 @end
