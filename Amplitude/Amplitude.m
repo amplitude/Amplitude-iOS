@@ -1610,14 +1610,30 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if ([fileManager fileExistsAtPath:path]) {
             NSData *inputData = [fileManager contentsAtPath:path];
+            NSError *error = nil;
             if (inputData != nil) {
-                NSError *error = nil;
                 id data = [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:inputData error:&error];
-                if (error == nil && data != nil) {
-                    return data;
+                if (error == nil) {
+                    if (data != nil) {
+                        return data;
+                    } else {
+                        AMPLITUDE_ERROR(@"ERROR: unarchived data is nil for file: %@", path);
+                    }
+                } else {
+                    AMPLITUDE_ERROR(@"ERROR: Unable to unarchive file %@: %@", path, error);
                 }
+            } else {
+                AMPLITUDE_ERROR(@"ERROR: File data is nil for file: %@", path);
+            }
+
+            // if reach here, then an error occured during unarchiving, delete corrupt file
+            [fileManager removeItemAtPath:path error:&error];
+            if (error != nil) {
+                AMPLITUDE_ERROR(@"ERROR: Can't remove corrupt file %@: %@", path, error);
             }
         }
+    } else {
+        AMPLITUDE_LOG(@"WARNING: user is using a version of iOS that is older than 9.0, skipping unarchiving of file: %@", path);
     }
     return nil;
 }
