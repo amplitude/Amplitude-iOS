@@ -347,6 +347,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         if ([AMPUtils isEmptyString:jsonString]) {
             AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization resulted in a null string, skipping this event");
+            if (jsonString != nil) {
+                SAFE_ARC_RELEASE(jsonString);
+            }
             continue;
         }
         success &= [defaultDbHelper addEvent:jsonString];
@@ -608,6 +611,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         if ([AMPUtils isEmptyString:jsonString]) {
             AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type %@ resulted in an NULL string", eventType);
+            if (jsonString != nil) {
+                SAFE_ARC_RELEASE(jsonString);
+            }
             return;
         }
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
@@ -826,6 +832,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSString *eventsString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
         if ([AMPUtils isEmptyString:eventsString]) {
             AMPLITUDE_ERROR(@"ERROR: JSONSerialization of event upload data resulted in a NULL string");
+            if (eventsString != nil) {
+                SAFE_ARC_RELEASE(eventsString);
+            }
             _updatingCurrently = NO;
             return;
         }
@@ -1239,6 +1248,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSDictionary *copy = [userProperties copy];
     [self runOnBackgroundQueue:^{
+        // sanitize and truncate user properties before turning into identify
+        NSDictionary *sanitized = [self truncate:copy];
+        if ([sanitized count] == 0) {
+            return;
+        }
+
         AMPIdentify *identify = [AMPIdentify identify];
         for (NSString *key in copy) {
             NSObject *value = [copy objectForKey:key];
@@ -1443,6 +1458,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         SAFE_ARC_RELEASE(objCopy);
         obj = [NSArray arrayWithArray:arr];
     } else if ([obj isKindOfClass:[NSDictionary class]]) {
+        // if too many properties, ignore
+        if ([(NSDictionary *)obj count] > kAMPMaxPropertyKeys) {
+            AMPLITUDE_LOG(@"WARNING: too many properties (more than 1000), ignoring");
+            return [NSDictionary dictionary];
+        }
+
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         id objCopy = [obj copy];
         for (id key in objCopy) {
