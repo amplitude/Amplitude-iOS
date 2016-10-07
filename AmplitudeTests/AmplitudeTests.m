@@ -748,4 +748,37 @@
     XCTAssertEqualObjects([event objectForKey:@"groups"], expectedGroups);
 }
 
+-(void)testBlockTooManyProperties {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+
+    NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+    NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
+    AMPIdentify *identify = [AMPIdentify identify];
+    for (int i = 0; i < kAMPMaxPropertyKeys + 1; i++) {
+        [eventProperties setObject:[NSNumber numberWithInt:i] forKey:[NSNumber numberWithInt:i]];
+        [userProperties setObject:[NSNumber numberWithInt:i*2] forKey:[NSNumber numberWithInt:i*2]];
+        [identify setOnce:[NSString stringWithFormat:@"%d", i] value:[NSNumber numberWithInt:i]];
+    }
+
+    // verify that setUserProperties ignores dict completely
+    [self.amplitude setUserProperties:userProperties];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+
+    // verify that event properties and user properties are scrubbed
+    [self.amplitude logEvent:@"test event" withEventProperties:eventProperties];
+    [self.amplitude identify:identify];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 1);
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqualObjects(event[@"event_properties"], [NSDictionary dictionary]);
+    XCTAssertEqualObjects(event[@"user_properties"], [NSDictionary dictionary]);
+
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    NSDictionary *identifyEvent = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects(identifyEvent[@"event_properties"], [NSDictionary dictionary]);
+    XCTAssertEqualObjects(identifyEvent[@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionary] forKey:@"$setOnce"]);
+}
+
 @end
