@@ -1626,19 +1626,35 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (id)unarchive:(NSString*)path {
-    if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        @try {
-            id data = [NSKeyedUnarchiver unarchiveObjectWithFile:path];
-            return data;
-        }
-        @catch (NSException *e) {
-            AMPLITUDE_ERROR(@"EXCEPTION: Corrupt file %@: %@", [e name], [e reason]);
+    // unarchive using new NSKeyedUnarchiver method from iOS 9.0 that doesn't throw exceptions
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if ([fileManager fileExistsAtPath:path]) {
+            NSData *inputData = [fileManager contentsAtPath:path];
             NSError *error = nil;
-            [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+            if (inputData != nil) {
+                id data = [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:inputData error:&error];
+                if (error == nil) {
+                    if (data != nil) {
+                        return data;
+                    } else {
+                        AMPLITUDE_ERROR(@"ERROR: unarchived data is nil for file: %@", path);
+                    }
+                } else {
+                    AMPLITUDE_ERROR(@"ERROR: Unable to unarchive file %@: %@", path, error);
+                }
+            } else {
+                AMPLITUDE_ERROR(@"ERROR: File data is nil for file: %@", path);
+            }
+
+            // if reach here, then an error occured during unarchiving, delete corrupt file
+            [fileManager removeItemAtPath:path error:&error];
             if (error != nil) {
-                AMPLITUDE_ERROR(@"ERROR: Can't remove corrupt archiveDict file:%@", error);
+                AMPLITUDE_ERROR(@"ERROR: Can't remove corrupt file %@: %@", path, error);
             }
         }
+    } else {
+        AMPLITUDE_LOG(@"WARNING: user is using a version of iOS that is older than 9.0, skipping unarchiving of file: %@", path);
     }
     return nil;
 }

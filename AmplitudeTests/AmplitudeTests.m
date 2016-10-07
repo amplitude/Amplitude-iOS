@@ -748,6 +748,19 @@
     XCTAssertEqualObjects([event objectForKey:@"groups"], expectedGroups);
 }
 
+-(void)testUnarchiveEventsDict {
+    NSString *archiveName = @"test_archive";
+    NSDictionary *event = [NSDictionary dictionaryWithObject:@"test event" forKey:@"event_type"];
+    XCTAssertTrue([self.amplitude archive:event toFile:archiveName]);
+
+    NSDictionary *unarchived = [self.amplitude unarchive:archiveName];
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
+        XCTAssertEqualObjects(unarchived, event);
+    } else {
+        XCTAssertNil(unarchived);
+    }
+}
+
 -(void)testBlockTooManyProperties {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
