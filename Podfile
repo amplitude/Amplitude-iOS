@@ -1,16 +1,9 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '6.0'
+platform :ios, '8.0'
 
-xcodeproj 'Amplitude'
+project 'Amplitude'
 
-target :test do
-  link_with "AmplitudeTests"
+target 'AmplitudeTests' do
   pod 'OCMock', '~> 3.1.1'
-end
-
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    puts target.name
-  end
 end

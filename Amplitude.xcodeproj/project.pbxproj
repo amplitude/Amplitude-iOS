@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		321B1765FE30892CC6A0E979 /* libPods-test.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB69FAEFF28EED71342290C /* libPods-test.a */; };
 		343AB41A1CC99F4F00962943 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 343AB4191CC99F4F00962943 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		343AB41F1CC99FB500962943 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DC708591AD4B28300949778 /* AMPConstants.m */; };
 		343AB4201CC99FB800962943 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BA92721C2376680043178E /* AMPDatabaseHelper.m */; };
@@ -66,6 +65,7 @@
 		9DFBB9C71AB0D1DD0017F703 /* Amplitude+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */; };
 		9DFBB9CA1AB0D26E0017F703 /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */; };
 		9DFBB9CC1AB0D47A0017F703 /* SessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */; };
+		C8499F8AA8B9A12E7A2E0101 /* libPods-AmplitudeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5E8A94DBEBCC41C21FB9C3B /* libPods-AmplitudeTests.a */; };
 		E93C8C551A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */; };
 		E96785EC1A48E93F00887CCD /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E96785E41A48E93F00887CCD /* AMPDeviceInfo.m */; };
 		E96785ED1A48E93F00887CCD /* Amplitude.m in Sources */ = {isa = PBXBuildFile; fileRef = E96785E71A48E93F00887CCD /* Amplitude.m */; };
@@ -88,6 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D336245588C1DEEE6803649 /* Pods-AmplitudeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmplitudeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AmplitudeTests/Pods-AmplitudeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		343AB4171CC99F4F00962943 /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		343AB4191CC99F4F00962943 /* AmplitudeFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		343AB41B1CC99F4F00962943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -103,8 +104,6 @@
 		60BA92761C2376680043178E /* AMPUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPUtils.m; sourceTree = "<group>"; };
 		60BA927D1C23768E0043178E /* AMPDatabaseHelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPDatabaseHelperTests.m; sourceTree = "<group>"; };
 		60BA927E1C23768E0043178E /* IdentifyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IdentifyTests.m; sourceTree = "<group>"; };
-		73478F50C66F6A68F4367561 /* Pods-test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-test.debug.xcconfig"; path = "Pods/Target Support Files/Pods-test/Pods-test.debug.xcconfig"; sourceTree = "<group>"; };
-		9BB69FAEFF28EED71342290C /* libPods-test.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-test.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSLPinningTests.m; sourceTree = "<group>"; };
 		9D40E1791AB3BF7F0095C7C6 /* AMPURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPURLConnection.h; sourceTree = "<group>"; };
 		9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPURLConnection.m; sourceTree = "<group>"; };
@@ -127,7 +126,7 @@
 		9DFBB9C81AB0D26E0017F703 /* BaseTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTestCase.h; sourceTree = "<group>"; };
 		9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTestCase.m; sourceTree = "<group>"; };
 		9DFBB9CB1AB0D47A0017F703 /* SessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SessionTests.m; sourceTree = "<group>"; };
-		C671D5C7AB6BB2A4B86F6EDF /* Pods-test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-test.release.xcconfig"; path = "Pods/Target Support Files/Pods-test/Pods-test.release.xcconfig"; sourceTree = "<group>"; };
+		A6EF8F5DCBA7336CCAD0C231 /* Pods-AmplitudeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmplitudeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AmplitudeTests/Pods-AmplitudeTests.release.xcconfig"; sourceTree = "<group>"; };
 		D7280F441D655B9900CF13D4 /* Amplitude.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = Amplitude.modulemap; sourceTree = "<group>"; };
 		E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPLocationManagerDelegateTests.m; sourceTree = "<group>"; };
 		E96785E11A48E93F00887CCD /* AMPARCMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPARCMacros.h; sourceTree = "<group>"; };
@@ -141,6 +140,7 @@
 		E98C05231A48E7FE00800C63 /* libAmplitude.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAmplitude.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E98C052E1A48E7FE00800C63 /* AmplitudeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmplitudeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E98C05311A48E7FE00800C63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F5E8A94DBEBCC41C21FB9C3B /* libPods-AmplitudeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AmplitudeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,13 +162,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				321B1765FE30892CC6A0E979 /* libPods-test.a in Frameworks */,
+				C8499F8AA8B9A12E7A2E0101 /* libPods-AmplitudeTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D6480202F4F72B83EAFE187 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F5E8A94DBEBCC41C21FB9C3B /* libPods-AmplitudeTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		343AB4181CC99F4F00962943 /* AmplitudeFramework */ = {
 			isa = PBXGroup;
 			children = (
@@ -179,19 +187,11 @@
 			path = AmplitudeFramework;
 			sourceTree = "<group>";
 		};
-		6315BBFA0F0B9BEEF624B93B /* Frameworks */ = {
+		48F039586334F640EA7637FC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9BB69FAEFF28EED71342290C /* libPods-test.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		7F6E89F7A89C7C6B8AE558E7 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				73478F50C66F6A68F4367561 /* Pods-test.debug.xcconfig */,
-				C671D5C7AB6BB2A4B86F6EDF /* Pods-test.release.xcconfig */,
+				0D336245588C1DEEE6803649 /* Pods-AmplitudeTests.debug.xcconfig */,
+				A6EF8F5DCBA7336CCAD0C231 /* Pods-AmplitudeTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -217,8 +217,8 @@
 				E98C052F1A48E7FE00800C63 /* AmplitudeTests */,
 				343AB4181CC99F4F00962943 /* AmplitudeFramework */,
 				E98C05241A48E7FE00800C63 /* Products */,
-				7F6E89F7A89C7C6B8AE558E7 /* Pods */,
-				6315BBFA0F0B9BEEF624B93B /* Frameworks */,
+				48F039586334F640EA7637FC /* Pods */,
+				0D6480202F4F72B83EAFE187 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -359,12 +359,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E98C05371A48E7FE00800C63 /* Build configuration list for PBXNativeTarget "AmplitudeTests" */;
 			buildPhases = (
-				7168A4D11E5B3F16F0347D06 /* Check Pods Manifest.lock */,
+				F44590EAF7503ACE2DAEB2E6 /* [CP] Check Pods Manifest.lock */,
 				E98C052A1A48E7FE00800C63 /* Sources */,
 				E98C052B1A48E7FE00800C63 /* Frameworks */,
 				E98C052C1A48E7FE00800C63 /* Resources */,
-				7D7E997384845A3DA750F1C6 /* Copy Pods Resources */,
-				04625B378E35F32B9DEB88E5 /* Embed Pods Frameworks */,
+				230A7944E241C4AFAEC4ED2D /* [CP] Embed Pods Frameworks */,
+				0E89121384B16BC5C34D28DE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -435,49 +435,49 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		04625B378E35F32B9DEB88E5 /* Embed Pods Frameworks */ = {
+		0E89121384B16BC5C34D28DE /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-test/Pods-test-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AmplitudeTests/Pods-AmplitudeTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7168A4D11E5B3F16F0347D06 /* Check Pods Manifest.lock */ = {
+		230A7944E241C4AFAEC4ED2D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AmplitudeTests/Pods-AmplitudeTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F44590EAF7503ACE2DAEB2E6 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		7D7E997384845A3DA750F1C6 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-test/Pods-test-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -558,37 +558,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = AmplitudeFramework/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = AmplitudeFramework/Amplitude.modulemap;
-				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
-				PRODUCT_NAME = Amplitude;
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		343AB41D1CC99F4F00962943 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -598,13 +568,36 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = AmplitudeFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = AmplitudeFramework/Amplitude.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
 				PRODUCT_NAME = Amplitude;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		343AB41D1CC99F4F00962943 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = AmplitudeFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = AmplitudeFramework/Amplitude.modulemap;
+				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
+				PRODUCT_NAME = Amplitude;
+				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -614,11 +607,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APPLICATION_EXTENSION_API_ONLY = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -646,11 +639,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lsqlite3.0";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -658,11 +652,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				APPLICATION_EXTENSION_API_ONLY = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -672,7 +666,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -683,10 +677,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-lsqlite3.0";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -694,10 +689,11 @@
 		E98C05351A48E7FE00800C63 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_OBJC_ARC = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -706,10 +702,11 @@
 		E98C05361A48E7FE00800C63 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_OBJC_ARC = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -717,9 +714,9 @@
 		};
 		E98C05381A48E7FE00800C63 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 73478F50C66F6A68F4367561 /* Pods-test.debug.xcconfig */;
+			baseConfigurationReference = 0D336245588C1DEEE6803649 /* Pods-AmplitudeTests.debug.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -735,9 +732,9 @@
 		};
 		E98C05391A48E7FE00800C63 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C671D5C7AB6BB2A4B86F6EDF /* Pods-test.release.xcconfig */;
+			baseConfigurationReference = A6EF8F5DCBA7336CCAD0C231 /* Pods-AmplitudeTests.release.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
