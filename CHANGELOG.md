@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add ability to log identify events outOfSession, this is useful for updating user properties without triggering session-handling logic. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-sessions) for more information.
+
 ### 3.9.0 (October 7, 2016)
 
 * Switch to unarchiving unsent events archive file with `[NSKeyedUnarchiver unarchiveObjectWithFile]` to iOS 9's `[NSKeyedUnarchiver unarchiveTopLevelObjectWithData]`. Note: this only affects you if you are *upgrading from an SDK version older than v3.1.0 straight to v3.9.0 or newer*. Users who have not updated to iOS 9.0 or newer will lose any unsent events stored on their devices. This also removes all Objective-C Exceptions (@try/@catch) from the SDK, removing the need to toggle `Enable Objective-C Exceptions` in Xcode.
