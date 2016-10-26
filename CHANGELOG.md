@@ -1,5 +1,7 @@
 ## Unreleased
 
+### 3.10.0 (October 26, 2016)
+
 * Add ability to log identify events outOfSession, this is useful for updating user properties without triggering session-handling logic. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-sessions) for more information.
 
 ### 3.9.0 (October 7, 2016)
