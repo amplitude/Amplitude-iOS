@@ -330,6 +330,7 @@
  [[Amplitude instance] identify:identify outOfSession:YES];
 
  @param identify                   An AMPIdentify object with the intended user property operations
+ @param outOfSession               Whether to log identify event out of session
 
  @see [User Properties and User Property Operations](https://github.com/amplitude/Amplitude-iOS#user-properties-and-user-property-operations)
 
