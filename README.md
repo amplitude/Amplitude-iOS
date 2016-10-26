@@ -81,6 +81,13 @@ You can also log events as out of session. Out of session events have a session_
 [[Amplitude instance] logEvent:@"EVENT_IDENTIFIER_HERE" withEventProperties:nil outOfSession:true];
 ```
 
+You can also log identify events as out of session by setting input parameter `outOfSession` to `YES` when calling identify:
+
+``` objective-c
+AMPIdentify *identify = [[AMPIdentify identify] set:@"key" value:@"value"];
+[[Amplitude instance] identify:identify outOfSession:YES];
+```
+
 ### Getting the Session Id ###
 
 You can use the helper method `getSessionId` to get the value of the current sessionId:
