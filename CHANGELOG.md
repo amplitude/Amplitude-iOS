@@ -2,7 +2,7 @@
 
 ### 3.10.1 (October 31, 2016)
 
-* Enable "Weak References in Manual Retain Release" to allow building in Xcode 7.3 and up.
+* Enable "Weak References in Manual Retain Release" to fix build errors in Xcode 7.3 and up.
 
 ### 3.10.0 (October 26, 2016)
 
