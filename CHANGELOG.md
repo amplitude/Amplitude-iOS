@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Enable "Weak References in Manual Retain Release" to allow building in Xcode 7.3 and up.
+
 ### 3.10.0 (October 26, 2016)
 
 * Add ability to log identify events outOfSession, this is useful for updating user properties without triggering session-handling logic. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-sessions) for more information.
