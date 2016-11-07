@@ -794,4 +794,14 @@
     XCTAssertEqualObjects(identifyEvent[@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionary] forKey:@"$setOnce"]);
 }
 
+-(void)testLogEventWithTimestamp {
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
+    NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970]];
+
+    [self.amplitude logEvent:@"test" withEventProperties:nil withGroups:nil withTimestamp:timestamp outOfSession:NO];
+    [self.amplitude flushQueue];
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqual(1000, [[event objectForKey:@"timestamp"] longLongValue]);
+}
+
 @end
