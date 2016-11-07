@@ -1,6 +1,8 @@
 ## Unreleased
 
-### Allow `logEvent` with a custom timestamp. If the timestamp value is `nil`, then the event is timestamped with the current time. See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:) for more details.
+### 3.11.0 (November 7, 2016)
+
+* Allow `logEvent` with a custom timestamp. If the timestamp value is `nil`, then the event is timestamped with the current time. See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:) for more details.
 
 ### 3.10.1 (October 31, 2016)
 
