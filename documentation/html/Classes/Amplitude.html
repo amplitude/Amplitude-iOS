@@ -1463,7 +1463,7 @@
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>timestamp</code></th>
-						<td><p>You can specify a custom timestamp by passing an NSNumber representing the milliseconds since epoch UTC time. If nil is passed in, then the event will be timestamped with the current time.</p></td>
+						<td><p>You can specify a custom timestamp by passing an NSNumber representing the milliseconds since epoch UTC time. We recommend using [NSNumber numberWithLongLong:milliseconds] to create the value. If nil is passed in, then the event will be timestamped with the current time.</p></td>
 					</tr>
 				
 					<tr>
