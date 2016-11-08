@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Allow `logEvent` with a custom long long timestamp (milliseconds since epoch). See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:) for more details.
+
 ### 3.11.0 (November 7, 2016)
 
 * Allow `logEvent` with a custom timestamp (milliseconds since epoch). If the timestamp value is `nil`, then the event is timestamped with the current time. If setting a custom timesatmp, you should use `[NSNumber numberWithLongLong:milliseconds]`. See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:) for more details.

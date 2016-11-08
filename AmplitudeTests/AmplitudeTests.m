@@ -802,6 +802,11 @@
     [self.amplitude flushQueue];
     NSDictionary *event = [self.amplitude getLastEvent];
     XCTAssertEqual(1000, [[event objectForKey:@"timestamp"] longLongValue]);
+
+    [self.amplitude logEvent:@"test2" withEventProperties:nil withGroups:nil withLongLongTimestamp:2000 outOfSession:NO];
+    [self.amplitude flushQueue];
+    event = [self.amplitude getLastEvent];
+    XCTAssertEqual(2000, [[event objectForKey:@"timestamp"] longLongValue]);
 }
 
 @end
