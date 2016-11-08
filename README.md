@@ -10,7 +10,7 @@ A [demo application](https://github.com/amplitude/iOS-Demo) is available to show
 
 A [demo application](https://github.com/amplitude/iOS-Extension-Demo) is available to show a simple integration in iOS extensions.
 
-See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/index.html) for a description of all available SDK methods and classes.
+See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/v3.11.1/documentation/html/index.html) for a description of all available SDK methods and classes.
 
 # Setup #
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
