@@ -2,7 +2,7 @@
 
 ### 3.11.1 (November 7, 2016)
 
-* Allow `logEvent` with a custom long long timestamp (milliseconds since epoch). See [iOS documentation](https://github.com/amplitude/Amplitude-iOS/blob/6c864997c362ea569768969bc720b084c223eb4d/documentation/html/Classes/Amplitude.html) for more details.
+* Allow `logEvent` with a custom long long timestamp (milliseconds since epoch). See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/v3.11.1/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:) for more details.
 
 ### 3.11.0 (November 7, 2016)
 
