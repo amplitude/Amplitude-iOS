@@ -1151,29 +1151,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)startNewSession:(NSNumber*) timestamp
 {
     if (_trackingSessionEvents) {
-        [self sendSessionEvent:kAMPSessionEndEvent];
+        [self sendSessionEvent:kAMPSessionEndEvent timestamp:[self lastEventTime]];
     }
     [self setSessionId:[timestamp longLongValue]];
     [self refreshSessionTime:timestamp];
     if (_trackingSessionEvents) {
-        [self sendSessionEvent:kAMPSessionStartEvent];
+        [self sendSessionEvent:kAMPSessionStartEvent timestamp:timestamp];
     }
 }
 
-- (void)sendSessionEvent:(NSString*) sessionEvent
+- (void)sendSessionEvent:(NSString*) sessionEvent timestamp:(NSNumber *) timestamp
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before sending session event");
+    if (_apiKey == nil || ![self inSession]) {
         return;
     }
 
-    if (![self inSession]) {
-        return;
-    }
-
-    NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:sessionEvent forKey:@"special"];
-    NSNumber* timestamp = [self lastEventTime];
+    NSDictionary *apiProperties = [NSDictionary dictionaryWithObject:sessionEvent forKey:@"special"];
     [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withTimestamp:timestamp outOfSession:NO];
 }
 
