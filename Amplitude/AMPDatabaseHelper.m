@@ -391,10 +391,8 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
                 continue;
             }
 
-            NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
-            NSError *error = nil;
-            id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:&error];
-            if (error != nil) {
+            NSDictionary *eventImmutable = [AMPUtils deserializeEventString:eventString];
+            if (eventImmutable == nil) {
                 AMPLITUDE_LOG(@"Error JSON deserialization of event id %lld from table %@: %@", eventId, table, error);
                 continue;
             }

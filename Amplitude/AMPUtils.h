@@ -12,5 +12,6 @@
 + (id) makeJSONSerializable:(id) obj;
 + (BOOL) isEmptyString:(NSString*) str;
 + (NSDictionary*) validateGroups:(NSDictionary*) obj;
++ (NSDictionary*) deserializeEventString:(NSString*) eventString;
 
 @end

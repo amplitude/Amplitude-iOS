@@ -141,4 +141,16 @@
     return [NSDictionary dictionaryWithDictionary:dict];
 }
 
++ (NSDictionary *) deserializeEventString:(NSString *)eventString
+{
+    NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error = nil;
+    id event = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:&error];
+    if (error != nil) {
+        AMPLITUDE_LOG(@"Error JSON deserialization of event: %@", error);
+        return nil;
+    }
+    return event;
+}
+
 @end
