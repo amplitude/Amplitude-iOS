@@ -628,6 +628,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
             (void) [self.dbHelper addIdentify:jsonString];
+        } else if ([eventType isEqualToString:kAMPSessionEndEvent]) {
+            (void) [self.dbHelper insertOrReplaceKeyValue:kAMPSessionEndEvent value:jsonString];
         } else {
             (void) [self.dbHelper addEvent:jsonString];
         }
@@ -1152,6 +1154,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     if (_trackingSessionEvents) {
         [self sendSessionEvent:kAMPSessionEndEvent timestamp:[self lastEventTime]];
+        NSString *endSessionEventString = [self.dbHelper getValue:kAMPSessionEndEvent];
+        if (![AMPUtils isEmptyString:endSessionEventString]) {
+            [self.dbHelper addEvent:endSessionEventString];
+            [self.dbHelper insertOrReplaceKeyValue:kAMPSessionEndEvent value:nil];
+        }
     }
     [self setSessionId:[timestamp longLongValue]];
     [self refreshSessionTime:timestamp];
