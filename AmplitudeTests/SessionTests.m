@@ -17,6 +17,7 @@
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
+#import "AMPUtils.h"
 
 @interface SessionTests : BaseTestCase
 
@@ -150,6 +151,8 @@
 }
 
 - (void)testTrackSessionEvents {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
@@ -201,6 +204,83 @@
     [mockAmplitude identify:identify outOfSession:YES];
     [mockAmplitude flushQueue];
     XCTAssertEqual([mockAmplitude queuedEventCount], 5); // does not trigger session events
+
+    // test new end session logic -> go to background
+    NSDate *date5 = [NSDate dateWithTimeIntervalSince1970:1000 + 4 * self.amplitude.minTimeBetweenSessionsMillis];
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date5)] currentTime];
+    [mockAmplitude enterBackground]; // simulate app entering background
+    [mockAmplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 5); // no actual events logged
+
+    // verify end session event is added to key value table
+    NSString *endSessionEventString = [dbHelper getValue:kAMPSessionEndEvent];
+    XCTAssertFalse([AMPUtils isEmptyString:endSessionEventString]);
+    NSDictionary *endSessionEvent = [AMPUtils deserializeEventString:endSessionEventString];
+    XCTAssertNotNil(endSessionEvent);
+    NSNumber *endSessionTimestamp = [endSessionEvent objectForKey:@"timestamp"];
+    NSNumber *expectedTimestamp = [NSNumber numberWithLongLong:[date5 timeIntervalSince1970] * 1000];
+    XCTAssertEqualObjects(expectedTimestamp, endSessionTimestamp);
+
+    // verify that the end session event sent is loaded from key value table
+    // we can modify the value in the database and verify the modified event is the one that is sent
+    // adding a value for version_name
+    endSessionEventString = @"{\"uuid\":\"CC83932C-7520-4AAD-BC95-8E59D30057D6\",\"device_manufacturer\":\"Apple\",\"library\":{\"name\":\"amplitude-ios\",\"version\":\"3.11.1\"},\"event_type\":\"session_end\",\"os_name\":\"ios\",\"sequence_number\":10,\"timestamp\":1201000000,\"event_properties\":{},\"api_properties\":{\"special\":\"session_end\",\"ios_idfv\":\"AFD750D7-1A23-44AB-A091-673A6229647A\"},\"groups\":{},\"user_properties\":{},\"platform\":\"iOS\",\"language\":\"English\",\"device_id\":\"AFD750D7-1A23-44AB-A091-673A6229647A\",\"os_version\":\"10.1\",\"session_id\":601000000,\"device_model\":\"Simulator\",\"country\":\"United States\",\"version_name\":\"test_version\"}";
+    [dbHelper insertOrReplaceKeyValue:kAMPSessionEndEvent value:endSessionEventString];
+
+    // force app to foreground and verify new session logic
+    NSDate *date6 = [NSDate dateWithTimeIntervalSince1970:1000 + 5 * self.amplitude.minTimeBetweenSessionsMillis];
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date6)] currentTime];
+    [mockAmplitude enterForeground];
+    [mockAmplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 7); // end and start session events logged
+
+    NSArray *events = [dbHelper getEvents:-1 limit:-1];
+    XCTAssertEqual([events count], 7);
+    endSessionEvent = [events objectAtIndex:5];
+    XCTAssertEqualObjects([endSessionEvent objectForKey:@"event_type"], kAMPSessionEndEvent);
+    XCTAssertEqualObjects([endSessionEvent objectForKey:@"timestamp"], expectedTimestamp);
+    XCTAssertEqualObjects([endSessionEvent objectForKey:@"version_name"], @"test_version");
+    XCTAssertNil([dbHelper getValue:kAMPSessionEndEvent]);
+
+    // the start session event should be missing the version_name
+    expectedTimestamp = [NSNumber numberWithLongLong:[date6 timeIntervalSince1970] * 1000];
+    NSDictionary *startSessionEvent = [events objectAtIndex:6];
+    XCTAssertEqualObjects([startSessionEvent objectForKey:@"event_type"], kAMPSessionStartEvent);
+    XCTAssertEqualObjects([startSessionEvent objectForKey:@"timestamp"], expectedTimestamp);
+    XCTAssertNil([startSessionEvent objectForKey:@"version_name"]);
+
+    // test new session logic -> verify saved end session event is discarded if the timestamp does not match
+    // the start session event logged at date6 should have updated the lastEventTime
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date6)] currentTime];
+    [mockAmplitude enterBackground]; // simulate app entering background
+    [mockAmplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 7); // no actual events logged
+
+    // if we try to re-send our modified endSessionEventString with date5, it should discard it and log a new one
+    endSessionEventString = @"{\"uuid\":\"CC83932C-7520-4AAD-BC95-8E59D30057D6\",\"device_manufacturer\":\"Apple\",\"library\":{\"name\":\"amplitude-ios\",\"version\":\"3.11.1\"},\"event_type\":\"session_end\",\"os_name\":\"ios\",\"sequence_number\":10,\"timestamp\":1201000000,\"event_properties\":{},\"api_properties\":{\"special\":\"session_end\",\"ios_idfv\":\"AFD750D7-1A23-44AB-A091-673A6229647A\"},\"groups\":{},\"user_properties\":{},\"platform\":\"iOS\",\"language\":\"English\",\"device_id\":\"AFD750D7-1A23-44AB-A091-673A6229647A\",\"os_version\":\"10.1\",\"session_id\":601000000,\"device_model\":\"Simulator\",\"country\":\"United States\",\"version_name\":\"test_version\"}";
+    [dbHelper insertOrReplaceKeyValue:kAMPSessionEndEvent value:endSessionEventString];
+
+    // force app to foreground and verify new session logic
+    NSDate *date7 = [NSDate dateWithTimeIntervalSince1970:1000 + 6 * self.amplitude.minTimeBetweenSessionsMillis];
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date7)] currentTime];
+    [mockAmplitude enterForeground];
+    [mockAmplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 9); // end and start session events logged
+
+    events = [dbHelper getEvents:-1 limit:-1];
+    XCTAssertEqual([events count], 9);
+    endSessionEvent = [events objectAtIndex:7];
+    XCTAssertEqualObjects([endSessionEvent objectForKey:@"event_type"], kAMPSessionEndEvent);
+    XCTAssertEqualObjects([endSessionEvent objectForKey:@"timestamp"], expectedTimestamp);
+    XCTAssertNil([endSessionEvent objectForKey:@"version_name"]);  // should be missing the version_name since a brand new end session event is logged
+    XCTAssertNil([dbHelper getValue:kAMPSessionEndEvent]);
+
+    // the start session event should be missing the version_name
+    startSessionEvent = [events objectAtIndex:8];
+    XCTAssertEqualObjects([startSessionEvent objectForKey:@"event_type"], kAMPSessionStartEvent);
+    XCTAssertEqualObjects([startSessionEvent objectForKey:@"timestamp"], [NSNumber numberWithLongLong:[date7 timeIntervalSince1970] * 1000]);
+    XCTAssertNil([startSessionEvent objectForKey:@"version_name"]);
+
 }
 
 - (void)testSessionEventsOn32BitDevices {

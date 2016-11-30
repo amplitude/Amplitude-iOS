@@ -1162,9 +1162,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self sendSessionEvent:kAMPSessionEndEvent timestamp:lastEventTime];
         } else {
             // sanity check the event
+            NSNumber *endSessionTimestamp = nil;
             NSDictionary *endSessionEvent = [AMPUtils deserializeEventString:endSessionEventString];
-            NSNumber *endSessionTimestamp = [endSessionEvent objectForKey:@"timestamp"];
-            if (endSessionTimestamp == nil || [endSessionTimestamp longLongValue] != [lastEventTime longLongValue]) {
+            if (endSessionEvent != nil) {
+                endSessionTimestamp = [endSessionEvent objectForKey:@"timestamp"];
+            }
+            if (endSessionEvent == nil || endSessionTimestamp == nil || [endSessionTimestamp longLongValue] != [lastEventTime longLongValue]) {
                 [self sendSessionEvent:kAMPSessionEndEvent timestamp:lastEventTime];
             }
         }

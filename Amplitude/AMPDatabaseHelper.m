@@ -386,11 +386,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
                 continue;
             }
             NSString *eventString = [NSString stringWithUTF8String:rawEventString];
-            if ([AMPUtils isEmptyString:eventString]) {
-                AMPLITUDE_LOG(@"Ignoring empty event string for event id %lld from table %@", eventId, table);
-                continue;
-            }
-
             NSDictionary *eventImmutable = [AMPUtils deserializeEventString:eventString];
             if (eventImmutable == nil) {
                 AMPLITUDE_LOG(@"Error JSON deserialization of event id %lld from table %@: %@", eventId, table, error);
