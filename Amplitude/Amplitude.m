@@ -1153,8 +1153,23 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)startNewSession:(NSNumber*) timestamp
 {
     if (_trackingSessionEvents) {
-        [self sendSessionEvent:kAMPSessionEndEvent timestamp:[self lastEventTime]];
+
+        // try to load saved end session event from key value table, else fall back to re-logging
+        NSNumber *lastEventTime = [self lastEventTime];
         NSString *endSessionEventString = [self.dbHelper getValue:kAMPSessionEndEvent];
+        if ([AMPUtils isEmptyString:endSessionEventString]) {
+            [self sendSessionEvent:kAMPSessionEndEvent timestamp:lastEventTime];
+        } else {
+            // sanity check the event
+            NSDictionary *endSessionEvent = [AMPUtils deserializeEventString:endSessionEventString];
+            NSNumber *endSessionTimestamp = [endSessionEvent objectForKey:@"timestamp"];
+            if (endSessionTimestamp == nil || [endSessionTimestamp longLongValue] != [lastEventTime longLongValue]) {
+                [self sendSessionEvent:kAMPSessionEndEvent timestamp:lastEventTime];
+            }
+        }
+
+        // transfer end session event from key value table into the event queue
+        endSessionEventString = [self.dbHelper getValue:kAMPSessionEndEvent];
         if (![AMPUtils isEmptyString:endSessionEventString]) {
             [self.dbHelper addEvent:endSessionEventString];
             [self.dbHelper insertOrReplaceKeyValue:kAMPSessionEndEvent value:nil];
