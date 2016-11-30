@@ -1104,6 +1104,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
         _inForeground = NO;
         [self refreshSessionTime:now];
+        [self sendSessionEvent:kAMPSessionEndEvent timestamp:now];
         [self uploadEventsWithLimit:0];
     }];
 }
