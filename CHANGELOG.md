@@ -1,5 +1,7 @@
 ## Unreleased
 
+### 3.12.0 (December 5, 2016)
+
 * Add helper method to regenerate a new random deviceId. This can be used in conjunction with `setUserId:nil` to anonymize a user after they log out. Note this is not recommended unless you know what you are doing. See [Readme](https://github.com/amplitude/Amplitude-iOS#logging-out-and-anonymous-users) for more information.
 
 ### 3.11.1 (November 7, 2016)
