@@ -15,6 +15,7 @@
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
 #import "AMPARCMacros.h"
+#import "AMPUtils.h"
 
 // expose private methods for unit testing
 @interface Amplitude (Tests)
@@ -807,6 +808,21 @@
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
     XCTAssertEqual(2000, [[event objectForKey:@"timestamp"] longLongValue]);
+}
+
+-(void)testRegenerateDeviceId {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
+    NSString *oldDeviceId = [self.amplitude getDeviceId];
+    XCTAssertFalse([AMPUtils isEmptyString:oldDeviceId]);
+    XCTAssertEqualObjects(oldDeviceId, [dbHelper getValue:@"device_id"]);
+
+    [self.amplitude regenerateDeviceId];
+    [self.amplitude flushQueue];
+    NSString *newDeviceId = [self.amplitude getDeviceId];
+    XCTAssertNotEqualObjects(oldDeviceId, newDeviceId);
+    XCTAssertEqualObjects(newDeviceId, [dbHelper getValue:@"device_id"]);
+    XCTAssertTrue([newDeviceId hasSuffix:@"R"]);
 }
 
 @end

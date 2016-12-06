@@ -1365,6 +1365,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
+- (void)regenerateDeviceId
+{
+    [self setDeviceId:_deviceInfo.generateUUID];
+}
+
 #pragma mark - location methods
 
 - (void)updateLocation

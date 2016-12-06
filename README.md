@@ -109,6 +109,15 @@ You can also add the user ID as an argument to the `initializeApiKey:` call:
 [[Amplitude instance] initializeApiKey:@"YOUR_API_KEY_HERE" userId:@"USER_ID_HERE"];
 ```
 
+### Logging Out and Anonymous Users ###
+If a user logs out, or you want to log the events under an anonymous user, you need to do 2 things: 1) set the userId to `nil` 2) regenerate a new deviceId. After doing that, events coming from the current user/device will appear as a brand new user in Amplitude dashboards. Note: if you choose to do this, you won't be able to see that the 2 users were using the same device.
+
+``` objective-c
+[[Amplitude instance] setUserId:nil];  // not string nil
+[[Amplitude instance] regenerateDeviceId];
+```
+
+
 # Setting Event Properties #
 
 You can attach additional data to any event by passing a NSDictionary object as the second argument to logEvent:withEventProperties:

@@ -529,6 +529,13 @@
 - (NSString*)getDeviceId;
 
 /**
+ Regenerates a new random deviceId for current user. Note: this is not recommended unless you know what you are doing. This can be used in conjunction with setUserId:nil to anonymize users after they log out. With a nil userId and a completely new deviceId, the current user would appear as a brand new user in dashboard.
+
+ @see [Logging Out Users](https://github.com/amplitude/Amplitude-iOS#logging-out-and-anonymous-users)
+ */
+- (void)regenerateDeviceId;
+
+/**
  Fetches the current sessionId, an identifier used by Amplitude to group together events tracked during the same session.
 
  @returns the current session id
