@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add helper method to regenerate a new random deviceId. This can be used in conjunction with `setUserId:nil` to anonymize a user after they log out. Note this is not recommended unless you know what you are doing. See [Readme](https://github.com/amplitude/Amplitude-iOS#logging-out-and-anonymous-users) for more information.
+
 ### 3.11.1 (November 7, 2016)
 
 * Allow `logEvent` with a custom long long timestamp (milliseconds since epoch). See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/v3.11.1/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:) for more details.
