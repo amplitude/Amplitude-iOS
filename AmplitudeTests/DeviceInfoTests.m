@@ -84,8 +84,8 @@
 
 
 - (void) testGenerateUUID {
-    NSString *a = [_deviceInfo generateUUID];
-    NSString *b = [_deviceInfo generateUUID];
+    NSString *a = [AMPDeviceInfo generateUUID];
+    NSString *b = [AMPDeviceInfo generateUUID];
     XCTAssertNotNil(a);
     XCTAssertNotNil(b);
     XCTAssertNotEqual(a, b);

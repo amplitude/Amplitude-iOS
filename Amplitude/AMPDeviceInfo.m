@@ -186,7 +186,7 @@
     }
 }
 
-- (NSString*)generateUUID
++ (NSString*)generateUUID
 {
     // Add "R" at the end of the ID to distinguish it from advertiserId
     NSString *result = [[AMPUtils generateUUID] stringByAppendingString:@"R"];
