@@ -1367,7 +1367,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)regenerateDeviceId
 {
-    [self setDeviceId:_deviceInfo.generateUUID];
+    [self runOnBackgroundQueue:^{
+        [self setDeviceId:[AMPDeviceInfo generateUUID]];
+    }];
 }
 
 #pragma mark - location methods
@@ -1441,7 +1443,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     if (!deviceId) {
         // Otherwise generate random ID
-        deviceId = _deviceInfo.generateUUID;
+        deviceId = [AMPDeviceInfo generateUUID];
     }
     return SAFE_ARC_AUTORELEASE([[NSString alloc] initWithString:deviceId]);
 }
