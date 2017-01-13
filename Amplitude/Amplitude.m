@@ -250,7 +250,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
             _uploadTaskID = UIBackgroundTaskInvalid;
             
-            NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+            NSString *eventsDataDirectory = [AMPUtils platformDataDirectory];
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
             if (![_instanceName isEqualToString:kAMPDefaultInstance]) {
                 propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, _instanceName]; // namespace pList with instance name

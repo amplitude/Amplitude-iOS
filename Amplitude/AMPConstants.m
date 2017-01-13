@@ -12,9 +12,17 @@ NSString *const kAMPDefaultInstance = @"$default_instance";
 const int kAMPApiVersion = 3;
 const int kAMPDBVersion = 3;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
+
+// for tvOS, upload events immediately, don't save too many events locally
+#if TARGET_OS_TV
+const int kAMPEventUploadThreshold = 1;
+const int kAMPEventMaxCount = 100;
+#else
 const int kAMPEventUploadThreshold = 30;
-const int kAMPEventUploadMaxBatchSize = 100;
 const int kAMPEventMaxCount = 1000;
+#endif
+
+const int kAMPEventUploadMaxBatchSize = 100;
 const int kAMPEventRemoveBatchSize = 20;
 const int kAMPEventUploadPeriodSeconds = 30; // 30s
 const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5m
