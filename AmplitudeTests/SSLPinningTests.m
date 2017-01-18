@@ -56,24 +56,18 @@
 }
 
 - (void)testSSLPinningInvalidCert {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
-
     self.amplitude.sslPinningEnabled = YES;
     [AMPURLConnection pinSSLCertificate:@[@"InvalidCertificationAuthority"]];
 
     [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
     [self.amplitude logEvent:@"Test Invalid SSL Pinning"];
+    [self.amplitude flushQueue];
 
     [self.amplitude flushUploads:^() {
+        // upload fails and so there should still be an unsent event
         NSDictionary *event = [self.amplitude getLastEvent];
         XCTAssertNotNil(event);
-        [expectation fulfill];
-    }];
-
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError *error) {
-        if (error) {
-            XCTFail(@"Expectation Failed with error: %@", error);
-        }
+        XCTAssertEqual([self.databaseHelper getEventCount], 1);
     }];
 }
 
@@ -85,6 +79,7 @@
 
     [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
     [self.amplitude logEvent:@"Test SSL Pinning"];
+    [self.amplitude flushQueue];
     [self.amplitude flushUploads:^() {
         NSDictionary *event = [self.amplitude getLastEvent];
         XCTAssertNil(event);

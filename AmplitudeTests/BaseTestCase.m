@@ -30,6 +30,7 @@ NSString *const userId = @"userId";
     XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
     [self.amplitude init];
+//    [self.amplitude setSslPinningEnabled:NO];
     self.amplitude.sslPinningEnabled = NO;
 }
 
