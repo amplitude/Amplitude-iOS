@@ -70,4 +70,14 @@
     XCTAssertEqual([self.databaseHelper getEventCount], 1);  // upload failed due to bad checksum
 }
 
+- (void)testLogEventPlatformAndOSName {
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    NSDictionary *event = [self.amplitude getLastEvent];
+
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
+    XCTAssertEqualObjects([event objectForKey:@"os_name"], @"tvos");
+    XCTAssertEqualObjects([event objectForKey:@"platform"], @"tvOS");
+}
+
 @end

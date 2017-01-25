@@ -81,4 +81,14 @@
     XCTAssertEqual(_connectionCallCount, 2);
 }
 
+- (void)testLogEventPlatformAndOSName {
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    NSDictionary *event = [self.amplitude getLastEvent];
+
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
+    XCTAssertEqualObjects([event objectForKey:@"os_name"], @"ios");
+    XCTAssertEqualObjects([event objectForKey:@"platform"], @"iOS");
+}
+
 @end
