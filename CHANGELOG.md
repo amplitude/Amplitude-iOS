@@ -1,6 +1,6 @@
 ## Unreleased
 
-* Add support for tvOS. Thanks to @gabek for the original PR.
+* Add support for tvOS. Thanks to @gabek for the original PR. See [Readme](https://github.com/amplitude/Amplitude-iOS#tvOS) for more information.
 * Bump iOS minimum deployment target to 6.0.
 
 ### 3.12.1 (December 15, 2016)
