@@ -329,6 +329,15 @@ NSString *deviceId = [[Amplitude instance] getDeviceId]; // existing deviceId
 [[Amplitude instanceWithName:@"new_app"] setDeviceId:deviceId]; // transferring existing deviceId to new app
 ```
 
+# tvOS #
+
+This SDK will work with tvOS apps. Follow the same [setup instructions](https://github.com/amplitude/Amplitude-iOS#setup) for iOS apps.
+
+One thing to note: tvOS apps have limited persistent storage (much less than iOS apps), so for tvOS the SDK is configured to upload events immediately as they are logged (`eventUploadThreshold` is set to 1 by default for tvOS). This is so events are not saved to storage. It is assumed that Apple TV devices have a stable internet connection, so immediately uploading events is reasonable. If you wish to revert back to the iOS batching behavior, you can do so by changing `eventUploadThreshold` (which is set to 30 by default for iOS):
+``` objective-c
+[[Amplitude instance] setEventUploadThreshold:30];
+```
+
 # Swift #
 
 This SDK will work with Swift. If you are copying the source files or using CocoaPods without the `use_frameworks!` directive, you should create a bridging header as documented [here](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html) and add the following line to your bridging header:

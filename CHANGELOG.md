@@ -1,5 +1,8 @@
 ## Unreleased
 
+* Add support for tvOS. Thanks to @gabek for the original PR.
+* Bump iOS minimum deployment target to 6.0.
+
 ### 3.12.1 (December 15, 2016)
 
 * Fix bug where `regenerateDeviceId` was not being run on background thread.
