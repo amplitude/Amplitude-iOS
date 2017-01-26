@@ -19,7 +19,7 @@ Our iOS SDK also supports tvOS. See [below](https://github.com/amplitude/Amplitu
 
 2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file.
 
-    Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.12.1'`. If you are using CocoaPods, you may skip steps 3 and 4.
+    Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.13.0'`. If you are using CocoaPods, you may skip steps 3 and 4.
 
     You also have the option to install using Carthage. If you are using Carthage, add the following line to your Cartfile: `github "amplitude/Amplitude-iOS"`. Just add `#import <Amplitude/Amplitude.h>` to import all of the Amplitude header files.
 
