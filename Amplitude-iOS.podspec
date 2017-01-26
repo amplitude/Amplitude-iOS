@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.author       = { "Amplitude" => "dev@amplitude.com" }
   s.source       = { :git => "https://github.com/amplitude/Amplitude-iOS.git", :tag => "v3.12.1" }
   s.platform     = :ios, '5.0'
-  s.source_files = 'Amplitude/*.{h,m}'
+  s.source_files = 'Amplitude/*.{h,m}', 'Amplitude/SSLCertificatePinning/*.{h,m,pch}'
   s.requires_arc = true
   s.library 	 = 'sqlite3.0'
 end
