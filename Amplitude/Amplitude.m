@@ -628,6 +628,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
             (void) [self.dbHelper addIdentify:jsonString];
+        } else if ([eventType isEqualToString:kAMPSessionEndEvent]) {
+            (void) [self.dbHelper insertOrReplaceKeyValue:kAMPSessionEndEvent value:jsonString];
         } else {
             (void) [self.dbHelper addEvent:jsonString];
         }
@@ -1102,6 +1104,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
         _inForeground = NO;
         [self refreshSessionTime:now];
+        [self sendSessionEvent:kAMPSessionEndEvent timestamp:now];
         [self uploadEventsWithLimit:0];
     }];
 }
@@ -1151,29 +1154,45 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)startNewSession:(NSNumber*) timestamp
 {
     if (_trackingSessionEvents) {
-        [self sendSessionEvent:kAMPSessionEndEvent];
+
+        // try to load saved end session event from key value table, else fall back to re-logging
+        NSNumber *lastEventTime = [self lastEventTime];
+        NSString *endSessionEventString = [self.dbHelper getValue:kAMPSessionEndEvent];
+        if ([AMPUtils isEmptyString:endSessionEventString]) {
+            [self sendSessionEvent:kAMPSessionEndEvent timestamp:lastEventTime];
+        } else {
+            // sanity check the event
+            NSNumber *endSessionTimestamp = nil;
+            NSDictionary *endSessionEvent = [AMPUtils deserializeEventString:endSessionEventString];
+            if (endSessionEvent != nil) {
+                endSessionTimestamp = [endSessionEvent objectForKey:@"timestamp"];
+            }
+            if (endSessionEvent == nil || endSessionTimestamp == nil || [endSessionTimestamp longLongValue] != [lastEventTime longLongValue]) {
+                [self sendSessionEvent:kAMPSessionEndEvent timestamp:lastEventTime];
+            }
+        }
+
+        // transfer end session event from key value table into the event queue
+        endSessionEventString = [self.dbHelper getValue:kAMPSessionEndEvent];
+        if (![AMPUtils isEmptyString:endSessionEventString]) {
+            [self.dbHelper addEvent:endSessionEventString];
+            [self.dbHelper insertOrReplaceKeyValue:kAMPSessionEndEvent value:nil];
+        }
     }
     [self setSessionId:[timestamp longLongValue]];
     [self refreshSessionTime:timestamp];
     if (_trackingSessionEvents) {
-        [self sendSessionEvent:kAMPSessionStartEvent];
+        [self sendSessionEvent:kAMPSessionStartEvent timestamp:timestamp];
     }
 }
 
-- (void)sendSessionEvent:(NSString*) sessionEvent
+- (void)sendSessionEvent:(NSString*) sessionEvent timestamp:(NSNumber *) timestamp
 {
-    if (_apiKey == nil) {
-        AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before sending session event");
+    if (_apiKey == nil || ![self inSession]) {
         return;
     }
 
-    if (![self inSession]) {
-        return;
-    }
-
-    NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
-    [apiProperties setValue:sessionEvent forKey:@"special"];
-    NSNumber* timestamp = [self lastEventTime];
+    NSDictionary *apiProperties = [NSDictionary dictionaryWithObject:sessionEvent forKey:@"special"];
     [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withTimestamp:timestamp outOfSession:NO];
 }
 
