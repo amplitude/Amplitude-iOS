@@ -5,6 +5,7 @@
 #import "AMPARCMacros.h"
 #import "AMPDeviceInfo.h"
 #import "AMPUtils.h"
+#import "AMPConstants.h"
 #import <UIKit/UIKit.h>
 #import <sys/sysctl.h>
 
@@ -54,7 +55,7 @@
 }
 
 -(NSString*) osName {
-    return @"ios";
+    return kAMPOSName;
 }
 
 -(NSString*) osVersion {

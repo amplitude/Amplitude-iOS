@@ -18,6 +18,9 @@
 @dynamic initialized;
 @dynamic sessionId;
 @dynamic lastEventTime;
+@dynamic backoffUpload;
+@dynamic backoffUploadBatchSize;
+@dynamic sslPinningEnabled;
 
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
