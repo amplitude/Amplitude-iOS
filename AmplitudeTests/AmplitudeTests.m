@@ -249,34 +249,6 @@
     XCTAssertFalse([[event2 allKeys] containsObject:@"user_id"]);
 }
 
-- (void)testLogEventUploadLogic {
-    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
-                                            @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
-                                            }];
-
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
-    for (int i = 0; i < kAMPEventUploadThreshold; i++) {
-        [self.amplitude logEvent:@"test"];
-    }
-    [self.amplitude logEvent:@"test"];
-    [self.amplitude flushQueue];
-
-    // no sent events, event count will be threshold + 1
-    XCTAssertEqual([self.amplitude queuedEventCount], kAMPEventUploadThreshold + 1);
-
-    [serverResponse setValue:[@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding] forKey:@"data"];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
-    for (int i = 0; i < kAMPEventUploadThreshold; i++) {
-        [self.amplitude logEvent:@"test"];
-    }
-    [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude queuedEventCount], 2 * kAMPEventUploadThreshold + 1);
-
-    // make post request should only be called 3 times
-    XCTAssertEqual(_connectionCallCount, 2);
-}
-
 - (void)testRequestTooLargeBackoffLogic {
     [self.amplitude setEventUploadThreshold:2];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
@@ -290,11 +262,29 @@
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
 
-    // with upload limit 1 and 413 --> the top event will be deleted until no events left
-    XCTAssertEqual([self.amplitude queuedEventCount], 0);
+    // after first 413, the backoffupload batch size should now be 1
+    XCTAssertTrue(self.amplitude.backoffUpload);
+    XCTAssertEqual(self.amplitude.backoffUploadBatchSize, 1);
+    XCTAssertEqual(_connectionCallCount, 1);
+}
 
-    // sent 4 server requests: start_session, 2 events, delete top event, delete top event
-    XCTAssertEqual(_connectionCallCount, 3);
+- (void)testRequestTooLargeBackoffRemoveEvent {
+    [self.amplitude setEventUploadThreshold:1];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:413 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+
+    // 413 error force backoff with 1 events --> should drop the event
+    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    // after first 413, the backoffupload batch size should now be 1
+    XCTAssertTrue(self.amplitude.backoffUpload);
+    XCTAssertEqual(self.amplitude.backoffUploadBatchSize, 1);
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
 }
 
 - (void)testUUIDInEvent {

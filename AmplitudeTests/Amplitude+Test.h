@@ -16,6 +16,9 @@
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, strong) NSNumber* lastEventTime;
+@property (nonatomic, assign) BOOL backoffUpload;
+@property (nonatomic, assign) int backoffUploadBatchSize;
+@property (nonatomic, assign) BOOL sslPinningEnabled;
 
 - (void)flushQueue;
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;
