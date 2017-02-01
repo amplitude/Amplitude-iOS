@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target  = '6.0'
   s.tvos.deployment_target = '9.0'
   s.source_files           = 'Amplitude/*', 'Amplitude/SSLCertificatePinning/*'
+  s.resources              = 'Amplitude/*.der'
   s.requires_arc           = true
   s.library 	             = 'sqlite3.0'
 end
