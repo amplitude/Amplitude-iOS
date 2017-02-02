@@ -10,7 +10,7 @@ A [demo application](https://github.com/amplitude/iOS-Demo) is available to show
 
 A [demo application](https://github.com/amplitude/iOS-Extension-Demo) is available to show a simple integration in iOS extensions.
 
-See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/v3.12.1/documentation/html/index.html) for a description of all available SDK methods and classes.
+See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/v3.14.0/documentation/html/index.html) for a description of all available SDK methods and classes.
 
 Our iOS SDK also supports tvOS. See [below](https://github.com/amplitude/Amplitude-iOS#tvOS) for more information.
 
@@ -19,7 +19,7 @@ Our iOS SDK also supports tvOS. See [below](https://github.com/amplitude/Amplitu
 
 2. [Download the source code](https://github.com/amplitude/Amplitude-iOS/archive/master.zip) and extract the zip file.
 
-    Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.13.0'`. If you are using CocoaPods, you may skip steps 3 and 4.
+    Alternatively, you can pull directly from GitHub. If you use CocoaPods, add the following line to your Podfile: `pod 'Amplitude-iOS', '~> 3.14.0'`. If you are using CocoaPods, you may skip steps 3 and 4.
 
     You also have the option to install using Carthage. If you are using Carthage, add the following line to your Cartfile: `github "amplitude/Amplitude-iOS"`. Just add `#import <Amplitude/Amplitude.h>` to import all of the Amplitude header files.
 
