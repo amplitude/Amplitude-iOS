@@ -399,7 +399,20 @@ If you have your own system for tracking device IDs and would like to set a cust
 This code will work with both ARC and non-ARC projects. Preprocessor macros are used to determine which version of the compiler is being used.
 
 ### SSL pinning ###
-The SDK includes support for SSL pinning, but it is undocumented and recommended against unless you have a specific need. Please contact Amplitude support before you ship any products with SSL pinning enabled so that we are aware and can provide documentation and implementation help.
+The SDK includes support for SSL pinning. It is enabled via a preprocessor macro.
+
+If you installed the SDK using Cocoapods, you will need to enable the preprocessor macro via your Podfile by adding this post install hook:
+```ruby
+post_install do |installer_representation|
+    installer_representation.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', 'AMPLITUDE_SSL_PINNING=1']
+        end
+    end
+end
+```
+
+If you installed the SDK directly from the source, you can enable SSL pinning by adding the following preprocessor macro: `AMPLITUDE_SSL_PINNING=1`
 
 ### iOS Extensions ###
 The SDK allows for tracking in iOS Extensions. Follow the [Setup instructions](https://github.com/amplitude/amplitude-ios#setup). In Step 6, instead of initializing the SDK in `application:didFinishLaunchingWithOptions:`, you initialize the SDK in your extension's `viewDidLoad` method.

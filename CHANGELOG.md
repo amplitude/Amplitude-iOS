@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Add support for enabling SSL-pinning via Cocoapods. Thanks to @aaronwasserman for the PR. See [Readme](https://github.com/amplitude/amplitude-ios#ssl-pinning) for more information.
+
 ### 3.13.0 (January 30, 2017)
 
 * Add support for tvOS. Thanks to @gabek for the original PR. See [Readme](https://github.com/amplitude/Amplitude-iOS#tvos) for more information.
