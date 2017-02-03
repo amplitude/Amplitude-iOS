@@ -12,7 +12,7 @@ A [demo application](https://github.com/amplitude/iOS-Extension-Demo) is availab
 
 See our [SDK documentation](https://rawgit.com/amplitude/Amplitude-iOS/v3.14.0/documentation/html/index.html) for a description of all available SDK methods and classes.
 
-Our iOS SDK also supports tvOS. See [below](https://github.com/amplitude/Amplitude-iOS#tvOS) for more information.
+Our iOS SDK also supports tvOS. See [below](https://github.com/amplitude/Amplitude-iOS#tvos) for more information.
 
 # Setup #
 1. If you haven't already, go to https://amplitude.com and register for an account. You will receive an API Key.
