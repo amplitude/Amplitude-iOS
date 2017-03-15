@@ -1,5 +1,12 @@
 ## Unreleased
 
+### 3.14.1 (March, 14, 2017)
+
+* Catch exceptions when looking up device carrier.
+* Fix build warnings caused by certificate files in the Podfile. Thanks to @benasher44 for the PR.
+* Fix warnings for missing new line at end of files. Thanks to @teanet for reporting.
+* Fix linker warnings when using Amplitude framework in an extension target. Thanks to @r-peck for the PR.
+
 ### 3.14.0 (February 2, 2017)
 
 * Add support for enabling SSL-pinning via Cocoapods. Thanks to @aaronwasserman for the PR. See [Readme](https://github.com/amplitude/amplitude-ios#ssl-pinning) for more information.
