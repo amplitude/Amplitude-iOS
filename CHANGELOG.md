@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Catch exceptions when looking up device carrier.
 * Fix build warnings caused by certificate files in the Podfile. Thanks to @benasher44 for the PR.
 * Fix warnings for missing new line at end of files. Thanks to @teanet for reporting.
 * Fix linker warnings when using Amplitude framework in an extension target. Thanks to @r-peck for the PR.
