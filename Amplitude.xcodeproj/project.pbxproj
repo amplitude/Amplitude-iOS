@@ -143,7 +143,7 @@
 		343AB4171CC99F4F00962943 /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		343AB4191CC99F4F00962943 /* AmplitudeFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		343AB41B1CC99F4F00962943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		37802BF31E86AF65003E5A8B /* AmplitudeFrameworkTVOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AmplitudeFrameworkTVOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		37802BF31E86AF65003E5A8B /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E837BC70064214FD8C88C1 /* Pods-AmplitudeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmplitudeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AmplitudeTests/Pods-AmplitudeTests.release.xcconfig"; sourceTree = "<group>"; };
 		600CBC5C1E2EF5B0001F58A9 /* AmplitudeTVOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmplitudeTVOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		600CBC631E2EF5B0001F58A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -318,7 +318,7 @@
 				E98C052E1A48E7FE00800C63 /* AmplitudeTests.xctest */,
 				343AB4171CC99F4F00962943 /* Amplitude.framework */,
 				600CBC5C1E2EF5B0001F58A9 /* AmplitudeTVOSTests.xctest */,
-				37802BF31E86AF65003E5A8B /* AmplitudeFrameworkTVOS.framework */,
+				37802BF31E86AF65003E5A8B /* Amplitude.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -467,7 +467,7 @@
 			);
 			name = AmplitudeFrameworkTVOS;
 			productName = AmplitudeFramework;
-			productReference = 37802BF31E86AF65003E5A8B /* AmplitudeFrameworkTVOS.framework */;
+			productReference = 37802BF31E86AF65003E5A8B /* Amplitude.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		600CBC5B1E2EF5B0001F58A9 /* AmplitudeTVOSTests */ = {
@@ -899,7 +899,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = AmplitudeFramework/Amplitude.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Amplitude;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -931,7 +931,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = AmplitudeFramework/Amplitude.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amplitude.AmplitudeFramework;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Amplitude;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
