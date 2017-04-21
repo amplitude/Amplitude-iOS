@@ -16,8 +16,11 @@ Please see our [installation guide](https://amplitude.zendesk.com/hc/en-us/artic
 See our [iOS SDK Reference](https://amplitude.zendesk.com/hc/en-us/articles/115003970027-iOS-SDK-Reference) for a list and description of all available SDK methods.
 
 # Demo Applications #
-* A [demo application](https://github.com/amplitude/iOS-Demo) showing a simple integration in an iOS app.
+* A [demo application](https://github.com/amplitude/iOS-Demo) showing the integration of our SDK using Cocoapods.
+* A [demo application](https://github.com/amplitude/iOS-Demo-Carthage) showing the integration of our SDK using Carthage.
+* A [demo application](https://github.com/amplitude/Segment-iOS-Demo) showing the integration of our SDK via [Segment's](https://segment.com/) iOS SDK.
 * A [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing an integration in an iOS extension.
+* A [demo application](https://github.com/amplitude/GTM-iOS-Demo) demonstrating a potential integration with Google Tag Manager.
 
 # Changelog #
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md) to view the iOS SDK Changelog.
