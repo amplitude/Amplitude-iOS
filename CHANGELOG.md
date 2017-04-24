@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Migrate setup instructions and SDK documentation in the README file to Zendesk articles.
+
 ### 3.14.1 (March, 14, 2017)
 
 * Catch exceptions when looking up device carrier.
