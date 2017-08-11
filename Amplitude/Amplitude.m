@@ -1543,12 +1543,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                                             CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
                                             CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
 #else
-    newString = NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                          (CFStringRef)string,
-                                                                          NULL,
-                                                                          CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                                                          CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
-    SAFE_ARC_AUTORELEASE(newString);
+    newString = [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 #endif
     if (newString) {
         return newString;
