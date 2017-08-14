@@ -29,28 +29,28 @@
 @end
 
 @implementation AmplitudeTests {
-    id _connectionMock;
+    id _sharedSessionMock;
     int _connectionCallCount;
 }
 
 - (void)setUp {
     [super setUp];
-    _connectionMock = [OCMockObject mockForClass:NSURLConnection.class];
+    _sharedSessionMock = [OCMockObject partialMockForObject:[NSURLSession sharedSession]];
     _connectionCallCount = 0;
     [self.amplitude initializeApiKey:apiKey];
 }
 
 - (void)tearDown {
-    [_connectionMock stopMocking];
+    [_sharedSessionMock stopMocking];
 }
 
-- (void)setupAsyncResponse:(id) connectionMock response:(NSMutableDictionary*) serverResponse {
-    [[[connectionMock expect] andDo:^(NSInvocation *invocation) {
+- (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
+    [[[_sharedSessionMock stub] andDo:^(NSInvocation *invocation) {
         _connectionCallCount++;
         void (^handler)(NSURLResponse*, NSData*, NSError*);
-        [invocation getArgument:&handler atIndex:4];
-        handler(serverResponse[@"response"], serverResponse[@"data"], serverResponse[@"error"]);
-    }] sendAsynchronousRequest:OCMOCK_ANY queue:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&handler atIndex:3];
+        handler(serverResponse[@"data"], serverResponse[@"response"], serverResponse[@"error"]);
+    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 }
 
 - (void)testInstanceWithName {
@@ -257,7 +257,7 @@
                                               }];
 
     // 413 error force backoff with 2 events --> new upload limit will be 1
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
     [self.amplitude logEvent:@"test"];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
@@ -265,7 +265,9 @@
     // after first 413, the backoffupload batch size should now be 1
     XCTAssertTrue(self.amplitude.backoffUpload);
     XCTAssertEqual(self.amplitude.backoffUploadBatchSize, 1);
-    XCTAssertEqual(_connectionCallCount, 1);
+
+    // 3 upload attempts: upload 2 events, upload first event fail -> remove first event, upload second event fail -> remove second event
+    XCTAssertEqual(_connectionCallCount, 3);
 }
 
 - (void)testRequestTooLargeBackoffRemoveEvent {
@@ -276,7 +278,7 @@
                                               }];
 
     // 413 error force backoff with 1 events --> should drop the event
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
 
@@ -325,7 +327,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
     AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
     [self.amplitude identify:identify2];
     SAFE_ARC_RELEASE(identify2);
@@ -400,7 +402,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
 
     [self.amplitude logEvent:@"test_event1"];
     [self.amplitude identify:[[AMPIdentify identify] add:@"photoCount" value:[NSNumber numberWithInt:1]]];
@@ -559,7 +561,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
 
     [self.amplitude setOffline:YES];
     [self.amplitude logEvent:@"test"];
@@ -588,7 +590,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
 
     [self.amplitude setOffline:YES];
     [self.amplitude logEvent:@"test1"];

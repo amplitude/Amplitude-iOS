@@ -964,13 +964,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     SAFE_ARC_RELEASE(postData);
 
-    // If pinning is enabled, use the AMPURLConnection that handles it.
-#if AMPLITUDE_SSL_PINNING
-    id Connection = (self.sslPinningEnabled ? [AMPURLConnection class] : [NSURLConnection class]);
-#else
-    id Connection = [NSURLConnection class];
-#endif
-    [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+//    // If pinning is enabled, use the AMPURLConnection that handles it.
+//#if AMPLITUDE_SSL_PINNING
+//    id Connection = (self.sslPinningEnabled ? [AMPURLConnection class] : [NSURLConnection class]);
+//#else
+//    id Connection = [NSURLConnection class];
+//#endif
+//    [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -1051,7 +1052,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 _uploadTaskID = UIBackgroundTaskInvalid;
             }
         }
-    }];
+    }] resume];
 }
 
 #pragma mark - application lifecycle methods
