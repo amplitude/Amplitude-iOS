@@ -1535,21 +1535,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSString*)urlEncodeString:(NSString*) string
 {
-    NSString *newString;
-#if __has_feature(objc_arc)
-    newString = (__bridge_transfer NSString*)
-    CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                            (__bridge CFStringRef)string,
-                                            NULL,
-                                            CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                            CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-#else
-    newString = [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-#endif
-    if (newString) {
-        return newString;
-    }
-    return @"";
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 }
 
 - (NSDate*) currentTime
