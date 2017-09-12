@@ -12,6 +12,7 @@
 
 + (AMPDatabaseHelper*)getDatabaseHelper;
 + (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName;
++ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName databaseDirectoryPath:(NSString *)directoryPath;
 - (BOOL)createTables;
 - (BOOL)dropTables;
 - (BOOL)upgrade:(int) oldVersion newVersion:(int) newVersion;

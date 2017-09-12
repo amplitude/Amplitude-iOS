@@ -112,7 +112,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [Amplitude instanceWithName:nil];
 }
 
-+ (Amplitude *)instanceWithName:(NSString*)instanceName {
++ (Amplitude *)instanceWithName:(NSString*)instanceName
+{
+    NSString *defaultStoragePath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    return [self instanceWithName:instanceName storageDirectoryPath:defaultStoragePath];
+}
+
++ (Amplitude *)instanceWithName:(NSString*) instanceName storageDirectoryPath:(NSString *)directoryPath
+{
     static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -129,7 +136,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     @synchronized(_instances) {
         client = [_instances objectForKey:instanceName];
         if (client == nil) {
-            client = [[self alloc] initWithInstanceName:instanceName];
+            client = [[self alloc] initWithInstanceName:instanceName storageDirectoryPath:directoryPath];
             [_instances setObject:client forKey:instanceName];
             SAFE_ARC_RELEASE(client);
         }
@@ -211,6 +218,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (id)initWithInstanceName:(NSString*) instanceName
 {
+    NSString *defaultStoragePath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    return [self initWithInstanceName:instanceName storageDirectoryPath:defaultStoragePath];
+}
+
+- (id)initWithInstanceName:(NSString*) instanceName storageDirectoryPath:(NSString *)eventsDataDirectory
+{
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
@@ -259,7 +272,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             _uploadTaskID = UIBackgroundTaskInvalid;
 #endif
             
-            NSString *eventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+            NSParameterAssert(eventsDataDirectory);
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
             if (![_instanceName isEqualToString:kAMPDefaultInstance]) {
                 propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, _instanceName]; // namespace pList with instance name

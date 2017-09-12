@@ -75,7 +75,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return [AMPDatabaseHelper getDatabaseHelper:nil];
 }
 
-+ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName
++ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName {
+    return [self getDatabaseHelper:instanceName databaseDirectoryPath:nil];
+}
+
++ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName databaseDirectoryPath:(NSString *)directoryPath
 {
     static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
@@ -92,7 +96,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     @synchronized(_instances) {
         dbHelper = [_instances objectForKey:instanceName];
         if (dbHelper == nil) {
-            dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName];
+            dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName databaseDirectoryPath:directoryPath];
             [_instances setObject:dbHelper forKey:instanceName];
             SAFE_ARC_RELEASE(dbHelper);
         }
@@ -107,13 +111,18 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
 - (id)initWithInstanceName:(NSString*) instanceName
 {
+    return [self initWithInstanceName:instanceName databaseDirectoryPath:nil];
+}
+
+- (id)initWithInstanceName:(NSString*) instanceName databaseDirectoryPath:(NSString *)directoryPath
+{
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
     instanceName = [instanceName lowercaseString];
 
     if ((self = [super init])) {
-        NSString *databaseDirectory = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+        NSString *databaseDirectory = directoryPath ?: [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
         NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
         if (![instanceName isEqualToString:kAMPDefaultInstance]) {
             databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];

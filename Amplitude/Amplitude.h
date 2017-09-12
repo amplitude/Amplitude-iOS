@@ -125,6 +125,19 @@
  */
 + (Amplitude *)instanceWithName:(NSString*) instanceName;
 
+
+/**
+ This fetches a named SDK instance. Use this if logging events to multiple Amplitude apps.
+ 
+ @param instanceName the name of the SDK instance to fetch.
+ @param stoageDirectoryPath the path to a directory to store amplitude's database and meta. Should not be nil
+ 
+ @returns the Amplitude SDK instance corresponding to `instanceName`
+ 
+ @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
+ */
++ (Amplitude *)instanceWithName:(NSString*) instanceName storageDirectoryPath:(NSString *)directory;
+
 /**-----------------------------------------------------------------------------
  * @name Initialize the Amplitude SDK with your Amplitude API Key
  * -----------------------------------------------------------------------------
