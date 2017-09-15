@@ -32,6 +32,7 @@
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
 #import "AMPURLConnection.h"
+#import "AMPURLSession.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPUtils.h"
 #import "AMPIdentify.h"
@@ -964,14 +965,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     SAFE_ARC_RELEASE(postData);
 
-//    // If pinning is enabled, use the AMPURLConnection that handles it.
-//#if AMPLITUDE_SSL_PINNING
-//    id Connection = (self.sslPinningEnabled ? [AMPURLConnection class] : [NSURLConnection class]);
-//#else
-//    id Connection = [NSURLConnection class];
-//#endif
-//    [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    // If pinning is enabled, use the AMPURLSession that handles it.
+#if AMPLITUDE_SSL_PINNING
+    id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession sharedSession]);
+#else
+    id session = [NSURLSession sharedSession];
+#endif
+    [[session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {

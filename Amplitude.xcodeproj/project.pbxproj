@@ -63,6 +63,11 @@
 		60227C0C1CC5AC2F007C117B /* AMPRevenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 60227C0A1CC5AB8A007C117B /* AMPRevenue.m */; };
 		60227C0E1CC5BC07007C117B /* RevenueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 60227C0D1CC5BC07007C117B /* RevenueTests.m */; };
 		602A9A6B1B754E7B0067230C /* AmplitudeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 602A9A6A1B754E7B0067230C /* AmplitudeTests.m */; };
+		60AFE7321F6B637100DF9A88 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */; };
+		60AFE7331F6B70EF00DF9A88 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 60AFE7301F6B636B00DF9A88 /* AMPURLSession.h */; };
+		60AFE7341F6B70F300DF9A88 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */; };
+		60AFE7351F6B70F300DF9A88 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */; };
+		60AFE7361F6B70F400DF9A88 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */; };
 		60BA92771C2376680043178E /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BA92721C2376680043178E /* AMPDatabaseHelper.m */; };
 		60BA92781C2376680043178E /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BA92741C2376680043178E /* AMPIdentify.m */; };
 		60BA92791C2376680043178E /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BA92761C2376680043178E /* AMPUtils.m */; };
@@ -125,6 +130,8 @@
 		60227C0A1CC5AB8A007C117B /* AMPRevenue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPRevenue.m; sourceTree = "<group>"; };
 		60227C0D1CC5BC07007C117B /* RevenueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RevenueTests.m; sourceTree = "<group>"; };
 		602A9A6A1B754E7B0067230C /* AmplitudeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmplitudeTests.m; sourceTree = "<group>"; };
+		60AFE7301F6B636B00DF9A88 /* AMPURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPURLSession.h; sourceTree = "<group>"; };
+		60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPURLSession.m; sourceTree = "<group>"; };
 		60BA92711C2376680043178E /* AMPDatabaseHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPDatabaseHelper.h; sourceTree = "<group>"; };
 		60BA92721C2376680043178E /* AMPDatabaseHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPDatabaseHelper.m; sourceTree = "<group>"; };
 		60BA92731C2376680043178E /* AMPIdentify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPIdentify.h; sourceTree = "<group>"; };
@@ -290,6 +297,8 @@
 		E98C05251A48E7FE00800C63 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
+				60AFE7301F6B636B00DF9A88 /* AMPURLSession.h */,
+				60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */,
 				E96785E11A48E93F00887CCD /* AMPARCMacros.h */,
 				E96785E21A48E93F00887CCD /* AMPConstants.h */,
 				9DC708591AD4B28300949778 /* AMPConstants.m */,
@@ -365,6 +374,7 @@
 				343AB42E1CC9A1EA00962943 /* AMPConstants.h in Headers */,
 				343AB4381CC9A1EA00962943 /* ISPCertificatePinning.h in Headers */,
 				343AB42D1CC9A1EA00962943 /* AMPARCMacros.h in Headers */,
+				60AFE7331F6B70EF00DF9A88 /* AMPURLSession.h in Headers */,
 				343AB43A1CC9A1EA00962943 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				343AB4311CC9A1EA00962943 /* AMPIdentify.h in Headers */,
 				343AB4361CC9A1EA00962943 /* AMPURLConnection.h in Headers */,
@@ -457,7 +467,7 @@
 		E98C051B1A48E7FE00800C63 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Amplitude;
 				TargetAttributes = {
 					343AB4161CC99F4F00962943 = {
@@ -630,6 +640,7 @@
 				343AB4281CC99FD500962943 /* ISPCertificatePinning.m in Sources */,
 				343AB4221CC99FBD00962943 /* AMPIdentify.m in Sources */,
 				343AB4241CC99FC200962943 /* AMPLocationManagerDelegate.m in Sources */,
+				60AFE7351F6B70F300DF9A88 /* AMPURLSession.m in Sources */,
 				343AB4271CC99FC900962943 /* AMPUtils.m in Sources */,
 				343AB4261CC99FC700962943 /* AMPURLConnection.m in Sources */,
 				343AB4201CC99FB800962943 /* AMPDatabaseHelper.m in Sources */,
@@ -646,6 +657,7 @@
 				600CBC731E2EF61F001F58A9 /* AMPUtils.m in Sources */,
 				600CBC7C1E2EF63F001F58A9 /* AmplitudeTests.m in Sources */,
 				600CBC821E2EF654001F58A9 /* SessionTests.m in Sources */,
+				60AFE7361F6B70F400DF9A88 /* AMPURLSession.m in Sources */,
 				600CBC791E2EF637001F58A9 /* AMPDatabaseHelperTests.m in Sources */,
 				600CBC761E2EF629001F58A9 /* ISPCertificatePinning.m in Sources */,
 				600CBC7A1E2EF63A001F58A9 /* Amplitude+Test.m in Sources */,
@@ -677,6 +689,7 @@
 				E96785EC1A48E93F00887CCD /* AMPDeviceInfo.m in Sources */,
 				E96785EE1A48E93F00887CCD /* AMPLocationManagerDelegate.m in Sources */,
 				60BA92791C2376680043178E /* AMPUtils.m in Sources */,
+				60AFE7321F6B637100DF9A88 /* AMPURLSession.m in Sources */,
 				9DC7085A1AD4B28300949778 /* AMPConstants.m in Sources */,
 				9D6E19551ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				E96785ED1A48E93F00887CCD /* Amplitude.m in Sources */,
@@ -695,6 +708,7 @@
 				602A9A6B1B754E7B0067230C /* AmplitudeTests.m in Sources */,
 				9DFBB9CC1AB0D47A0017F703 /* SessionTests.m in Sources */,
 				E96786001A48FBD100887CCD /* AMPDeviceInfo.m in Sources */,
+				60AFE7341F6B70F300DF9A88 /* AMPURLSession.m in Sources */,
 				9DFBB9CA1AB0D26E0017F703 /* BaseTestCase.m in Sources */,
 				60BA927C1C23767D0043178E /* AMPUtils.m in Sources */,
 				601AF94B1E2EF2A1006CE4BA /* AmplitudeiOSTests.m in Sources */,
@@ -827,14 +841,20 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -876,14 +896,20 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
