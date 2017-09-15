@@ -967,11 +967,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     // If pinning is enabled, use the AMPURLSession that handles it.
 #if AMPLITUDE_SSL_PINNING
-    id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession sharedSession]);
+    id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
 #else
-    id session = [NSURLSession sharedSession];
+    id session = [NSURLSession class];
 #endif
-    [[session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [[[session sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {

@@ -10,9 +10,10 @@
 #import <Foundation/Foundation.h>
 #import "ISPPinnedNSURLSessionDelegate.h"
 
-@interface AMPURLSession : ISPPinnedNSURLSessionDelegate <NSURLSessionDelegate, NSURLSessionDataDelegate, NSURLSessionTaskDelegate>
+@interface AMPURLSession : ISPPinnedNSURLSessionDelegate <NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 
-+ (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
++ (AMPURLSession *)sharedSession;
+- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
 
 @end
 #endif

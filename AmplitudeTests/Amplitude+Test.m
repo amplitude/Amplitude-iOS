@@ -49,7 +49,7 @@
     return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
 }
 
-- (void)flushUploads:(void (^)())handler {
+- (void)flushUploads:(void (^)(void))handler {
     [self performSelector:@selector(uploadEvents)];
     [self flushQueue];
 

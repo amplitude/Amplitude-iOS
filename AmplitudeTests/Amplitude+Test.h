@@ -22,7 +22,7 @@
 
 - (void)flushQueue;
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;
-- (void)flushUploads:(void (^)())handler;
+- (void)flushUploads:(void (^)(void))handler;
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getLastIdentify;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;

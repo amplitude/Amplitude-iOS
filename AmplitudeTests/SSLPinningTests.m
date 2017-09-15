@@ -59,6 +59,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
 
     self.amplitude.sslPinningEnabled = YES;
+    [AMPURLSession sharedSession]; // trigger static instance to pin valid certificates, then pin the invalid one
     [AMPURLSession pinSSLCertificate:@[@"InvalidCertificationAuthority"]];
 
     [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];

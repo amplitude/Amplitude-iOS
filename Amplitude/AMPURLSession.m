@@ -17,13 +17,27 @@
 
 @end
 
-@implementation AMPURLSession
+@implementation AMPURLSession {
+    NSURLSession *_sharedSession;
+}
 
-+ (void)initialize
++ (AMPURLSession *)sharedSession {
+    static AMPURLSession *_instance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[AMPURLSession alloc] init];
+    });
+    return _instance;
+}
+
+- (id)init
 {
-    if (self == [AMPURLSession class]) {
+    if ((self = [super init])) {
         [AMPURLSession pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        _sharedSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     }
+    return self;
 }
 
 + (void)pinSSLCertificate:(NSArray *)certFilenames
@@ -59,16 +73,14 @@
 
 - (void)dealloc
 {
+    [_sharedSession finishTasksAndInvalidate];
+    SAFE_ARC_RELEASE(_sharedSession);
     SAFE_ARC_SUPER_DEALLOC();
 }
 
-+ (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
+- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
                             completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler {
-
-    AMPURLSession *delegate = SAFE_ARC_AUTORELEASE([[AMPURLSession alloc] init]);
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:nil];
-    return [session dataTaskWithRequest:request completionHandler:completionHandler];
+    return [_sharedSession dataTaskWithRequest:request completionHandler:completionHandler];
 }
 
 @end
