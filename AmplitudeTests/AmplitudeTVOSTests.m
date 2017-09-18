@@ -29,28 +29,28 @@
 @end
 
 @implementation AmplitudeTVOSTests {
-    id _connectionMock;
+    id _sharedSessionMock;
     int _connectionCallCount;
 }
 
 - (void)setUp {
     [super setUp];
-    _connectionMock = [OCMockObject mockForClass:NSURLConnection.class];
+    _sharedSessionMock = [OCMockObject partialMockForObject:[NSURLSession sharedSession]];
     _connectionCallCount = 0;
     [self.amplitude initializeApiKey:apiKey];
 }
 
 - (void)tearDown {
-    [_connectionMock stopMocking];
+    [_sharedSessionMock stopMocking];
 }
 
-- (void)setupAsyncResponse:(id) connectionMock response:(NSMutableDictionary*) serverResponse {
-    [[[connectionMock expect] andDo:^(NSInvocation *invocation) {
+- (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
+    [[[_sharedSessionMock stub] andDo:^(NSInvocation *invocation) {
         _connectionCallCount++;
         void (^handler)(NSURLResponse*, NSData*, NSError*);
-        [invocation getArgument:&handler atIndex:4];
-        handler(serverResponse[@"response"], serverResponse[@"data"], serverResponse[@"error"]);
-    }] sendAsynchronousRequest:OCMOCK_ANY queue:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&handler atIndex:3];
+        handler(serverResponse[@"data"], serverResponse[@"response"], serverResponse[@"error"]);
+    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 }
 
 - (void)testLogEventUploadLogic {
@@ -58,7 +58,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
 
     // tv os should have upload event upload threshold set to 1
     XCTAssertEqual(kAMPEventUploadThreshold, 1);

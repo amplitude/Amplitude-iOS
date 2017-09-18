@@ -32,6 +32,7 @@
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
 #import "AMPURLConnection.h"
+#import "AMPURLSession.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPUtils.h"
 #import "AMPIdentify.h"
@@ -964,13 +965,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     SAFE_ARC_RELEASE(postData);
 
-    // If pinning is enabled, use the AMPURLConnection that handles it.
+    // If pinning is enabled, use the AMPURLSession that handles it.
 #if AMPLITUDE_SSL_PINNING
-    id Connection = (self.sslPinningEnabled ? [AMPURLConnection class] : [NSURLConnection class]);
+    id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
 #else
-    id Connection = [NSURLConnection class];
+    id session = [NSURLSession class];
 #endif
-    [Connection sendAsynchronousRequest:request queue:_backgroundQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    [[[session sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -1051,7 +1052,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 _uploadTaskID = UIBackgroundTaskInvalid;
             }
         }
-    }];
+    }] resume];
 }
 
 #pragma mark - application lifecycle methods
@@ -1534,26 +1535,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSString*)urlEncodeString:(NSString*) string
 {
-    NSString *newString;
-#if __has_feature(objc_arc)
-    newString = (__bridge_transfer NSString*)
-    CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                            (__bridge CFStringRef)string,
-                                            NULL,
-                                            CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                            CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-#else
-    newString = NSMakeCollectable(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                          (CFStringRef)string,
-                                                                          NULL,
-                                                                          CFSTR(":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"),
-                                                                          CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
-    SAFE_ARC_AUTORELEASE(newString);
-#endif
-    if (newString) {
-        return newString;
-    }
-    return @"";
+    NSCharacterSet * allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"] invertedSet];
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
 }
 
 - (NSDate*) currentTime

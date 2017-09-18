@@ -29,28 +29,28 @@
 @end
 
 @implementation AmplitudeiOSTests {
-    id _connectionMock;
+    id _sharedSessionMock;
     int _connectionCallCount;
 }
 
 - (void)setUp {
     [super setUp];
-    _connectionMock = [OCMockObject mockForClass:NSURLConnection.class];
+    _sharedSessionMock = [OCMockObject partialMockForObject:[NSURLSession sharedSession]];
     _connectionCallCount = 0;
     [self.amplitude initializeApiKey:apiKey];
 }
 
 - (void)tearDown {
-    [_connectionMock stopMocking];
+    [_sharedSessionMock stopMocking];
 }
 
-- (void)setupAsyncResponse:(id) connectionMock response:(NSMutableDictionary*) serverResponse {
-    [[[connectionMock expect] andDo:^(NSInvocation *invocation) {
+- (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
+    [[[_sharedSessionMock stub] andDo:^(NSInvocation *invocation) {
         _connectionCallCount++;
         void (^handler)(NSURLResponse*, NSData*, NSError*);
-        [invocation getArgument:&handler atIndex:4];
-        handler(serverResponse[@"response"], serverResponse[@"data"], serverResponse[@"error"]);
-    }] sendAsynchronousRequest:OCMOCK_ANY queue:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&handler atIndex:3];
+        handler(serverResponse[@"data"], serverResponse[@"response"], serverResponse[@"error"]);
+    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 }
 
 - (void)testLogEventUploadLogic {
@@ -59,7 +59,7 @@
                                             @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
                                             }];
 
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
     for (int i = 0; i < kAMPEventUploadThreshold; i++) {
         [self.amplitude logEvent:@"test"];
     }
@@ -70,7 +70,7 @@
     XCTAssertEqual([self.amplitude queuedEventCount], kAMPEventUploadThreshold + 1);
 
     [serverResponse setValue:[@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding] forKey:@"data"];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
     for (int i = 0; i < kAMPEventUploadThreshold; i++) {
         [self.amplitude logEvent:@"test"];
     }
