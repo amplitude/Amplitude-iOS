@@ -1535,7 +1535,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSString*)urlEncodeString:(NSString*) string
 {
-    return [string stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    NSCharacterSet * allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"] invertedSet];
+    return [string stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
 }
 
 - (NSDate*) currentTime
