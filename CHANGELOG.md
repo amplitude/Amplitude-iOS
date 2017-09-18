@@ -1,8 +1,12 @@
 ## Unreleased
 
+### 4.0.0 (September 18, 2017)
+
+* Minimum required iOS version is now 9.0
+* Removed deprecated methods, fixed warnings in Xcode 9, adding support for iOS 11.
 * Migrate setup instructions and SDK documentation in the README file to Zendesk articles.
 
-### 3.14.1 (March, 14, 2017)
+### 3.14.1 (March 14, 2017)
 
 * Catch exceptions when looking up device carrier.
 * Fix build warnings caused by certificate files in the Podfile. Thanks to @benasher44 for the PR.
