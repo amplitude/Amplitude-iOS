@@ -1,5 +1,9 @@
 ## Unreleased
 
+### 4.0.1 (September 18, 2017)
+
+* Lowering minimum required iOS version down to 7.0.
+
 ### 4.0.0 (September 18, 2017)
 
 * Minimum required iOS version is now 9.0
