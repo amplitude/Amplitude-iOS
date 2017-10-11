@@ -475,15 +475,17 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
         }];
 
-        UIApplication *app = [self getSharedApplication];
-        if (app != nil) {
-            UIApplicationState state = app.applicationState;
-            if (state != UIApplicationStateBackground) {
-                // If this is called while the app is running in the background, for example
-                // via a push notification, don't call enterForeground
-                [self enterForeground];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            UIApplication *app = [self getSharedApplication];
+            if (app != nil) {
+                UIApplicationState state = app.applicationState;
+                if (state != UIApplicationStateBackground) {
+                    // If this is called while the app is running in the background, for example
+                    // via a push notification, don't call enterForeground
+                    [self enterForeground];
+                }
             }
-        }
+        }];
         _initialized = YES;
     }
 }
