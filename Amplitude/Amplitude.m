@@ -475,15 +475,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
         }];
 
-        UIApplication *app = [self getSharedApplication];
-        if (app != nil) {
-            UIApplicationState state = app.applicationState;
-            if (state != UIApplicationStateBackground) {
-                // If this is called while the app is running in the background, for example
-                // via a push notification, don't call enterForeground
-                [self enterForeground];
+        // Normally _inForeground is set by the enterForeground callback, but initializeWithApiKey will be called after the app's enterForeground
+        // notification is already triggered, so we need to manually check and set it now.
+        // UIApplication methods are only allowed on the main thread so need to dispatch this synchronously to the main thread.
+        void (^checkInForeground)(void) = ^{
+            UIApplication *app = [self getSharedApplication];
+            if (app != nil) {
+                UIApplicationState state = app.applicationState;
+                if (state != UIApplicationStateBackground) {
+                    _inForeground = YES;
+                }
             }
-        }
+        };
+        [self runSynchronouslyOnMainQueue:checkInForeground];
+        NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+        [self startOrContinueSession:now];
         _initialized = YES;
     }
 }
@@ -511,10 +517,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         AMPLITUDE_LOG(@"Already running in the background.");
         block();
         return NO;
-    }
-    else {
+    } else {
         [_backgroundQueue addOperationWithBlock:block];
         return YES;
+    }
+}
+
+/**
+ * Run a block on the main thread. If already on the main thread, run immediately.
+ */
+- (void)runSynchronouslyOnMainQueue:(void (^)(void))block
+{
+    if ([NSThread isMainThread]) {
+        block();
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), block);
     }
 }
 
