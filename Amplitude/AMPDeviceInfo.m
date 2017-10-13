@@ -78,27 +78,22 @@
 
 -(NSString*) carrier {
     if (!_carrier) {
-        @try {
-            Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
-            SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
-            SEL carrierName = NSSelectorFromString(@"carrierName");
-            if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
-                networkInfo = SAFE_ARC_RETAIN([[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init]);
-                id carrier = nil;
-                id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
-                if (imp1) {
-                    carrier = imp1(networkInfo, subscriberCellularProvider);
-                }
-                NSString* (*imp2)(id, SEL) = (NSString* (*)(id, SEL))[carrier methodForSelector:carrierName];
-                if (imp2) {
-                    _carrier = SAFE_ARC_RETAIN(imp2(carrier, carrierName));
-                }
+        Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
+        SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
+        SEL carrierName = NSSelectorFromString(@"carrierName");
+        if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
+            networkInfo = SAFE_ARC_RETAIN([[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init]);
+            id carrier = nil;
+            id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
+            if (imp1) {
+                carrier = imp1(networkInfo, subscriberCellularProvider);
             }
-            else {
-                _carrier = SAFE_ARC_RETAIN(@"Unknown");
+            NSString* (*imp2)(id, SEL) = (NSString* (*)(id, SEL))[carrier methodForSelector:carrierName];
+            if (imp2) {
+                _carrier = SAFE_ARC_RETAIN(imp2(carrier, carrierName));
             }
         }
-        @catch (NSException *exception) {
+        else {
             _carrier = SAFE_ARC_RETAIN(@"Unknown");
         }
     }
