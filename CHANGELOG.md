@@ -1,5 +1,6 @@
 ## Unreleased
 
+* Ensure the foreground checker in `initializeApiKey` runs on the main thread. This fixes the "UI API called on a background thread" warning.
 * Removing unnecessary try / catch when looking up device carrier.
 
 ## 4.0.1 (September 18, 2017)
