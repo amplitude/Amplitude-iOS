@@ -1,77 +1,79 @@
 ## Unreleased
 
-### 4.0.1 (September 18, 2017)
+* Removing unnecessary try / catch when looking up device carrier.
+
+## 4.0.1 (September 18, 2017)
 
 * Lowering minimum required iOS version down to 7.0.
 
-### 4.0.0 (September 18, 2017)
+## 4.0.0 (September 18, 2017)
 
 * Minimum required iOS version is now 9.0
 * Removed deprecated methods, fixed warnings in Xcode 9, adding support for iOS 11.
 * Migrate setup instructions and SDK documentation in the README file to Zendesk articles.
 
-### 3.14.1 (March 14, 2017)
+## 3.14.1 (March 14, 2017)
 
 * Catch exceptions when looking up device carrier.
 * Fix build warnings caused by certificate files in the Podfile. Thanks to @benasher44 for the PR.
 * Fix warnings for missing new line at end of files. Thanks to @teanet for reporting.
 * Fix linker warnings when using Amplitude framework in an extension target. Thanks to @r-peck for the PR.
 
-### 3.14.0 (February 2, 2017)
+## 3.14.0 (February 2, 2017)
 
 * Add support for enabling SSL-pinning via Cocoapods. Thanks to @aaronwasserman for the PR. See [Readme](https://github.com/amplitude/amplitude-ios#ssl-pinning) for more information.
 
-### 3.13.0 (January 30, 2017)
+## 3.13.0 (January 30, 2017)
 
 * Add support for tvOS. Thanks to @gabek for the original PR. See [Readme](https://github.com/amplitude/Amplitude-iOS#tvos) for more information.
 * Bump iOS minimum deployment target to 6.0.
 * Update device list. Thanks to @subbotkin for the PR.
 
-### 3.12.1 (December 15, 2016)
+## 3.12.1 (December 15, 2016)
 
 * Fix bug where `regenerateDeviceId` was not being run on background thread.
 * `[AMPDeviceInfo generateUUID]` should be a static method.
 
-### 3.12.0 (December 5, 2016)
+## 3.12.0 (December 5, 2016)
 
 * Add helper method to regenerate a new random deviceId. This can be used in conjunction with `setUserId:nil` to anonymize a user after they log out. Note this is not recommended unless you know what you are doing. See [Readme](https://github.com/amplitude/Amplitude-iOS#logging-out-and-anonymous-users) for more information.
 
-### 3.11.1 (November 7, 2016)
+## 3.11.1 (November 7, 2016)
 
 * Allow `logEvent` with a custom long long timestamp (milliseconds since epoch). See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/v3.11.1/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:) for more details.
 
-### 3.11.0 (November 7, 2016)
+## 3.11.0 (November 7, 2016)
 
 * Allow `logEvent` with a custom timestamp (milliseconds since epoch). If the timestamp value is `nil`, then the event is timestamped with the current time. If setting a custom timestamp, you should use `[NSNumber numberWithLongLong:milliseconds]`. See [iOS documentation](https://rawgit.com/amplitude/Amplitude-iOS/master/documentation/html/Classes/Amplitude.html#//api/name/logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:) for more details.
 
-### 3.10.1 (October 31, 2016)
+## 3.10.1 (October 31, 2016)
 
 * Enable "Weak References in Manual Retain Release" to fix build errors in Xcode 7.3 and up.
 
-### 3.10.0 (October 26, 2016)
+## 3.10.0 (October 26, 2016)
 
 * Add ability to log identify events outOfSession, this is useful for updating user properties without triggering session-handling logic. See [Readme](https://github.com/amplitude/Amplitude-iOS#tracking-sessions) for more information.
 
-### 3.9.0 (October 7, 2016)
+## 3.9.0 (October 7, 2016)
 
 * Switch to unarchiving unsent events archive file with `[NSKeyedUnarchiver unarchiveObjectWithFile]` to iOS 9's `[NSKeyedUnarchiver unarchiveTopLevelObjectWithData]`. Note: this only affects you if you are *upgrading from an SDK version older than v3.1.0 straight to v3.9.0 or newer*. Users who have not updated to iOS 9.0 or newer will lose any unsent events stored on their devices. This also removes all Objective-C Exceptions (@try/@catch) from the SDK, removing the need to toggle `Enable Objective-C Exceptions` in Xcode.
 * Block event property and user property dictionaries that have more than 1000 items. This is to block properties that are set unintentionally (for example in a loop). A single call to `logEvent` should not have more than 1000 event properties. Similarly a single call to `setUserProperties` should not have more than 1000 user properties.
 
-### 3.8.5 (August 29, 2016)
+## 3.8.5 (August 29, 2016)
 
 * Fix crash by handling NULL events saved to and fetched from the database.
 
-### 3.8.4 Re-release (August 19, 2016)
+## 3.8.4 Re-release (August 19, 2016)
 
 * Added support for integration via Carthage. Thanks to @mpurland for the original PR. Thanks to @lexrus for follow up PR to fix framework naming.
 * Cleaned up warnings for expression result unused.
 * Note if you installed 3.8.4 on August 18, just rerun `pod install` or `carthage update` to pull in the new changes. The re-release was to fix the Carthage framework naming.
 
-### 3.8.3 (July 18, 2016)
+## 3.8.3 (July 18, 2016)
 
 * Fix overflow bug for long long values saved to Sqlite DB on 32-bit devices.
 
-### 3.8.2 (July 11, 2016)
+## 3.8.2 (July 11, 2016)
 
 * `productId` is no longer a required field for `Revenue` logged via `logRevenueV2`.
 * Fix bug where revenue receipt was being truncated if it was too long (exceeded 1024 characters);
