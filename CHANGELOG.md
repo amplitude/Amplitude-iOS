@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Fix unknown carrier caching. This fixes "Could not successfully update network info during initialization" warnings when logging events on devices without SIM cards.
+
 ## 4.0.2 (October 13, 2017)
 
 * Ensure the foreground checker in `initializeApiKey` runs on the main thread. This fixes the "UI API called on a background thread" warning.
