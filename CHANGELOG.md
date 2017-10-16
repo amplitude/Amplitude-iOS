@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 4.0.3 (October 16, 2017)
+
 * Fix unknown carrier caching. This fixes "Could not successfully update network info during initialization" warnings when logging events on devices without SIM cards.
 
 ## 4.0.2 (October 13, 2017)
