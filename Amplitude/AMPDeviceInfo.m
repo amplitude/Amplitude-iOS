@@ -93,7 +93,8 @@
                 _carrier = SAFE_ARC_RETAIN(imp2(carrier, carrierName));
             }
         }
-        else {
+        // unable to fetch carrier information
+        if (!_carrier) {
             _carrier = SAFE_ARC_RETAIN(@"Unknown");
         }
     }
