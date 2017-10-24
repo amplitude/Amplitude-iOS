@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 4.0.4 (October 23, 2017)
+
+* Fix bug where events in the initial session for brand new users have a session id of -1 (introduced in v4.0.2).
+
 ## 4.0.3 (October 16, 2017)
 
 * Fix unknown carrier caching. This fixes "Could not successfully update network info during initialization" warnings when logging events on devices without SIM cards.
