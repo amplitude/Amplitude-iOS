@@ -483,13 +483,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (app != nil) {
                 UIApplicationState state = app.applicationState;
                 if (state != UIApplicationStateBackground) {
-                    _inForeground = YES;
+                    [self runOnBackgroundQueue:^{
+                        NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+                        [self startOrContinueSession:now];
+                        _inForeground = YES;
+                    }];
+
                 }
             }
         };
         [self runSynchronouslyOnMainQueue:checkInForeground];
-        NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-        [self startOrContinueSession:now];
         _initialized = YES;
     }
 }

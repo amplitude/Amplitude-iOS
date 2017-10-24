@@ -48,6 +48,18 @@
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
 }
 
+- (void)testSessionAutoStartedInactive {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+
+    id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
+    [mockAmplitude initializeApiKey:apiKey];
+    [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
+    [mockAmplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 0);
+}
+
 - (void)testSessionHandling {
 
     // start new session on initializeApiKey
