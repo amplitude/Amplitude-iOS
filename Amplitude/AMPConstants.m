@@ -12,22 +12,23 @@ const int kAMPApiVersion = 3;
 const int kAMPDBVersion = 3;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
 
-// for tvOS, upload events immediately, don't save too many events locally
-#if TARGET_OS_TV
-const int kAMPEventUploadThreshold = 1;
-const int kAMPEventMaxCount = 100;
-NSString *const kAMPPlatform = @"tvOS";
-NSString *const kAMPOSName = @"tvos";
-#elseif TARGET_OS_OSX
-const int kAMPEventUploadThreshold = 30;
-const int kAMPEventMaxCount = 1000;
-NSString *const kAMPPlatform = @"macOS";
-NSString *const kAMPOSName = @"macOS";
-#else  // iOS
-const int kAMPEventUploadThreshold = 30;
-const int kAMPEventMaxCount = 1000;
-NSString *const kAMPPlatform = @"iOS";
-NSString *const kAMPOSName = @"ios";
+// Note: order of these target conditionals is important
+#if TARGET_OS_OSX
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"macOS";
+    NSString *const kAMPOSName = @"macOS";
+#elif TARGET_OS_TV
+    // for tvOS, upload events immediately, don't save too many events locally
+    const int kAMPEventUploadThreshold = 1;
+    const int kAMPEventMaxCount = 100;
+    NSString *const kAMPPlatform = @"tvOS";
+    NSString *const kAMPOSName = @"tvos";
+#else  // iOS, simulator, etc.
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"iOS";
+    NSString *const kAMPOSName = @"ios";
 #endif
 
 const int kAMPEventUploadMaxBatchSize = 100;

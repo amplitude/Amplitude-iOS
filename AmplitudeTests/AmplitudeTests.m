@@ -7,7 +7,11 @@
 //
 
 #import <XCTest/XCTest.h>
+#if TARGET_OS_OSX
+#import <Cocoa/Cocoa.h>
+#else
 #import <UIKit/UIKit.h>
+#endif
 #import <OCMock/OCMock.h>
 #import "Amplitude.h"
 #import "AMPConstants.h"
@@ -751,11 +755,15 @@
     XCTAssertTrue([self.amplitude archive:event toFile:archiveName]);
 
     NSDictionary *unarchived = [self.amplitude unarchive:archiveName];
+#if TARGET_OS_OSX
+    XCTAssertEqualObjects(unarchived, event);
+#else
     if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
         XCTAssertEqualObjects(unarchived, event);
     } else {
         XCTAssertNil(unarchived);
     }
+#endif
 }
 
 -(void)testBlockTooManyProperties {

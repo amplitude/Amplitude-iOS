@@ -12,7 +12,11 @@
 //
 
 #import <XCTest/XCTest.h>
+#if TARGET_OS_OSX
+#import <Cocoa/Cocoa.h>
+#else
 #import <UIKit/UIKit.h>
+#endif
 #import <OCMock/OCMock.h>
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
@@ -34,9 +38,11 @@
 
 - (void)testSessionAutoStartedBackground {
     // mock application state
+#if !TARGET_OS_OSX
     id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
     OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateBackground);
+#endif
 
     // mock amplitude object and verify enterForeground not called
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
@@ -49,9 +55,11 @@
 }
 
 - (void)testSessionAutoStartedInactive {
+#if !TARGET_OS_OSX
     id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
     OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+#endif
 
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [mockAmplitude initializeApiKey:apiKey];
@@ -141,7 +149,11 @@
     [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if TARGET_OS_OSX
+    [center postNotificationName:NSApplicationDidResignActiveNotification object:nil userInfo:nil];
+#else
     [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:nil userInfo:nil];
+#endif
 
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude queuedEventCount], 0);

@@ -7,7 +7,11 @@
 //
 
 #import <XCTest/XCTest.h>
+#if TARGET_OS_OSX
+#import <Cocoa/Cocoa.h>
+#else
 #import <UIKit/UIKit.h>
+#endif
 #import <OCMock/OCMock.h>
 #import "Amplitude.h"
 #import "Amplitude+SSLPinning.h"

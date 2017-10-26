@@ -1,16 +1,23 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '7.0'
-
 project 'Amplitude'
 
-target 'AmplitudeTests' do
-    pod 'OCMock', '~> 3.2.1'
-end
+abstract_target 'shared' do
+  
+  pod 'OCMock', '~> 3.2.1'
+  
+  target 'AmplitudeTests' do
+      platform :ios, '7.0'
+  end
 
-target 'AmplitudeTVOSTests' do
-    platform :tvos, '9.0'
-    pod 'OCMock', '~> 3.2.1'
+  target 'AmplitudeTVOSTests' do
+      platform :tvos, '9.0'
+  end
+
+  target 'AmplitudeMacOSTests' do
+      platform :osx, '10.12'
+  end
+  
 end
 
 post_install do |installer|
