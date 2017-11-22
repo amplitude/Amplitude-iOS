@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.homepage               = "https://amplitude.com"
   s.license                = { :type => "MIT" }
   s.author                 = { "Amplitude" => "dev@amplitude.com" }
-  s.source                 = { :git => "https://github.com/amplitude/Amplitude-iOS.git", :tag => "v4.0.4" }
+  s.source                 = { :git => "https://github.com/fubotv/Amplitude-iOS", :tag => "v4.0.4" }
   s.ios.deployment_target  = '7.0'
   s.tvos.deployment_target = '9.0'
   s.source_files           = 'Amplitude/*.{h,m}', 'Amplitude/SSLCertificatePinning/*.{h,m}'
