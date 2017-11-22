@@ -12,4 +12,5 @@ Pod::Spec.new do |s|
   s.resources              = 'Amplitude/*.der'
   s.requires_arc           = true
   s.library 	             = 'sqlite3.0'
+  s.dependency             'Analytics', '~> 3.6'
 end
