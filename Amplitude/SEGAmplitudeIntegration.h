@@ -1,10 +1,10 @@
 #import <Foundation/Foundation.h>
 #import <Analytics/SEGIntegration.h>
 
-#if defined(__has_include) && __has_include(<Amplitude_tvOS/Amplitude.h>)
-#import <Amplitude_tvOS/Amplitude.h>
+#if defined(__has_include) && __has_include(<Amplitude_Segment_tvOS/Amplitude.h>)
+#import <Amplitude_Segment_tvOS/Amplitude.h>
 #else
-#import <Amplitude-tvOS/Amplitude.h>
+#import <Amplitude-Segment-tvOS/Amplitude.h>
 #endif
 
 
