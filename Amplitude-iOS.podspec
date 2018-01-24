@@ -8,6 +8,7 @@ Pod::Spec.new do |s|
   s.source                 = { :git => "https://github.com/amplitude/Amplitude-iOS.git", :tag => "v4.2.0" }
   s.ios.deployment_target  = '7.0'
   s.tvos.deployment_target = '9.0'
+  s.macos.deployment_target = '10.12'
   s.source_files           = 'Amplitude/*.{h,m}', 'Amplitude/SSLCertificatePinning/*.{h,m}'
   s.resources              = 'Amplitude/*.der'
   s.requires_arc           = true
