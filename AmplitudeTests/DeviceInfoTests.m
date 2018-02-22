@@ -13,6 +13,11 @@
 #import "AMPDeviceInfo.h"
 #import "AMPARCMacros.h"
 
+// expose private methods for unit testing
+@interface AMPDeviceInfo (Tests)
++(NSString*)getAdvertiserID:(int) maxAttempts;
+@end
+
 @interface DeviceInfoTests : XCTestCase
 
 @end
@@ -73,8 +78,20 @@
 }
 
 - (void) testAdvertiserID {
-    // TODO: Not sure how to test this on the simulator
-//    XCTAssertEqualObjects(nil, _deviceInfo.advertiserID);
+    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
+    [[mockDeviceInfo expect] getAdvertiserID:5];
+    XCTAssertEqualObjects(nil, _deviceInfo.advertiserID);
+    [mockDeviceInfo verify];
+    [mockDeviceInfo stopMocking];
+}
+
+- (void) testDisableIDFATracking {
+    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
+    [[mockDeviceInfo reject] getAdvertiserID:5];
+    AMPDeviceInfo *newDeviceInfo = [[AMPDeviceInfo alloc] init:YES];
+    XCTAssertEqualObjects(nil, newDeviceInfo.advertiserID);
+    [mockDeviceInfo verify];
+    [mockDeviceInfo stopMocking];
 }
 
 - (void) testVendorID {
