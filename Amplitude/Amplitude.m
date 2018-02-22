@@ -88,6 +88,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
+    BOOL _disableIDFATracking;
 
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
@@ -224,6 +225,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _updateScheduled = NO;
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
+        _disableIDFATracking = NO;
         _backoffUpload = NO;
         _offline = NO;
         _instanceName = SAFE_ARC_RETAIN(instanceName);
@@ -247,7 +249,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         
         [_initializerQueue addOperationWithBlock:^{
             
-            _deviceInfo = [[AMPDeviceInfo alloc] init];
+            _deviceInfo = [[AMPDeviceInfo alloc] init:_disableIDFATracking];
 
             _uploadTaskID = UIBackgroundTaskInvalid;
             
@@ -1423,6 +1425,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)useAdvertisingIdForDeviceId
 {
     _useAdvertisingIdForDeviceId = YES;
+}
+
+- (void)disableIDFATracking
+{
+    _disableIDFATracking = YES;
 }
 
 #pragma mark - Getters for device data

@@ -509,6 +509,13 @@
  */
 - (void)useAdvertisingIdForDeviceId;
 
+/**
+ Disables tracking of advertisingIdentifier by the SDK
+
+ **NOTE:** Must be called before initializeApiKey: is called to function.
+ */
+- (void)disableIDFATracking;
+
 /**-----------------------------------------------------------------------------
  * @name Other Methods
  * -----------------------------------------------------------------------------
