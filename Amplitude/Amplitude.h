@@ -514,7 +514,7 @@
 
  **NOTE:** Must be called before initializeApiKey: is called to function.
  */
-- (void)disableIDFATracking;
+- (void)disableIdfaTracking;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods
