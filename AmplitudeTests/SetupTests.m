@@ -107,6 +107,7 @@
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
     [self.amplitude initializeApiKey:apiKey];
+    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
     NSString *generatedDeviceId = [self.amplitude getDeviceId];
     XCTAssertNotNil(generatedDeviceId);

@@ -248,8 +248,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _backgroundQueue.name = BACKGROUND_QUEUE_NAME;
         
         [_initializerQueue addOperationWithBlock:^{
-            
-            _deviceInfo = [[AMPDeviceInfo alloc] init:_disableIdfaTracking];
 
             _uploadTaskID = UIBackgroundTaskInvalid;
             
@@ -306,8 +304,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (previousSessionId >= 0) {
                 _sessionId = previousSessionId;
             }
-
-            [self initializeDeviceId];
 
             [_backgroundQueue setSuspended:NO];
         }];
@@ -470,6 +466,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
+            _deviceInfo = [[AMPDeviceInfo alloc] init:_disableIdfaTracking];
+            [self initializeDeviceId];
             if (setUserId) {
                 [self setUserId:userId];
             } else {

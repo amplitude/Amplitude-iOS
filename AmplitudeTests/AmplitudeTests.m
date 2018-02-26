@@ -18,6 +18,10 @@
 #import "AMPUtils.h"
 
 // expose private methods for unit testing
+@interface AMPDeviceInfo (Tests)
++(NSString*)getAdvertiserID:(int) maxAttempts;
+@end
+
 @interface Amplitude (Tests)
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id) truncate:(id) obj;
@@ -815,6 +819,39 @@
     XCTAssertNotEqualObjects(oldDeviceId, newDeviceId);
     XCTAssertEqualObjects(newDeviceId, [dbHelper getValue:@"device_id"]);
     XCTAssertTrue([newDeviceId hasSuffix:@"R"]);
+}
+
+-(void)testTrackIdfa {
+    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
+    [[mockDeviceInfo expect] getAdvertiserID:5];
+
+    Amplitude *client = [Amplitude instanceWithName:@"has_idfa"];
+    [client flushQueueWithQueue:client.initializerQueue];
+    [client initializeApiKey:@"blah"];
+    [client flushQueue];
+
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    [mockDeviceInfo verify];
+    [mockDeviceInfo stopMocking];
+}
+
+-(void)testDisableIdfa {
+    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
+    [[mockDeviceInfo reject] getAdvertiserID:5];
+
+    Amplitude *client = [Amplitude instanceWithName:@"disable_idfa"];
+    [client flushQueueWithQueue:client.initializerQueue];
+    [client disableIdfaTracking];
+    [client initializeApiKey:@"blah"];
+    [client flushQueue];
+
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    [mockDeviceInfo verify];
+    [mockDeviceInfo stopMocking];
 }
 
 @end

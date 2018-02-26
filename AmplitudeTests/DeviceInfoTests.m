@@ -95,8 +95,7 @@
 }
 
 - (void) testVendorID {
-    // TODO: Not sure how to test this on the simulator
-//    XCTAssertEqualObjects(nil, _deviceInfo.vendorID);
+    XCTAssertEqualObjects(_deviceInfo.vendorID, [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
 }
 
 
