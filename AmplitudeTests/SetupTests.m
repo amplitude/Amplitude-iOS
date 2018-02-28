@@ -105,12 +105,15 @@
 
 - (void)testSetDeviceId {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    NSString *initialDeviceId = [self.amplitude getDeviceId];
+    XCTAssertNil(initialDeviceId);  // device id not initialized yet
 
     [self.amplitude initializeApiKey:apiKey];
     [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
     NSString *generatedDeviceId = [self.amplitude getDeviceId];
     XCTAssertNotNil(generatedDeviceId);
+    XCTAssertNotEqualObjects(initialDeviceId, generatedDeviceId);
     XCTAssertEqual(generatedDeviceId.length, 36);
     XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
 
