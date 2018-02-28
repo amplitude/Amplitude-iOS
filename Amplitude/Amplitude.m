@@ -88,6 +88,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
+    BOOL _disableIdfaTracking;
 
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
@@ -224,6 +225,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _updateScheduled = NO;
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
+        _disableIdfaTracking = NO;
         _backoffUpload = NO;
         _offline = NO;
         _instanceName = SAFE_ARC_RETAIN(instanceName);
@@ -246,8 +248,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _backgroundQueue.name = BACKGROUND_QUEUE_NAME;
         
         [_initializerQueue addOperationWithBlock:^{
-            
-            _deviceInfo = [[AMPDeviceInfo alloc] init];
 
             _uploadTaskID = UIBackgroundTaskInvalid;
             
@@ -304,8 +304,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (previousSessionId >= 0) {
                 _sessionId = previousSessionId;
             }
-
-            [self initializeDeviceId];
 
             [_backgroundQueue setSuspended:NO];
         }];
@@ -468,6 +466,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
+            _deviceInfo = [[AMPDeviceInfo alloc] init:_disableIdfaTracking];
+            [self initializeDeviceId];
             if (setUserId) {
                 [self setUserId:userId];
             } else {
@@ -1423,6 +1423,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)useAdvertisingIdForDeviceId
 {
     _useAdvertisingIdForDeviceId = YES;
+}
+
+- (void)disableIdfaTracking
+{
+    _disableIdfaTracking = YES;
 }
 
 #pragma mark - Getters for device data
