@@ -16,6 +16,7 @@
 
 @implementation AMPDeviceInfo {
     NSObject* networkInfo;
+    BOOL _disableIdfaTracking;
 }
 
 @synthesize appVersion = _appVersion;
@@ -27,11 +28,9 @@
 @synthesize advertiserID = _advertiserID;
 @synthesize vendorID = _vendorID;
 
-
-
-
--(id) init {
+-(id) init: (BOOL) disableIdfaTracking {
     self = [super init];
+    _disableIdfaTracking = disableIdfaTracking;
     return self;
 }
 
@@ -119,7 +118,7 @@
 }
 
 -(NSString*) advertiserID {
-    if (!_advertiserID) {
+    if (!_disableIdfaTracking && !_advertiserID) {
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
             NSString *advertiserId = [AMPDeviceInfo getAdvertiserID:5];
             if (advertiserId != nil &&
