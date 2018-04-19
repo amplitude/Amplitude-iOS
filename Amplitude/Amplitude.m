@@ -1335,12 +1335,37 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
         return;
     }
-    
+
     [self runOnBackgroundQueue:^{
         (void) SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
         (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
+    }];
+}
+
+- (void)setUserIdAndStartNewSession:(NSString*) userId
+{
+    if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
+        return;
+    }
+
+    [self runOnBackgroundQueue:^{
+        if (_trackingSessionEvents) {
+            [self sendSessionEvent:kAMPSessionEndEvent];
+        }
+
+        (void) SAFE_ARC_RETAIN(userId);
+        SAFE_ARC_RELEASE(_userId);
+        _userId = userId;
+        (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
+
+        NSNumber* timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+        [self setSessionId:[timestamp longLongValue]];
+        [self refreshSessionTime:timestamp];
+        if (_trackingSessionEvents) {
+            [self sendSessionEvent:kAMPSessionStartEvent];
+        }
     }];
 }
 
