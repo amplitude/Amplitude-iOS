@@ -1332,26 +1332,17 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setUserId:(NSString*) userId
 {
-    if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
-        return;
-    }
-
-    [self runOnBackgroundQueue:^{
-        (void) SAFE_ARC_RETAIN(userId);
-        SAFE_ARC_RELEASE(_userId);
-        _userId = userId;
-        (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
-    }];
+    [self setUserId:userId startNewSession:NO];
 }
 
-- (void)setUserIdAndStartNewSession:(NSString*) userId
+- (void)setUserId:(NSString*) userId startNewSession:(BOOL) startNewSession
 {
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
         return;
     }
 
     [self runOnBackgroundQueue:^{
-        if (_trackingSessionEvents) {
+        if (startNewSession && _trackingSessionEvents) {
             [self sendSessionEvent:kAMPSessionEndEvent];
         }
 
@@ -1360,11 +1351,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _userId = userId;
         (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
 
-        NSNumber* timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-        [self setSessionId:[timestamp longLongValue]];
-        [self refreshSessionTime:timestamp];
-        if (_trackingSessionEvents) {
-            [self sendSessionEvent:kAMPSessionStartEvent];
+        if (startNewSession) {
+            NSNumber* timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+            [self setSessionId:[timestamp longLongValue]];
+            [self refreshSessionTime:timestamp];
+            if (_trackingSessionEvents) {
+                [self sendSessionEvent:kAMPSessionStartEvent];
+            }
         }
     }];
 }

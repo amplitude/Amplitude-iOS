@@ -452,7 +452,7 @@
 
  @see [Setting Custom UserIds](https://github.com/amplitude/Amplitude-iOS#setting-custom-user-ids)
  */
-- (void)setUserIdAndStartNewSession:(NSString*) userId;
+- (void)setUserId:(NSString*) userId startNewSession:(BOOL) startNewSession;
 
 /**
  Sets the deviceId.
