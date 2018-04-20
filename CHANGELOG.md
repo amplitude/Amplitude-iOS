@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 4.2.0 (April 19, 2018)
+
+* Added a `setUserId` method with optional boolean argument `startNewSession`, which when `YES` starts a new session after changing the userId.
+
 ## 4.1.0 (February 27, 2018)
 * Add option to disable IDFA tracking. To disable IDFA tracking call `[[Amplitude instance] disableIdfaTracking];` before initializing with your API key.
 
