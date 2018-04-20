@@ -1332,15 +1332,33 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setUserId:(NSString*) userId
 {
+    [self setUserId:userId startNewSession:NO];
+}
+
+- (void)setUserId:(NSString*) userId startNewSession:(BOOL) startNewSession
+{
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
         return;
     }
-    
+
     [self runOnBackgroundQueue:^{
+        if (startNewSession && _trackingSessionEvents) {
+            [self sendSessionEvent:kAMPSessionEndEvent];
+        }
+
         (void) SAFE_ARC_RETAIN(userId);
         SAFE_ARC_RELEASE(_userId);
         _userId = userId;
         (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:_userId];
+
+        if (startNewSession) {
+            NSNumber* timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+            [self setSessionId:[timestamp longLongValue]];
+            [self refreshSessionTime:timestamp];
+            if (_trackingSessionEvents) {
+                [self sendSessionEvent:kAMPSessionStartEvent];
+            }
+        }
     }];
 }
 
