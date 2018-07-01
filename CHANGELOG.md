@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 4.2.1 (May 21, 2018)
+
+* Fix a bunch of compiler warnings
+* Fix SSLPinning import so that it doesn't corrupt debug console. Thanks to @rob-keepsafe for the PR
+
 ## 4.2.0 (April 19, 2018)
 
 * Added a `setUserId` method with optional boolean argument `startNewSession`, which when `YES` starts a new session after changing the userId.
