@@ -90,6 +90,17 @@
     return self;
 }
 
+- (BOOL)shouldTrackDeviceManufacturer
+{
+    return [self shouldTrackField:AMP_TRACKING_OPTION_DEVICE_MANUFACTURER];
+}
+
+- (AMPTrackingOptions*)disableDeviceModel
+{
+    [self disableTrackingField:AMP_TRACKING_OPTION_DEVICE_MODEL];
+    return self;
+}
+
 - (BOOL)shouldTrackDeviceModel
 {
     return [self shouldTrackField:AMP_TRACKING_OPTION_DEVICE_MODEL];
