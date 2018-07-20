@@ -43,3 +43,5 @@
 - (BOOL)shouldTrackPlatform;
 - (BOOL)shouldTrackRegion;
 - (BOOL)shouldTrackVersionName;
+
+@end

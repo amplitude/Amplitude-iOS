@@ -54,6 +54,7 @@
 - (AMPTrackingOptions*)disableCarrier
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_CARRIER];
+    return self;
 }
 
 - (BOOL)shouldTrackCarrier
@@ -64,6 +65,7 @@
 - (AMPTrackingOptions*)disableCity
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_CITY];
+    return self;
 }
 
 - (BOOL)shouldTrackCity
@@ -74,6 +76,7 @@
 - (AMPTrackingOptions*)disableCountry
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_COUNTRY];
+    return self;
 }
 
 - (BOOL)shouldTrackCountry
@@ -84,6 +87,7 @@
 - (AMPTrackingOptions*)disableDeviceManufacturer
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_DEVICE_MANUFACTURER];
+    return self;
 }
 
 - (BOOL)shouldTrackDeviceModel
@@ -94,6 +98,7 @@
 - (AMPTrackingOptions*)disableDMA
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_DMA];
+    return self;
 }
 
 - (BOOL)shouldTrackDMA
@@ -104,6 +109,7 @@
 - (AMPTrackingOptions*)disableIDFA
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_IDFA];
+    return self;
 }
 
 - (BOOL)shouldTrackIDFA
@@ -114,6 +120,7 @@
 - (AMPTrackingOptions*)disableIDFV
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_IDFV];
+    return self;
 }
 
 - (BOOL)shouldTrackIDFV
@@ -124,6 +131,7 @@
 - (AMPTrackingOptions*)disableIPAddress
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_IP_ADDRESS];
+    return self;
 }
 
 - (BOOL)shouldTrackIPAddress
@@ -134,6 +142,7 @@
 - (AMPTrackingOptions*)disableLanguage
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_LANGUAGE];
+    return self;
 }
 
 - (BOOL)shouldTrackLanguage
@@ -144,6 +153,7 @@
 - (AMPTrackingOptions*)disableLatLon
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_LAT_LON];
+    return self;
 }
 
 - (BOOL)shouldTrackLatLon
@@ -154,6 +164,7 @@
 - (AMPTrackingOptions*)disableOSName
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_OS_NAME];
+    return self;
 }
 
 - (BOOL)shouldTrackOSName
@@ -164,6 +175,7 @@
 - (AMPTrackingOptions*)disableOSVersion
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_OS_VERSION];
+    return self;
 }
 
 - (BOOL)shouldTrackOSVersion
@@ -174,6 +186,7 @@
 - (AMPTrackingOptions*)disablePlatform
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_PLATFORM];
+    return self;
 }
 
 - (BOOL)shouldTrackPlatform
@@ -184,6 +197,7 @@
 - (AMPTrackingOptions*)disableRegion
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_REGION];
+    return self;
 }
 
 - (BOOL)shouldTrackRegion
@@ -194,6 +208,7 @@
 - (AMPTrackingOptions*)disableVersionName
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_VERSION_NAME];
+    return self;
 }
 
 - (BOOL)shouldTrackVersionName
