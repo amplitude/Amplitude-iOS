@@ -20,7 +20,7 @@
 - (AMPTrackingOptions*)disableIDFV;
 - (AMPTrackingOptions*)disableIPAddress;
 - (AMPTrackingOptions*)disableLanguage;
-- (AMPTrackingOptions*)disableLatLon;
+- (AMPTrackingOptions*)disableLatLng;
 - (AMPTrackingOptions*)disableOSName;
 - (AMPTrackingOptions*)disableOSVersion;
 - (AMPTrackingOptions*)disablePlatform;
@@ -37,7 +37,7 @@
 - (BOOL)shouldTrackIDFV;
 - (BOOL)shouldTrackIPAddress;
 - (BOOL)shouldTrackLanguage;
-- (BOOL)shouldTrackLatLon;
+- (BOOL)shouldTrackLatLng;
 - (BOOL)shouldTrackOSName;
 - (BOOL)shouldTrackOSVersion;
 - (BOOL)shouldTrackPlatform;

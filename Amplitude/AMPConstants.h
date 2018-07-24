@@ -46,7 +46,7 @@ extern NSString *const AMP_TRACKING_OPTION_IDFA;
 extern NSString *const AMP_TRACKING_OPTION_IDFV;
 extern NSString *const AMP_TRACKING_OPTION_IP_ADDRESS;
 extern NSString *const AMP_TRACKING_OPTION_LANGUAGE;
-extern NSString *const AMP_TRACKING_OPTION_LAT_LON;
+extern NSString *const AMP_TRACKING_OPTION_LAT_LNG;
 extern NSString *const AMP_TRACKING_OPTION_OS_NAME;
 extern NSString *const AMP_TRACKING_OPTION_OS_VERSION;
 extern NSString *const AMP_TRACKING_OPTION_PLATFORM;

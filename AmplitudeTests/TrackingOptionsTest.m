@@ -38,7 +38,7 @@
     XCTAssertTrue([options shouldTrackIDFV]);
     XCTAssertFalse([options shouldTrackIPAddress]);
     XCTAssertFalse([options shouldTrackLanguage]);
-    XCTAssertTrue([options shouldTrackLatLon]);
+    XCTAssertTrue([options shouldTrackLatLng]);
     XCTAssertTrue([options shouldTrackOSName]);
     XCTAssertTrue([options shouldTrackOSVersion]);
     XCTAssertTrue([options shouldTrackPlatform]);
@@ -47,12 +47,13 @@
 }
 
 - (void)testGetApiPropertiesTrackingOptions {
-    AMPTrackingOptions *options = [[[[[AMPTrackingOptions options] disableCity] disableIPAddress] disableLanguage] disableCountry];
+    AMPTrackingOptions *options = [[[[[[AMPTrackingOptions options] disableCity] disableIPAddress] disableLanguage] disableCountry] disableLatLng];
 
     NSMutableDictionary *apiPropertiesTrackingOptions = [options getApiPropertiesTrackingOption];
-    XCTAssertEqual([apiPropertiesTrackingOptions count], 3);
+    XCTAssertEqual([apiPropertiesTrackingOptions count], 4);
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"city"], [NSNumber numberWithBool:NO]);
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"country"], [NSNumber numberWithBool:NO]);
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"ip_address"], [NSNumber numberWithBool:NO]);
+    XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"lat_lng"], [NSNumber numberWithBool:NO]);
 }
 @end

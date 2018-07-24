@@ -160,15 +160,15 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_LANGUAGE];
 }
 
-- (AMPTrackingOptions*)disableLatLon
+- (AMPTrackingOptions*)disableLatLng
 {
-    [self disableTrackingField:AMP_TRACKING_OPTION_LAT_LON];
+    [self disableTrackingField:AMP_TRACKING_OPTION_LAT_LNG];
     return self;
 }
 
-- (BOOL)shouldTrackLatLon
+- (BOOL)shouldTrackLatLng
 {
-    return [self shouldTrackField:AMP_TRACKING_OPTION_LAT_LON];
+    return [self shouldTrackField:AMP_TRACKING_OPTION_LAT_LNG];
 }
 
 - (AMPTrackingOptions*)disableOSName
@@ -242,7 +242,7 @@
         return SAFE_ARC_AUTORELEASE(apiPropertiesTrackingOptions);
     }
 
-    for (id key in @[AMP_TRACKING_OPTION_CITY, AMP_TRACKING_OPTION_COUNTRY, AMP_TRACKING_OPTION_DMA, AMP_TRACKING_OPTION_IP_ADDRESS, AMP_TRACKING_OPTION_LAT_LON, AMP_TRACKING_OPTION_REGION]) {
+    for (id key in @[AMP_TRACKING_OPTION_CITY, AMP_TRACKING_OPTION_COUNTRY, AMP_TRACKING_OPTION_DMA, AMP_TRACKING_OPTION_IP_ADDRESS, AMP_TRACKING_OPTION_LAT_LNG, AMP_TRACKING_OPTION_REGION]) {
         if ([_disabledFields containsObject:key]) {
             [apiPropertiesTrackingOptions setObject:[NSNumber numberWithBool:NO] forKey:key];
         }
