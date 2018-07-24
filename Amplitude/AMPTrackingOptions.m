@@ -29,7 +29,6 @@
 @implementation AMPTrackingOptions
 {
     NSMutableSet *_disabledFields;
-    NSArray *SERVER_SIDE_PROPERTIES;
 }
 
 - (id)init

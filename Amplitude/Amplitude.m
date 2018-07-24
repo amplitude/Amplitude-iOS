@@ -758,6 +758,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [apiProperties setValue:location forKey:@"location"];
         }
     }
+
+    if (self->_apiPropertiesTrackingOptions.count > 0) {
+        [apiProperties setValue:self->_apiPropertiesTrackingOptions forKey:@"tracking_options"];
+    }
 }
 
 #pragma mark - logRevenue
