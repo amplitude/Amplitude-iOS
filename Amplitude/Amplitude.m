@@ -37,6 +37,7 @@
 #import "AMPUtils.h"
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
+#import "AMPTrackingOptions.h"
 #import <math.h>
 #import <sys/socket.h>
 #import <sys/sysctl.h>
@@ -94,6 +95,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     BOOL _locationListeningEnabled;
     CLLocationManager *_locationManager;
     AMPLocationManagerDelegate *_locationManagerDelegate;
+
+    AMPTrackingOptions *_trackingOptions;
+    NSDictionary *_apiPropertiesTrackingOptions;
 
     BOOL _inForeground;
     BOOL _offline;
@@ -228,6 +232,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _disableIdfaTracking = NO;
         _backoffUpload = NO;
         _offline = NO;
+        _trackingOptions = SAFE_ARC_RETAIN([AMPTrackingOptions options]);
+        _apiPropertiesTrackingOptions = SAFE_ARC_RETAIN([NSDictionary dictionary]);
         _instanceName = SAFE_ARC_RETAIN(instanceName);
         _dbHelper = SAFE_ARC_RETAIN([AMPDatabaseHelper getDatabaseHelper:instanceName]);
 
@@ -419,6 +425,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_RELEASE(_propertyListPath);
     SAFE_ARC_RELEASE(_dbHelper);
     SAFE_ARC_RELEASE(_instanceName);
+    SAFE_ARC_RELEASE(_trackingOptions);
+    SAFE_ARC_RELEASE(_apiPropertiesTrackingOptions);
 
 
     SAFE_ARC_SUPER_DEALLOC();
@@ -684,15 +692,33 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 {
     [event setValue:_userId forKey:@"user_id"];
     [event setValue:_deviceId forKey:@"device_id"];
-    [event setValue:kAMPPlatform forKey:@"platform"];
-    [event setValue:_deviceInfo.appVersion forKey:@"version_name"];
-    [event setValue:_deviceInfo.osName forKey:@"os_name"];
-    [event setValue:_deviceInfo.osVersion forKey:@"os_version"];
-    [event setValue:_deviceInfo.model forKey:@"device_model"];
-    [event setValue:_deviceInfo.manufacturer forKey:@"device_manufacturer"];
-    [event setValue:_deviceInfo.carrier forKey:@"carrier"];
-    [event setValue:_deviceInfo.country forKey:@"country"];
-    [event setValue:_deviceInfo.language forKey:@"language"];
+    if ([self->_trackingOptions shouldTrackPlatform]) {
+        [event setValue:kAMPPlatform forKey:@"platform"];
+    }
+    if ([self->_trackingOptions shouldTrackVersionName]) {
+        [event setValue:_deviceInfo.appVersion forKey:@"version_name"];
+    }
+    if ([self->_trackingOptions shouldTrackOSName]) {
+        [event setValue:_deviceInfo.osName forKey:@"os_name"];
+    }
+    if ([self->_trackingOptions shouldTrackOSVersion]) {
+        [event setValue:_deviceInfo.osVersion forKey:@"os_version"];
+    }
+    if ([self->_trackingOptions shouldTrackDeviceModel]) {
+        [event setValue:_deviceInfo.model forKey:@"device_model"];
+    }
+    if ([self->_trackingOptions shouldTrackDeviceManufacturer]) {
+        [event setValue:_deviceInfo.manufacturer forKey:@"device_manufacturer"];
+    }
+    if ([self->_trackingOptions shouldTrackCarrier]) {
+        [event setValue:_deviceInfo.carrier forKey:@"carrier"];
+    }
+    if ([self->_trackingOptions shouldTrackCountry]) {
+        [event setValue:_deviceInfo.country forKey:@"country"];
+    }
+    if ([self->_trackingOptions shouldTrackLanguage]) {
+        [event setValue:_deviceInfo.language forKey:@"language"];
+    }
     NSDictionary *library = @{
         @"name": kAMPLibrary,
         @"version": kAMPVersion
@@ -704,15 +730,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
     NSString* advertiserID = _deviceInfo.advertiserID;
-    if (advertiserID) {
+    if ([self->_trackingOptions shouldTrackIDFA] && advertiserID) {
         [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
     }
     NSString* vendorID = _deviceInfo.vendorID;
-    if (vendorID) {
+    if ([self->_trackingOptions shouldTrackIDFV] && vendorID) {
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
     
-    if (_lastKnownLocation != nil) {
+    if ([self->_trackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
         @synchronized (_locationManager) {
             NSMutableDictionary *location = [NSMutableDictionary dictionary];
 
@@ -731,6 +757,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
             [apiProperties setValue:location forKey:@"location"];
         }
+    }
+
+    if (self->_apiPropertiesTrackingOptions.count > 0) {
+        [apiProperties setValue:self->_apiPropertiesTrackingOptions forKey:@"tracking_options"];
     }
 }
 
@@ -1328,6 +1358,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPIdentify *identify = [[AMPIdentify identify] set:groupType value:groupName];
     [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:groups withTimestamp:nil outOfSession:NO];
 
+}
+
+- (void)setTrackingOptions:(AMPTrackingOptions *) options
+{
+    if (![self isArgument:options validType:[AMPTrackingOptions class] methodName:@"setTrackingOptions:"]) {
+        return;
+    }
+
+    (void) SAFE_ARC_RETAIN(options);
+    SAFE_ARC_RELEASE(self->_trackingOptions);
+    SAFE_ARC_RELEASE(self->_apiPropertiesTrackingOptions);
+    self->_trackingOptions = options;
+    self->_apiPropertiesTrackingOptions = SAFE_ARC_RETAIN([NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]]);
 }
 
 - (void)setUserId:(NSString*) userId
