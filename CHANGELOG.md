@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 4.3.0 (July 24, 2018)
+
 * Add `AMPTrackingOptions` interface to customize the automatic tracking of user properties in the SDK (such as language, ip_address, platform, etc). See [Help Center Documentation](https://amplitude.zendesk.com/hc/en-us/articles/115002278527#disable-automatic-tracking-of-properties) for instructions on setting up this configuration.
 
 ## 4.2.1 (May 21, 2018)
