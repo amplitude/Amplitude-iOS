@@ -9,6 +9,7 @@
 @interface AMPDatabaseHelper : NSObject
 
 @property (nonatomic, strong, readonly) NSString *databasePath;
+@property (nonatomic, assign) BOOL callResetListenerOnDatabaseReset;
 
 + (AMPDatabaseHelper*)getDatabaseHelper;
 + (AMPDatabaseHelper*)getDatabaseHelper:(NSString*) instanceName;

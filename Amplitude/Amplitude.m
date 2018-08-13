@@ -314,6 +314,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             self->_lastEventTime = [self getLastEventTime];
             self->_optOut = [self loadOptOut];
 
+            [self->_dbHelper setDatabaseResetListener:^{
+                [self->_dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self->_deviceId];
+                [self->_dbHelper insertOrReplaceKeyValue:USER_ID value:self->_userId];
+                [self->_dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:self->_optOut]];
+                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
+                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
+            }];
+
             [self->_backgroundQueue setSuspended:NO];
         }];
 

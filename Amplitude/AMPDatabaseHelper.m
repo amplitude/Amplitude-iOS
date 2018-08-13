@@ -34,7 +34,6 @@
     BOOL _databaseCreated;
     sqlite3 *_database;
     dispatch_queue_t _queue;
-    BOOL _callResetListenerOnDatabaseReset;
     void (^_databaseResetListener)(void);
 }
 
