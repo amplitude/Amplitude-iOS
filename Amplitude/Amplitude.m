@@ -494,7 +494,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 UIApplicationState state = app.applicationState;
                 if (state != UIApplicationStateBackground) {
                     [self runOnBackgroundQueue:^{
-                        NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+                        long long now = [[self currentTime] timeIntervalSince1970] * 1000;
                         [self startOrContinueSession:now];
                         self->_inForeground = YES;
                     }];
@@ -623,7 +623,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // skip session check if logging start_session or end_session events
         BOOL loggingSessionEvent = self->_trackingSessionEvents && ([eventType isEqualToString:kAMPSessionStartEvent] || [eventType isEqualToString:kAMPSessionEndEvent]);
         if (!loggingSessionEvent && !outOfSession) {
-            [self startOrContinueSession:timestamp];
+            [self startOrContinueSession:[timestamp longLongValue]];
         }
 
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
@@ -1118,7 +1118,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     [self updateLocation];
 
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    long long now = [[self currentTime] timeIntervalSince1970] * 1000;
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
@@ -1139,7 +1139,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    long long now = [[self currentTime] timeIntervalSince1970] * 1000;
 
     // Stop uploading
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
@@ -1168,7 +1168,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  *
  * Returns YES if a new session was created.
  */
-- (BOOL)startOrContinueSession:(NSNumber*) timestamp
+- (BOOL)startOrContinueSession:(long long) timestamp
 {
     if (!_inForeground) {
         if ([self inSession]) {
@@ -1201,12 +1201,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return NO;
 }
 
-- (void)startNewSession:(NSNumber*) timestamp
+- (void)startNewSession:(long long) timestamp
 {
     if (_trackingSessionEvents) {
         [self sendSessionEvent:kAMPSessionEndEvent];
     }
-    [self setSessionId:[timestamp longLongValue]];
+    [self setSessionId:timestamp];
     [self refreshSessionTime:timestamp];
     if (_trackingSessionEvents) {
         [self sendSessionEvent:kAMPSessionStartEvent];
@@ -1235,12 +1235,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return _sessionId >= 0;
 }
 
-- (BOOL)isWithinMinTimeBetweenSessions:(NSNumber*) timestamp
+- (BOOL)isWithinMinTimeBetweenSessions:(long long) timestamp
 {
-    NSNumber *previousSessionTime = [NSNumber numberWithLongLong:self->_lastEventTime];
-    long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
-
-    return timeDelta < self.minTimeBetweenSessionsMillis;
+    return (timestamp - self->_lastEventTime) < self.minTimeBetweenSessionsMillis;
 }
 
 /**
@@ -1248,14 +1245,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  */
 - (void)setSessionId:(long long) timestamp
 {
-    _sessionId = timestamp;
+    self->_sessionId = timestamp;
     [self setPreviousSessionId:_sessionId];
 }
 
 /**
  * Update the session timer if there's a running session.
  */
-- (void)refreshSessionTime:(NSNumber*) timestamp
+- (void)refreshSessionTime:(long long) timestamp
 {
     if (![self inSession]) {
         return;
@@ -1278,12 +1275,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [previousSessionId longLongValue];
 }
 
-- (void)setLastEventTime:(NSNumber*) timestamp
+- (void)setLastEventTime:(long long) timestamp
 {
-    if (timestamp != nil) {
-        self->_lastEventTime = [timestamp longLongValue];
-    }
-    (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
+    self->_lastEventTime = timestamp;
+    NSNumber *value = [NSNumber numberWithLongLong:timestamp];
+    (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:value];
 }
 
 - (long long)getLastEventTime
@@ -1404,8 +1400,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:self->_userId];
 
         if (startNewSession) {
-            NSNumber* timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-            [self setSessionId:[timestamp longLongValue]];
+            long long timestamp = [[self currentTime] timeIntervalSince1970] * 1000;
+            [self setSessionId:timestamp];
             [self refreshSessionTime:timestamp];
             if (self->_trackingSessionEvents) {
                 [self sendSessionEvent:kAMPSessionStartEvent];
