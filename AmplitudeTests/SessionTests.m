@@ -97,7 +97,7 @@
     [mockAmplitude logEvent:@"continue_session"];
     [mockAmplitude flushQueue];
 
-    XCTAssertEqual([[mockAmplitude lastEventTime] longLongValue], 1001000 + self.amplitude.minTimeBetweenSessionsMillis);
+    XCTAssertEqual([mockAmplitude getLastEventTime], 1001000 + self.amplitude.minTimeBetweenSessionsMillis);
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
     XCTAssertEqual([mockAmplitude sessionId], 1000000 + self.amplitude.minTimeBetweenSessionsMillis);
 
@@ -133,7 +133,7 @@
                isEqualToNumber:[NSNumber numberWithLongLong:-1]]);
 
     // An out of session event should not continue the session
-    XCTAssertEqual([[mockAmplitude lastEventTime] longLongValue], 3000000); // event time of first no session
+    XCTAssertEqual([mockAmplitude getLastEventTime], 3000000); // event time of first no session
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {

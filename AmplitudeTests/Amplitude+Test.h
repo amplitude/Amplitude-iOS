@@ -32,5 +32,6 @@
 - (NSDate*)currentTime;
 - (id)unarchive:(NSString*)path;
 - (BOOL)archive:(id) obj toFile:(NSString*)path;
+- (long long)getLastEventTime;
 
 @end

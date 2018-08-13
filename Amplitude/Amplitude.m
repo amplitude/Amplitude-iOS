@@ -90,6 +90,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
     BOOL _disableIdfaTracking;
+    long long _lastEventTime;
 
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
@@ -310,6 +311,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (previousSessionId >= 0) {
                 self->_sessionId = previousSessionId;
             }
+            self->_lastEventTime = [self getLastEventTime];
 
             [self->_backgroundQueue setSuspended:NO];
         }];
@@ -1224,7 +1226,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:sessionEvent forKey:@"special"];
-    NSNumber* timestamp = [self lastEventTime];
+    NSNumber *timestamp = [NSNumber numberWithLongLong:self->_lastEventTime];
     [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withTimestamp:timestamp outOfSession:NO];
 }
 
@@ -1235,7 +1237,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (BOOL)isWithinMinTimeBetweenSessions:(NSNumber*) timestamp
 {
-    NSNumber *previousSessionTime = [self lastEventTime];
+    NSNumber *previousSessionTime = [NSNumber numberWithLongLong:self->_lastEventTime];
     long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
 
     return timeDelta < self.minTimeBetweenSessionsMillis;
@@ -1278,12 +1280,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setLastEventTime:(NSNumber*) timestamp
 {
+    if (timestamp != nil) {
+        self->_lastEventTime = [timestamp longLongValue];
+    }
     (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
 }
 
-- (NSNumber*)lastEventTime
+- (long long)getLastEventTime
 {
-    return [self.dbHelper getLongValue:PREVIOUS_SESSION_TIME];
+    NSNumber *lastEventTime = [self.dbHelper getLongValue:PREVIOUS_SESSION_TIME];
+    if (lastEventTime == nil) {
+        return -1;
+    }
+    return [lastEventTime longLongValue];
 }
 
 - (void)startSession
