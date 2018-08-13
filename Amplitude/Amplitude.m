@@ -314,14 +314,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             self->_lastEventTime = [self getLastEventTime];
             self->_optOut = [self loadOptOut];
 
-            [self->_dbHelper setDatabaseResetListener:^{
-                [self->_dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self->_deviceId];
-                [self->_dbHelper insertOrReplaceKeyValue:USER_ID value:self->_userId];
-                [self->_dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:self->_optOut]];
-                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
-                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
-            }];
-
             [self->_backgroundQueue setSuspended:NO];
         }];
 
@@ -492,6 +484,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else {
                 self->_userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
             }
+
+            [self->_dbHelper setDatabaseResetListener:^{
+                [self->_dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self->_deviceId];
+                [self->_dbHelper insertOrReplaceKeyValue:USER_ID value:self->_userId];
+                [self->_dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:self->_optOut]];
+                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
+                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
+            }];
         }];
 
         // Normally _inForeground is set by the enterForeground callback, but initializeWithApiKey will be called after the app's enterForeground
@@ -1165,6 +1165,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_inForeground = NO;
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
+
+        // persist metadata back into database
+        [[self dbHelper] insertOrReplaceKeyValue:DEVICE_ID value:self->_deviceId];
+        [[self dbHelper] insertOrReplaceKeyValue:USER_ID value:self->_userId];
+        [[self dbHelper] insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:self->_optOut]];
+        [[self dbHelper] insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
+        [[self dbHelper] insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
     }];
 }
 
