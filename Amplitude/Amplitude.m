@@ -312,6 +312,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self->_sessionId = previousSessionId;
             }
             self->_lastEventTime = [self getLastEventTime];
+            self->_optOut = [self loadOptOut];
 
             [self->_backgroundQueue setSuspended:NO];
         }];
@@ -611,7 +612,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     
     [self runOnBackgroundQueue:^{
         // Respect the opt-out setting by not sending or storing any events.
-        if ([self optOut])  {
+        if (self->_optOut)  {
             AMPLITUDE_LOG(@"User has opted out of tracking. Event %@ not logged.", eventType);
             SAFE_ARC_RELEASE(eventProperties);
             SAFE_ARC_RELEASE(apiProperties);
@@ -864,7 +865,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
 
         // Don't communicate with the server if the user has opted out.
-        if ([self optOut] || self->_offline)  {
+        if (self->_optOut || self->_offline)  {
             self->_updatingCurrently = NO;
             return;
         }
@@ -1413,6 +1414,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)setOptOut:(BOOL)enabled
 {
     [self runOnBackgroundQueue:^{
+        self->_optOut = enabled;
         NSNumber *value = [NSNumber numberWithBool:enabled];
         (void) [self.dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:value];
     }];
@@ -1433,9 +1435,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     _backoffUploadBatchSize = eventUploadMaxBatchSize;
 }
 
-- (BOOL)optOut
+- (BOOL)loadOptOut
 {
-    return [[self.dbHelper getLongValue:OPT_OUT] boolValue];
+    NSNumber *value = [self.dbHelper getLongValue:OPT_OUT];
+    if (value == nil) {
+        return NO;
+    }
+    return [value boolValue];
 }
 
 - (void)setDeviceId:(NSString*)deviceId
@@ -1505,6 +1511,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (long long) getSessionId
 {
     return _sessionId;
+}
+
+- (BOOL) getOptOut
+{
+    return _optOut;
 }
 
 - (NSString*) initializeDeviceId
