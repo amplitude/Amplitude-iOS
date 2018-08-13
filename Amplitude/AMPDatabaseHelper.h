@@ -37,4 +37,6 @@
 - (NSString*)getValue:(NSString*) key;
 - (NSNumber*)getLongValue:(NSString*) key;
 
+- (void)setDatabaseResetListener: (void (^)(void)) listener;
+
 @end
