@@ -485,12 +485,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self->_userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
             }
 
+            __unsafe_unretained typeof(self) weakSelf = self;
             [self->_dbHelper setDatabaseResetListener:^{
-                [self->_dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self->_deviceId];
-                [self->_dbHelper insertOrReplaceKeyValue:USER_ID value:self->_userId];
-                [self->_dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:self->_optOut]];
-                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
-                [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
+                __strong typeof(self) strongSelf = weakSelf;
+                if (strongSelf) {
+                    [strongSelf->_dbHelper insertOrReplaceKeyValue:DEVICE_ID value:strongSelf->_deviceId];
+                    [strongSelf->_dbHelper insertOrReplaceKeyValue:USER_ID value:strongSelf->_userId];
+                    [strongSelf->_dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:strongSelf->_optOut]];
+                    [strongSelf->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:strongSelf->_sessionId]];
+                    [strongSelf->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:strongSelf->_lastEventTime]];
+                }
             }];
         }];
 

@@ -138,7 +138,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         _queue = NULL;
     }
     if (_databaseResetListener) {
-        (void) SAFE_ARC_RELEASE(_databaseResetListener);
+        SAFE_ARC_RELEASE(_databaseResetListener);
         _databaseResetListener = NULL;
     }
     SAFE_ARC_SUPER_DEALLOC();
@@ -176,11 +176,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 - (void)setDatabaseResetListener: (void (^)(void)) listener
 {
     if (listener == nil) {
-        (void) SAFE_ARC_RELEASE(_databaseResetListener);
+        SAFE_ARC_RELEASE(_databaseResetListener);
         return;
     }
     id copy = [listener copy];
-    (void) SAFE_ARC_RELEASE(_databaseResetListener);
+    SAFE_ARC_RELEASE(_databaseResetListener);
     _databaseResetListener = SAFE_ARC_RETAIN(copy);
 }
 
