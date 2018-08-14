@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 4.3.1 (August 14, 2018)
+
+* Update SDK to better handle SQLite Exceptions.
+
 ## 4.3.0 (July 24, 2018)
 
 * Add `AMPTrackingOptions` interface to customize the automatic tracking of user properties in the SDK (such as language, ip_address, platform, etc). See [Help Center Documentation](https://amplitude.zendesk.com/hc/en-us/articles/115002278527#disable-automatic-tracking-of-properties) for instructions on setting up this configuration.
