@@ -21,6 +21,7 @@
 @dynamic backoffUpload;
 @dynamic backoffUploadBatchSize;
 @dynamic sslPinningEnabled;
+@dynamic dbHelper;
 
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
