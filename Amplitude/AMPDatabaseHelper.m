@@ -34,6 +34,7 @@
     BOOL _databaseCreated;
     sqlite3 *_database;
     dispatch_queue_t _queue;
+    void (^_databaseResetListener)(void);
 }
 
 static NSString *const QUEUE_NAME = @"com.amplitude.db.queue";
@@ -122,11 +123,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     instanceName = [instanceName lowercaseString];
 
     if ((self = [super init])) {
-        NSString *databaseDirectory = directoryPath ?: [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+        NSString *databaseDirectory = directoryPath ?: [AMPUtils platformDataDirectory];
         NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
         if (![instanceName isEqualToString:kAMPDefaultInstance]) {
             databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];
         }
+        _callResetListenerOnDatabaseReset = YES;
         _databasePath = SAFE_ARC_RETAIN(databasePath);
         _queue = dispatch_queue_create([QUEUE_NAME UTF8String], NULL);
         dispatch_queue_set_specific(_queue, kDispatchQueueKey, (__bridge void *)self, NULL);
@@ -141,8 +143,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 {
     SAFE_ARC_RELEASE(_databasePath);
     if (_queue) {
-        SAFE_ARC_DISPATCH_RELEASE(_queue);
+        (void) SAFE_ARC_DISPATCH_RELEASE(_queue);
         _queue = NULL;
+    }
+    if (_databaseResetListener) {
+        SAFE_ARC_RELEASE(_databaseResetListener);
+        _databaseResetListener = NULL;
     }
     SAFE_ARC_SUPER_DEALLOC();
 }
@@ -164,16 +170,27 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block BOOL success = YES;
 
     dispatch_sync(_queue, ^() {
-        if (sqlite3_open([_databasePath UTF8String], &_database) != SQLITE_OK) {
+        if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
             NSLog(@"Failed to open database");
             success = NO;
             return;
         }
-        block(_database);
-        sqlite3_close(_database);
+        block(self->_database);
+        sqlite3_close(self->_database);
     });
 
     return success;
+}
+
+- (void)setDatabaseResetListener: (void (^)(void)) listener
+{
+    if (listener == nil) {
+        SAFE_ARC_RELEASE(_databaseResetListener);
+        return;
+    }
+    id copy = [listener copy];
+    SAFE_ARC_RELEASE(_databaseResetListener);
+    _databaseResetListener = SAFE_ARC_RETAIN(copy);
 }
 
 /**
@@ -194,23 +211,23 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     __block BOOL success = YES;
 
     dispatch_sync(_queue, ^() {
-        if (sqlite3_open([_databasePath UTF8String], &_database) != SQLITE_OK) {
+        if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
             NSLog(@"Failed to open database");
             success = NO;
             return;
         }
 
         sqlite3_stmt *stmt;
-        if (sqlite3_prepare_v2(_database, [SQLString UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
+        if (sqlite3_prepare_v2(self->_database, [SQLString UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
             AMPLITUDE_LOG(@"Failed to prepare statement for query %@", SQLString);
-            sqlite3_close(_database);
+            sqlite3_close(self->_database);
             success = NO;
             return;
         }
 
         block(stmt);
         sqlite3_finalize(stmt);
-        sqlite3_close(_database);
+        sqlite3_close(self->_database);
     });
 
     return success;
@@ -315,6 +332,12 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     }
     success &= [self createTables];
 
+    if (_databaseResetListener && _callResetListenerOnDatabaseReset) {
+        _callResetListenerOnDatabaseReset = NO;
+        _databaseResetListener();
+        _callResetListenerOnDatabaseReset = YES;
+    }
+
     return success;
 }
 
@@ -387,12 +410,24 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     [self inDatabaseWithStatement:querySQL block:^(sqlite3_stmt *stmt) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             long long eventId = sqlite3_column_int64(stmt, 0);
-            NSString *eventString = [NSString stringWithUTF8String:(char *)sqlite3_column_text(stmt, 1)];
-            NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
 
-            id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:NULL];
-            if (eventImmutable == nil) {
-                AMPLITUDE_LOG(@"Error JSON deserialization of event id %lld from table %@", eventId, table);
+            // need to handle null events saved to database
+            const char *rawEventString = (const char*)sqlite3_column_text(stmt, 1);
+            if (rawEventString == NULL) {
+                AMPLITUDE_LOG(@"Ignoring NULL event string for event id %lld from table %@", eventId, table);
+                continue;
+            }
+            NSString *eventString = [NSString stringWithUTF8String:rawEventString];
+            if ([AMPUtils isEmptyString:eventString]) {
+                AMPLITUDE_LOG(@"Ignoring empty event string for event id %lld from table %@", eventId, table);
+                continue;
+            }
+
+            NSData *eventData = [eventString dataUsingEncoding:NSUTF8StringEncoding];
+            NSError *error = nil;
+            id eventImmutable = [NSJSONSerialization JSONObjectWithData:eventData options:0 error:&error];
+            if (error != nil) {
+                AMPLITUDE_LOG(@"Error JSON deserialization of event id %lld from table %@: %@", eventId, table, error);
                 continue;
             }
 

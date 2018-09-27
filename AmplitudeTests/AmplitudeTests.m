@@ -15,8 +15,14 @@
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
 #import "AMPARCMacros.h"
+#import "AMPUtils.h"
+#import "AMPTrackingOptions.h"
 
 // expose private methods for unit testing
+@interface AMPDeviceInfo (Tests)
++(NSString*)getAdvertiserID:(int) maxAttempts;
+@end
+
 @interface Amplitude (Tests)
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id) truncate:(id) obj;
@@ -28,28 +34,28 @@
 @end
 
 @implementation AmplitudeTests {
-    id _connectionMock;
+    id _sharedSessionMock;
     int _connectionCallCount;
 }
 
 - (void)setUp {
     [super setUp];
-    _connectionMock = [OCMockObject mockForClass:NSURLConnection.class];
+    _sharedSessionMock = [OCMockObject partialMockForObject:[NSURLSession sharedSession]];
     _connectionCallCount = 0;
     [self.amplitude initializeApiKey:apiKey];
 }
 
 - (void)tearDown {
-    [_connectionMock stopMocking];
+    [_sharedSessionMock stopMocking];
 }
 
-- (void)setupAsyncResponse:(id) connectionMock response:(NSMutableDictionary*) serverResponse {
-    [[[connectionMock expect] andDo:^(NSInvocation *invocation) {
+- (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
+    [[[_sharedSessionMock stub] andDo:^(NSInvocation *invocation) {
         _connectionCallCount++;
         void (^handler)(NSURLResponse*, NSData*, NSError*);
-        [invocation getArgument:&handler atIndex:4];
-        handler(serverResponse[@"response"], serverResponse[@"data"], serverResponse[@"error"]);
-    }] sendAsynchronousRequest:OCMOCK_ANY queue:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&handler atIndex:3];
+        handler(serverResponse[@"data"], serverResponse[@"response"], serverResponse[@"error"]);
+    }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 }
 
 - (void)testInstanceWithName {
@@ -248,34 +254,6 @@
     XCTAssertFalse([[event2 allKeys] containsObject:@"user_id"]);
 }
 
-- (void)testLogEventUploadLogic {
-    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
-                                            @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
-                                            }];
-
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
-    for (int i = 0; i < kAMPEventUploadThreshold; i++) {
-        [self.amplitude logEvent:@"test"];
-    }
-    [self.amplitude logEvent:@"test"];
-    [self.amplitude flushQueue];
-
-    // no sent events, event count will be threshold + 1
-    XCTAssertEqual([self.amplitude queuedEventCount], kAMPEventUploadThreshold + 1);
-
-    [serverResponse setValue:[@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding] forKey:@"data"];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
-    for (int i = 0; i < kAMPEventUploadThreshold; i++) {
-        [self.amplitude logEvent:@"test"];
-    }
-    [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude queuedEventCount], 2 * kAMPEventUploadThreshold + 1);
-
-    // make post request should only be called 3 times
-    XCTAssertEqual(_connectionCallCount, 2);
-}
-
 - (void)testRequestTooLargeBackoffLogic {
     [self.amplitude setEventUploadThreshold:2];
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
@@ -284,16 +262,36 @@
                                               }];
 
     // 413 error force backoff with 2 events --> new upload limit will be 1
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
     [self.amplitude logEvent:@"test"];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
 
-    // with upload limit 1 and 413 --> the top event will be deleted until no events left
-    XCTAssertEqual([self.amplitude queuedEventCount], 0);
+    // after first 413, the backoffupload batch size should now be 1
+    XCTAssertTrue(self.amplitude.backoffUpload);
+    XCTAssertEqual(self.amplitude.backoffUploadBatchSize, 1);
 
-    // sent 4 server requests: start_session, 2 events, delete top event, delete top event
+    // 3 upload attempts: upload 2 events, upload first event fail -> remove first event, upload second event fail -> remove second event
     XCTAssertEqual(_connectionCallCount, 3);
+}
+
+- (void)testRequestTooLargeBackoffRemoveEvent {
+    [self.amplitude setEventUploadThreshold:1];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:413 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+
+    // 413 error force backoff with 1 events --> should drop the event
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    // after first 413, the backoffupload batch size should now be 1
+    XCTAssertTrue(self.amplitude.backoffUpload);
+    XCTAssertEqual(self.amplitude.backoffUploadBatchSize, 1);
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
 }
 
 - (void)testUUIDInEvent {
@@ -334,7 +332,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
     AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
     [self.amplitude identify:identify2];
     SAFE_ARC_RELEASE(identify2);
@@ -409,7 +407,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
 
     [self.amplitude logEvent:@"test_event1"];
     [self.amplitude identify:[[AMPIdentify identify] add:@"photoCount" value:[NSNumber numberWithInt:1]]];
@@ -568,7 +566,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
 
     [self.amplitude setOffline:YES];
     [self.amplitude logEvent:@"test"];
@@ -597,7 +595,7 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:_connectionMock response:serverResponse];
+    [self setupAsyncResponse:serverResponse];
 
     [self.amplitude setOffline:YES];
     [self.amplitude logEvent:@"test1"];
@@ -746,6 +744,144 @@
     XCTAssertEqualObjects([event objectForKey:@"user_properties"], [NSDictionary dictionary]); // user properties should be empty
     XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
     XCTAssertEqualObjects([event objectForKey:@"groups"], expectedGroups);
+}
+
+-(void)testUnarchiveEventsDict {
+    NSString *archiveName = @"test_archive";
+    NSDictionary *event = [NSDictionary dictionaryWithObject:@"test event" forKey:@"event_type"];
+    XCTAssertTrue([self.amplitude archive:event toFile:archiveName]);
+
+    NSDictionary *unarchived = [self.amplitude unarchive:archiveName];
+    if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
+        XCTAssertEqualObjects(unarchived, event);
+    } else {
+        XCTAssertNil(unarchived);
+    }
+}
+
+-(void)testBlockTooManyProperties {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+
+    NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+    NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
+    AMPIdentify *identify = [AMPIdentify identify];
+    for (int i = 0; i < kAMPMaxPropertyKeys + 1; i++) {
+        [eventProperties setObject:[NSNumber numberWithInt:i] forKey:[NSNumber numberWithInt:i]];
+        [userProperties setObject:[NSNumber numberWithInt:i*2] forKey:[NSNumber numberWithInt:i*2]];
+        [identify setOnce:[NSString stringWithFormat:@"%d", i] value:[NSNumber numberWithInt:i]];
+    }
+
+    // verify that setUserProperties ignores dict completely
+    [self.amplitude setUserProperties:userProperties];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+
+    // verify that event properties and user properties are scrubbed
+    [self.amplitude logEvent:@"test event" withEventProperties:eventProperties];
+    [self.amplitude identify:identify];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 1);
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqualObjects(event[@"event_properties"], [NSDictionary dictionary]);
+    XCTAssertEqualObjects(event[@"user_properties"], [NSDictionary dictionary]);
+
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    NSDictionary *identifyEvent = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects(identifyEvent[@"event_properties"], [NSDictionary dictionary]);
+    XCTAssertEqualObjects(identifyEvent[@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionary] forKey:@"$setOnce"]);
+}
+
+-(void)testLogEventWithTimestamp {
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
+    NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970]];
+
+    [self.amplitude logEvent:@"test" withEventProperties:nil withGroups:nil withTimestamp:timestamp outOfSession:NO];
+    [self.amplitude flushQueue];
+    NSDictionary *event = [self.amplitude getLastEvent];
+    XCTAssertEqual(1000, [[event objectForKey:@"timestamp"] longLongValue]);
+
+    [self.amplitude logEvent:@"test2" withEventProperties:nil withGroups:nil withLongLongTimestamp:2000 outOfSession:NO];
+    [self.amplitude flushQueue];
+    event = [self.amplitude getLastEvent];
+    XCTAssertEqual(2000, [[event objectForKey:@"timestamp"] longLongValue]);
+}
+
+-(void)testRegenerateDeviceId {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
+    NSString *oldDeviceId = [self.amplitude getDeviceId];
+    XCTAssertFalse([AMPUtils isEmptyString:oldDeviceId]);
+    XCTAssertEqualObjects(oldDeviceId, [dbHelper getValue:@"device_id"]);
+
+    [self.amplitude regenerateDeviceId];
+    [self.amplitude flushQueue];
+    NSString *newDeviceId = [self.amplitude getDeviceId];
+    XCTAssertNotEqualObjects(oldDeviceId, newDeviceId);
+    XCTAssertEqualObjects(newDeviceId, [dbHelper getValue:@"device_id"]);
+    XCTAssertTrue([newDeviceId hasSuffix:@"R"]);
+}
+
+-(void)testTrackIdfa {
+    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
+    [[mockDeviceInfo expect] getAdvertiserID:5];
+
+    Amplitude *client = [Amplitude instanceWithName:@"has_idfa"];
+    [client flushQueueWithQueue:client.initializerQueue];
+    [client initializeApiKey:@"blah"];
+    [client flushQueue];
+
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    [mockDeviceInfo verify];
+    [mockDeviceInfo stopMocking];
+}
+
+-(void)testDisableIdfa {
+    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
+    [[mockDeviceInfo reject] getAdvertiserID:5];
+
+    Amplitude *client = [Amplitude instanceWithName:@"disable_idfa"];
+    [client flushQueueWithQueue:client.initializerQueue];
+    [client disableIdfaTracking];
+    [client initializeApiKey:@"blah"];
+    [client flushQueue];
+
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    [mockDeviceInfo verify];
+    [mockDeviceInfo stopMocking];
+}
+
+-(void)testSetTrackingConfig {
+    AMPTrackingOptions *options = [[[[[AMPTrackingOptions options] disableCity] disableIPAddress] disableLanguage] disableCountry];
+    [self.amplitude setTrackingOptions:options];
+
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    NSDictionary *event = [self.amplitude getLastEvent];
+
+    // verify we have platform and carrier since those were not filtered out
+    XCTAssertEqualObjects([event objectForKey:@"platform"], @"iOS");
+    XCTAssertEqualObjects([event objectForKey:@"carrier"], @"Unknown");
+
+    // verify we do not have any of the filtered out events
+    XCTAssertNil([event objectForKey:@"city"]);
+    XCTAssertNil([event objectForKey:@"country"]);
+    XCTAssertNil([event objectForKey:@"language"]);
+
+    // verify api properties contains tracking options for location filtering
+    NSDictionary *apiProperties = [event objectForKey:@"api_properties"];
+    XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
+    XCTAssertNotNil([apiProperties objectForKey:@"tracking_options"]);
+
+    NSDictionary *trackingOptions = [apiProperties objectForKey:@"tracking_options"];
+    XCTAssertEqual(3, trackingOptions.count);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"city"]);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"country"]);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
 @end

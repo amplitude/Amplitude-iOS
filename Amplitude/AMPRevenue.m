@@ -71,7 +71,7 @@
         return self;
     }
 
-    SAFE_ARC_RETAIN(productIdentifier);
+    (void) SAFE_ARC_RETAIN(productIdentifier);
     SAFE_ARC_RELEASE(_productId);
     _productId = productIdentifier;
     return self;
@@ -85,7 +85,7 @@
 
 - (AMPRevenue*)setPrice:(NSNumber *) price
 {
-    SAFE_ARC_RETAIN(price);
+    (void) SAFE_ARC_RETAIN(price);
     SAFE_ARC_RELEASE(_price);
     _price = price;
     return self;
@@ -93,7 +93,7 @@
 
 - (AMPRevenue*)setRevenueType:(NSString*) revenueType
 {
-    SAFE_ARC_RETAIN(revenueType);
+    (void) SAFE_ARC_RETAIN(revenueType);
     SAFE_ARC_RELEASE(_revenueType);
     _revenueType = revenueType;
     return self;
@@ -101,7 +101,7 @@
 
 - (AMPRevenue*)setReceipt:(NSData*) receipt
 {
-    SAFE_ARC_RETAIN(receipt);
+    (void) SAFE_ARC_RETAIN(receipt);
     SAFE_ARC_RELEASE(_receipt);
     _receipt = receipt;
     return self;

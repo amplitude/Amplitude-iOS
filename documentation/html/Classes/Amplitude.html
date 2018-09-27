@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" href="../css/style.css">
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
-	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
+	<meta name="generator" content="appledoc 2.2.1 (build 1333)">
 </head>
 <body class="appledoc">
 	<header>
@@ -106,9 +106,13 @@
 		
 		<option value="//api/name/identify:">- identify:</option>
 		
+		<option value="//api/name/identify:outOfSession:">- identify:outOfSession:</option>
+		
 		<option value="//api/name/initializeApiKey:">- initializeApiKey:</option>
 		
 		<option value="//api/name/initializeApiKey:userId:">- initializeApiKey:userId:</option>
+		
+		<option value="//api/name/initializeApiKey:userId:setUserId:">- initializeApiKey:userId:setUserId:</option>
 		
 		<option value="//api/name/logEvent:">- logEvent:</option>
 		
@@ -120,6 +124,10 @@
 		
 		<option value="//api/name/logEvent:withEventProperties:withGroups:outOfSession:">- logEvent:withEventProperties:withGroups:outOfSession:</option>
 		
+		<option value="//api/name/logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:">- logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:</option>
+		
+		<option value="//api/name/logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:">- logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:</option>
+		
 		<option value="//api/name/logRevenue:">- logRevenue:</option>
 		
 		<option value="//api/name/logRevenue:quantity:price:">- logRevenue:quantity:price:</option>
@@ -130,6 +138,12 @@
 		
 		<option value="//api/name/printEventsCount">- printEventsCount</option>
 		
+		<option value="//api/name/refreshSessionTime:">- refreshSessionTime:</option>
+		
+		<option value="//api/name/regenerateDeviceId">- regenerateDeviceId</option>
+		
+		<option value="//api/name/runOnBackgroundQueue:">- runOnBackgroundQueue:</option>
+		
 		<option value="//api/name/setDeviceId:">- setDeviceId:</option>
 		
 		<option value="//api/name/setGroup:groupName:">- setGroup:groupName:</option>
@@ -138,13 +152,19 @@
 		
 		<option value="//api/name/setOptOut:">- setOptOut:</option>
 		
+		<option value="//api/name/setSessionId:">- setSessionId:</option>
+		
 		<option value="//api/name/setUserId:">- setUserId:</option>
 		
 		<option value="//api/name/setUserProperties:">- setUserProperties:</option>
 		
 		<option value="//api/name/setUserProperties:replace:">- setUserProperties:replace:</option>
 		
+		<option value="//api/name/startOrContinueSession:">- startOrContinueSession:</option>
+		
 		<option value="//api/name/updateLocation">- updateLocation</option>
+		
+		<option value="//api/name/upgradePrefs">- upgradePrefs</option>
 		
 		<option value="//api/name/uploadEvents">- uploadEvents</option>
 		
@@ -174,7 +194,7 @@
 	<td>NSObject</td>
 </tr><tr>
 	<th>Declared in</th>
-	<td>Amplitude.h</td>
+	<td>Amplitude.h<br />Amplitude.m</td>
 </tr>
 						</tbody></table></div>
 					
@@ -1405,6 +1425,192 @@
 			
 		</div>
 	</div>
+</div><div class="section-method">
+	<a name="//api/name/logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:" title="logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:">&ndash;&nbsp;logEvent:withEventProperties:withGroups:withLongLongTimestamp:outOfSession:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Tracks an event. Events are saved locally.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em> withLongLongTimestamp:(long long)<em>timestamp</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventType</code></th>
+						<td><p>The name of the event you wish to track.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventProperties</code></th>
+						<td><p>You can attach additional data to any event by passing a NSDictionary object with property: value pairs.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>groups</code></th>
+						<td><p>You can specify event-level groups for this user by passing a NSDictionary object with groupType: groupName pairs. Note the keys need to be strings, and the values can either be strings or an array of strings.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>outOfSession</code></th>
+						<td><p>If YES, will track the event as out of session. Useful for push notification events.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>longLongtimestamp</code></th>
+						<td><p>You can specify a custom timestamp by passing the milliseconds since epoch UTC time as a long long.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Tracks an event. Events are saved locally.</p>
+
+<p>Uploads are batched to occur every 30 events or every 30 seconds (whichever comes first), as well as on app close.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events">Tracking Events</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-groups">Setting Groups</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-sessions">Tracking Sessions</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:" title="logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:">&ndash;&nbsp;logEvent:withEventProperties:withGroups:withTimestamp:outOfSession:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Tracks an event. Events are saved locally.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em> withTimestamp:(NSNumber *)<em>timestamp</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventType</code></th>
+						<td><p>The name of the event you wish to track.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>eventProperties</code></th>
+						<td><p>You can attach additional data to any event by passing a NSDictionary object with property: value pairs.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>groups</code></th>
+						<td><p>You can specify event-level groups for this user by passing a NSDictionary object with groupType: groupName pairs. Note the keys need to be strings, and the values can either be strings or an array of strings.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>timestamp</code></th>
+						<td><p>You can specify a custom timestamp by passing an NSNumber representing the milliseconds since epoch UTC time. We recommend using [NSNumber numberWithLongLong:milliseconds] to create the value. If nil is passed in, then the event will be timestamped with the current time.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>outOfSession</code></th>
+						<td><p>If YES, will track the event as out of session. Useful for push notification events.</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Tracks an event. Events are saved locally.</p>
+
+<p>Uploads are batched to occur every 30 events or every 30 seconds (whichever comes first), as well as on app close.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/amplitude-ios#tracking-events">Tracking Events</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#setting-groups">Setting Groups</a></p></code></li>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-sessions">Tracking Sessions</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
 </div>
 						</div>
 						
@@ -1786,6 +1992,86 @@
 
 <pre><code>[[Amplitude instance] identify:identify];
 </code></pre>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#user-properties-and-user-property-operations">User Properties and User Property Operations</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/identify:outOfSession:" title="identify:outOfSession:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/identify:outOfSession:">&ndash;&nbsp;identify:outOfSession:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Update user properties using operations provided via Identify API. If outOfSession is <code>YES</code> then the identify event is logged with a session id of -1 and does not trigger any session-handling logic.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)identify:(AMPIdentify *)<em>identify</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>identify</code></th>
+						<td><p>An <a href="../Classes/AMPIdentify.html">AMPIdentify</a> object with the intended user property operations</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>outOfSession</code></th>
+						<td><p>Whether to log identify event out of session</p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Update user properties using operations provided via Identify API. If outOfSession is <code>YES</code> then the identify event is logged with a session id of -1 and does not trigger any session-handling logic.</p>
+
+<p>To update user properties, first create an AMPIdentify object. For example if you wanted to set a user&rsquo;s gender, and then increment their karma count by 1, you would do:</p>
+
+<p>AMPIdentify *identify = [[[AMPIdentify identify] set:@&ldquo;gender&rdquo; value:@&ldquo;male&rdquo;] add:@&ldquo;karma&rdquo; value:[NSNumber numberWithInt:1]];</p>
+
+<p>Then you would pass this AMPIdentify object to the identify function to send to the server:</p>
+
+<p>[[Amplitude instance] identify:identify outOfSession:YES];</p>
 			</div>
 			
 
@@ -2665,6 +2951,61 @@
 		</div>
 	</div>
 </div><div class="section-method">
+	<a name="//api/name/regenerateDeviceId" title="regenerateDeviceId"></a>
+	<h3 class="method-title"><code><a href="#//api/name/regenerateDeviceId">&ndash;&nbsp;regenerateDeviceId</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Regenerates a new random <a href="#//api/name/deviceId">deviceId</a> for current user. Note: this is not recommended unless you know what you are doing. This can be used in conjunction with setUserId:nil to anonymize users after they log out. With a nil <a href="#//api/name/userId">userId</a> and a completely new <a href="#//api/name/deviceId">deviceId</a>, the current user would appear as a brand new user in dashboard.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)regenerateDeviceId</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Regenerates a new random <a href="#//api/name/deviceId">deviceId</a> for current user. Note: this is not recommended unless you know what you are doing. This can be used in conjunction with setUserId:nil to anonymize users after they log out. With a nil <a href="#//api/name/userId">userId</a> and a completely new <a href="#//api/name/deviceId">deviceId</a>, the current user would appear as a brand new user in dashboard.</p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#logging-out-and-anonymous-users">Logging Out Users</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
 	<a name="//api/name/getSessionId" title="getSessionId"></a>
 	<h3 class="method-title"><code><a href="#//api/name/getSessionId">&ndash;&nbsp;getSessionId</a></code>
 </h3>
@@ -2676,7 +3017,7 @@
 			
 			
 			<div class="method-subsection brief-description">
-				<p>Fetches the current sessionId, an identifier used by Amplitude to group together events tracked during the same session.</p>
+				<p>Fetches the current <a href="#//api/name/sessionId">sessionId</a>, an identifier used by Amplitude to group together events tracked during the same session.</p>
 			</div>
 			
 		    
@@ -2698,7 +3039,7 @@
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>Fetches the current sessionId, an identifier used by Amplitude to group together events tracked during the same session.</p>
+				<p>Fetches the current <a href="#//api/name/sessionId">sessionId</a>, an identifier used by Amplitude to group together events tracked during the same session.</p>
 			</div>
 			
 
@@ -2775,6 +3116,302 @@
 </div>
 						</div>
 						
+
+						
+						<h2 class="task-title">Other Methods</h2>
+
+						<div class="task-list">
+							<div class="section-method">
+	<a name="//api/name/initializeApiKey:userId:setUserId:" title="initializeApiKey:userId:setUserId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/initializeApiKey:userId:setUserId:">&ndash;&nbsp;initializeApiKey:userId:setUserId:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a <a href="#//api/name/userId">userId</a> (can be nil).
+If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a> from saved eventsData.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)initializeApiKey:(NSString *)<em>apiKey</em> userId:(NSString *)<em>userId</em> setUserId:(BOOL)<em>setUserId</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>SetUserId: client explicitly <a href="#//api/name/initialized">initialized</a> with a <a href="#//api/name/userId">userId</a> (can be nil).
+If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a> from saved eventsData.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.m</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/runOnBackgroundQueue:" title="runOnBackgroundQueue:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/runOnBackgroundQueue:">&ndash;&nbsp;runOnBackgroundQueue:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Run a block in the background. If already in the background, run immediately.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (BOOL)runOnBackgroundQueue:(void ( ^ ) ( void ))<em>block</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Run a block in the background. If already in the background, run immediately.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.m</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/startOrContinueSession:" title="startOrContinueSession:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/startOrContinueSession:">&ndash;&nbsp;startOrContinueSession:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Creates a new session if we are in the background and
+the current session is expired or if there is no current session ID].
+Otherwise extends the session.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (BOOL)startOrContinueSession:(NSNumber *)<em>timestamp</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Creates a new session if we are in the background and
+the current session is expired or if there is no current session ID].
+Otherwise extends the session.</p>
+
+<p>Returns YES if a new session was created.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.m</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setSessionId:" title="setSessionId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setSessionId:">&ndash;&nbsp;setSessionId:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets the session ID in memory and persists it to disk.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setSessionId:(long long)<em>timestamp</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets the session ID in memory and persists it to disk.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.m</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/refreshSessionTime:" title="refreshSessionTime:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/refreshSessionTime:">&ndash;&nbsp;refreshSessionTime:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Update the session timer if there&rsquo;s a running session.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)refreshSessionTime:(NSNumber *)<em>timestamp</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Update the session timer if there&rsquo;s a running session.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.m</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/upgradePrefs" title="upgradePrefs"></a>
+	<h3 class="method-title"><code><a href="#//api/name/upgradePrefs">&ndash;&nbsp;upgradePrefs</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Move all preference data from the legacy name to the new, static name if needed.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (BOOL)upgradePrefs</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Move all preference data from the legacy name to the new, static name if needed.</p>
+
+<p>Data used to be in the NSCachesDirectory, which would sometimes be cleared unexpectedly,
+resulting in data loss. We move the data from NSCachesDirectory to the current
+location in NSLibraryDirectory.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.m</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+						</div>
+						
 					</div>
 					
 					
@@ -2787,10 +3424,10 @@
 				<footer>
 					<div class="footer-copyright">
 						
-						<p class="copyright">Copyright &copy; 2016 Amplitude. All rights reserved. Updated: 2016-05-09</p>
+						<p class="copyright">Copyright &copy; 2016 Amplitude. All rights reserved. Updated: 2016-12-05</p>
 						
 						
-						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1333)</a>.</p>
 						
 					</div>
 				</footer>

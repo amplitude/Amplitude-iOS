@@ -54,11 +54,9 @@
     OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
 
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
-    [[mockAmplitude expect] enterForeground];
     [mockAmplitude initializeApiKey:apiKey];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
-    [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
 }
 
@@ -99,7 +97,7 @@
     [mockAmplitude logEvent:@"continue_session"];
     [mockAmplitude flushQueue];
 
-    XCTAssertEqual([[mockAmplitude lastEventTime] longLongValue], 1001000 + self.amplitude.minTimeBetweenSessionsMillis);
+    XCTAssertEqual([mockAmplitude getLastEventTime], 1001000 + self.amplitude.minTimeBetweenSessionsMillis);
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
     XCTAssertEqual([mockAmplitude sessionId], 1000000 + self.amplitude.minTimeBetweenSessionsMillis);
 
@@ -135,7 +133,7 @@
                isEqualToNumber:[NSNumber numberWithLongLong:-1]]);
 
     // An out of session event should not continue the session
-    XCTAssertEqual([[mockAmplitude lastEventTime] longLongValue], 3000000); // event time of first no session
+    XCTAssertEqual([mockAmplitude getLastEventTime], 3000000); // event time of first no session
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
@@ -171,7 +169,7 @@
     NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:1000 + (self.amplitude.minTimeBetweenSessionsMillis / 1000)];
     [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)] currentTime];
     [mockAmplitude enterForeground]; // simulate app entering foreground
-    [self.amplitude flushQueue];
+    [mockAmplitude flushQueue];
     XCTAssertEqual([mockAmplitude queuedEventCount], 3);
 
     long long expectedSessionId = 1000000 + self.amplitude.minTimeBetweenSessionsMillis;
@@ -183,6 +181,24 @@
 
     XCTAssertEqual([[self.amplitude getLastEvent][@"session_id"] longLongValue], expectedSessionId);
     XCTAssertEqualObjects([self.amplitude getLastEvent][@"event_type"], kAMPSessionStartEvent);
+
+    // test in session identify with app in background
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)] currentTime];
+    [mockAmplitude enterBackground]; // simulate app entering background
+
+    NSDate *date3 = [NSDate dateWithTimeIntervalSince1970:1000 + 2 * self.amplitude.minTimeBetweenSessionsMillis];
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date3)] currentTime];
+    AMPIdentify *identify = [[AMPIdentify identify] set:@"key" value:@"value"];
+    [mockAmplitude identify:identify outOfSession:NO];
+    [mockAmplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 5); // triggers session events
+
+    // test out of session identify with app in background
+    NSDate *date4 = [NSDate dateWithTimeIntervalSince1970:1000 + 3 * self.amplitude.minTimeBetweenSessionsMillis];
+    [[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date4)] currentTime];
+    [mockAmplitude identify:identify outOfSession:YES];
+    [mockAmplitude flushQueue];
+    XCTAssertEqual([mockAmplitude queuedEventCount], 5); // does not trigger session events
 }
 
 - (void)testSessionEventsOn32BitDevices {

@@ -12,10 +12,10 @@
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
-#import "AMPURLConnection.h"
+#import "AMPURLSession.h"
 #import "Amplitude+SSLPinning.h"
 
-@interface AMPURLConnection (Test)
+@interface AMPURLSession (Test)
 
 + (void)pinSSLCertificate:(NSArray *)certFilename;
 
@@ -59,14 +59,18 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
 
     self.amplitude.sslPinningEnabled = YES;
-    [AMPURLConnection pinSSLCertificate:@[@"InvalidCertificationAuthority"]];
+    [AMPURLSession sharedSession]; // trigger static instance to pin valid certificates, then pin the invalid one
+    [AMPURLSession pinSSLCertificate:@[@"InvalidCertificationAuthority"]];
 
     [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
     [self.amplitude logEvent:@"Test Invalid SSL Pinning"];
+    [self.amplitude flushQueue];
 
     [self.amplitude flushUploads:^() {
+        // upload fails and so there should still be an unsent event
         NSDictionary *event = [self.amplitude getLastEvent];
         XCTAssertNotNil(event);
+        XCTAssertEqual([self.databaseHelper getEventCount], 1);
         [expectation fulfill];
     }];
 
@@ -81,10 +85,11 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
 
     self.amplitude.sslPinningEnabled = YES;
-    [AMPURLConnection pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
+    [AMPURLSession pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
 
     [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
     [self.amplitude logEvent:@"Test SSL Pinning"];
+    [self.amplitude flushQueue];
     [self.amplitude flushUploads:^() {
         NSDictionary *event = [self.amplitude getLastEvent];
         XCTAssertNil(event);

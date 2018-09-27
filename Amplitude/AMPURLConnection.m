@@ -114,6 +114,7 @@
     SAFE_ARC_RELEASE(_completionHandler);
     SAFE_ARC_RELEASE(_data);
     SAFE_ARC_RELEASE(_response);
+    SAFE_ARC_RELEASE(_delegate);
     SAFE_ARC_SUPER_DEALLOC();
 }
 

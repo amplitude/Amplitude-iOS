@@ -18,6 +18,10 @@
 @dynamic initialized;
 @dynamic sessionId;
 @dynamic lastEventTime;
+@dynamic backoffUpload;
+@dynamic backoffUploadBatchSize;
+@dynamic sslPinningEnabled;
+@dynamic dbHelper;
 
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
@@ -46,7 +50,7 @@
     return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
 }
 
-- (void)flushUploads:(void (^)())handler {
+- (void)flushUploads:(void (^)(void))handler {
     [self performSelector:@selector(uploadEvents)];
     [self flushQueue];
 

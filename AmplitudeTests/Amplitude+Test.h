@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AMPDatabaseHelper.h"
 
 @interface Amplitude (Test)
 
@@ -16,10 +17,14 @@
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, strong) NSNumber* lastEventTime;
+@property (nonatomic, assign) BOOL backoffUpload;
+@property (nonatomic, assign) int backoffUploadBatchSize;
+@property (nonatomic, assign) BOOL sslPinningEnabled;
+@property (nonatomic, assign) AMPDatabaseHelper *dbHelper;
 
 - (void)flushQueue;
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;
-- (void)flushUploads:(void (^)())handler;
+- (void)flushUploads:(void (^)(void))handler;
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getLastIdentify;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
@@ -27,5 +32,8 @@
 - (void)enterForeground;
 - (void)enterBackground;
 - (NSDate*)currentTime;
+- (id)unarchive:(NSString*)path;
+- (BOOL)archive:(id) obj toFile:(NSString*)path;
+- (long long)getLastEventTime;
 
 @end
