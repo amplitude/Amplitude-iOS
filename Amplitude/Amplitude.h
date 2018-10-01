@@ -4,6 +4,7 @@
 #import <Foundation/Foundation.h>
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
+#import "AMPTrackingOptions.h"
 
 
 /**
@@ -524,6 +525,8 @@
  **NOTE:** Must be called before initializeApiKey: is called to function.
  */
 - (void)disableIdfaTracking;
+
+- (void)setTrackingOptions:(AMPTrackingOptions*) options;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods
