@@ -343,6 +343,46 @@
     XCTAssertEqual([dbHelper getTotalEventCount], 0);
 }
 
+- (void)testGroupIdentify {
+    NSString *groupType = @"test group type";
+    NSString *groupName = @"test group name";
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude setEventUploadThreshold:2];
+
+    AMPIdentify *identify = [[AMPIdentify identify] set:@"key1" value:@"value1"];
+    [self.amplitude groupIdentify:groupType groupName:groupName groupIdentify:identify];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+
+    NSDictionary *operations = [NSDictionary dictionaryWithObject:@"value1" forKey:@"key1"];
+    NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$set"];
+    NSDictionary *expectedGroups = [NSDictionary dictionaryWithObject:@"test group name" forKey:@"test group type"];
+    NSDictionary *event = [self.amplitude getLastIdentify];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], GROUP_IDENTIFY_EVENT);
+    XCTAssertEqualObjects([event objectForKey:@"groups"], expectedGroups);
+    XCTAssertEqualObjects([event objectForKey:@"group_properties"], expected);
+    XCTAssertEqualObjects([event objectForKey:@"user_properties"], [NSDictionary dictionary]);
+    XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
+    XCTAssertEqual(1, [[event objectForKey:@"sequence_number"] intValue]);
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+    AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
+    [self.amplitude groupIdentify:groupType groupName:groupName groupIdentify:identify2];
+    SAFE_ARC_RELEASE(identify2);
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 0);
+}
+
 - (void)testLogRevenueV2 {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
