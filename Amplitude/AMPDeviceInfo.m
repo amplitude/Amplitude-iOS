@@ -207,6 +207,8 @@
 
 + (NSString*)getPhoneModel{
     NSString *platform = [self getPlatformString];
+    if ([platform isEqualToString:@"AppleTV5,3"])   return @"AppleTV 4th Gen";
+    if ([platform isEqualToString:@"AppleTV6,2"])   return @"AppleTV 4K";    
     if ([platform isEqualToString:@"iPhone1,1"])    return @"iPhone 1";
     if ([platform isEqualToString:@"iPhone1,2"])    return @"iPhone 3G";
     if ([platform isEqualToString:@"iPhone2,1"])    return @"iPhone 3GS";
@@ -268,6 +270,7 @@
     if ([platform isEqualToString:@"iPad6,8"])      return @"iPad Pro";
     if ([platform isEqualToString:@"i386"])         return @"Simulator";
     if ([platform isEqualToString:@"x86_64"])       return @"Simulator";
+    if ([platform isEqualToString:@"iPhone1,1"])    return @"iPhone 1";
     return platform;
 }
 @end
