@@ -2,7 +2,7 @@
 
 ## 4.4.0 (October 15, 2018)
 
-* Add ability to set group properties via a new `groupIdentifyWithGroupType` method that takes in an `Identify` object as well as a group type and group name.
+* Add ability to set group properties via a new `groupIdentifyWithGroupType` method that takes in an `AMPIdentify` object as well as a group type and group name.
 
 ## 4.3.1 (August 14, 2018)
 
