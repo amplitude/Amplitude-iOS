@@ -1333,12 +1333,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:outOfSession];
 }
 
-- (void)groupIdentify:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify
+- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify
 {
-    [self groupIdentify:groupType groupName:groupName groupIdentify:groupIdentify outOfSession:NO];
+    [self groupIdentifyWithGroupType:groupType groupName:groupName groupIdentify:groupIdentify outOfSession:NO];
 }
 
-- (void)groupIdentify:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify outOfSession:(BOOL) outOfSession
+- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify outOfSession:(BOOL) outOfSession
 {
     if (groupIdentify == nil || [groupIdentify.userPropertyOperations count] == 0) {
         return;

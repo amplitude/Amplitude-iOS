@@ -432,9 +432,9 @@
 
 - (void)setGroup:(NSString*) groupType groupName:(NSObject*) groupName;
 
-- (void)groupIdentify:(NSString*) groupType groupName:(NSObject*) groupName groupIdentify:(AMPIdentify *) groupIdentify;
+- (void)groupIdentifyWithGroupType:(NSString*) groupType groupName:(NSObject*) groupName groupIdentify:(AMPIdentify *) groupIdentify;
 
-- (void)groupIdentify:(NSString*) groupType groupName:(NSObject*) groupName groupIdentify:(AMPIdentify *) groupIdentify outOfSession:(BOOL) outOfSession;
+- (void)groupIdentifyWithGroupType:(NSString*) groupType groupName:(NSObject*) groupName groupIdentify:(AMPIdentify *) groupIdentify outOfSession:(BOOL) outOfSession;
 
 /**-----------------------------------------------------------------------------
  * @name Setting User and Device Identifiers

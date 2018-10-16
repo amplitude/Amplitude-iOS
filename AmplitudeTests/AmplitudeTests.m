@@ -350,7 +350,7 @@
     [self.amplitude setEventUploadThreshold:2];
 
     AMPIdentify *identify = [[AMPIdentify identify] set:@"key1" value:@"value1"];
-    [self.amplitude groupIdentify:groupType groupName:groupName groupIdentify:identify];
+    [self.amplitude groupIdentifyWithGroupType:groupType groupName:groupName groupIdentify:identify];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 0);
@@ -374,7 +374,7 @@
                                               }];
     [self setupAsyncResponse:serverResponse];
     AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
-    [self.amplitude groupIdentify:groupType groupName:groupName groupIdentify:identify2];
+    [self.amplitude groupIdentifyWithGroupType:groupType groupName:groupName groupIdentify:identify2];
     SAFE_ARC_RELEASE(identify2);
     [self.amplitude flushQueue];
 
