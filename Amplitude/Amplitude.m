@@ -213,6 +213,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (id)initWithInstanceName:(NSString*) instanceName
 {
+    id<AMPNetworkClient> client = [[AMPNSURLSessionNetworkClient alloc] init];
+
+    return [self initWithInstanceName:instanceName networkClient:nil];
+}
+
+- (id)initWithInstanceName:(NSString*) instanceName networkClient: (id<AMPNetworkClient>) client
+{
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
@@ -245,6 +252,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self.eventUploadMaxBatchSize = kAMPEventUploadMaxBatchSize;
         self.eventUploadPeriodSeconds = kAMPEventUploadPeriodSeconds;
         self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
+        self.networkClient = client;
         _backoffUploadBatchSize = self.eventUploadMaxBatchSize;
 
         _initializerQueue = [[NSOperationQueue alloc] init];
@@ -432,6 +440,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_RELEASE(_instanceName);
     SAFE_ARC_RELEASE(_trackingOptions);
     SAFE_ARC_RELEASE(_apiPropertiesTrackingOptions);
+    SAFE_ARC_RELEASE(_networkClient);
 
 
     SAFE_ARC_SUPER_DEALLOC();
@@ -839,6 +848,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:kAMPRevenueEvent withEventProperties:[revenue toNSDictionary]];
 }
 
+- (id<AMPNetworkClient>) networkClient {
+    if (_networkClient != nil) {
+        return _networkClient;
+    } else {
+        // If pinning is enabled, use the AMPURLSession that handles it.
+        #if AMPLITUDE_SSL_PINNING
+            id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
+        #else
+            id session = [NSURLSession class];
+        #endif
+        NSURLSession *sharedSession = [session sharedSession];
+
+        return [[AMPNSURLSessionNetworkClient alloc] initWithNSURLSession:sharedSession];
+    }
+}
+
 #pragma mark - Upload events
 
 - (void)uploadEventsWithDelay:(int) delay
@@ -1020,7 +1045,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     AMPLITUDE_LOG(@"Events: %@", events);
 
-    [[self networkClient] uploadEvents:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [self.networkClient uploadEvents:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -1102,18 +1127,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
         }
     }];
-}
-
-- (id <AMPNetworkClient>) networkClient {
-    // If pinning is enabled, use the AMPURLSession that handles it.
-    #if AMPLITUDE_SSL_PINNING
-        id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
-    #else
-        id session = [NSURLSession class];
-    #endif
-    NSURLSession *sharedSession = [session sharedSession];
-
-    return [[AMPNSURLSessionNetworkClient alloc] initWithNSURLSession:sharedSession];
 }
 
 #pragma mark - application lifecycle methods

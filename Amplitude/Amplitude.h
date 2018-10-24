@@ -100,6 +100,10 @@
  */
 @property (nonatomic, assign) BOOL trackingSessionEvents;
 
+/**
+Network client to be used for event upload requests.
+ */
+@property (nonatomic, strong, nonnull) id<AMPNetworkClient> networkClient;
 
 #pragma mark - Methods
 
@@ -125,6 +129,19 @@
  @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
  */
 + (Amplitude *)instanceWithName:(NSString*) instanceName;
+
+/**
+ This fetches a named SDK instance. Use this if logging events to multiple Amplitude apps.
+
+ @param instanceName the name of the SDK instance to fetch.
+
+ @param networkClient the network client to be used for the upload requests.
+
+ @returns the Amplitude SDK instance corresponding to `instanceName`
+
+ @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
+ */
++ (Amplitude *)instanceWithName:(NSString*) instanceName networkClient:(id <AMPNetworkClient>) client;
 
 /**-----------------------------------------------------------------------------
  * @name Initialize the Amplitude SDK with your Amplitude API Key
