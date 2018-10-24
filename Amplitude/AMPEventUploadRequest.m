@@ -14,18 +14,21 @@
 @synthesize apiKey = _apiKey;
 @synthesize events = _events;
 @synthesize checksum = _checksum;
+@synthesize url = _url;
 
 - (instancetype)initWithApiVersion: (int) apiVersion
                             apiKey: (nonnull NSString *) apiKey
                             events: (nonnull NSString *) events
                         uploadTime: (long long) uploadTime
-                          checksum: (nonnull NSString *)checksum {
+                          checksum: (nonnull NSString *)checksum
+                               url: (nonnull NSURL *)url {
     self = [super init];
     _apiVersion = apiVersion;
     _apiKey = apiKey;
     _events = events;
     _uploadTime = uploadTime;
     _checksum = checksum;
+    _url = url;
     return self;
 }
 
@@ -33,6 +36,7 @@
     SAFE_ARC_RELEASE(_apiKey);
     SAFE_ARC_RELEASE(_events);
     SAFE_ARC_RELEASE(_checksum);
+    SAFE_ARC_RELEASE(_url);
     SAFE_ARC_SUPER_DEALLOC();
 }
 

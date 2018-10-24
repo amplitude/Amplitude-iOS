@@ -109,6 +109,11 @@
 		A320B8C421801AE7008BBC0A /* AMPEventUploadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A320B8C021801846008BBC0A /* AMPEventUploadRequest.m */; };
 		A320B8C521801AE7008BBC0A /* AMPEventUploadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A320B8C021801846008BBC0A /* AMPEventUploadRequest.m */; };
 		A320B8C621801AE8008BBC0A /* AMPEventUploadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A320B8C021801846008BBC0A /* AMPEventUploadRequest.m */; };
+		A320B8C921801B4A008BBC0A /* AMPNSURLSessionNetworkClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A320B8C721801B4A008BBC0A /* AMPNSURLSessionNetworkClient.h */; };
+		A320B8CA21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A320B8C821801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m */; };
+		A320B8CB21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A320B8C821801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m */; };
+		A320B8CC21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A320B8C821801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m */; };
+		A320B8CD21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A320B8C821801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m */; };
 		DA6B3BB40A3C99F08C34EDFD /* libPods-AmplitudeTVOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C1E203B94A494052A38E53DF /* libPods-AmplitudeTVOSTests.a */; };
 		E93C8C551A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E93C8C541A59B3B9001339A5 /* AMPLocationManagerDelegateTests.m */; };
 		E96785EC1A48E93F00887CCD /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = E96785E41A48E93F00887CCD /* AMPDeviceInfo.m */; };
@@ -184,6 +189,8 @@
 		A320B8BE218016FB008BBC0A /* AMPNetworkClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPNetworkClient.h; sourceTree = "<group>"; };
 		A320B8BF21801846008BBC0A /* AMPEventUploadRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPEventUploadRequest.h; sourceTree = "<group>"; };
 		A320B8C021801846008BBC0A /* AMPEventUploadRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPEventUploadRequest.m; sourceTree = "<group>"; };
+		A320B8C721801B4A008BBC0A /* AMPNSURLSessionNetworkClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPNSURLSessionNetworkClient.h; sourceTree = "<group>"; };
+		A320B8C821801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPNSURLSessionNetworkClient.m; sourceTree = "<group>"; };
 		A553A7142982FCF36CA7B0D3 /* Pods-AmplitudeTVOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmplitudeTVOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AmplitudeTVOSTests/Pods-AmplitudeTVOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BBEDD10CA8A6B9F1D5F260BB /* Pods-AmplitudeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmplitudeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AmplitudeTests/Pods-AmplitudeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C1E203B94A494052A38E53DF /* libPods-AmplitudeTVOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AmplitudeTVOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -346,6 +353,8 @@
 				60FD3058210264C000267B2A /* AMPTrackingOptions.h */,
 				60FD305A210264FA00267B2A /* AMPTrackingOptions.m */,
 				A320B8BE218016FB008BBC0A /* AMPNetworkClient.h */,
+				A320B8C721801B4A008BBC0A /* AMPNSURLSessionNetworkClient.h */,
+				A320B8C821801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m */,
 				A320B8BF21801846008BBC0A /* AMPEventUploadRequest.h */,
 				A320B8C021801846008BBC0A /* AMPEventUploadRequest.m */,
 			);
@@ -399,6 +408,7 @@
 				343AB4331CC9A1EA00962943 /* Amplitude+SSLPinning.h in Headers */,
 				343AB4301CC9A1EA00962943 /* AMPDeviceInfo.h in Headers */,
 				A320B8C321801AE2008BBC0A /* AMPEventUploadRequest.h in Headers */,
+				A320B8C921801B4A008BBC0A /* AMPNSURLSessionNetworkClient.h in Headers */,
 				343AB41A1CC99F4F00962943 /* AmplitudeFramework.h in Headers */,
 				343AB42E1CC9A1EA00962943 /* AMPConstants.h in Headers */,
 				343AB4381CC9A1EA00962943 /* ISPCertificatePinning.h in Headers */,
@@ -613,6 +623,7 @@
 				343AB4231CC99FBF00962943 /* Amplitude.m in Sources */,
 				343AB4281CC99FD500962943 /* ISPCertificatePinning.m in Sources */,
 				343AB4221CC99FBD00962943 /* AMPIdentify.m in Sources */,
+				A320B8CC21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */,
 				343AB4241CC99FC200962943 /* AMPLocationManagerDelegate.m in Sources */,
 				60AFE7351F6B70F300DF9A88 /* AMPURLSession.m in Sources */,
 				343AB4271CC99FC900962943 /* AMPUtils.m in Sources */,
@@ -637,6 +648,7 @@
 				600CBC761E2EF629001F58A9 /* ISPCertificatePinning.m in Sources */,
 				600CBC7A1E2EF63A001F58A9 /* Amplitude+Test.m in Sources */,
 				600CBC781E2EF62E001F58A9 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
+				A320B8CD21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */,
 				600CBC6F1E2EF614001F58A9 /* Amplitude.m in Sources */,
 				600CBC701E2EF617001F58A9 /* AMPLocationManagerDelegate.m in Sources */,
 				600CBC7F1E2EF64C001F58A9 /* BaseTestCase.m in Sources */,
@@ -667,6 +679,7 @@
 				9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */,
 				E96785EC1A48E93F00887CCD /* AMPDeviceInfo.m in Sources */,
 				E96785EE1A48E93F00887CCD /* AMPLocationManagerDelegate.m in Sources */,
+				A320B8CA21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */,
 				60BA92791C2376680043178E /* AMPUtils.m in Sources */,
 				60AFE7321F6B637100DF9A88 /* AMPURLSession.m in Sources */,
 				9DC7085A1AD4B28300949778 /* AMPConstants.m in Sources */,
@@ -683,6 +696,7 @@
 			files = (
 				9D6E19561ACCDE9000352C6C /* ISPCertificatePinning.m in Sources */,
 				60BA92801C23768E0043178E /* IdentifyTests.m in Sources */,
+				A320B8CB21801B4A008BBC0A /* AMPNSURLSessionNetworkClient.m in Sources */,
 				9D6E19571ACCDE9000352C6C /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				9D6E19581ACCDE9000352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				602A9A6B1B754E7B0067230C /* AmplitudeTests.m in Sources */,

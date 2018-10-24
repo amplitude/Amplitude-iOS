@@ -31,6 +31,8 @@
 #import "AMPARCMacros.h"
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
+#import "AMPEventUploadRequest.h"
+#import "AMPNSURLSessionNetworkClient.h"
 #import "AMPURLConnection.h"
 #import "AMPURLSession.h"
 #import "AMPDatabaseHelper.h"
@@ -1001,46 +1003,24 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events numEvents:(long) numEvents maxEventId:(long long) maxEventId maxIdentifyId:(long long) maxIdentifyId
 {
-    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    [request setTimeoutInterval:60.0];
 
-    NSString *apiVersionString = [[NSNumber numberWithInt:kAMPApiVersion] stringValue];
-
-    NSMutableData *postData = [[NSMutableData alloc] init];
-    [postData appendData:[@"v=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[[self urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
-
-    // Add timestamp of upload
-    [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *timestampString = [[NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000] stringValue];
-    [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
+    long long uploadTime = [[self currentTime] timeIntervalSince1970] * 1000;
+    NSString *timestampString = [[NSNumber numberWithLongLong:uploadTime] stringValue];
 
     // Add checksum
-    [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
+    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@",
+                              [[NSNumber numberWithInt:kAMPApiVersion] stringValue],
+                              _apiKey,
+                              events,
+                              timestampString];
+
     NSString *checksum = [self md5HexDigest: checksumData];
-    [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
 
-    [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
+    AMPEventUploadRequest *request = [[AMPEventUploadRequest alloc] initWithApiVersion:kAMPApiVersion apiKey:_apiKey events:events uploadTime:uploadTime checksum:checksum url:[NSURL URLWithString:url]];
 
-    [request setHTTPBody:postData];
     AMPLITUDE_LOG(@"Events: %@", events);
 
-    SAFE_ARC_RELEASE(postData);
-
-    // If pinning is enabled, use the AMPURLSession that handles it.
-#if AMPLITUDE_SSL_PINNING
-    id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
-#else
-    id session = [NSURLSession class];
-#endif
-    [[[session sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [[self networkClient] uploadEvents:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {
@@ -1121,7 +1101,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self->_uploadTaskID = UIBackgroundTaskInvalid;
             }
         }
-    }] resume];
+    }];
+}
+
+- (id <AMPNetworkClient>) networkClient {
+    // If pinning is enabled, use the AMPURLSession that handles it.
+    #if AMPLITUDE_SSL_PINNING
+        id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
+    #else
+        id session = [NSURLSession class];
+    #endif
+    NSURLSession *sharedSession = [session sharedSession];
+
+    return [[AMPNSURLSessionNetworkClient alloc] initWithNSURLSession:sharedSession];
 }
 
 #pragma mark - application lifecycle methods
@@ -1676,12 +1668,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [ret appendFormat:@"%02x",result[i]];
     }
     return ret;
-}
-
-- (NSString*)urlEncodeString:(NSString*) string
-{
-    NSCharacterSet * allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"] invertedSet];
-    return [string stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
 }
 
 - (NSDate*) currentTime

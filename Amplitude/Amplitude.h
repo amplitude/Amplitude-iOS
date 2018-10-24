@@ -5,7 +5,7 @@
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
-
+#import "AMPNetworkClient.h"
 
 /**
  Amplitude iOS SDK.

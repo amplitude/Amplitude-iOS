@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 NS_SWIFT_NAME(EventUploadRequest)
 @interface AMPEventUploadRequest : NSObject
 
@@ -18,7 +16,12 @@ NS_SWIFT_NAME(EventUploadRequest)
 @property (nonatomic, strong, nonnull) NSString *events;
 @property (nonatomic, assign) long long uploadTime;
 @property (nonatomic, strong, nonnull) NSString *checksum;
+@property (nonatomic, strong, nonnull) NSURL *url;
 
+- (nonnull instancetype)initWithApiVersion: (int) apiVersion
+                            apiKey: (nonnull NSString *) apiKey
+                            events: (nonnull NSString *) events
+                        uploadTime: (long long) uploadTime
+                          checksum: (nonnull NSString *)checksum
+                               url: (nonnull NSURL *)url;
 @end
-
-NS_ASSUME_NONNULL_END
