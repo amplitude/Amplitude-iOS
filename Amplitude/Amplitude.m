@@ -485,9 +485,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self->_userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
             }
 
-            __unsafe_unretained typeof(self) weakSelf = self;
+            __unsafe_unretained __typeof(self) weakSelf = self;
             [self->_dbHelper setDatabaseResetListener:^{
-                __strong typeof(self) strongSelf = weakSelf;
+                __strong __typeof(self) strongSelf = weakSelf;
                 if (strongSelf) {
                     [strongSelf->_dbHelper insertOrReplaceKeyValue:DEVICE_ID value:strongSelf->_deviceId];
                     [strongSelf->_dbHelper insertOrReplaceKeyValue:USER_ID value:strongSelf->_userId];

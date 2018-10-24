@@ -64,8 +64,8 @@
     NSNumber *sequenceNumber = [dbHelper getLongValue:@"sequence_number"];
 
     XCTAssertNotNil(amp.deviceId);
-    XCTAssertGreaterThanOrEqual([previousSessionId intValue], 0);
-    XCTAssertGreaterThanOrEqual([previousSessionTime intValue], 0);
+    XCTAssertGreaterThanOrEqual([previousSessionId longLongValue], 0);
+    XCTAssertGreaterThanOrEqual([previousSessionTime longLongValue], 0);
     XCTAssertEqual([sequenceNumber intValue], 1);
 
     dbHelper.callResetListenerOnDatabaseReset = YES;
