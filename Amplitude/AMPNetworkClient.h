@@ -6,7 +6,7 @@
 //  Copyright © 2018 Amplitude. All rights reserved.
 //
 
-@class AMPEventUploadRequest;
+#import "AMPEventUploadRequest.h"
 
 NS_SWIFT_NAME(NetworkClient)
 @protocol AMPNetworkClient <NSObject>
