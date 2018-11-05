@@ -103,7 +103,7 @@
 /**
 Network client to be used for event upload requests.
  */
-@property (nonatomic, strong, nonnull) id<AMPNetworkClient> networkClient;
+@property (nonatomic, strong) id<AMPNetworkClient> networkClient;
 
 #pragma mark - Methods
 
@@ -135,7 +135,7 @@ Network client to be used for event upload requests.
 
  @param instanceName the name of the SDK instance to fetch.
 
- @param networkClient the network client to be used for the upload requests.
+ @param client the network client to be used for the upload requests.
 
  @returns the Amplitude SDK instance corresponding to `instanceName`
 
