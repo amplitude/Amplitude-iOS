@@ -924,4 +924,18 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
+- (void)testCustomEventLogURL {
+    // ensure the private function is implemented in Amplitude
+    if (![self.amplitude respondsToSelector:@selector(resolvedEventLogUrl)]) {
+        XCTFail(@"method implementation [Amplitude resolvedEventLogUrl] is not found.");
+        return;
+    }
+    NSString *url = @"https://testing.api.somecompany.com/";
+    [self.amplitude useCustomEventLogURL:url];
+    XCTAssertEqual([self.amplitude resolvedEventLogUrl], url);
+    
+    // verify amplitude uses default url after removing customEventLogURL
+    [self.amplitude useCustomEventLogURL:nil];
+    XCTAssertEqual([self.amplitude resolvedEventLogUrl], kAMPEventLogUrl);
+}
 @end

@@ -35,5 +35,5 @@
 - (id)unarchive:(NSString*)path;
 - (BOOL)archive:(id) obj toFile:(NSString*)path;
 - (long long)getLastEventTime;
-
+- (NSString *)resolvedEventLogUrl; // exposing the private method from Amplitude
 @end

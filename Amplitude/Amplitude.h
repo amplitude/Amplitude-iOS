@@ -157,6 +157,15 @@
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
 
 
+/**
+ Overrides the default URL provided by kAMPEventLogUrl.
+ 
+ The main purpose is to offer a way for user to adopt a custom server or proxy to ingest the events
+ 
+ @param urlString The custom url to be used for sending events.
+ */
+- (void)useCustomEventLogURL: (NSString *)urlString;
+
 /**-----------------------------------------------------------------------------
  * @name Logging Events
  * -----------------------------------------------------------------------------

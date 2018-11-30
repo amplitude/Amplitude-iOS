@@ -58,7 +58,11 @@
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, assign) BOOL backoffUpload;
 @property (nonatomic, assign) int backoffUploadBatchSize;
-
+@property (nonatomic, strong) NSString *customEventLogUrl;
+/**
+    Returns customEventLogUrl if a custom url is set, otherwise returns kAMPEventLogUrl.
+ */
+- (NSString *)resolvedEventLogUrl;
 @end
 
 NSString *const kAMPSessionStartEvent = @"session_start";
@@ -237,7 +241,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _apiPropertiesTrackingOptions = SAFE_ARC_RETAIN([NSDictionary dictionary]);
         _instanceName = SAFE_ARC_RETAIN(instanceName);
         _dbHelper = SAFE_ARC_RETAIN([AMPDatabaseHelper getDatabaseHelper:instanceName]);
-
+        _customEventLogUrl = SAFE_ARC_RETAIN(@"");
+        
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
         self.eventUploadMaxBatchSize = kAMPEventUploadMaxBatchSize;
@@ -417,6 +422,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_RELEASE(_backgroundQueue);
     SAFE_ARC_RELEASE(_deviceId);
     SAFE_ARC_RELEASE(_userId);
+    SAFE_ARC_RELEASE(_customEventLogUrl);
 
     // Release instance variables
     SAFE_ARC_RELEASE(_deviceInfo);
@@ -919,7 +925,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
 
-        [self makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString numEvents:numEvents maxEventId:maxEventId maxIdentifyId:maxIdentifyId];
+        [self makeEventUploadPostRequest:[self resolvedEventLogUrl] events:eventsString numEvents:numEvents maxEventId:maxEventId maxIdentifyId:maxIdentifyId];
         SAFE_ARC_RELEASE(eventsString);
     }];
 }
@@ -1506,6 +1512,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
         [self setDeviceId:[AMPDeviceInfo generateUUID]];
     }];
+}
+
+- (void)useCustomEventLogURL: (NSString *)urlString
+{
+    (void) SAFE_ARC_RETAIN(urlString);
+    SAFE_ARC_RELEASE(self->_customEventLogUrl);
+    self->_customEventLogUrl = urlString;
+}
+
+- (NSString *)resolvedEventLogUrl
+{
+    NSString *urlString = (self->_customEventLogUrl.length > 0) ? self->_customEventLogUrl : kAMPEventLogUrl;
+    return urlString;
 }
 
 #pragma mark - location methods
