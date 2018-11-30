@@ -141,7 +141,7 @@ Network client to be used for event upload requests.
 
  @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
  */
-+ (Amplitude *)instanceWithName:(NSString*) instanceName networkClient:(id <AMPNetworkClient>) client;
++ (Amplitude *)instanceWithName:(NSString*) instanceName networkClient:(id <AMPNetworkClient>) networkClient;
 
 /**-----------------------------------------------------------------------------
  * @name Initialize the Amplitude SDK with your Amplitude API Key
