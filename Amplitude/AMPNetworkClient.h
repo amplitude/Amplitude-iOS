@@ -11,6 +11,6 @@
 NS_SWIFT_NAME(NetworkClient)
 @protocol AMPNetworkClient <NSObject>
 
-- (void) uploadEvents: (nonnull AMPEventUploadRequest *) request completionHandler: (void (^ _Nonnull )(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) completionHandler;
+- (void) uploadEvents: (nonnull AMPEventUploadRequest *) uploadRequest using: (nonnull NSURLSession *) session completionHandler: (void (^ _Nonnull )(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) completionHandler;
 
 @end

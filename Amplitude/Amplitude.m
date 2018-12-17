@@ -245,6 +245,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self.eventUploadMaxBatchSize = kAMPEventUploadMaxBatchSize;
         self.eventUploadPeriodSeconds = kAMPEventUploadPeriodSeconds;
         self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
+        self.networkClient = [[AMPNSURLSessionNetworkClient alloc] init];
         _backoffUploadBatchSize = self.eventUploadMaxBatchSize;
 
         _initializerQueue = [[NSOperationQueue alloc] init];
@@ -840,22 +841,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:kAMPRevenueEvent withEventProperties:[revenue toNSDictionary]];
 }
 
-- (id<AMPNetworkClient>) networkClient {
-    if (_networkClient != nil) {
-        return _networkClient;
-    } else {
-        // If pinning is enabled, use the AMPURLSession that handles it.
-        #if AMPLITUDE_SSL_PINNING
-            id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
-        #else
-            id session = [NSURLSession class];
-        #endif
-        NSURLSession *sharedSession = [session sharedSession];
-
-        return [[AMPNSURLSessionNetworkClient alloc] initWithNSURLSession:sharedSession];
-    }
-}
-
 #pragma mark - Upload events
 
 - (void)uploadEventsWithDelay:(int) delay
@@ -1037,7 +1022,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     AMPLITUDE_LOG(@"Events: %@", events);
 
-    [self.networkClient uploadEvents:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    #if AMPLITUDE_SSL_PINNING
+        id sessionClass = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
+    #else
+        id sessionClass = [NSURLSession class];
+    #endif
+    id session = [sessionClass sharedSession];
+    [self.networkClient uploadEvents:request using:session completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse*)response;
         if (response != nil) {

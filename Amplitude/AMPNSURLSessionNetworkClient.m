@@ -15,13 +15,11 @@
 @end
 
 @implementation AMPNSURLSessionNetworkClient
-- (instancetype) initWithNSURLSession: (NSURLSession *) session {
-    self = [super init];
-    _session = session;
-    return self;
+- (instancetype) init {
+    return [super init];
 }
 
-- (void)uploadEvents:(nonnull AMPEventUploadRequest *)uploadRequest completionHandler:(void (^)(NSData * _Nullable, NSURLResponse * _Nullable, NSError * _Nullable))completionHandler {
+- (void) uploadEvents: (nonnull AMPEventUploadRequest *) uploadRequest using: (nonnull NSURLSession *) session completionHandler: (void (^ _Nonnull )(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) completionHandler {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:uploadRequest.url];
     [request setTimeoutInterval:60.0];
 
@@ -51,17 +49,12 @@
 
     SAFE_ARC_RELEASE(postData);
 
-    [[self.session dataTaskWithRequest:request completionHandler:completionHandler] resume];
+    [[session dataTaskWithRequest:request completionHandler:completionHandler] resume];
 }
 
 - (NSString*)urlEncodeString:(NSString*) string {
     NSCharacterSet * allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"] invertedSet];
     return [string stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
-}
-
-- (void) dealloc {
-    SAFE_ARC_RELEASE(_session);
-    SAFE_ARC_SUPER_DEALLOC();
 }
 
 @end
