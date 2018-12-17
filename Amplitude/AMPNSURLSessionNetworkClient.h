@@ -11,6 +11,6 @@
 
 @interface AMPNSURLSessionNetworkClient : NSObject <AMPNetworkClient>
 
-- (nonnull instancetype) init;
+- (instancetype) init;
 
 @end

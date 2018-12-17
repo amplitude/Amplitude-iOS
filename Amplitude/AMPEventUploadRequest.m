@@ -17,11 +17,11 @@
 @synthesize url = _url;
 
 - (instancetype)initWithApiVersion: (int) apiVersion
-                            apiKey: (nonnull NSString *) apiKey
-                            events: (nonnull NSString *) events
+                            apiKey: (NSString *) apiKey
+                            events: (NSString *) events
                         uploadTime: (long long) uploadTime
-                          checksum: (nonnull NSString *)checksum
-                               url: (nonnull NSURL *)url {
+                          checksum: (NSString *)checksum
+                               url: (NSURL *)url {
     self = [super init];
     _apiVersion = apiVersion;
     _apiKey = apiKey;

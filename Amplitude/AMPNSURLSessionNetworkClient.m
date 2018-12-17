@@ -11,7 +11,7 @@
 #import "AMPEventUploadRequest.h"
 
 @interface AMPNSURLSessionNetworkClient()
-@property (nonatomic, strong, nonnull) NSURLSession *session;
+@property (nonatomic, strong) NSURLSession *session;
 @end
 
 @implementation AMPNSURLSessionNetworkClient
@@ -19,7 +19,7 @@
     return [super init];
 }
 
-- (void) uploadEvents: (nonnull AMPEventUploadRequest *) uploadRequest using: (nonnull NSURLSession *) session completionHandler: (void (^ _Nonnull )(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error)) completionHandler {
+- (void) uploadEvents: (AMPEventUploadRequest *) uploadRequest using: (NSURLSession *) session completionHandler: (void (^)(NSData *  data, NSURLResponse *response, NSError *error)) completionHandler {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:uploadRequest.url];
     [request setTimeoutInterval:60.0];
 
