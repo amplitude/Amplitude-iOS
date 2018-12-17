@@ -115,10 +115,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 + (Amplitude *)instanceWithName:(NSString*)instanceName {
-    return [Amplitude instanceWithName:nil networkClient:nil];
-}
-
-+ (Amplitude *)instanceWithName:(NSString*) instanceName networkClient:(id <AMPNetworkClient>) networkClient {
     static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -135,7 +131,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     @synchronized(_instances) {
         client = [_instances objectForKey:instanceName];
         if (client == nil) {
-            client = [[self alloc] initWithInstanceName:instanceName networkClient:networkClient];
+            client = [[self alloc] initWithInstanceName:instanceName];
             [_instances setObject:client forKey:instanceName];
             SAFE_ARC_RELEASE(client);
         }
@@ -143,7 +139,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     return client;
 }
-
 
 + (void)initializeApiKey:(NSString*) apiKey {
     [[Amplitude instance] initializeApiKey:apiKey];
@@ -218,11 +213,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (id)initWithInstanceName:(NSString*) instanceName
 {
-    return [self initWithInstanceName:instanceName networkClient:nil];
-}
-
-- (id)initWithInstanceName:(NSString*) instanceName networkClient: (id<AMPNetworkClient>) client
-{
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
@@ -255,7 +245,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self.eventUploadMaxBatchSize = kAMPEventUploadMaxBatchSize;
         self.eventUploadPeriodSeconds = kAMPEventUploadPeriodSeconds;
         self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
-        self.networkClient = client;
         _backoffUploadBatchSize = self.eventUploadMaxBatchSize;
 
         _initializerQueue = [[NSOperationQueue alloc] init];

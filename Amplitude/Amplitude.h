@@ -130,18 +130,6 @@ Network client to be used for event upload requests.
  */
 + (Amplitude *)instanceWithName:(NSString*) instanceName;
 
-/**
- This fetches a named SDK instance. Use this if logging events to multiple Amplitude apps.
-
- @param instanceName the name of the SDK instance to fetch.
-
- @param client the network client to be used for the upload requests.
-
- @returns the Amplitude SDK instance corresponding to `instanceName`
-
- @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
- */
-+ (Amplitude *)instanceWithName:(NSString*) instanceName networkClient:(id <AMPNetworkClient>) networkClient;
 
 /**-----------------------------------------------------------------------------
  * @name Initialize the Amplitude SDK with your Amplitude API Key
