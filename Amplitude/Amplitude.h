@@ -531,6 +531,8 @@
 
 - (void)setTrackingOptions:(AMPTrackingOptions*) options;
 
+- (void)setServerUrl:(NSString*) serverUrl;
+
 /**-----------------------------------------------------------------------------
  * @name Other Methods
  * -----------------------------------------------------------------------------
