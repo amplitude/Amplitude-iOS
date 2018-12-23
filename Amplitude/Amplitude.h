@@ -536,6 +536,8 @@ Network client to be used for event upload requests.
 
 - (void)setTrackingOptions:(AMPTrackingOptions*) options;
 
+- (void)setServerUrl:(NSString*) serverUrl;
+
 /**-----------------------------------------------------------------------------
  * @name Other Methods
  * -----------------------------------------------------------------------------

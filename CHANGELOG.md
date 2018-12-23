@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 4.5.0 (December 18, 2018)
+
+* Add ability to set a custom server URL for uploading events using `setServerUrl`.
+
 ## 4.4.0 (October 15, 2018)
 
 * Add ability to set group properties via a new `groupIdentifyWithGroupType` method that takes in an `AMPIdentify` object as well as a group type and group name.

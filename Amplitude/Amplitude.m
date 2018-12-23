@@ -104,6 +104,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     BOOL _inForeground;
     BOOL _offline;
+
+    NSString* _serverUrl;
 }
 
 #pragma clang diagnostic push
@@ -235,6 +237,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _disableIdfaTracking = NO;
         _backoffUpload = NO;
         _offline = NO;
+        _serverUrl = SAFE_ARC_RETAIN(kAMPEventLogUrl);
         _trackingOptions = SAFE_ARC_RETAIN([AMPTrackingOptions options]);
         _apiPropertiesTrackingOptions = SAFE_ARC_RETAIN([NSDictionary dictionary]);
         _instanceName = SAFE_ARC_RETAIN(instanceName);
@@ -433,8 +436,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_RELEASE(_instanceName);
     SAFE_ARC_RELEASE(_trackingOptions);
     SAFE_ARC_RELEASE(_apiPropertiesTrackingOptions);
+    SAFE_ARC_RELEASE(_serverUrl);
     SAFE_ARC_RELEASE(_networkClient);
-
 
     SAFE_ARC_SUPER_DEALLOC();
 }
@@ -923,7 +926,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
 
-        [self makeEventUploadPostRequest:kAMPEventLogUrl events:eventsString numEvents:numEvents maxEventId:maxEventId maxIdentifyId:maxIdentifyId];
+        [self makeEventUploadPostRequest:self->_serverUrl events:eventsString numEvents:numEvents maxEventId:maxEventId maxIdentifyId:maxIdentifyId];
         SAFE_ARC_RELEASE(eventsString);
     }];
 }
@@ -1458,6 +1461,17 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (!_offline) {
         [self uploadEvents];
     }
+}
+
+- (void)setServerUrl:(NSString*) serverUrl
+{
+    if (!(serverUrl == nil || [self isArgument:serverUrl validType:[NSString class] methodName:@"setServerUrl:"])) {
+        return;
+    }
+
+    (void) SAFE_ARC_RETAIN(serverUrl);
+    SAFE_ARC_RELEASE(self->_serverUrl);
+    self->_serverUrl = serverUrl;
 }
 
 - (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
