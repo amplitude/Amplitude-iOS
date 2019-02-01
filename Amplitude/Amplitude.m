@@ -609,9 +609,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     if (![self isArgument:eventType validType:[NSString class] methodName:@"logEvent"]) {
+        AMPLITUDE_ERROR(@"ERROR: eventType must be an NSString");
         return;
     }
     if (eventProperties != nil && ![self isArgument:eventProperties validType:[NSDictionary class] methodName:@"logEvent"]) {
+        AMPLITUDE_ERROR(@"ERROR: eventProperties must by a NSDictionary");
         return;
     }
 
