@@ -1599,7 +1599,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     // return identifierForVendor
-    if (!deviceId) {
+    if ([self->_trackingOptions shouldTrackIDFV] && !deviceId) {
         deviceId = _deviceInfo.vendorID;
     }
 
