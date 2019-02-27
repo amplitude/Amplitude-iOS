@@ -111,6 +111,9 @@
 		60FD305D210264FA00267B2A /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FD305A210264FA00267B2A /* AMPTrackingOptions.m */; };
 		60FD305E210264FA00267B2A /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FD305A210264FA00267B2A /* AMPTrackingOptions.m */; };
 		60FD30612102760500267B2A /* TrackingOptionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FD305F2102760500267B2A /* TrackingOptionsTest.m */; };
+		6561B3D122273AD600763B04 /* AMPTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 60FD3058210264C000267B2A /* AMPTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6561B3D222273AE200763B04 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 60AFE7301F6B636B00DF9A88 /* AMPURLSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6561B3D322273BEB00763B04 /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 60FD305A210264FA00267B2A /* AMPTrackingOptions.m */; };
 		9D265EF41AB3FA2500399D93 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D265EF31AB3FA2500399D93 /* SSLPinningTests.m */; };
 		9D40E17E1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
 		9D40E17F1AB3BF7F0095C7C6 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */; };
@@ -345,33 +348,33 @@
 		E98C05251A48E7FE00800C63 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
-				60AFE7301F6B636B00DF9A88 /* AMPURLSession.h */,
-				60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */,
-				E96785E11A48E93F00887CCD /* AMPARCMacros.h */,
-				E96785E21A48E93F00887CCD /* AMPConstants.h */,
-				9DC708591AD4B28300949778 /* AMPConstants.m */,
-				60BA92711C2376680043178E /* AMPDatabaseHelper.h */,
-				60BA92721C2376680043178E /* AMPDatabaseHelper.m */,
-				E96785E31A48E93F00887CCD /* AMPDeviceInfo.h */,
-				E96785E41A48E93F00887CCD /* AMPDeviceInfo.m */,
-				60BA92731C2376680043178E /* AMPIdentify.h */,
-				60BA92741C2376680043178E /* AMPIdentify.m */,
-				E96785E61A48E93F00887CCD /* Amplitude.h */,
-				E96785E71A48E93F00887CCD /* Amplitude.m */,
-				9DC708561AD4A49E00949778 /* Amplitude+SSLPinning.h */,
-				E96785E81A48E93F00887CCD /* AMPLocationManagerDelegate.h */,
-				E96785E91A48E93F00887CCD /* AMPLocationManagerDelegate.m */,
-				60227C091CC5AB8A007C117B /* AMPRevenue.h */,
-				60227C0A1CC5AB8A007C117B /* AMPRevenue.m */,
-				9D40E1791AB3BF7F0095C7C6 /* AMPURLConnection.h */,
-				9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */,
-				60BA92751C2376680043178E /* AMPUtils.h */,
-				60BA92761C2376680043178E /* AMPUtils.m */,
 				9D76A3A41ABA5F890062E132 /* ComodoRsaCA.der */,
 				9D76A3A31ABA5F890062E132 /* ComodoRsaDomainValidationCA.der */,
-				9D6E194B1ACCDE1C00352C6C /* SSLCertificatePinning */,
+				E96785E11A48E93F00887CCD /* AMPARCMacros.h */,
+				E96785E21A48E93F00887CCD /* AMPConstants.h */,
+				60BA92711C2376680043178E /* AMPDatabaseHelper.h */,
+				E96785E31A48E93F00887CCD /* AMPDeviceInfo.h */,
+				60BA92731C2376680043178E /* AMPIdentify.h */,
+				E96785E61A48E93F00887CCD /* Amplitude.h */,
+				9DC708561AD4A49E00949778 /* Amplitude+SSLPinning.h */,
+				E96785E81A48E93F00887CCD /* AMPLocationManagerDelegate.h */,
+				60227C091CC5AB8A007C117B /* AMPRevenue.h */,
 				60FD3058210264C000267B2A /* AMPTrackingOptions.h */,
+				9D40E1791AB3BF7F0095C7C6 /* AMPURLConnection.h */,
+				60AFE7301F6B636B00DF9A88 /* AMPURLSession.h */,
+				60BA92751C2376680043178E /* AMPUtils.h */,
+				9DC708591AD4B28300949778 /* AMPConstants.m */,
+				60BA92721C2376680043178E /* AMPDatabaseHelper.m */,
+				E96785E41A48E93F00887CCD /* AMPDeviceInfo.m */,
+				60BA92741C2376680043178E /* AMPIdentify.m */,
+				E96785E71A48E93F00887CCD /* Amplitude.m */,
+				E96785E91A48E93F00887CCD /* AMPLocationManagerDelegate.m */,
+				60227C0A1CC5AB8A007C117B /* AMPRevenue.m */,
 				60FD305A210264FA00267B2A /* AMPTrackingOptions.m */,
+				9D40E17A1AB3BF7F0095C7C6 /* AMPURLConnection.m */,
+				60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */,
+				60BA92761C2376680043178E /* AMPUtils.m */,
+				9D6E194B1ACCDE1C00352C6C /* SSLCertificatePinning */,
 			);
 			path = Amplitude;
 			sourceTree = "<group>";
@@ -447,8 +450,10 @@
 				37802BE41E86AF65003E5A8B /* Amplitude+SSLPinning.h in Headers */,
 				37802BE51E86AF65003E5A8B /* AMPDeviceInfo.h in Headers */,
 				37802BE61E86AF65003E5A8B /* AmplitudeFramework.h in Headers */,
+				6561B3D122273AD600763B04 /* AMPTrackingOptions.h in Headers */,
 				37802BE71E86AF65003E5A8B /* AMPConstants.h in Headers */,
 				37802BE81E86AF65003E5A8B /* ISPCertificatePinning.h in Headers */,
+				6561B3D222273AE200763B04 /* AMPURLSession.h in Headers */,
 				37802BE91E86AF65003E5A8B /* AMPARCMacros.h in Headers */,
 				37802BEA1E86AF65003E5A8B /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				37802BEB1E86AF65003E5A8B /* AMPIdentify.h in Headers */,
@@ -556,7 +561,7 @@
 		E98C051B1A48E7FE00800C63 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = Amplitude;
 				TargetAttributes = {
 					343AB4161CC99F4F00962943 = {
@@ -701,6 +706,7 @@
 				37802BD41E86AF65003E5A8B /* AMPRevenue.m in Sources */,
 				37802BD51E86AF65003E5A8B /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				37802BD61E86AF65003E5A8B /* Amplitude.m in Sources */,
+				6561B3D322273BEB00763B04 /* AMPTrackingOptions.m in Sources */,
 				37802BD71E86AF65003E5A8B /* ISPCertificatePinning.m in Sources */,
 				37802BD81E86AF65003E5A8B /* AMPIdentify.m in Sources */,
 				37802BD91E86AF65003E5A8B /* AMPLocationManagerDelegate.m in Sources */,
@@ -865,6 +871,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -896,6 +903,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;

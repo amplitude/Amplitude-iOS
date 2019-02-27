@@ -80,4 +80,33 @@
     XCTAssertEqualObjects([event objectForKey:@"platform"], @"tvOS");
 }
 
+-(void)testSetTrackingConfig {
+    AMPTrackingOptions *options = [[[[[AMPTrackingOptions options] disableCity] disableIPAddress] disableLanguage] disableCountry];
+    [self.amplitude setTrackingOptions:options];
+
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    NSDictionary *event = [self.amplitude getLastEvent];
+
+    // verify we have platform and carrier since those were not filtered out
+    XCTAssertEqualObjects([event objectForKey:@"platform"], @"tvOS");
+    XCTAssertEqualObjects([event objectForKey:@"carrier"], @"Unknown");
+
+    // verify we do not have any of the filtered out events
+    XCTAssertNil([event objectForKey:@"city"]);
+    XCTAssertNil([event objectForKey:@"country"]);
+    XCTAssertNil([event objectForKey:@"language"]);
+
+    // verify api properties contains tracking options for location filtering
+    NSDictionary *apiProperties = [event objectForKey:@"api_properties"];
+    XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
+    XCTAssertNotNil([apiProperties objectForKey:@"tracking_options"]);
+
+    NSDictionary *trackingOptions = [apiProperties objectForKey:@"tracking_options"];
+    XCTAssertEqual(3, trackingOptions.count);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"city"]);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"country"]);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
+}
+
 @end

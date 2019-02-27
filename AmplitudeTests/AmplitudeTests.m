@@ -904,7 +904,6 @@
     NSDictionary *event = [self.amplitude getLastEvent];
 
     // verify we have platform and carrier since those were not filtered out
-    XCTAssertEqualObjects([event objectForKey:@"platform"], @"iOS");
     XCTAssertEqualObjects([event objectForKey:@"carrier"], @"Unknown");
 
     // verify we do not have any of the filtered out events
