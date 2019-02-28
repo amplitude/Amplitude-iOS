@@ -895,6 +895,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
         if (numEvents == 0) {
             self->_updatingCurrently = NO;
+            [self endBackgroundTaskIfNeeded];
             return;
         }
         NSMutableArray *events = [self.dbHelper getEvents:-1 limit:numEvents];
@@ -911,6 +912,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         if (error != nil) {
             AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization error: %@", error);
             self->_updatingCurrently = NO;
+            [self endBackgroundTaskIfNeeded];
             return;
         }
 
@@ -921,6 +923,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 SAFE_ARC_RELEASE(eventsString);
             }
             self->_updatingCurrently = NO;
+            [self endBackgroundTaskIfNeeded];
             return;
         }
 
@@ -1120,11 +1123,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
 
             // Upload finished, allow background task to be ended
-            UIApplication *app = [self getSharedApplication];
-            if (app != nil) {
-                [app endBackgroundTask:self->_uploadTaskID];
-                self->_uploadTaskID = UIBackgroundTaskInvalid;
-            }
+            [self endBackgroundTaskIfNeeded];
         }
     }] resume];
 }
@@ -1143,10 +1142,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     long long now = [[self currentTime] timeIntervalSince1970] * 1000;
 
     // Stop uploading
-    if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [app endBackgroundTask:_uploadTaskID];
-        _uploadTaskID = UIBackgroundTaskInvalid;
-    }
+    [self endBackgroundTaskIfNeeded];
     [self runOnBackgroundQueue:^{
         [self startOrContinueSession:now];
         self->_inForeground = YES;
@@ -1164,15 +1160,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     long long now = [[self currentTime] timeIntervalSince1970] * 1000;
 
     // Stop uploading
-    if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [app endBackgroundTask:_uploadTaskID];
-    }
+    [self endBackgroundTaskIfNeeded];
     _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
-        if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
-            [app endBackgroundTask:self->_uploadTaskID];
-            self->_uploadTaskID = UIBackgroundTaskInvalid;
-        }
+        [self endBackgroundTaskIfNeeded];
     }];
     [self runOnBackgroundQueue:^{
         self->_inForeground = NO;
@@ -1186,6 +1177,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
         [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
     }];
+}
+
+- (void)endBackgroundTaskIfNeeded
+{
+    UIApplication *app = [self getSharedApplication];
+    if (app == nil) {
+        return;
+    }
+    if (_uploadTaskID != UIBackgroundTaskInvalid) {
+        [app endBackgroundTask:_uploadTaskID];
+        self->_uploadTaskID = UIBackgroundTaskInvalid;
+    }
 }
 
 #pragma mark - Sessions
