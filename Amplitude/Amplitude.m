@@ -1596,12 +1596,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSString*)_getDeviceId
 {
     NSString *deviceId = nil;
-    if (_useAdvertisingIdForDeviceId) {
+    if (_useAdvertisingIdForDeviceId && [self->_trackingOptions shouldTrackIDFA]) {
         deviceId = _deviceInfo.advertiserID;
     }
 
     // return identifierForVendor
-    if (!deviceId) {
+    if ([self->_trackingOptions shouldTrackIDFV] && !deviceId) {
         deviceId = _deviceInfo.vendorID;
     }
 
