@@ -1120,11 +1120,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
 
             // Upload finished, allow background task to be ended
-            UIApplication *app = [self getSharedApplication];
-            if (app != nil) {
-                [app endBackgroundTask:self->_uploadTaskID];
-                self->_uploadTaskID = UIBackgroundTaskInvalid;
-            }
+            [self endBackgroundTaskIfNeeded];
         }
     }] resume];
 }
@@ -1143,10 +1139,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     long long now = [[self currentTime] timeIntervalSince1970] * 1000;
 
     // Stop uploading
-    if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [app endBackgroundTask:_uploadTaskID];
-        _uploadTaskID = UIBackgroundTaskInvalid;
-    }
+    [self endBackgroundTaskIfNeeded];
     [self runOnBackgroundQueue:^{
         [self startOrContinueSession:now];
         self->_inForeground = YES;
@@ -1164,15 +1157,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     long long now = [[self currentTime] timeIntervalSince1970] * 1000;
 
     // Stop uploading
-    if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        [app endBackgroundTask:_uploadTaskID];
-    }
+    [self endBackgroundTaskIfNeeded];
     _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
-        if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
-            [app endBackgroundTask:self->_uploadTaskID];
-            self->_uploadTaskID = UIBackgroundTaskInvalid;
-        }
+        [self endBackgroundTaskIfNeeded];
     }];
     [self runOnBackgroundQueue:^{
         self->_inForeground = NO;
@@ -1185,7 +1173,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self->_dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:self->_optOut]];
         [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
         [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
+
+        [self endBackgroundTaskIfNeeded];
     }];
+}
+
+- (void)endBackgroundTaskIfNeeded
+{
+    UIApplication *app = [self getSharedApplication];
+    if (app == nil) {
+        return;
+    }
+    if (_uploadTaskID != UIBackgroundTaskInvalid) {
+        [app endBackgroundTask:_uploadTaskID];
+        self->_uploadTaskID = UIBackgroundTaskInvalid;
+    }
 }
 
 #pragma mark - Sessions
