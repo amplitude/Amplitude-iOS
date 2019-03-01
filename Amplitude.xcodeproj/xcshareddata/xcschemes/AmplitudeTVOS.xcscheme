@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1010"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "60F36EE11E2EAC8C00BA4203"
-               BuildableName = "AmplitudeTVOS.framework"
-               BlueprintName = "AmplitudeTVOS"
+               BlueprintIdentifier = "37802BD01E86AF65003E5A8B"
+               BuildableName = "Amplitude.framework"
+               BlueprintName = "AmplitudeFrameworkTVOS"
                ReferencedContainer = "container:Amplitude.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -64,9 +64,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "60F36EE11E2EAC8C00BA4203"
-            BuildableName = "AmplitudeTVOS.framework"
-            BlueprintName = "AmplitudeTVOS"
+            BlueprintIdentifier = "37802BD01E86AF65003E5A8B"
+            BuildableName = "Amplitude.framework"
+            BlueprintName = "AmplitudeFrameworkTVOS"
             ReferencedContainer = "container:Amplitude.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -79,15 +79,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "60F36EE11E2EAC8C00BA4203"
-            BuildableName = "AmplitudeTVOS.framework"
-            BlueprintName = "AmplitudeTVOS"
-            ReferencedContainer = "container:Amplitude.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
