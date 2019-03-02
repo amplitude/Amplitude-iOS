@@ -1,5 +1,15 @@
 ## Unreleased
 
+## 4.6.0 (March 1, 2019)
+
+* Add support for installing on tvOS platform via Carthage
+* Do not use IDFV or IDFA for device ID if disabled via tracking options
+* Close Sqlite DB object even if open fails
+* Made `startOrContinueSession` public method. Only call this if you know what you are doing. This may trigger a new session to start.
+* Properly end background event flush task
+* Increased minimum iOS deployment target to 8.0
+
+
 ## 4.5.0 (December 18, 2018)
 
 * Add ability to set a custom server URL for uploading events using `setServerUrl`.
