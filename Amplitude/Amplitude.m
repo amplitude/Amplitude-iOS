@@ -5,6 +5,10 @@
 #define AMPLITUDE_DEBUG 0
 #endif
 
+#ifndef AMPLITUDE_LOCATION_TRACKING
+#define AMPLITUDE_LOCATION_TRACKING 1
+#endif
+
 #ifndef AMPLITUDE_LOG
 #if AMPLITUDE_DEBUG
 #   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
@@ -92,10 +96,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     BOOL _disableIdfaTracking;
     long long _lastEventTime;
 
-    CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
+
+#if AMPLITUDE_LOCATION_TRACKING
+    CLLocation *_lastKnownLocation;
     CLLocationManager *_locationManager;
     AMPLocationManagerDelegate *_locationManagerDelegate;
+#endif
 
     AMPTrackingOptions *_trackingOptions;
     NSDictionary *_apiPropertiesTrackingOptions;
@@ -320,6 +327,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self->_backgroundQueue setSuspended:NO];
         }];
 
+#if AMPLITUDE_LOCATION_TRACKING
         // CLLocationManager must be created on the main thread
         dispatch_async(dispatch_get_main_queue(), ^{
             Class CLLocationManager = NSClassFromString(@"CLLocationManager");
@@ -328,6 +336,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             SEL setDelegate = NSSelectorFromString(@"setDelegate:");
             [self->_locationManager performSelector:setDelegate withObject:self->_locationManagerDelegate];
         });
+#endif
 
         [self addObservers];
     }
@@ -424,9 +433,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     // Release instance variables
     SAFE_ARC_RELEASE(_deviceInfo);
     SAFE_ARC_RELEASE(_initializerQueue);
+#if AMPLITUDE_LOCATION_TRACKING
     SAFE_ARC_RELEASE(_lastKnownLocation);
     SAFE_ARC_RELEASE(_locationManager);
     SAFE_ARC_RELEASE(_locationManagerDelegate);
+#endif
     SAFE_ARC_RELEASE(_propertyList);
     SAFE_ARC_RELEASE(_propertyListPath);
     SAFE_ARC_RELEASE(_dbHelper);
@@ -762,6 +773,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
     
+#if AMPLITUDE_LOCATION_TRACKING
     if ([self->_trackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
         @synchronized (_locationManager) {
             NSMutableDictionary *location = [NSMutableDictionary dictionary];
@@ -782,6 +794,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [apiProperties setValue:location forKey:@"location"];
         }
     }
+#endif
 
     if (self->_apiPropertiesTrackingOptions.count > 0) {
         [apiProperties setValue:self->_apiPropertiesTrackingOptions forKey:@"tracking_options"];
@@ -1531,6 +1544,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)updateLocation
 {
     if (_locationListeningEnabled) {
+#if AMPLITUDE_LOCATION_TRACKING
         CLLocation *location = [_locationManager location];
         @synchronized (_locationManager) {
             if (location != nil) {
@@ -1539,6 +1553,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 _lastKnownLocation = location;
             }
         }
+#else
+        AMPLITUDE_LOG(@"WARNING: AMPLITUDE_LOCATION_TRACKING tracking was disabled");
+#endif
     }
 }
 

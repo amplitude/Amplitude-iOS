@@ -1,6 +1,12 @@
 //
 //  AMPLocationManagerDelegate.m
 
+#ifndef AMPLITUDE_LOCATION_TRACKING
+#define AMPLITUDE_LOCATION_TRACKING 1
+#endif
+
+#if AMPLITUDE_LOCATION_TRACKING
+
 #import "AMPLocationManagerDelegate.h"
 #import "Amplitude.h"
 
@@ -30,3 +36,5 @@
 }
 
 @end
+
+#endif
