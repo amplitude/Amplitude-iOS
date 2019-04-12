@@ -5,7 +5,7 @@
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
-
+#import "AMPNetworkClient.h"
 
 /**
  Amplitude iOS SDK.
@@ -100,6 +100,10 @@
  */
 @property (nonatomic, assign) BOOL trackingSessionEvents;
 
+/**
+Network client to be used for event upload requests.
+ */
+@property (nonatomic, strong) id<AMPNetworkClient> networkClient;
 
 #pragma mark - Methods
 
@@ -125,6 +129,7 @@
  @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
  */
 + (Amplitude *)instanceWithName:(NSString*) instanceName;
+
 
 /**-----------------------------------------------------------------------------
  * @name Initialize the Amplitude SDK with your Amplitude API Key
