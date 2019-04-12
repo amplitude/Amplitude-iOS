@@ -11,31 +11,27 @@
 
 @implementation AMPEventUploadRequest
 
-@synthesize apiKey = _apiKey;
-@synthesize events = _events;
-@synthesize checksum = _checksum;
+@synthesize httpMethod = _httpMethod;
+@synthesize httpBody = _httpBody;
+@synthesize httpHeaders = _httpHeaders;
 @synthesize url = _url;
 
-- (instancetype)initWithApiVersion: (int) apiVersion
-                            apiKey: (NSString *) apiKey
-                            events: (NSString *) events
-                        uploadTime: (long long) uploadTime
-                          checksum: (NSString *)checksum
-                               url: (NSURL *)url {
+- (instancetype)initWithMethod: (NSString *) httpMethod
+                          body: (NSMutableData *) httpBody
+                       headers: (NSDictionary<NSString *, NSString *> *) httpHeaders
+                           url: (NSURL *)url {
     self = [super init];
-    _apiVersion = apiVersion;
-    _apiKey = apiKey;
-    _events = events;
-    _uploadTime = uploadTime;
-    _checksum = checksum;
+    _httpMethod = httpMethod;
+    _httpBody = httpBody;
+    _httpHeaders = httpHeaders;
     _url = url;
     return self;
 }
 
 - (void) dealloc {
-    SAFE_ARC_RELEASE(_apiKey);
-    SAFE_ARC_RELEASE(_events);
-    SAFE_ARC_RELEASE(_checksum);
+    SAFE_ARC_RELEASE(_httpMethod);
+    SAFE_ARC_RELEASE(_httpBody);
+    SAFE_ARC_RELEASE(_httpHeaders);
     SAFE_ARC_RELEASE(_url);
     SAFE_ARC_SUPER_DEALLOC();
 }

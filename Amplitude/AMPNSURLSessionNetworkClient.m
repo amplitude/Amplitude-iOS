@@ -23,38 +23,12 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:uploadRequest.url];
     [request setTimeoutInterval:60.0];
 
-    NSString *apiVersionString = [[NSNumber numberWithInt:uploadRequest.apiVersion] stringValue];
-
-    NSMutableData *postData = [[NSMutableData alloc] init];
-    [postData appendData:[@"v=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[uploadRequest.apiKey dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[[self urlEncodeString:uploadRequest.events] dataUsingEncoding:NSUTF8StringEncoding]];
-
-    // Add timestamp of upload
-    [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *timestampString = [[NSNumber numberWithLongLong: uploadRequest.uploadTime] stringValue];
-    [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[uploadRequest.checksum dataUsingEncoding:NSUTF8StringEncoding]];
-
-    [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
-
-    [request setHTTPBody:postData];
-
-    SAFE_ARC_RELEASE(postData);
+    request.HTTPMethod = uploadRequest.httpMethod;
+    request.HTTPBody = uploadRequest.httpBody;
+    request.allHTTPHeaderFields = uploadRequest.httpHeaders;
 
     [[session dataTaskWithRequest:request completionHandler:completionHandler] resume];
 }
 
-- (NSString*)urlEncodeString:(NSString*) string {
-    NSCharacterSet * allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"] invertedSet];
-    return [string stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
-}
 
 @end

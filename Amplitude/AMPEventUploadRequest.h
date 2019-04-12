@@ -11,17 +11,15 @@
 NS_SWIFT_NAME(EventUploadRequest)
 @interface AMPEventUploadRequest : NSObject
 
-@property (nonatomic, assign) int apiVersion;
-@property (nonatomic, strong) NSString *apiKey;
-@property (nonatomic, strong) NSString *events;
-@property (nonatomic, assign) long long uploadTime;
-@property (nonatomic, strong) NSString *checksum;
+@property (nonatomic, strong) NSString *httpMethod;
+@property (nonatomic, strong) NSMutableData *httpBody;
+@property (nonatomic, strong) NSDictionary<NSString *, NSString *> *httpHeaders;
 @property (nonatomic, strong) NSURL *url;
 
-- (instancetype)initWithApiVersion: (int) apiVersion
-                            apiKey: (NSString *) apiKey
-                            events: (NSString *) events
-                        uploadTime: (long long) uploadTime
-                          checksum: (NSString *)checksum
-                               url: (NSURL *)url;
+
+- (instancetype)initWithMethod: (NSString *) httpMethod
+                          body: (NSMutableData *) httpBody
+                       headers: (NSDictionary<NSString *, NSString *> *) httpHeaders
+                           url: (NSURL *)url;
+
 @end
