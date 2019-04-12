@@ -895,6 +895,33 @@
     [mockDeviceInfo stopMocking];
 }
 
+-(void)testIdfvAsDeviceId {
+    Amplitude *client = [Amplitude instanceWithName:@"idfv"];
+    AMPDeviceInfo * deviceInfo = [[AMPDeviceInfo alloc] init];
+
+    [client flushQueueWithQueue:client.initializerQueue];
+    [client initializeApiKey:@"api key"];
+    [client flushQueue];
+
+    XCTAssertTrue([[client getDeviceId] isEqual:deviceInfo.vendorID]);
+    SAFE_ARC_RELEASE(deviceInfo);
+}
+
+-(void)testDisableIdfvAsDeviceId {
+    AMPTrackingOptions *options = [[AMPTrackingOptions options] disableIDFV];
+    AMPDeviceInfo *deviceInfo = [[AMPDeviceInfo alloc] init];
+
+    Amplitude *client = [Amplitude instanceWithName:@"disable_idfv"];
+    [client flushQueueWithQueue:client.initializerQueue];
+    [client setTrackingOptions:options];
+    [client initializeApiKey:@"api key"];
+    [client flushQueue];
+
+    XCTAssertFalse([[client getDeviceId] isEqual:deviceInfo.vendorID]);
+    XCTAssertEqual([[client getDeviceId] characterAtIndex:36], 'R');
+    SAFE_ARC_RELEASE(deviceInfo);
+}
+
 -(void)testSetTrackingConfig {
     AMPTrackingOptions *options = [[[[[AMPTrackingOptions options] disableCity] disableIPAddress] disableLanguage] disableCountry];
     [self.amplitude setTrackingOptions:options];
@@ -904,7 +931,6 @@
     NSDictionary *event = [self.amplitude getLastEvent];
 
     // verify we have platform and carrier since those were not filtered out
-    XCTAssertEqualObjects([event objectForKey:@"platform"], @"iOS");
     XCTAssertEqualObjects([event objectForKey:@"carrier"], @"Unknown");
 
     // verify we do not have any of the filtered out events
