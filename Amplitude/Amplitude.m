@@ -895,6 +895,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
         if (numEvents == 0) {
             self->_updatingCurrently = NO;
+            [self endBackgroundTaskIfNeeded];
             return;
         }
         NSMutableArray *events = [self.dbHelper getEvents:-1 limit:numEvents];
@@ -911,6 +912,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         if (error != nil) {
             AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization error: %@", error);
             self->_updatingCurrently = NO;
+            [self endBackgroundTaskIfNeeded];
             return;
         }
 
@@ -921,6 +923,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 SAFE_ARC_RELEASE(eventsString);
             }
             self->_updatingCurrently = NO;
+            [self endBackgroundTaskIfNeeded];
             return;
         }
 
@@ -1173,8 +1176,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self->_dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:[NSNumber numberWithBool:self->_optOut]];
         [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:[NSNumber numberWithLongLong:self->_sessionId]];
         [self->_dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:[NSNumber numberWithLongLong:self->_lastEventTime]];
-
-        [self endBackgroundTaskIfNeeded];
     }];
 }
 
