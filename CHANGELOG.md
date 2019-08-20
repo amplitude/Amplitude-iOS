@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 4.7.0 (August 20, 2019)
+
+* Fix bug where background task might be stopped before final events are flushed
+* Revert logic to restore db from memory on potential db resets
+
 ## 4.6.0 (March 1, 2019)
 
 * Add support for installing on tvOS platform via Carthage
