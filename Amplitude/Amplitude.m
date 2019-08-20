@@ -496,7 +496,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 if (state != UIApplicationStateBackground) {
                     [self runOnBackgroundQueue:^{
                         NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-                        [self startOrContinueSession:now];
+                        [self startOrContinueSessionNSNumber:now];
                         self->_inForeground = YES;
                     }];
 
@@ -628,7 +628,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // skip session check if logging start_session or end_session events
         BOOL loggingSessionEvent = self->_trackingSessionEvents && ([eventType isEqualToString:kAMPSessionStartEvent] || [eventType isEqualToString:kAMPSessionEndEvent]);
         if (!loggingSessionEvent && !outOfSession) {
-            [self startOrContinueSession:timestamp];
+            [self startOrContinueSessionNSNumber:timestamp];
         }
 
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
@@ -1129,7 +1129,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
     [self runOnBackgroundQueue:^{
-        [self startOrContinueSession:now];
+        [self startOrContinueSessionNSNumber:now];
         self->_inForeground = YES;
         [self uploadEvents];
     }];
@@ -1178,7 +1178,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  *
  * Returns YES if a new session was created.
  */
-- (BOOL)startOrContinueSession:(NSNumber*) timestamp
+- (BOOL)startOrContinueSessionNSNumber:(NSNumber*) timestamp
 {
     if (!_inForeground) {
         if ([self inSession]) {
@@ -1209,6 +1209,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     // not creating a session means we should continue the session
     [self refreshSessionTime:timestamp];
     return NO;
+}
+
+- (BOOL)startOrContinueSession:(long long) timestamp
+{
+    NSNumber *timestampNumber = [NSNumber numberWithLongLong:timestamp];
+    return [self startOrContinueSessionNSNumber:timestampNumber];
 }
 
 - (void)startNewSession:(NSNumber*) timestamp
