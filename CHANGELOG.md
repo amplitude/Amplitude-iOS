@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 4.7.1 (August 20, 2019)
+
+* Fix issue where tag wasn't included in tag spec
+
 ## 4.7.0 (August 20, 2019)
 
 * Fix bug where background task might be stopped before final events are flushed
