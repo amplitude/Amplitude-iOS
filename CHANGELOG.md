@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 4.7.1 (September 3, 2019)
+
+* Identify Macs for Mac Catalyst support.
+
 ## 4.7.1 (August 20, 2019)
 
 * Fix issue where tag wasn't included in tag spec
