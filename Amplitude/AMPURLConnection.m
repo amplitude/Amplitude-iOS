@@ -7,6 +7,18 @@
 //  Copyright (c) 2015 Amplitude. All rights reserved.
 //
 
+#ifndef AMPLITUDE_DEBUG
+#define AMPLITUDE_DEBUG 0
+#endif
+
+#ifndef AMPLITUDE_LOG
+#if AMPLITUDE_DEBUG
+#   define AMPLITUDE_LOG(fmt, ...) NSLog(fmt, ##__VA_ARGS__)
+#else
+#   define AMPLITUDE_LOG(...)
+#endif
+#endif
+
 #import "AMPURLConnection.h"
 #import "AMPARCMacros.h"
 #import "AMPConstants.h"
@@ -40,7 +52,7 @@
         NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:@"der"];
         NSData *certData = SAFE_ARC_AUTORELEASE([[NSData alloc] initWithContentsOfFile:certPath]);
         if (certData == nil) {
-            NSLog(@"Failed to load a certificate");
+            AMPLITUDE_LOG(@"Failed to load a certificate");
             return;
         }
         [certs addObject:certData];
@@ -50,13 +62,13 @@
     [pins setObject:certs forKey:kAMPEventLogDomain];
 
     if (pins == nil) {
-        NSLog(@"Failed to pin a certificate");
+        AMPLITUDE_LOG(@"Failed to pin a certificate");
         return;
     }
 
     // Save the SSL pins so that our connection delegates automatically use them
     if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:pins] != YES) {
-        NSLog(@"Failed to pin the certificates");
+        AMPLITUDE_LOG(@"Failed to pin the certificates");
         SAFE_ARC_RELEASE(pins);
         return;
     }
