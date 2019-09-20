@@ -1,6 +1,10 @@
 ## Unreleased
 
-## 4.7.1 (September 3, 2019)
+## 4.8.1 (September 19, 2019)
+
+* Suppress NSLogs for non-dev environments.
+
+## 4.8.0 (September 3, 2019)
 
 * Identify Macs for Mac Catalyst support.
 

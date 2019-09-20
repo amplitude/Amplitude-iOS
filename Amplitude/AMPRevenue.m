@@ -58,7 +58,7 @@
 - (BOOL)isValidRevenue
 {
     if (_price == nil) {
-        NSLog(@"Invalid revenue, need to set price field");
+        AMPLITUDE_LOG(@"Invalid revenue, need to set price field");
         return NO;
     }
     return YES;
