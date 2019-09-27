@@ -99,7 +99,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPTrackingOptions *_trackingOptions;
     NSDictionary *_apiPropertiesTrackingOptions;
 
-    BOOL _runningInBackground;
     BOOL _inForeground;
     BOOL _offline;
 
@@ -1118,7 +1117,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterForeground
 {
-    _runningInBackground = NO;
     UIApplication *app = [self getSharedApplication];
     if (app == nil) {
         return;
@@ -1139,7 +1137,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterBackground
 {
-    _runningInBackground = YES;
     UIApplication *app = [self getSharedApplication];
     if (app == nil) {
         return;
@@ -1149,16 +1146,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
-    if (_runningInBackground) {
-        _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
-            //Took too long, manually stop
-            [self endBackgroundTaskIfNeeded];
-        }];
-    }
+    _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
+        //Took too long, manually stop
+        [self endBackgroundTaskIfNeeded];
+    }];
+
     [self runOnBackgroundQueue:^{
         self->_inForeground = NO;
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
+        [self endBackgroundTaskIfNeeded];
     }];
 }
 
