@@ -873,6 +873,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Don't communicate with the server if the user has opted out.
         if ([self optOut] || self->_offline)  {
             self->_updatingCurrently = NO;
+            [self endBackgroundTaskIfNeeded];
             return;
         }
 
@@ -1150,6 +1151,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         //Took too long, manually stop
         [self endBackgroundTaskIfNeeded];
     }];
+
     [self runOnBackgroundQueue:^{
         self->_inForeground = NO;
         [self refreshSessionTime:now];
@@ -1159,11 +1161,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)endBackgroundTaskIfNeeded
 {
-    UIApplication *app = [self getSharedApplication];
-    if (app == nil) {
-        return;
-    }
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
+        UIApplication *app = [self getSharedApplication];
+        if (app == nil) {
+            return;
+        }
+
         [app endBackgroundTask:_uploadTaskID];
         self->_uploadTaskID = UIBackgroundTaskInvalid;
     }
