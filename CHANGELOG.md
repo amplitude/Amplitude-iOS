@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 4.8.2 (September 19, 2019)
+
+* Ensure background tasks are always ended and add safeguard before retrieving the app by checking for valid uploadTaskID
+
+
 ## 4.8.1 (September 19, 2019)
 
 * Suppress NSLogs for non-dev environments.
