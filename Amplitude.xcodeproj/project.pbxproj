@@ -263,14 +263,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		02267F682355C80800E1F8E2 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				E98C05251A48E7FE00800C63 /* Amplitude */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
 		343AB4181CC99F4F00962943 /* AmplitudeFramework */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,7 +320,7 @@
 		E98C051A1A48E7FE00800C63 = {
 			isa = PBXGroup;
 			children = (
-				02267F682355C80800E1F8E2 /* Sources */,
+				E98C05251A48E7FE00800C63 /* Amplitude */,
 				E98C052F1A48E7FE00800C63 /* AmplitudeTests */,
 				343AB4181CC99F4F00962943 /* AmplitudeFramework */,
 				600CBC601E2EF5B0001F58A9 /* AmplitudeTVOSTests */,
@@ -588,7 +580,6 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 			);
 			mainGroup = E98C051A1A48E7FE00800C63;
