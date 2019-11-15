@@ -1027,7 +1027,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     if (_token != nil) {
         NSString *auth = [NSString stringWithFormat:@"Bearer %@", _token];
-        AMPLITUDE_LOG(@"Attaching bearer");
+        AMPLITUDE_LOG(@"Attaching bearer %@", _token);
         [request setValue:auth forHTTPHeaderField:@"Authorization"];
     }
 
@@ -1482,8 +1482,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     self->_serverUrl = serverUrl;
 }
 
-- (void)setBearerToken:(NSString *)token
-{
+- (void)setBearerToken:(NSString *)token {
     if (!(token == nil || [self isArgument:token validType:[NSString class] methodName:@"setBearerToken:"])) {
         return;
     }
