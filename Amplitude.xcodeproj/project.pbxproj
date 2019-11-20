@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12E8A60E2385CBA000921FC7 /* AMPFirebaseUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 12E8A60C2385CBA000921FC7 /* AMPFirebaseUtil.h */; };
+		12E8A60F2385CBA000921FC7 /* AMPFirebaseUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 12E8A60C2385CBA000921FC7 /* AMPFirebaseUtil.h */; };
+		12E8A6102385CBA000921FC7 /* AMPFirebaseUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 12E8A60D2385CBA000921FC7 /* AMPFirebaseUtil.m */; };
+		12E8A6112385CBA000921FC7 /* AMPFirebaseUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 12E8A60D2385CBA000921FC7 /* AMPFirebaseUtil.m */; };
+		12E8A6122385CBA000921FC7 /* AMPFirebaseUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 12E8A60D2385CBA000921FC7 /* AMPFirebaseUtil.m */; };
 		343AB41A1CC99F4F00962943 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 343AB4191CC99F4F00962943 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		343AB41F1CC99FB500962943 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DC708591AD4B28300949778 /* AMPConstants.m */; };
 		343AB4201CC99FB800962943 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BA92721C2376680043178E /* AMPDatabaseHelper.m */; };
@@ -154,6 +159,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		12E8A60C2385CBA000921FC7 /* AMPFirebaseUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPFirebaseUtil.h; sourceTree = "<group>"; };
+		12E8A60D2385CBA000921FC7 /* AMPFirebaseUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPFirebaseUtil.m; sourceTree = "<group>"; };
 		343AB4171CC99F4F00962943 /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		343AB4191CC99F4F00962943 /* AmplitudeFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		343AB41B1CC99F4F00962943 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -345,6 +352,8 @@
 		E98C05251A48E7FE00800C63 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
+				12E8A60C2385CBA000921FC7 /* AMPFirebaseUtil.h */,
+				12E8A60D2385CBA000921FC7 /* AMPFirebaseUtil.m */,
 				9D76A3A41ABA5F890062E132 /* ComodoRsaCA.der */,
 				9D76A3A31ABA5F890062E132 /* ComodoRsaDomainValidationCA.der */,
 				E96785E11A48E93F00887CCD /* AMPARCMacros.h */,
@@ -427,6 +436,7 @@
 				60FD3059210264C000267B2A /* AMPTrackingOptions.h in Headers */,
 				343AB42D1CC9A1EA00962943 /* AMPARCMacros.h in Headers */,
 				60AFE7331F6B70EF00DF9A88 /* AMPURLSession.h in Headers */,
+				12E8A60E2385CBA000921FC7 /* AMPFirebaseUtil.h in Headers */,
 				343AB43A1CC9A1EA00962943 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				343AB4311CC9A1EA00962943 /* AMPIdentify.h in Headers */,
 				343AB4361CC9A1EA00962943 /* AMPURLConnection.h in Headers */,
@@ -451,6 +461,7 @@
 				37802BE81E86AF65003E5A8B /* ISPCertificatePinning.h in Headers */,
 				6561B3D222273AE200763B04 /* AMPURLSession.h in Headers */,
 				37802BE91E86AF65003E5A8B /* AMPARCMacros.h in Headers */,
+				12E8A60F2385CBA000921FC7 /* AMPFirebaseUtil.h in Headers */,
 				37802BEA1E86AF65003E5A8B /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				37802BEB1E86AF65003E5A8B /* AMPIdentify.h in Headers */,
 				37802BEC1E86AF65003E5A8B /* AMPURLConnection.h in Headers */,
@@ -580,6 +591,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = E98C051A1A48E7FE00800C63;
@@ -688,6 +700,7 @@
 				343AB4271CC99FC900962943 /* AMPUtils.m in Sources */,
 				343AB4261CC99FC700962943 /* AMPURLConnection.m in Sources */,
 				343AB4201CC99FB800962943 /* AMPDatabaseHelper.m in Sources */,
+				12E8A6112385CBA000921FC7 /* AMPFirebaseUtil.m in Sources */,
 				60FD305D210264FA00267B2A /* AMPTrackingOptions.m in Sources */,
 				343AB4291CC99FD800962943 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 			);
@@ -698,6 +711,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37802BD21E86AF65003E5A8B /* AMPDeviceInfo.m in Sources */,
+				12E8A6122385CBA000921FC7 /* AMPFirebaseUtil.m in Sources */,
 				37802BD31E86AF65003E5A8B /* AMPConstants.m in Sources */,
 				37802BD41E86AF65003E5A8B /* AMPRevenue.m in Sources */,
 				37802BD51E86AF65003E5A8B /* ISPPinnedNSURLSessionDelegate.m in Sources */,
@@ -759,6 +773,7 @@
 				9DC7085A1AD4B28300949778 /* AMPConstants.m in Sources */,
 				9D6E19551ACCDE1C00352C6C /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				E96785ED1A48E93F00887CCD /* Amplitude.m in Sources */,
+				12E8A6102385CBA000921FC7 /* AMPFirebaseUtil.m in Sources */,
 				60FD305B210264FA00267B2A /* AMPTrackingOptions.m in Sources */,
 				9D6E19531ACCDE1C00352C6C /* ISPCertificatePinning.m in Sources */,
 			);
