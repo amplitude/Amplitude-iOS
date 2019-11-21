@@ -1,4 +1,6 @@
-## Unreleased
+## 4.9.0 (November 21, 2019)
+
+* Added support for Swift Package Manager. Thanks @mayur1407 to add the support.
 
 ## 4.8.2 (October 19, 2019)
 
