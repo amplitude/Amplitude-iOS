@@ -47,6 +47,7 @@
 #import <UIKit/UIKit.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#include "AMPFirebaseUtil.h"
 
 @interface Amplitude ()
 
@@ -605,7 +606,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (timestamp == nil) {
         timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
     }
-
+    
     // Create snapshot of all event json objects, to prevent deallocation crash
     eventProperties = [eventProperties copy];
     apiProperties = [apiProperties mutableCopy];
@@ -648,6 +649,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         SAFE_ARC_RELEASE(groupProperties);
 
         [self annotateEvent:event];
+        
+        [AMPFirebaseUtil addEvent:event];
 
         // convert event dictionary to JSON String
         NSError *error = nil;

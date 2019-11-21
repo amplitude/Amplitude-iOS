@@ -96,6 +96,4 @@ BOOL deviceIdReported = NO;
     [getTask resume];
 }
 
-//+ (void)addEventFor
-
 @end
