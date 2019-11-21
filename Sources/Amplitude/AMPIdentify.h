@@ -21,7 +21,6 @@
 
  See [User Properties and User Property Operations](https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations)
  */
-@import Foundation;
 @interface AMPIdentify : NSObject
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *userPropertyOperations;
