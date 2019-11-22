@@ -18,7 +18,6 @@
 #endif
 #endif
 
-#import <Foundation/Foundation.h>
 #import "AMPRevenue.h"
 #import "AMPARCMacros.h"
 #import "AMPConstants.h"
@@ -29,8 +28,7 @@
 
 @implementation AMPRevenue{}
 
-- (void)dealloc
-{
+- (void)dealloc {
     SAFE_ARC_RELEASE(_productId);
     SAFE_ARC_RELEASE(_price);
     SAFE_ARC_RELEASE(_revenueType);
@@ -39,8 +37,7 @@
     SAFE_ARC_SUPER_DEALLOC();
 }
 
-- (id)init
-{
+- (id)init {
     if ((self = [super init])) {
         _quantity = 1;
     }
@@ -50,13 +47,11 @@
 /*
  * Create an AMPRevenue object
  */
-+ (instancetype)revenue
-{
++ (instancetype)revenue {
     return SAFE_ARC_AUTORELEASE([[self alloc] init]);
 }
 
-- (BOOL)isValidRevenue
-{
+- (BOOL)isValidRevenue {
     if (_price == nil) {
         AMPLITUDE_LOG(@"Invalid revenue, need to set price field");
         return NO;
@@ -64,8 +59,7 @@
     return YES;
 }
 
-- (AMPRevenue*)setProductIdentifier:(NSString *) productIdentifier
-{
+- (AMPRevenue*)setProductIdentifier:(NSString *) productIdentifier {
     if ([AMPUtils isEmptyString:productIdentifier]) {
         AMPLITUDE_LOG(@"Invalid empty productIdentifier");
         return self;
@@ -77,46 +71,40 @@
     return self;
 }
 
-- (AMPRevenue*)setQuantity:(NSInteger) quantity
-{
+- (AMPRevenue*)setQuantity:(NSInteger)quantity {
     _quantity = quantity;
     return self;
 }
 
-- (AMPRevenue*)setPrice:(NSNumber *) price
-{
+- (AMPRevenue*)setPrice:(NSNumber *)price {
     (void) SAFE_ARC_RETAIN(price);
     SAFE_ARC_RELEASE(_price);
     _price = price;
     return self;
 }
 
-- (AMPRevenue*)setRevenueType:(NSString*) revenueType
-{
+- (AMPRevenue*)setRevenueType:(NSString*)revenueType {
     (void) SAFE_ARC_RETAIN(revenueType);
     SAFE_ARC_RELEASE(_revenueType);
     _revenueType = revenueType;
     return self;
 }
 
-- (AMPRevenue*)setReceipt:(NSData*) receipt
-{
+- (AMPRevenue*)setReceipt:(NSData*)receipt {
     (void) SAFE_ARC_RETAIN(receipt);
     SAFE_ARC_RELEASE(_receipt);
     _receipt = receipt;
     return self;
 }
 
-- (AMPRevenue*)setEventProperties:(NSDictionary*) eventProperties
-{
+- (AMPRevenue*)setEventProperties:(NSDictionary*)eventProperties {
     eventProperties = [eventProperties copy];
     SAFE_ARC_RELEASE(_properties);
     _properties = eventProperties;
     return self;
 }
 
-- (NSDictionary*)toNSDictionary
-{
+- (NSDictionary*)toNSDictionary {
     NSMutableDictionary *dict;
     if (_properties == nil) {
         dict = [[NSMutableDictionary alloc] init];

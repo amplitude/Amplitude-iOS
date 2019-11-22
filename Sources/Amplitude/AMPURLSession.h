@@ -1,4 +1,3 @@
-#if AMPLITUDE_SSL_PINNING
 //
 //  AMPURLSession.h
 //  Amplitude
@@ -6,6 +5,8 @@
 //  Created by Daniel Jih on 9/14/17.
 //  Copyright (c) 2017 Amplitude. All rights reserved.
 //
+
+#if AMPLITUDE_SSL_PINNING
 
 #import <Foundation/Foundation.h>
 #import "ISPPinnedNSURLSessionDelegate.h"

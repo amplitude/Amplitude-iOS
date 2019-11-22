@@ -6,6 +6,8 @@
 //  Copyright © 2016 Amplitude. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 /**
  `AMPRevenue` objects are a wrapper for revenue data, which get passed to the `logRevenueV2` method to send to Amplitude servers.
 

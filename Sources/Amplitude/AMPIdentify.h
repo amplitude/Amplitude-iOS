@@ -6,6 +6,8 @@
 //  Copyright © 2015 Amplitude. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 /**
  `AMPIdentify` objects are a wrapper for user property operations, which get passed to the `identify` method to send to Amplitude servers.
 

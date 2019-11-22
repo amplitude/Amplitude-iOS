@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Amplitude. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 @interface AMPDatabaseHelper : NSObject
 
 @property (nonatomic, strong, readonly) NSString *databasePath;
