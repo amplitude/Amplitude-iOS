@@ -103,6 +103,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     BOOL _offline;
 
     NSString* _serverUrl;
+    NSString* _token;
 }
 
 #pragma clang diagnostic push
@@ -431,6 +432,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_RELEASE(_trackingOptions);
     SAFE_ARC_RELEASE(_apiPropertiesTrackingOptions);
     SAFE_ARC_RELEASE(_serverUrl);
+    SAFE_ARC_RELEASE(_token);
 
     SAFE_ARC_SUPER_DEALLOC();
 }
@@ -1023,6 +1025,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
 
+    if (_token != nil) {
+        NSString *auth = [NSString stringWithFormat:@"Bearer %@", _token];
+        AMPLITUDE_LOG(@"Attaching bearer %@", _token);
+        [request setValue:auth forHTTPHeaderField:@"Authorization"];
+    }
+
     [request setHTTPBody:postData];
     AMPLITUDE_LOG(@"Events: %@", events);
 
@@ -1472,6 +1480,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     (void) SAFE_ARC_RETAIN(serverUrl);
     SAFE_ARC_RELEASE(self->_serverUrl);
     self->_serverUrl = serverUrl;
+}
+
+- (void)setBearerToken:(NSString *)token {
+    if (!(token == nil || [self isArgument:token validType:[NSString class] methodName:@"setBearerToken:"])) {
+        return;
+    }
+
+    (void) SAFE_ARC_RETAIN(token);
+    SAFE_ARC_RELEASE(self->_token);
+    self->_token = token;
 }
 
 - (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
