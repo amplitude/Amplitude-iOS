@@ -17,5 +17,7 @@ let package = Package(
             exclude: [],
             sources: ["Amplitude", "Amplitude/"],
             publicHeadersPath: "Amplitude"),
+        
+        .testTarget(name: "AmplitudeTests", dependencies: ["Amplitude"])
     ]
 )

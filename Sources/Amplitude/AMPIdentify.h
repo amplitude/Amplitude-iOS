@@ -22,7 +22,9 @@
  See [User Properties and User Property Operations](https://github.com/amplitude/amplitude-ios#user-properties-and-user-property-operations)
  */
 
+#if SWIFT_PACKAGE
 #import <Foundation/Foundation.h>
+#endif
 
 @interface AMPIdentify : NSObject
 
