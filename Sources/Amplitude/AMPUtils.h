@@ -6,6 +6,8 @@
 //
 //
 
+#import <Foundation/Foundation.h>
+
 @interface AMPUtils : NSObject
 
 + (NSString*) generateUUID;

@@ -48,7 +48,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
-@interface Amplitude ()
+@interface Amplitude()
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) NSOperationQueue *initializerQueue;
@@ -200,19 +200,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [[Amplitude instance] getDeviceId];
 }
 
-+ (void)updateLocation
-{
++ (void)updateLocation {
     [[Amplitude instance] updateLocation];
 }
 
 #pragma mark - Main class methods
-- (id)init
-{
+- (id)init {
     return [self initWithInstanceName:nil];
 }
 
-- (id)initWithInstanceName:(NSString*) instanceName
-{
+- (id)initWithInstanceName:(NSString*) instanceName {
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
@@ -390,8 +387,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return success;
 }
 
-- (void) addObservers
-{
+- (void) addObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self
                selector:@selector(enterForeground)
@@ -403,8 +399,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                  object:nil];
 }
 
-- (void) removeObservers
-{
+- (void) removeObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -437,16 +432,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     SAFE_ARC_SUPER_DEALLOC();
 }
 
-- (void)initializeApiKey:(NSString*) apiKey
-{
+- (void)initializeApiKey:(NSString*) apiKey {
     [self initializeApiKey:apiKey userId:nil setUserId: NO];
 }
 
 /**
  * Initialize Amplitude with a given apiKey and userId.
  */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId
-{
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId {
     [self initializeApiKey:apiKey userId:userId setUserId: YES];
 }
 
@@ -454,8 +447,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  * SetUserId: client explicitly initialized with a userId (can be nil).
  * If setUserId is NO, then attempt to load userId from saved eventsData.
  */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId setUserId:(BOOL) setUserId
-{
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId setUserId:(BOOL) setUserId {
     if (apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
@@ -510,8 +502,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (UIApplication *)getSharedApplication
-{
+- (UIApplication *)getSharedApplication {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
         return [UIApplication performSelector:@selector(sharedApplication)];
@@ -519,16 +510,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return nil;
 }
 
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession
-{
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession {
     [self initializeApiKey:apiKey userId:userId];
 }
 
 /**
  * Run a block in the background. If already in the background, run immediately.
  */
-- (BOOL)runOnBackgroundQueue:(void (^)(void))block
-{
+- (BOOL)runOnBackgroundQueue:(void (^)(void))block {
     if ([[NSOperationQueue currentQueue].name isEqualToString:BACKGROUND_QUEUE_NAME]) {
         AMPLITUDE_LOG(@"Already running in the background.");
         block();
@@ -542,8 +531,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 /**
  * Run a block on the main thread. If already on the main thread, run immediately.
  */
-- (void)runSynchronouslyOnMainQueue:(void (^)(void))block
-{
+- (void)runSynchronouslyOnMainQueue:(void (^)(void))block {
     if ([NSThread isMainThread]) {
         block();
     } else {
@@ -553,43 +541,35 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 #pragma mark - logEvent
 
-- (void)logEvent:(NSString*) eventType
-{
+- (void)logEvent:(NSString*) eventType {
     [self logEvent:eventType withEventProperties:nil];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties
-{
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties {
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession
-{
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups
-{
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups {
     [self logEvent:eventType withEventProperties:eventProperties withGroups:groups outOfSession:NO];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL)outOfSession
-{
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL)outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:nil withTimestamp:nil outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups withLongLongTimestamp:(long long) timestamp outOfSession:(BOOL)outOfSession
-{
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups withLongLongTimestamp:(long long) timestamp outOfSession:(BOOL)outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:nil withTimestamp:[NSNumber numberWithLongLong:timestamp] outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL)outOfSession
-{
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL)outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:nil withTimestamp:timestamp outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withGroups:(NSDictionary*) groups withGroupProperties:(NSDictionary*) groupProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession
-{
+- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withGroups:(NSDictionary*) groups withGroupProperties:(NSDictionary*) groupProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession {
     if (_apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
         return;
@@ -686,8 +666,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
-- (void)truncateEventQueues
-{
+- (void)truncateEventQueues {
     int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
     int eventCount = [self.dbHelper getEventCount];
     if (eventCount > self.eventMaxCount) {
@@ -699,8 +678,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (void)annotateEvent:(NSMutableDictionary*) event
-{
+- (void)annotateEvent:(NSMutableDictionary*) event {
     [event setValue:_userId forKey:@"user_id"];
     [event setValue:_deviceId forKey:@"device_id"];
     if ([self->_trackingOptions shouldTrackPlatform]) {
@@ -816,8 +794,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:kAMPRevenueEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:NO];
 }
 
-- (void)logRevenueV2:(AMPRevenue*) revenue
-{
+- (void)logRevenueV2:(AMPRevenue*) revenue {
     if (_apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenueV2");
         return;
@@ -831,8 +808,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 #pragma mark - Upload events
 
-- (void)uploadEventsWithDelay:(int) delay
-{
+- (void)uploadEventsWithDelay:(int)delay {
     if (!_updateScheduled) {
         _updateScheduled = YES;
         __block __weak Amplitude *weakSelf = self;
@@ -844,20 +820,17 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (void)uploadEventsInBackground
-{
+- (void)uploadEventsInBackground {
     _updateScheduled = NO;
     [self uploadEvents];
 }
 
-- (void)uploadEvents
-{
+- (void)uploadEvents {
     int limit = _backoffUpload ? _backoffUploadBatchSize : self.eventUploadMaxBatchSize;
     [self uploadEventsWithLimit:limit];
 }
 
-- (void)uploadEventsWithLimit:(int) limit
-{
+- (void)uploadEventsWithLimit:(int)limit {
     if (_apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
@@ -920,8 +893,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
-- (long long)getNextSequenceNumber
-{
+- (long long)getNextSequenceNumber {
     NSNumber *sequenceNumberFromDB = [self.dbHelper getLongValue:SEQUENCE_NUMBER];
     long long sequenceNumber = 0;
     if (sequenceNumberFromDB != nil) {
@@ -934,8 +906,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return sequenceNumber;
 }
 
-- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents
-{
+- (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long)numEvents {
     NSMutableArray *mergedEvents = [[NSMutableArray alloc] init];
     long long maxEventId = -1;
     long long maxIdentifyId = -1;
@@ -995,8 +966,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return SAFE_ARC_AUTORELEASE(results);
 }
 
-- (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events numEvents:(long) numEvents maxEventId:(long long) maxEventId maxIdentifyId:(long long) maxIdentifyId
-{
+- (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events numEvents:(long) numEvents maxEventId:(long long) maxEventId maxIdentifyId:(long long) maxIdentifyId {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
 
@@ -1124,8 +1094,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 #pragma mark - application lifecycle methods
 
-- (void)enterForeground
-{
+- (void)enterForeground {
     UIApplication *app = [self getSharedApplication];
     if (app == nil) {
         return;
@@ -1144,8 +1113,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
-- (void)enterBackground
-{
+- (void)enterBackground {
     UIApplication *app = [self getSharedApplication];
     if (app == nil) {
         return;
@@ -1167,8 +1135,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
-- (void)endBackgroundTaskIfNeeded
-{
+- (void)endBackgroundTaskIfNeeded {
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         UIApplication *app = [self getSharedApplication];
         if (app == nil) {
@@ -1189,8 +1156,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  *
  * Returns YES if a new session was created.
  */
-- (BOOL)startOrContinueSessionNSNumber:(NSNumber*) timestamp
-{
+- (BOOL)startOrContinueSessionNSNumber:(NSNumber*) timestamp {
     if (!_inForeground) {
         if ([self inSession]) {
             if ([self isWithinMinTimeBetweenSessions:timestamp]) {
@@ -1222,14 +1188,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return NO;
 }
 
-- (BOOL)startOrContinueSession:(long long) timestamp
-{
+- (BOOL)startOrContinueSession:(long long)timestamp {
     NSNumber *timestampNumber = [NSNumber numberWithLongLong:timestamp];
     return [self startOrContinueSessionNSNumber:timestampNumber];
 }
 
-- (void)startNewSession:(NSNumber*) timestamp
-{
+- (void)startNewSession:(NSNumber*)timestamp {
     if (_trackingSessionEvents) {
         [self sendSessionEvent:kAMPSessionEndEvent];
     }
@@ -1240,8 +1204,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (void)sendSessionEvent:(NSString*) sessionEvent
-{
+- (void)sendSessionEvent:(NSString*)sessionEvent {
     if (_apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before sending session event");
         return;
@@ -1257,13 +1220,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withGroupProperties:nil withTimestamp:timestamp outOfSession:NO];
 }
 
-- (BOOL)inSession
-{
+- (BOOL)inSession {
     return _sessionId >= 0;
 }
 
-- (BOOL)isWithinMinTimeBetweenSessions:(NSNumber*) timestamp
-{
+- (BOOL)isWithinMinTimeBetweenSessions:(NSNumber*) timestamp {
     NSNumber *previousSessionTime = [self lastEventTime];
     long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
 
@@ -1273,8 +1234,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 /**
  * Sets the session ID in memory and persists it to disk.
  */
-- (void)setSessionId:(long long) timestamp
-{
+- (void)setSessionId:(long long)timestamp {
     _sessionId = timestamp;
     [self setPreviousSessionId:_sessionId];
 }
@@ -1282,22 +1242,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 /**
  * Update the session timer if there's a running session.
  */
-- (void)refreshSessionTime:(NSNumber*) timestamp
-{
+- (void)refreshSessionTime:(NSNumber*) timestamp {
     if (![self inSession]) {
         return;
     }
     [self setLastEventTime:timestamp];
 }
 
-- (void)setPreviousSessionId:(long long) previousSessionId
-{
+- (void)setPreviousSessionId:(long long) previousSessionId {
     NSNumber *value = [NSNumber numberWithLongLong:previousSessionId];
     (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:value];
 }
 
-- (long long)previousSessionId
-{
+- (long long)previousSessionId {
     NSNumber* previousSessionId = [self.dbHelper getLongValue:PREVIOUS_SESSION_ID];
     if (previousSessionId == nil) {
         return -1;
@@ -1305,41 +1262,34 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [previousSessionId longLongValue];
 }
 
-- (void)setLastEventTime:(NSNumber*) timestamp
-{
+- (void)setLastEventTime:(NSNumber*)timestamp {
     (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
 }
 
-- (NSNumber*)lastEventTime
-{
+- (NSNumber*)lastEventTime {
     return [self.dbHelper getLongValue:PREVIOUS_SESSION_TIME];
 }
 
-- (void)startSession
-{
+- (void)startSession {
     return;
 }
 
-- (void)identify:(AMPIdentify *)identify
-{
+- (void)identify:(AMPIdentify *)identify {
     [self identify:identify outOfSession:NO];
 }
 
-- (void)identify:(AMPIdentify *)identify outOfSession:(BOOL) outOfSession
-{
+- (void)identify:(AMPIdentify *)identify outOfSession:(BOOL) outOfSession {
     if (identify == nil || [identify.userPropertyOperations count] == 0) {
         return;
     }
     [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:outOfSession];
 }
 
-- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify
-{
+- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify {
     [self groupIdentifyWithGroupType:groupType groupName:groupName groupIdentify:groupIdentify outOfSession:NO];
 }
 
-- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify outOfSession:(BOOL) outOfSession
-{
+- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify outOfSession:(BOOL) outOfSession {
     if (groupIdentify == nil || [groupIdentify.userPropertyOperations count] == 0) {
         return;
     }
@@ -1355,8 +1305,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 #pragma mark - configurations
 
-- (void)setUserProperties:(NSDictionary*) userProperties
-{
+- (void)setUserProperties:(NSDictionary*) userProperties {
     if (userProperties == nil || ![self isArgument:userProperties validType:[NSDictionary class] methodName:@"setUserProperties:"] || [userProperties count] == 0) {
         return;
     }
@@ -1380,19 +1329,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 // maintain for legacy
 // replace argument is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.
-- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace
-{
+- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace {
     [self setUserProperties:userProperties];
 }
 
-- (void)clearUserProperties
-{
+- (void)clearUserProperties {
     AMPIdentify *identify = [[AMPIdentify identify] clearAll];
     [self identify:identify];
 }
 
-- (void)setGroup:(NSString *)groupType groupName:(NSObject *)groupName
-{
+- (void)setGroup:(NSString *)groupType groupName:(NSObject *)groupName {
     if (_apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setGroupType");
         return;
@@ -1409,8 +1355,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 }
 
-- (void)setTrackingOptions:(AMPTrackingOptions *) options
-{
+- (void)setTrackingOptions:(AMPTrackingOptions *)options {
     if (![self isArgument:options validType:[AMPTrackingOptions class] methodName:@"setTrackingOptions:"]) {
         return;
     }
@@ -1422,13 +1367,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     self->_apiPropertiesTrackingOptions = SAFE_ARC_RETAIN([NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]]);
 }
 
-- (void)setUserId:(NSString*) userId
-{
+- (void)setUserId:(NSString*)userId {
     [self setUserId:userId startNewSession:NO];
 }
 
-- (void)setUserId:(NSString*) userId startNewSession:(BOOL) startNewSession
-{
+- (void)setUserId:(NSString*) userId startNewSession:(BOOL)startNewSession {
     if (!(userId == nil || [self isArgument:userId validType:[NSString class] methodName:@"setUserId:"])) {
         return;
     }
@@ -1454,16 +1397,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
-- (void)setOptOut:(BOOL)enabled
-{
+- (void)setOptOut:(BOOL)enabled {
     [self runOnBackgroundQueue:^{
         NSNumber *value = [NSNumber numberWithBool:enabled];
         (void) [self.dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:value];
     }];
 }
 
-- (void)setOffline:(BOOL)offline
-{
+- (void)setOffline:(BOOL)offline {
     _offline = offline;
 
     if (!_offline) {
@@ -1471,8 +1412,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (void)setServerUrl:(NSString*) serverUrl
-{
+- (void)setServerUrl:(NSString*) serverUrl {
     if (!(serverUrl == nil || [self isArgument:serverUrl validType:[NSString class] methodName:@"setServerUrl:"])) {
         return;
     }
@@ -1492,19 +1432,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     self->_token = token;
 }
 
-- (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize
-{
+- (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize {
     _eventUploadMaxBatchSize = eventUploadMaxBatchSize;
     _backoffUploadBatchSize = eventUploadMaxBatchSize;
 }
 
-- (BOOL)optOut
-{
+- (BOOL)optOut {
     return [[self.dbHelper getLongValue:OPT_OUT] boolValue];
 }
 
-- (void)setDeviceId:(NSString*)deviceId
-{
+- (void)setDeviceId:(NSString*)deviceId {
     if (![self isValidDeviceId:deviceId]) {
         return;
     }
@@ -1517,8 +1454,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
-- (void)regenerateDeviceId
-{
+- (void)regenerateDeviceId {
     [self runOnBackgroundQueue:^{
         [self setDeviceId:[AMPDeviceInfo generateUUID]];
     }];
@@ -1526,8 +1462,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 #pragma mark - location methods
 
-- (void)updateLocation
-{
+- (void)updateLocation {
     if (_locationListeningEnabled) {
         CLLocation *location = [_locationManager location];
         @synchronized (_locationManager) {
@@ -1540,40 +1475,33 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (void)enableLocationListening
-{
+- (void)enableLocationListening {
     _locationListeningEnabled = YES;
     [self updateLocation];
 }
 
-- (void)disableLocationListening
-{
+- (void)disableLocationListening {
     _locationListeningEnabled = NO;
 }
 
-- (void)useAdvertisingIdForDeviceId
-{
+- (void)useAdvertisingIdForDeviceId {
     _useAdvertisingIdForDeviceId = YES;
 }
 
-- (void)disableIdfaTracking
-{
+- (void)disableIdfaTracking {
     _disableIdfaTracking = YES;
 }
 
 #pragma mark - Getters for device data
-- (NSString*) getDeviceId
-{
+- (NSString*)getDeviceId {
     return _deviceId;
 }
 
-- (long long) getSessionId
-{
+- (long long)getSessionId {
     return _sessionId;
 }
 
-- (NSString*) initializeDeviceId
-{
+- (NSString*)initializeDeviceId {
     if (_deviceId == nil) {
         _deviceId = SAFE_ARC_RETAIN([self.dbHelper getValue:DEVICE_ID]);
         if (![self isValidDeviceId:_deviceId]) {
@@ -1586,8 +1514,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return _deviceId;
 }
 
-- (NSString*)_getDeviceId
-{
+- (NSString*)_getDeviceId {
     NSString *deviceId = nil;
     if (_useAdvertisingIdForDeviceId && [self->_trackingOptions shouldTrackIDFA]) {
         deviceId = _deviceInfo.advertiserID;
@@ -1605,8 +1532,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return SAFE_ARC_AUTORELEASE([[NSString alloc] initWithString:deviceId]);
 }
 
-- (BOOL)isValidDeviceId:(NSString*)deviceId
-{
+- (BOOL)isValidDeviceId:(NSString*)deviceId {
     if (deviceId == nil ||
         ![self isArgument:deviceId validType:[NSString class] methodName:@"isValidDeviceId"] ||
         [deviceId isEqualToString:@"e3f5536a141811db40efd6400f1d0a4e"] ||
@@ -1616,13 +1542,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return YES;
 }
 
-- (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*) dictionary
-{
+- (NSDictionary*)replaceWithEmptyJSON:(NSDictionary*)dictionary {
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
 }
 
-- (id) truncate:(id) obj
-{
+- (id) truncate:(id)obj {
     if ([obj isKindOfClass:[NSString class]]) {
         obj = (NSString*)obj;
         if ([obj length] > kAMPMaxStringLength) {
@@ -1666,8 +1590,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return obj;
 }
 
-- (BOOL)isArgument:(id) argument validType:(Class) class methodName:(NSString*) methodName
-{
+- (BOOL)isArgument:(id) argument validType:(Class) class methodName:(NSString*)methodName {
     if ([argument isKindOfClass:class]) {
         return YES;
     } else {
@@ -1676,8 +1599,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
-- (NSString*)md5HexDigest:(NSString*)input
-{
+- (NSString*)md5HexDigest:(NSString*)input {
     const char* str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
     CC_MD5(str, (CC_LONG) strlen(str), result);
@@ -1689,24 +1611,20 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return ret;
 }
 
-- (NSString*)urlEncodeString:(NSString*) string
-{
+- (NSString*)urlEncodeString:(NSString*)string {
     NSCharacterSet * allowedCharacters = [[NSCharacterSet characterSetWithCharactersInString:@":/?#[]@!$ &'()*+,;=\"<>%{}|\\^~`"] invertedSet];
     return [string stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacters];
 }
 
-- (NSDate*) currentTime
-{
+- (NSDate*)currentTime {
     return [NSDate date];
 }
 
-- (void)printEventsCount
-{
+- (void)printEventsCount {
     AMPLITUDE_LOG(@"Events count:%ld", (long) [self.dbHelper getEventCount]);
 }
 
 #pragma mark - Compatibility
-
 
 /**
  * Move all preference data from the legacy name to the new, static name if needed.
@@ -1716,8 +1634,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  * location in NSLibraryDirectory.
  *
  */
-- (BOOL)upgradePrefs
-{
+- (BOOL)upgradePrefs {
     // Copy any old data files to new file paths
     NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
     NSString *oldPropertyListPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
@@ -1824,8 +1741,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [NSKeyedArchiver archiveRootObject:obj toFile:path];
 }
 
-- (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to
-{
+- (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error;
     if (![fileManager fileExistsAtPath:to] &&

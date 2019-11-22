@@ -1,17 +1,15 @@
 //
 //  AMPDeviceInfo.m
 
-#import <Foundation/Foundation.h>
 #import "AMPARCMacros.h"
 #import "AMPDeviceInfo.h"
 #import "AMPUtils.h"
 #import "AMPConstants.h"
 #import <UIKit/UIKit.h>
 #import <sys/sysctl.h>
-
 #include <sys/types.h>
 
-@interface AMPDeviceInfo ()
+@interface AMPDeviceInfo()
 @end
 
 @implementation AMPDeviceInfo {

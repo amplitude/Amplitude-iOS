@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Amplitude. All rights reserved.
 //
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 #import "Amplitude.h"
 
 @interface Amplitude (SSLPinning)

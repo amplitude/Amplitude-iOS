@@ -6,7 +6,6 @@
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
 
-
 /**
  Amplitude iOS SDK.
 
@@ -38,9 +37,9 @@
  * -----------------------------------------------------------------------------
  */
 
- /**
+/**
   API key for your Amplitude App.
-  */
+ */
 @property (nonatomic, strong, readonly) NSString *apiKey;
 
 /**
@@ -57,7 +56,7 @@
  Name of the SDK instance (ex: no name for default instance, or custom name for a named instance)
  */
 @property (nonatomic, strong, readonly) NSString *instanceName;
-@property (nonatomic ,strong, readonly) NSString *propertyListPath;
+@property (nonatomic, strong, readonly) NSString *propertyListPath;
 
 /**
  Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.

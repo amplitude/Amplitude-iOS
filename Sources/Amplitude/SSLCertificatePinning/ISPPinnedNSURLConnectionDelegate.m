@@ -1,4 +1,3 @@
-#if AMPLITUDE_SSL_PINNING
 //
 //  ISPPinnedNSURLConnectionDelegate.m
 //  SSLCertificatePinning
@@ -7,12 +6,12 @@
 //  Copyright (c) 2014 iSEC Partners. All rights reserved.
 //
 
+#if AMPLITUDE_SSL_PINNING
+
 #import "ISPPinnedNSURLConnectionDelegate.h"
 #import "ISPCertificatePinning.h"
 
-
 @implementation ISPPinnedNSURLConnectionDelegate
-
 
 - (void)connection:(NSURLConnection *)connection willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
 
@@ -45,7 +44,6 @@
         }
     }
 }
-
 
 @end
 #endif

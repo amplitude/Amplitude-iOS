@@ -6,9 +6,9 @@
 //  Copyright © 2018 Amplitude. All rights reserved.
 //
 
-@interface AMPTrackingOptions : NSObject
+#import <Foundation/Foundation.h>
 
-+ (instancetype)options;
+@interface AMPTrackingOptions : NSObject
 
 - (AMPTrackingOptions*)disableCarrier;
 - (AMPTrackingOptions*)disableCity;
@@ -45,5 +45,6 @@
 - (BOOL)shouldTrackVersionName;
 
 - (NSMutableDictionary*) getApiPropertiesTrackingOption;
++ (instancetype)options;
 
 @end
