@@ -4,7 +4,7 @@
 #import "AMPConstants.h"
 
 NSString *const kAMPLibrary = @"amplitude-ios";
-NSString *const kAMPVersion = @"4.8.2";
+NSString *const kAMPVersion = @"4.9.0";
 NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";
@@ -32,8 +32,10 @@ NSString *const kAMPOSName = @"ios";
 
 const int kAMPEventUploadMaxBatchSize = 100;
 const int kAMPEventRemoveBatchSize = 20;
-const int kAMPEventUploadPeriodSeconds = 30; // 30s
-const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5m
+
+const int kAMPEventUploadPeriodSeconds = 30; // 30 seconds
+const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5 minutes
+
 const int kAMPMaxStringLength = 1024;
 const int kAMPMaxPropertyKeys = 1000;
 
