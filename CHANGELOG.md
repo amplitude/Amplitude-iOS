@@ -1,4 +1,4 @@
-## 4.9.1 (November 22, 2019)
+## 4.9.2 (November 22, 2019)
 
 * Fix error for not finding declaration for NSObject when using Swift Package Manager
 
