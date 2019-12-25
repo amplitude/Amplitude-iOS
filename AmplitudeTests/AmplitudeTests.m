@@ -335,7 +335,6 @@
     [self setupAsyncResponse:serverResponse];
     AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
     [self.amplitude identify:identify2];
-    SAFE_ARC_RELEASE(identify2);
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 0);
@@ -375,7 +374,6 @@
     [self setupAsyncResponse:serverResponse];
     AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
     [self.amplitude groupIdentifyWithGroupType:groupType groupName:groupName groupIdentify:identify2];
-    SAFE_ARC_RELEASE(identify2);
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 0);
@@ -519,7 +517,6 @@
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     [dbHelper addEvent:jsonString];
-    SAFE_ARC_RELEASE(jsonString);
 
     // the event without sequence number should be ordered before the identify
     NSMutableArray *events = [dbHelper getEvents:-1 limit:-1];
@@ -904,7 +901,6 @@
     [client flushQueue];
 
     XCTAssertTrue([[client getDeviceId] isEqual:deviceInfo.vendorID]);
-    SAFE_ARC_RELEASE(deviceInfo);
 }
 
 -(void)testDisableIdfvAsDeviceId {
@@ -919,7 +915,6 @@
 
     XCTAssertFalse([[client getDeviceId] isEqual:deviceInfo.vendorID]);
     XCTAssertEqual([[client getDeviceId] characterAtIndex:36], 'R');
-    SAFE_ARC_RELEASE(deviceInfo);
 }
 
 -(void)testSetTrackingConfig {

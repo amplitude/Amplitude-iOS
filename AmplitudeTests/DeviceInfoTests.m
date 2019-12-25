@@ -32,7 +32,6 @@
 }
 
 - (void)tearDown {
-    SAFE_ARC_RELEASE(_deviceInfo);
     [super tearDown];
 }
 

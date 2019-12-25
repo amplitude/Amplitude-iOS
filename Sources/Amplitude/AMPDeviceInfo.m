@@ -1,7 +1,6 @@
 //
 //  AMPDeviceInfo.m
 
-#import "AMPARCMacros.h"
 #import "AMPDeviceInfo.h"
 #import "AMPUtils.h"
 #import "AMPConstants.h"
@@ -26,60 +25,48 @@
 @synthesize advertiserID = _advertiserID;
 @synthesize vendorID = _vendorID;
 
--(id) init: (BOOL) disableIdfaTracking {
+- (instancetype)init: (BOOL) disableIdfaTracking {
     self = [super init];
     _disableIdfaTracking = disableIdfaTracking;
     return self;
 }
 
-- (void) dealloc {
-    SAFE_ARC_RELEASE(_appVersion);
-    SAFE_ARC_RELEASE(_osVersion);
-    SAFE_ARC_RELEASE(_model);
-    SAFE_ARC_RELEASE(_carrier);
-    SAFE_ARC_RELEASE(_country);
-    SAFE_ARC_RELEASE(_language);
-    SAFE_ARC_RELEASE(_advertiserID);
-    SAFE_ARC_RELEASE(_vendorID);
-    SAFE_ARC_SUPER_DEALLOC();
-}
-
--(NSString*) appVersion {
+- (NSString*)appVersion {
     if (!_appVersion) {
-        _appVersion = SAFE_ARC_RETAIN([[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"]);
+        _appVersion = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"];
     }
     return _appVersion;
 }
 
--(NSString*) osName {
+- (NSString*)osName {
     return kAMPOSName;
 }
 
--(NSString*) osVersion {
+- (NSString*)osVersion {
     if (!_osVersion) {
-        _osVersion = SAFE_ARC_RETAIN([[UIDevice currentDevice] systemVersion]);
+        _osVersion = [[UIDevice currentDevice] systemVersion];
     }
     return _osVersion;
 }
 
--(NSString*) manufacturer {
+- (NSString*)manufacturer {
     return @"Apple";
 }
 
--(NSString*) model {
+- (NSString*)model {
     if (!_model) {
-        _model = SAFE_ARC_RETAIN([AMPDeviceInfo getPhoneModel]);
+        _model = [AMPDeviceInfo getPhoneModel];
     }
     return _model;
 }
 
--(NSString*) carrier {
+- (NSString*)carrier {
     if (!_carrier) {
         Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
         SEL carrierName = NSSelectorFromString(@"carrierName");
         if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
-            networkInfo = SAFE_ARC_RETAIN([[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init]);
+            networkInfo = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
             id carrier = nil;
             id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
             if (imp1) {
@@ -87,62 +74,60 @@
             }
             NSString* (*imp2)(id, SEL) = (NSString* (*)(id, SEL))[carrier methodForSelector:carrierName];
             if (imp2) {
-                _carrier = SAFE_ARC_RETAIN(imp2(carrier, carrierName));
+                _carrier = imp2(carrier, carrierName);
             }
         }
         // unable to fetch carrier information
         if (!_carrier) {
-            _carrier = SAFE_ARC_RETAIN(@"Unknown");
+            _carrier = @"Unknown";
         }
     }
     return _carrier;
 }
 
--(NSString*) country {
+- (NSString*)country {
     if (!_country) {
-        _country = SAFE_ARC_RETAIN([[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:
-            NSLocaleCountryCode value:
-            [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]]);
+        _country = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey: NSLocaleCountryCode
+                                                                               value: [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]];
     }
     return _country;
 }
 
--(NSString*) language {
+- (NSString*)language {
     if (!_language) {
-        _language = SAFE_ARC_RETAIN([[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:
-            NSLocaleLanguageCode value:[[NSLocale preferredLanguages] objectAtIndex:0]]);
+        _language = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey: NSLocaleLanguageCode
+                                                                                value: [[NSLocale preferredLanguages] objectAtIndex:0]];
     }
     return _language;
 }
 
--(NSString*) advertiserID {
+- (NSString*)advertiserID {
     if (!_disableIdfaTracking && !_advertiserID) {
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
             NSString *advertiserId = [AMPDeviceInfo getAdvertiserID:5];
             if (advertiserId != nil &&
                 ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-                _advertiserID = SAFE_ARC_RETAIN(advertiserId);
+                _advertiserID = advertiserId;
             }
         }
     }
     return _advertiserID;
 }
 
--(NSString*) vendorID {
+- (NSString*)vendorID {
     if (!_vendorID) {
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
             NSString *identifierForVendor = [AMPDeviceInfo getVendorID:5];
             if (identifierForVendor != nil &&
                 ![identifierForVendor isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-                _vendorID = SAFE_ARC_RETAIN(identifierForVendor);
+                _vendorID = identifierForVendor;
             }
         }
     }
     return _vendorID;
 }
 
-+ (NSString*)getAdvertiserID:(int) maxAttempts
-{
++ (NSString*)getAdvertiserID:(int) maxAttempts {
     Class ASIdentifierManager = NSClassFromString(@"ASIdentifierManager");
     SEL sharedManager = NSSelectorFromString(@"sharedManager");
     SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
@@ -173,8 +158,7 @@
     }
 }
 
-+ (NSString*)getVendorID:(int) maxAttempts
-{
++ (NSString*)getVendorID:(int) maxAttempts {
     NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
     if (identifier == nil && maxAttempts > 0) {
         // Try again every 5 seconds
@@ -185,15 +169,13 @@
     }
 }
 
-+ (NSString*)generateUUID
-{
++ (NSString*)generateUUID {
     // Add "R" at the end of the ID to distinguish it from advertiserId
     NSString *result = [[AMPUtils generateUUID] stringByAppendingString:@"R"];
     return result;
 }
 
-+ (NSString*)getPlatformString
-{
++ (NSString*)getPlatformString {
     size_t size;
     sysctlbyname("hw.machine", NULL, &size, NULL, 0);
     char *machine = malloc(size);
@@ -203,7 +185,7 @@
     return platform;
 }
 
-+ (NSString*)getPhoneModel{
++ (NSString*)getPhoneModel {
     NSString *platform = [self getPlatformString];
     if ([platform isEqualToString:@"iPhone1,1"])    return @"iPhone 1";
     if ([platform isEqualToString:@"iPhone1,2"])    return @"iPhone 3G";
@@ -268,4 +250,5 @@
     if ([platform isEqualToString:@"x86_64"])       return @"Simulator";
     return platform;
 }
+
 @end

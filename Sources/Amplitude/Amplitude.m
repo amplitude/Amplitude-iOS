@@ -28,7 +28,6 @@
 
 #import "Amplitude.h"
 #import "AMPLocationManagerDelegate.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
 #import "AMPURLConnection.h"
@@ -133,7 +132,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         if (client == nil) {
             client = [[self alloc] initWithInstanceName:instanceName];
             [_instances setObject:client forKey:instanceName];
-            SAFE_ARC_RELEASE(client);
         }
     }
 
@@ -232,11 +230,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _disableIdfaTracking = NO;
         _backoffUpload = NO;
         _offline = NO;
-        _serverUrl = SAFE_ARC_RETAIN(kAMPEventLogUrl);
-        _trackingOptions = SAFE_ARC_RETAIN([AMPTrackingOptions options]);
-        _apiPropertiesTrackingOptions = SAFE_ARC_RETAIN([NSDictionary dictionary]);
-        _instanceName = SAFE_ARC_RETAIN(instanceName);
-        _dbHelper = SAFE_ARC_RETAIN([AMPDatabaseHelper getDatabaseHelper:instanceName]);
+        _serverUrl = kAMPEventLogUrl;
+        _trackingOptions = [AMPTrackingOptions options];
+        _apiPropertiesTrackingOptions = [NSDictionary dictionary];
+        _instanceName = instanceName;
+        _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
@@ -263,14 +261,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (![self->_instanceName isEqualToString:kAMPDefaultInstance]) {
                 propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, self->_instanceName]; // namespace pList with instance name
             }
-            self->_propertyListPath = SAFE_ARC_RETAIN(propertyListPath);
-            self->_eventsDataPath = SAFE_ARC_RETAIN([eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"]);
+            self->_propertyListPath = propertyListPath;
+            self->_eventsDataPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
             [self upgradePrefs];
 
             // Load propertyList object
-            self->_propertyList = SAFE_ARC_RETAIN([self deserializePList:self->_propertyListPath]);
+            self->_propertyList = [self deserializePList:self->_propertyListPath];
             if (!self->_propertyList) {
-                self->_propertyList = SAFE_ARC_RETAIN([NSMutableDictionary dictionary]);
+                self->_propertyList = [NSMutableDictionary dictionary];
                 [self->_propertyList setObject:[NSNumber numberWithInt:1] forKey:DATABASE_VERSION];
                 BOOL success = [self savePropertyList];
                 if (!success) {
@@ -304,7 +302,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                     }
                 }
             }
-            SAFE_ARC_RELEASE(self->_eventsDataPath);
 
             // try to restore previous session
             long long previousSessionId = [self previousSessionId];
@@ -353,13 +350,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         if ([AMPUtils isEmptyString:jsonString]) {
             AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization resulted in a null string, skipping this event");
-            if (jsonString != nil) {
-                SAFE_ARC_RELEASE(jsonString);
-            }
             continue;
         }
         success &= [defaultDbHelper addEvent:jsonString];
-        SAFE_ARC_RELEASE(jsonString);
     }
 
     // migrate remaining properties
@@ -407,29 +400,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void) dealloc {
     [self removeObservers];
-
-    // Release properties
-    SAFE_ARC_RELEASE(_apiKey);
-    SAFE_ARC_RELEASE(_backgroundQueue);
-    SAFE_ARC_RELEASE(_deviceId);
-    SAFE_ARC_RELEASE(_userId);
-
-    // Release instance variables
-    SAFE_ARC_RELEASE(_deviceInfo);
-    SAFE_ARC_RELEASE(_initializerQueue);
-    SAFE_ARC_RELEASE(_lastKnownLocation);
-    SAFE_ARC_RELEASE(_locationManager);
-    SAFE_ARC_RELEASE(_locationManagerDelegate);
-    SAFE_ARC_RELEASE(_propertyList);
-    SAFE_ARC_RELEASE(_propertyListPath);
-    SAFE_ARC_RELEASE(_dbHelper);
-    SAFE_ARC_RELEASE(_instanceName);
-    SAFE_ARC_RELEASE(_trackingOptions);
-    SAFE_ARC_RELEASE(_apiPropertiesTrackingOptions);
-    SAFE_ARC_RELEASE(_serverUrl);
-    SAFE_ARC_RELEASE(_token);
-
-    SAFE_ARC_SUPER_DEALLOC();
 }
 
 - (void)initializeApiKey:(NSString*) apiKey {
@@ -466,8 +436,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     if (!_initialized) {
-        (void) SAFE_ARC_RETAIN(apiKey);
-        SAFE_ARC_RELEASE(_apiKey);
         _apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
@@ -476,7 +444,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (setUserId) {
                 [self setUserId:userId];
             } else {
-                self->_userId = SAFE_ARC_RETAIN([self.dbHelper getValue:USER_ID]);
+                self->_userId = [self.dbHelper getValue:USER_ID];
             }
         }];
 
@@ -599,11 +567,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Respect the opt-out setting by not sending or storing any events.
         if ([self optOut])  {
             AMPLITUDE_LOG(@"User has opted out of tracking. Event %@ not logged.", eventType);
-            SAFE_ARC_RELEASE(eventProperties);
-            SAFE_ARC_RELEASE(apiProperties);
-            SAFE_ARC_RELEASE(userProperties);
-            SAFE_ARC_RELEASE(groups);
-            SAFE_ARC_RELEASE(groupProperties);
             return;
         }
 
@@ -623,12 +586,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [event setValue:[NSNumber numberWithLongLong:outOfSession ? -1 : self->_sessionId] forKey:@"session_id"];
         [event setValue:timestamp forKey:@"timestamp"];
 
-        SAFE_ARC_RELEASE(eventProperties);
-        SAFE_ARC_RELEASE(apiProperties);
-        SAFE_ARC_RELEASE(userProperties);
-        SAFE_ARC_RELEASE(groups);
-        SAFE_ARC_RELEASE(groupProperties);
-
         [self annotateEvent:event];
 
         // convert event dictionary to JSON String
@@ -641,9 +598,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         if ([AMPUtils isEmptyString:jsonString]) {
             AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type %@ resulted in an NULL string", eventType);
-            if (jsonString != nil) {
-                SAFE_ARC_RELEASE(jsonString);
-            }
             return;
         }
         if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
@@ -651,7 +605,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         } else {
             (void) [self.dbHelper addEvent:jsonString];
         }
-        SAFE_ARC_RELEASE(jsonString);
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
@@ -880,16 +833,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSString *eventsString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
         if ([AMPUtils isEmptyString:eventsString]) {
             AMPLITUDE_ERROR(@"ERROR: JSONSerialization of event upload data resulted in a NULL string");
-            if (eventsString != nil) {
-                SAFE_ARC_RELEASE(eventsString);
-            }
             self->_updatingCurrently = NO;
             [self endBackgroundTaskIfNeeded];
             return;
         }
 
         [self makeEventUploadPostRequest:self->_serverUrl events:eventsString numEvents:numEvents maxEventId:maxEventId maxIdentifyId:maxIdentifyId];
-        SAFE_ARC_RELEASE(eventsString);
     }];
 }
 
@@ -926,44 +875,39 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         // case 1: no identifys grab from events
         if (noIdentifies) {
-            event = SAFE_ARC_RETAIN(events[0]);
+            event = events[0];
             [events removeObjectAtIndex:0];
             maxEventId = [[event objectForKey:@"event_id"] longValue];
 
         // case 2: no events grab from identifys
         } else if (noEvents) {
-            identify = SAFE_ARC_RETAIN(identifys[0]);
+            identify = identifys[0];
             [identifys removeObjectAtIndex:0];
             maxIdentifyId = [[identify objectForKey:@"event_id"] longValue];
 
         // case 3: need to compare sequence numbers
         } else {
             // events logged before v3.2.0 won't have sequeunce number, put those first
-            event = SAFE_ARC_RETAIN(events[0]);
-            identify = SAFE_ARC_RETAIN(identifys[0]);
+            event = events[0];
+            identify = identifys[0];
             if ([event objectForKey:SEQUENCE_NUMBER] == nil ||
                     ([[event objectForKey:SEQUENCE_NUMBER] longLongValue] <
                      [[identify objectForKey:SEQUENCE_NUMBER] longLongValue])) {
                 [events removeObjectAtIndex:0];
                 maxEventId = [[event objectForKey:EVENT_ID] longValue];
-                SAFE_ARC_RELEASE(identify);
                 identify = nil;
             } else {
                 [identifys removeObjectAtIndex:0];
                 maxIdentifyId = [[identify objectForKey:EVENT_ID] longValue];
-                SAFE_ARC_RELEASE(event);
                 event = nil;
             }
         }
 
         [mergedEvents addObject: event != nil ? event : identify];
-        SAFE_ARC_RELEASE(event);
-        SAFE_ARC_RELEASE(identify);
     }
 
     NSDictionary *results = [[NSDictionary alloc] initWithObjectsAndKeys: mergedEvents, EVENTS, [NSNumber numberWithLongLong:maxEventId], MAX_EVENT_ID, [NSNumber numberWithLongLong:maxIdentifyId], MAX_IDENTIFY_ID, nil];
-    SAFE_ARC_RELEASE(mergedEvents);
-    return SAFE_ARC_AUTORELEASE(results);
+    return results;
 }
 
 - (void)makeEventUploadPostRequest:(NSString*) url events:(NSString*) events numEvents:(long) numEvents maxEventId:(long long) maxEventId maxIdentifyId:(long long) maxIdentifyId {
@@ -1004,8 +948,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [request setHTTPBody:postData];
     AMPLITUDE_LOG(@"Events: %@", events);
 
-    SAFE_ARC_RELEASE(postData);
-
     // If pinning is enabled, use the AMPURLSession that handles it.
 #if AMPLITUDE_SSL_PINNING
     id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
@@ -1036,7 +978,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 } else {
                     AMPLITUDE_ERROR(@"ERROR: %@, will attempt to reupload later", result);
                 }
-                SAFE_ARC_RELEASE(result);
             } else if ([httpResponse statusCode] == 413) {
                 // If blocked by one massive event, drop it
                 if (numEvents == 1) {
@@ -1058,7 +999,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
             } else {
                 AMPLITUDE_ERROR(@"ERROR: Connection response received:%ld, %@", (long)[httpResponse statusCode],
-                    SAFE_ARC_AUTORELEASE([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]));
+                    [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             }
         } else if (error != nil) {
             if ([error code] == -1009) {
@@ -1360,11 +1301,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 
-    (void) SAFE_ARC_RETAIN(options);
-    SAFE_ARC_RELEASE(self->_trackingOptions);
-    SAFE_ARC_RELEASE(self->_apiPropertiesTrackingOptions);
     self->_trackingOptions = options;
-    self->_apiPropertiesTrackingOptions = SAFE_ARC_RETAIN([NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]]);
+    self->_apiPropertiesTrackingOptions = [NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]];
 }
 
 - (void)setUserId:(NSString*)userId {
@@ -1381,8 +1319,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self sendSessionEvent:kAMPSessionEndEvent];
         }
 
-        (void) SAFE_ARC_RETAIN(userId);
-        SAFE_ARC_RELEASE(self->_userId);
         self->_userId = userId;
         (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:self->_userId];
 
@@ -1417,8 +1353,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 
-    (void) SAFE_ARC_RETAIN(serverUrl);
-    SAFE_ARC_RELEASE(self->_serverUrl);
     self->_serverUrl = serverUrl;
 }
 
@@ -1427,8 +1361,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 
-    (void) SAFE_ARC_RETAIN(token);
-    SAFE_ARC_RELEASE(self->_token);
     self->_token = token;
 }
 
@@ -1447,10 +1379,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     [self runOnBackgroundQueue:^{
-        (void) SAFE_ARC_RETAIN(deviceId);
-        SAFE_ARC_RELEASE(self->_deviceId);
         self->_deviceId = deviceId;
-        (void) [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
+        [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
     }];
 }
 
@@ -1467,8 +1397,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         CLLocation *location = [_locationManager location];
         @synchronized (_locationManager) {
             if (location != nil) {
-                (void) SAFE_ARC_RETAIN(location);
-                SAFE_ARC_RELEASE(_lastKnownLocation);
                 _lastKnownLocation = location;
             }
         }
@@ -1503,10 +1431,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSString*)initializeDeviceId {
     if (_deviceId == nil) {
-        _deviceId = SAFE_ARC_RETAIN([self.dbHelper getValue:DEVICE_ID]);
+        _deviceId = [self.dbHelper getValue:DEVICE_ID];
         if (![self isValidDeviceId:_deviceId]) {
-            NSString *newDeviceId = SAFE_ARC_RETAIN([self _getDeviceId]);
-            SAFE_ARC_RELEASE(_deviceId);
+            NSString *newDeviceId = [self _getDeviceId];
             _deviceId = newDeviceId;
             (void) [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:newDeviceId];
         }
@@ -1529,7 +1456,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Otherwise generate random ID
         deviceId = [AMPDeviceInfo generateUUID];
     }
-    return SAFE_ARC_AUTORELEASE([[NSString alloc] initWithString:deviceId]);
+    return [[NSString alloc] initWithString:deviceId];
 }
 
 - (BOOL)isValidDeviceId:(NSString*)deviceId {
@@ -1558,7 +1485,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         for (id i in objCopy) {
             [arr addObject:[self truncate:i]];
         }
-        SAFE_ARC_RELEASE(objCopy);
         obj = [NSArray arrayWithArray:arr];
     } else if ([obj isKindOfClass:[NSDictionary class]]) {
         // if too many properties, ignore
@@ -1584,7 +1510,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 dict[coercedKey] = [self truncate:objCopy[key]];
             }
         }
-        SAFE_ARC_RELEASE(objCopy);
         obj = [NSDictionary dictionaryWithDictionary:dict];
     }
     return obj;

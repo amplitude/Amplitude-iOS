@@ -37,8 +37,6 @@ NSString *const userId = @"userId";
     // Ensure all background operations are done
     [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
     [self.amplitude flushQueue];
-    SAFE_ARC_RELEASE(_amplitude);
-    SAFE_ARC_RELEASE(_databaseHelper);
     [super tearDown];
 }
 

@@ -38,15 +38,13 @@
 
 @implementation AMPURLConnection
 
-+ (void)initialize
-{
++ (void)initialize {
     if (self == [AMPURLConnection class]) {
         [AMPURLConnection pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
     }
 }
 
-+ (void)pinSSLCertificate:(NSArray *)certFilenames
-{
++ (void)pinSSLCertificate:(NSArray *)certFilenames {
     // We pin the anchor/CA certificates
     NSMutableArray *certs = [NSMutableArray array];
     for (NSString *certFilename in certFilenames) {
@@ -70,10 +68,8 @@
     // Save the SSL pins so that our connection delegates automatically use them
     if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:pins] != YES) {
         AMPLITUDE_LOG(@"Failed to pin the certificates");
-        SAFE_ARC_RELEASE(pins);
         return;
     }
-    SAFE_ARC_RELEASE(pins);
 }
 
 /**
@@ -85,8 +81,7 @@
  */
 + (void)sendAsynchronousRequest:(NSURLRequest *)request
                           queue:(NSOperationQueue *)queue
-              completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler
-{
+              completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler {
     // Ignore the return value. See note below about self retaining.
     (void)[[AMPURLConnection alloc] initWithRequest:request
                                               queue:queue
@@ -95,8 +90,7 @@
 
 - (AMPURLConnection *)initWithRequest:(NSURLRequest *)request
                                 queue:(NSOperationQueue *)queue
-                    completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler
-{
+                    completionHandler:(void (^)(NSURLResponse *response, NSData *data, NSError *connectionError))handler {
 
     if (self = [super init]) {
         self.completionHandler = handler;
@@ -121,22 +115,8 @@
     return self;
 }
 
-- (void)dealloc
-{
-    SAFE_ARC_RELEASE(_connection);
-    SAFE_ARC_RELEASE(_completionHandler);
-    SAFE_ARC_RELEASE(_data);
-    SAFE_ARC_RELEASE(_response);
-    SAFE_ARC_RELEASE(_delegate);
-    SAFE_ARC_SUPER_DEALLOC();
-}
-
-- (void)complete:(NSError *)error
-{
+- (void)complete:(NSError *)error {
     self.completionHandler(self.response, self.data, error);
-
-    // The instance has done it's work. Release thyself.
-    SAFE_ARC_RELEASE(self);
     self.delegate = nil;
 }
 

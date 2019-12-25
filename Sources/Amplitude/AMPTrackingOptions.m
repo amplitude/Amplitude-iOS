@@ -19,7 +19,6 @@
 #endif
 
 #import "AMPTrackingOptions.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 
 @interface AMPTrackingOptions()
@@ -37,12 +36,7 @@
 }
 
 + (instancetype)options {
-    return SAFE_ARC_AUTORELEASE([[self alloc] init]);
-}
-
-- (void)dealloc {
-    SAFE_ARC_RELEASE(_disabledFields);
-    SAFE_ARC_SUPER_DEALLOC();
+    return [[self alloc] init];
 }
 
 - (AMPTrackingOptions*)disableCarrier {
@@ -202,7 +196,7 @@
 - (NSMutableDictionary*) getApiPropertiesTrackingOption {
     NSMutableDictionary *apiPropertiesTrackingOptions = [[NSMutableDictionary alloc] init];
     if ([_disabledFields count] == 0) {
-        return SAFE_ARC_AUTORELEASE(apiPropertiesTrackingOptions);
+        return apiPropertiesTrackingOptions;
     }
 
     for (id key in @[AMP_TRACKING_OPTION_CITY, AMP_TRACKING_OPTION_COUNTRY, AMP_TRACKING_OPTION_DMA, AMP_TRACKING_OPTION_IP_ADDRESS, AMP_TRACKING_OPTION_LAT_LNG, AMP_TRACKING_OPTION_REGION]) {
@@ -211,7 +205,7 @@
         }
     }
 
-    return SAFE_ARC_AUTORELEASE(apiPropertiesTrackingOptions);
+    return apiPropertiesTrackingOptions;
 }
 
 @end

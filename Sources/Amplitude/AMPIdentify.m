@@ -19,7 +19,6 @@
 #endif
 
 #import "AMPIdentify.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 #import "AMPUtils.h"
 
@@ -30,7 +29,7 @@
     NSMutableSet *_userProperties;
 }
 
-- (id)init {
+- (instancetype)init {
     if ((self = [super init])) {
         _userPropertyOperations = [[NSMutableDictionary alloc] init];
         _userProperties = [[NSMutableSet alloc] init];
@@ -39,13 +38,7 @@
 }
 
 + (instancetype)identify {
-    return SAFE_ARC_AUTORELEASE([[self alloc] init]);
-}
-
-- (void)dealloc {
-    SAFE_ARC_RELEASE(_userPropertyOperations);
-    SAFE_ARC_RELEASE(_userProperties);
-    SAFE_ARC_SUPER_DEALLOC();
+    return [[self alloc] init];
 }
 
 - (AMPIdentify*)add:(NSString*) property value:(NSObject*) value {
