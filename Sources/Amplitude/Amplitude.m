@@ -203,11 +203,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 #pragma mark - Main class methods
-- (id)init {
+- (instancetype)init {
     return [self initWithInstanceName:nil];
 }
 
-- (id)initWithInstanceName:(NSString*) instanceName {
+- (instancetype)initWithInstanceName:(NSString*)instanceName {
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }

@@ -44,7 +44,7 @@
 - (BOOL)shouldTrackRegion;
 - (BOOL)shouldTrackVersionName;
 
-- (NSMutableDictionary*) getApiPropertiesTrackingOption;
+- (NSMutableDictionary*)getApiPropertiesTrackingOption;
 + (instancetype)options;
 
 @end

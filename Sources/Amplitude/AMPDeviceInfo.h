@@ -3,21 +3,21 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AMPDeviceInfo : NSObject
+@interface AMPDeviceInfo: NSObject
 
-- (id)init: (BOOL) disableIdfaTracking;
+- (instancetype)init:(BOOL)disableIdfaTracking;
 
-@property (readonly) NSString *appVersion;
-@property (readonly) NSString *osName;
-@property (readonly) NSString *osVersion;
-@property (readonly) NSString *manufacturer;
-@property (readonly) NSString *model;
-@property (readonly) NSString *carrier;
-@property (readonly) NSString *country;
-@property (readonly) NSString *language;
-@property (readonly) NSString *advertiserID;
-@property (readonly) NSString *vendorID;
+@property (readonly, strong, nonatomic) NSString *appVersion;
+@property (readonly, strong, nonatomic) NSString *osName;
+@property (readonly, strong, nonatomic) NSString *osVersion;
+@property (readonly, strong, nonatomic) NSString *manufacturer;
+@property (readonly, strong, nonatomic) NSString *model;
+@property (readonly, strong, nonatomic) NSString *carrier;
+@property (readonly, strong, nonatomic) NSString *country;
+@property (readonly, strong, nonatomic) NSString *language;
+@property (readonly, strong, nonatomic) NSString *advertiserID;
+@property (readonly, strong, nonatomic) NSString *vendorID;
 
-+(NSString*) generateUUID;
++ (NSString*) generateUUID;
 
 @end
