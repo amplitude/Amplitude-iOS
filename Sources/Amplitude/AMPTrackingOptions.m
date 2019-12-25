@@ -28,7 +28,7 @@
     NSMutableSet *_disabledFields;
 }
 
-- (id)init {
+- (instancetype)init {
     if ((self = [super init])) {
         _disabledFields = [[NSMutableSet alloc] init];
     }

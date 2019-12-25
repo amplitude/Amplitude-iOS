@@ -25,7 +25,7 @@
 
 @implementation AMPUtils
 
-+ (id)alloc
++ (instancetype)alloc
 {
     // Util class cannot be instantiated.
     return nil;
@@ -43,7 +43,7 @@
     return uuidStr;
 }
 
-+ (id) makeJSONSerializable:(id) obj
++ (id)makeJSONSerializable:(id) obj
 {
     if (obj == nil) {
         return [NSNull null];

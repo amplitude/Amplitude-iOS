@@ -96,13 +96,11 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return dbHelper;
 }
 
-- (id)init
-{
+- (instancetype)init {
     return [self initWithInstanceName:nil];
 }
 
-- (id)initWithInstanceName:(NSString*) instanceName
-{
+- (instancetype)initWithInstanceName:(NSString*) instanceName {
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }

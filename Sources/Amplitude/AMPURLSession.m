@@ -43,8 +43,7 @@
     return _instance;
 }
 
-- (id)init
-{
+- (instancetype)init {
     if ((self = [super init])) {
         [AMPURLSession pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -53,8 +52,7 @@
     return self;
 }
 
-+ (void)pinSSLCertificate:(NSArray *)certFilenames
-{
++ (void)pinSSLCertificate:(NSArray *)certFilenames {
     // We pin the anchor/CA certificates
     NSMutableArray *certs = [NSMutableArray array];
     for (NSString *certFilename in certFilenames) {
@@ -82,8 +80,7 @@
     }
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [_sharedSession finishTasksAndInvalidate];
 }
 
@@ -93,4 +90,5 @@
 }
 
 @end
+
 #endif
