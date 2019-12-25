@@ -19,25 +19,16 @@
 #endif
 
 #import "AMPRevenue.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 #import "AMPUtils.h"
 
 @interface AMPRevenue()
+
 @end
 
 @implementation AMPRevenue{}
 
-- (void)dealloc {
-    SAFE_ARC_RELEASE(_productId);
-    SAFE_ARC_RELEASE(_price);
-    SAFE_ARC_RELEASE(_revenueType);
-    SAFE_ARC_RELEASE(_receipt);
-    SAFE_ARC_RELEASE(_properties);
-    SAFE_ARC_SUPER_DEALLOC();
-}
-
-- (id)init {
+- (instancetype)init {
     if ((self = [super init])) {
         _quantity = 1;
     }
@@ -48,7 +39,7 @@
  * Create an AMPRevenue object
  */
 + (instancetype)revenue {
-    return SAFE_ARC_AUTORELEASE([[self alloc] init]);
+    return [[self alloc] init];
 }
 
 - (BOOL)isValidRevenue {
@@ -65,8 +56,6 @@
         return self;
     }
 
-    (void) SAFE_ARC_RETAIN(productIdentifier);
-    SAFE_ARC_RELEASE(_productId);
     _productId = productIdentifier;
     return self;
 }
@@ -77,29 +66,22 @@
 }
 
 - (AMPRevenue*)setPrice:(NSNumber *)price {
-    (void) SAFE_ARC_RETAIN(price);
-    SAFE_ARC_RELEASE(_price);
     _price = price;
     return self;
 }
 
 - (AMPRevenue*)setRevenueType:(NSString*)revenueType {
-    (void) SAFE_ARC_RETAIN(revenueType);
-    SAFE_ARC_RELEASE(_revenueType);
     _revenueType = revenueType;
     return self;
 }
 
 - (AMPRevenue*)setReceipt:(NSData*)receipt {
-    (void) SAFE_ARC_RETAIN(receipt);
-    SAFE_ARC_RELEASE(_receipt);
     _receipt = receipt;
     return self;
 }
 
 - (AMPRevenue*)setEventProperties:(NSDictionary*)eventProperties {
     eventProperties = [eventProperties copy];
-    SAFE_ARC_RELEASE(_properties);
     _properties = eventProperties;
     return self;
 }
@@ -126,7 +108,7 @@
 #pragma clang diagnostic pop
     }
 
-    return SAFE_ARC_AUTORELEASE(dict);
+    return dict;
 }
 
 @end

@@ -78,17 +78,13 @@
     // Save the SSL pins so that our connection delegates automatically use them
     if ([ISPCertificatePinning setupSSLPinsUsingDictionnary:pins] != YES) {
         AMPLITUDE_LOG(@"Failed to pin the certificates");
-        SAFE_ARC_RELEASE(pins);
         return;
     }
-    SAFE_ARC_RELEASE(pins);
 }
 
 - (void)dealloc
 {
     [_sharedSession finishTasksAndInvalidate];
-    SAFE_ARC_RELEASE(_sharedSession);
-    SAFE_ARC_SUPER_DEALLOC();
 }
 
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request

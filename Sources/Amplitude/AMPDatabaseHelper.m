@@ -19,9 +19,7 @@
 #endif
 
 #import <sqlite3.h>
-#import "AMPARCMacros.h"
 #import "AMPDatabaseHelper.h"
-#import "AMPARCMacros.h"
 #import "AMPUtils.h"
 #import "AMPConstants.h"
 
@@ -93,7 +91,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         if (dbHelper == nil) {
             dbHelper = [[AMPDatabaseHelper alloc] initWithInstanceName:instanceName];
             [_instances setObject:dbHelper forKey:instanceName];
-            SAFE_ARC_RELEASE(dbHelper);
         }
     }
     return dbHelper;
@@ -117,7 +114,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         if (![instanceName isEqualToString:kAMPDefaultInstance]) {
             databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];
         }
-        _databasePath = SAFE_ARC_RETAIN(databasePath);
+        _databasePath = databasePath;
         _queue = dispatch_queue_create([QUEUE_NAME UTF8String], NULL);
         dispatch_queue_set_specific(_queue, kDispatchQueueKey, (__bridge void *)self, NULL);
         if (![[NSFileManager defaultManager] fileExistsAtPath:_databasePath]) {
@@ -127,14 +124,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return self;
 }
 
-- (void)dealloc
-{
-    SAFE_ARC_RELEASE(_databasePath);
+- (void)dealloc {
     if (_queue) {
-        (void) SAFE_ARC_DISPATCH_RELEASE(_queue);
         _queue = NULL;
     }
-    SAFE_ARC_SUPER_DEALLOC();
 }
 
 /**
@@ -403,11 +396,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
             NSMutableDictionary *event = [eventImmutable mutableCopy];
             [event setValue:[NSNumber numberWithLongLong:eventId] forKey:@"event_id"];
             [events addObject:event];
-            SAFE_ARC_RELEASE(event);
         }
     }];
 
-    return SAFE_ARC_AUTORELEASE(events);
+    return events;
 }
 
 - (BOOL)insertOrReplaceKeyValue:(NSString*) key value:(NSString*) value
@@ -511,7 +503,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         }
     }];
 
-    return SAFE_ARC_AUTORELEASE(value);
+    return value;
 }
 
 - (int)getEventCount

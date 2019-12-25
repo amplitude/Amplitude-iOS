@@ -19,7 +19,6 @@
 #endif
 
 #import "AMPUtils.h"
-#import "AMPARCMacros.h"
 
 @interface AMPUtils()
 @end
@@ -41,7 +40,7 @@
     NSString *uuidStr = (NSString *) CFUUIDCreateString(kCFAllocatorDefault, uuid);
 #endif
     CFRelease(uuid);
-    return SAFE_ARC_AUTORELEASE(uuidStr);
+    return uuidStr;
 }
 
 + (id) makeJSONSerializable:(id) obj
@@ -69,7 +68,6 @@
         for (id i in objCopy) {
             [arr addObject:[self makeJSONSerializable:i]];
         }
-        SAFE_ARC_RELEASE(objCopy);
         return [NSArray arrayWithArray:arr];
     }
     if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -79,7 +77,6 @@
             NSString *coercedKey = [self coerceToString:key withName:@"property key"];
             dict[coercedKey] = [self makeJSONSerializable:objCopy[key]];
         }
-        SAFE_ARC_RELEASE(objCopy);
         return [NSDictionary dictionaryWithDictionary:dict];
     }
     NSString *str = [obj description];
@@ -136,7 +133,6 @@
             AMPLITUDE_LOG(@"WARNING: Invalid groupName value for groupType %@ (received class %@). Please use NSString or NSArray of NSStrings", coercedKey, [value class]);
         }
     }
-    SAFE_ARC_RELEASE(objCopy);
     return [NSDictionary dictionaryWithDictionary:dict];
 }
 
