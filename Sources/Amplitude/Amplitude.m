@@ -1477,7 +1477,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if ([obj isKindOfClass:[NSString class]]) {
         obj = (NSString*)obj;
         if ([obj length] > kAMPMaxStringLength) {
-            obj = [obj substringToIndex:kAMPMaxStringLength];
+            obj = [obj substringWithRange: [obj rangeOfComposedCharacterSequencesForRange: NSMakeRange(0, kAMPMaxStringLength)]];
         }
     } else if ([obj isKindOfClass:[NSArray class]]) {
         NSMutableArray *arr = [NSMutableArray array];
