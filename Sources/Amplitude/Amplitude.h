@@ -530,6 +530,10 @@
 
 - (void)setTrackingOptions:(AMPTrackingOptions*) options;
 
+- (void)enablePrivacyGuard;
+
+- (void)disablePrivacyGuard;
+
 - (void)setServerUrl:(NSString*) serverUrl;
 
 - (void)setBearerToken:(NSString *) token;

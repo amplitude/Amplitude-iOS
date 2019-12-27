@@ -10,6 +10,8 @@
 
 @interface AMPTrackingOptions : NSObject
 
+@property (nonatomic, strong, readonly) NSMutableSet *disabledFields;
+
 - (AMPTrackingOptions*)disableCarrier;
 - (AMPTrackingOptions*)disableCity;
 - (AMPTrackingOptions*)disableCountry;
@@ -44,7 +46,10 @@
 - (BOOL)shouldTrackRegion;
 - (BOOL)shouldTrackVersionName;
 
-- (NSMutableDictionary*)getApiPropertiesTrackingOption;
+- (NSMutableDictionary *)getApiPropertiesTrackingOption;
+- (AMPTrackingOptions *)mergeIn: (AMPTrackingOptions *)options;
 + (instancetype)options;
++ (AMPTrackingOptions *)forPrivacyGuard;
++ (AMPTrackingOptions *)copyOf: (AMPTrackingOptions *)origin;
 
 @end

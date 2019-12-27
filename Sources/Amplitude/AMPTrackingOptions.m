@@ -22,15 +22,16 @@
 #import "AMPConstants.h"
 
 @interface AMPTrackingOptions()
+
+@property (nonatomic, strong, readwrite) NSMutableSet *disabledFields;
+
 @end
 
-@implementation AMPTrackingOptions {
-    NSMutableSet *_disabledFields;
-}
+@implementation AMPTrackingOptions
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _disabledFields = [[NSMutableSet alloc] init];
+        self.disabledFields = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -186,26 +187,61 @@
 }
 
 - (void) disableTrackingField:(NSString*)field {
-    [_disabledFields addObject:field];
+    [self.disabledFields addObject:field];
 }
 
 - (BOOL) shouldTrackField:(NSString*)field {
-    return ![_disabledFields containsObject:field];
+    return ![self.disabledFields containsObject:field];
 }
 
 - (NSMutableDictionary*) getApiPropertiesTrackingOption {
     NSMutableDictionary *apiPropertiesTrackingOptions = [[NSMutableDictionary alloc] init];
-    if ([_disabledFields count] == 0) {
+    if (self.disabledFields.count == 0) {
         return apiPropertiesTrackingOptions;
     }
+    
+    NSArray *serverSideOptions =  @[AMP_TRACKING_OPTION_CITY,
+                                    AMP_TRACKING_OPTION_COUNTRY,
+                                    AMP_TRACKING_OPTION_DMA,
+                                    AMP_TRACKING_OPTION_IP_ADDRESS,
+                                    AMP_TRACKING_OPTION_LAT_LNG,
+                                    AMP_TRACKING_OPTION_REGION];
 
-    for (id key in @[AMP_TRACKING_OPTION_CITY, AMP_TRACKING_OPTION_COUNTRY, AMP_TRACKING_OPTION_DMA, AMP_TRACKING_OPTION_IP_ADDRESS, AMP_TRACKING_OPTION_LAT_LNG, AMP_TRACKING_OPTION_REGION]) {
-        if ([_disabledFields containsObject:key]) {
+    for (id key in serverSideOptions) {
+        if ([self.disabledFields containsObject:key]) {
             [apiPropertiesTrackingOptions setObject:[NSNumber numberWithBool:NO] forKey:key];
         }
     }
 
     return apiPropertiesTrackingOptions;
+}
+
+- (AMPTrackingOptions *)mergeIn: (AMPTrackingOptions *)other {
+    for (NSString *field in other.disabledFields) {
+        [self disableTrackingField:field];
+    }
+}
+
++ (AMPTrackingOptions *)forPrivacyGuard {
+    NSArray *privacyGuardOptions = @[AMP_TRACKING_OPTION_IDFA,
+                                     AMP_TRACKING_OPTION_CITY,
+                                     AMP_TRACKING_OPTION_IP_ADDRESS,
+                                     AMP_TRACKING_OPTION_LAT_LNG];
+    
+    AMPTrackingOptions *options = [[AMPTrackingOptions alloc] init];
+    for (NSString *field in privacyGuardOptions) {
+        [options disableTrackingField:field];
+    }
+    return options;
+}
+
++ (AMPTrackingOptions *)copyOf: (AMPTrackingOptions *)origin {
+    AMPTrackingOptions *options = [[AMPTrackingOptions alloc] init];
+    for (NSString *field in origin.disabledFields) {
+        [options disableTrackingField:field];
+    }
+    
+    return options;
 }
 
 @end
