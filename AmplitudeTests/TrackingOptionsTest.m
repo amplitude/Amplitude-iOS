@@ -56,4 +56,35 @@
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"lat_lng"], [NSNumber numberWithBool:NO]);
 }
 
+- (void)testGetPrivacyGuardTrackingOptions {
+    AMPTrackingOptions *options = [AMPTrackingOptions forPrivacyGuard];
+    XCTAssertFalse(options.shouldTrackIDFA);
+    XCTAssertFalse(options.shouldTrackCity);
+    XCTAssertFalse(options.shouldTrackIPAddress);
+    XCTAssertFalse(options.shouldTrackLatLng);
+}
+
+- (void)testMerging {
+    AMPTrackingOptions *options1 = [AMPTrackingOptions forPrivacyGuard];
+    AMPTrackingOptions *options2 = [[[AMPTrackingOptions options] disableCountry] disableLanguage];
+    [options1 mergeIn:options2];
+    
+    XCTAssertFalse(options1.shouldTrackIDFA);
+    XCTAssertFalse(options1.shouldTrackCity);
+    XCTAssertFalse(options1.shouldTrackIPAddress);
+    XCTAssertFalse(options1.shouldTrackLatLng);
+    
+    XCTAssertFalse(options1.shouldTrackCountry);
+    XCTAssertFalse(options1.shouldTrackLanguage);
+}
+
+- (void)testCopyOf {
+    AMPTrackingOptions *options = [AMPTrackingOptions copyOf:[AMPTrackingOptions forPrivacyGuard]];
+    
+    XCTAssertFalse(options.shouldTrackIDFA);
+    XCTAssertFalse(options.shouldTrackCity);
+    XCTAssertFalse(options.shouldTrackIPAddress);
+    XCTAssertFalse(options.shouldTrackLatLng);
+}
+
 @end

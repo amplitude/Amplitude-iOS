@@ -226,6 +226,7 @@
 
 + (AMPTrackingOptions *)forPrivacyGuard {
     NSArray *privacyGuardOptions = @[AMP_TRACKING_OPTION_IDFA,
+                                     AMP_TRACKING_OPTION_IDFV,
                                      AMP_TRACKING_OPTION_CITY,
                                      AMP_TRACKING_OPTION_IP_ADDRESS,
                                      AMP_TRACKING_OPTION_LAT_LNG];

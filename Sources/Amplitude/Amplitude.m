@@ -677,11 +677,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSString* advertiserID = _deviceInfo.advertiserID;
     if ([_appliedTrackingOptions shouldTrackIDFA] && advertiserID) {
-        [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
+        [apiProperties setValue:advertiserID forKey:AMP_TRACKING_OPTION_IDFA];
     }
     NSString* vendorID = _deviceInfo.vendorID;
     if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
-        [apiProperties setValue:vendorID forKey:@"ios_idfv"];
+        [apiProperties setValue:vendorID forKey:AMP_TRACKING_OPTION_IDFV];
     }
     
     if ([_appliedTrackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
