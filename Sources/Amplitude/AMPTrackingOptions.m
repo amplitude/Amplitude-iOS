@@ -220,6 +220,8 @@
     for (NSString *field in other.disabledFields) {
         [self disableTrackingField:field];
     }
+    
+    return self;
 }
 
 + (AMPTrackingOptions *)forPrivacyGuard {

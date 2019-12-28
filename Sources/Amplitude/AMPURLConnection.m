@@ -21,7 +21,6 @@
 #endif
 
 #import "AMPURLConnection.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 #import "ISPCertificatePinning.h"
 #import "ISPPinnedNSURLConnectionDelegate.h"
@@ -49,7 +48,7 @@
     NSMutableArray *certs = [NSMutableArray array];
     for (NSString *certFilename in certFilenames) {
         NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:@"der"];
-        NSData *certData = SAFE_ARC_AUTORELEASE([[NSData alloc] initWithContentsOfFile:certPath]);
+        NSData *certData = [[NSData alloc] initWithContentsOfFile:certPath];
         if (certData == nil) {
             AMPLITUDE_LOG(@"Failed to load a certificate");
             return;

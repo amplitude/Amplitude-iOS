@@ -14,7 +14,6 @@
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
-#import "AMPARCMacros.h"
 #import "AMPUtils.h"
 #import "AMPTrackingOptions.h"
 
@@ -944,5 +943,6 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"country"]);
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
+
 
 @end

@@ -11,11 +11,12 @@
 #import <OCMock/OCMock.h>
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
-#import "AMPARCMacros.h"
 
 // expose private methods for unit testing
 @interface AMPDeviceInfo (Tests)
-+(NSString*)getAdvertiserID:(int) maxAttempts;
+
++ (NSString*)getAdvertiserID:(int)maxAttempts;
+
 @end
 
 @interface DeviceInfoTests : XCTestCase
@@ -35,7 +36,7 @@
     [super tearDown];
 }
 
-- (void) testAppVersion {
+- (void)testAppVersion {
     id mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
     [[[mockBundle stub] andReturn:mockBundle] mainBundle];
     NSDictionary *mockDictionary = @{
@@ -47,36 +48,36 @@
     [mockBundle stopMocking];
 }
 
-- (void) testOsName {
+- (void)testOsName {
     XCTAssertEqualObjects(@"ios", _deviceInfo.osName);
 }
 
-- (void) testOsVersion {
+- (void)testOsVersion {
     XCTAssertEqualObjects([[UIDevice currentDevice] systemVersion], _deviceInfo.osVersion);
 }
 
-- (void) testManufacturer {
+- (void)testManufacturer {
     XCTAssertEqualObjects(@"Apple", _deviceInfo.manufacturer);
 }
 
-- (void) testModel {
+- (void)testModel {
     XCTAssertEqualObjects(@"Simulator", _deviceInfo.model);
 }
 
-- (void) testCarrier {
+- (void)testCarrier {
     // TODO: Not sure how to test this on the simulator
 //    XCTAssertEqualObjects(nil, _deviceInfo.carrier);
 }
 
-- (void) testCountry {
+- (void)testCountry {
     XCTAssertEqualObjects(@"United States", _deviceInfo.country);
 }
 
-- (void) testLanguage {
+- (void)testLanguage {
     XCTAssertEqualObjects(@"English", _deviceInfo.language);
 }
 
-- (void) testAdvertiserID {
+- (void)testAdvertiserID {
     id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
     [[mockDeviceInfo expect] getAdvertiserID:5];
     XCTAssertEqualObjects(nil, _deviceInfo.advertiserID);
@@ -84,7 +85,7 @@
     [mockDeviceInfo stopMocking];
 }
 
-- (void) testDisableIDFATracking {
+- (void)testDisableIDFATracking {
     id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
     [[mockDeviceInfo reject] getAdvertiserID:5];
     AMPDeviceInfo *newDeviceInfo = [[AMPDeviceInfo alloc] init:YES];
@@ -93,12 +94,12 @@
     [mockDeviceInfo stopMocking];
 }
 
-- (void) testVendorID {
+- (void)testVendorID {
     XCTAssertEqualObjects(_deviceInfo.vendorID, [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
 }
 
 
-- (void) testGenerateUUID {
+- (void)testGenerateUUID {
     NSString *a = [AMPDeviceInfo generateUUID];
     NSString *b = [AMPDeviceInfo generateUUID];
     XCTAssertNotNil(a);

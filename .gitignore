@@ -6,3 +6,5 @@
 /DerivedData/
 *.xcworkspace/xcshareddata/*.xcscmblueprint
 Carthage/Build
+
+.swiftpm

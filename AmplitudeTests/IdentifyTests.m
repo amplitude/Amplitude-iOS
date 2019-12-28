@@ -8,7 +8,6 @@
 
 #import <XCTest/XCTest.h>
 #import "AMPIdentify.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 
 @interface IdentifyTests : XCTestCase

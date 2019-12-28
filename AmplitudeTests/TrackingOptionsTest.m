@@ -8,7 +8,6 @@
 
 #import <XCTest/XCTest.h>
 #import "AMPTrackingOptions.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 
 @interface TrackingOptionsTests : XCTestCase
@@ -56,4 +55,5 @@
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"ip_address"], [NSNumber numberWithBool:NO]);
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"lat_lng"], [NSNumber numberWithBool:NO]);
 }
+
 @end
