@@ -948,11 +948,11 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
-- (void)testEnablePrivacyGuard {
+- (void)testEnableMinorGuard {
     NSDictionary *event = nil;
     NSDictionary *apiProperties = nil;
     
-    [self.amplitude disablePrivacyGuard];
+    [self.amplitude disableMinorGuard];
     
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
@@ -962,7 +962,7 @@
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNotNil([apiProperties objectForKey:AMP_TRACKING_OPTION_IDFV]);
     
-    [self.amplitude enablePrivacyGuard];
+    [self.amplitude enableMinorGuard];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];

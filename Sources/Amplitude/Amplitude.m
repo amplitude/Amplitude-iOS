@@ -98,7 +98,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPTrackingOptions *_inputTrackingOptions;
     AMPTrackingOptions *_appliedTrackingOptions;
     NSDictionary *_apiPropertiesTrackingOptions;
-    BOOL _privacyGuardEnabled;
+    BOOL _minorGuardEnabled;
     
     BOOL _inForeground;
     BOOL _offline;
@@ -236,7 +236,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _inputTrackingOptions = [AMPTrackingOptions options];
         _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
-        _privacyGuardEnabled = NO;
+        _minorGuardEnabled = NO;
         _instanceName = instanceName;
         _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
 
@@ -677,11 +677,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSString* advertiserID = _deviceInfo.advertiserID;
     if ([_appliedTrackingOptions shouldTrackIDFA] && advertiserID) {
-        [apiProperties setValue:advertiserID forKey:AMP_TRACKING_OPTION_IDFA];
+        [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
     }
     NSString* vendorID = _deviceInfo.vendorID;
     if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
-        [apiProperties setValue:vendorID forKey:AMP_TRACKING_OPTION_IDFV];
+        [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
     
     if ([_appliedTrackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
@@ -1308,21 +1308,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     _inputTrackingOptions = options;
     _appliedTrackingOptions = [AMPTrackingOptions copyOf:options];
     
-    if (_privacyGuardEnabled) {
-        [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forPrivacyGuard]];
+    if (_minorGuardEnabled) {
+        [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forMinorGuard]];
     }
 
     self->_apiPropertiesTrackingOptions = [NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]];
 }
 
-- (void)enablePrivacyGuard {
-    _privacyGuardEnabled = YES;
-    [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forPrivacyGuard]];
+- (void)enableMinorGuard {
+    _minorGuardEnabled = YES;
+    [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forMinorGuard]];
     _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];
 }
 
-- (void)disablePrivacyGuard {
-    _privacyGuardEnabled = NO;
+- (void)disableMinorGuard {
+    _minorGuardEnabled = NO;
     // Restore it to original input.
     _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
     _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];

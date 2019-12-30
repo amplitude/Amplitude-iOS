@@ -530,9 +530,9 @@
 
 - (void)setTrackingOptions:(AMPTrackingOptions*) options;
 
-- (void)enablePrivacyGuard;
+- (void)enableMinorGuard;
 
-- (void)disablePrivacyGuard;
+- (void)disableMinorGuard;
 
 - (void)setServerUrl:(NSString*) serverUrl;
 

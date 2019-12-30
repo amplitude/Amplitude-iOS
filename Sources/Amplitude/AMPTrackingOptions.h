@@ -49,7 +49,7 @@
 - (NSMutableDictionary *)getApiPropertiesTrackingOption;
 - (AMPTrackingOptions *)mergeIn: (AMPTrackingOptions *)options;
 + (instancetype)options;
-+ (AMPTrackingOptions *)forPrivacyGuard;
++ (AMPTrackingOptions *)forMinorGuard;
 + (AMPTrackingOptions *)copyOf: (AMPTrackingOptions *)origin;
 
 @end
