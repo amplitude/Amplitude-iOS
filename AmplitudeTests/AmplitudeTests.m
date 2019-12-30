@@ -14,19 +14,22 @@
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
-#import "AMPARCMacros.h"
 #import "AMPUtils.h"
 #import "AMPTrackingOptions.h"
 
 // expose private methods for unit testing
 @interface AMPDeviceInfo (Tests)
-+(NSString*)getAdvertiserID:(int) maxAttempts;
+
++ (NSString*)getAdvertiserID:(int) maxAttempts;
+
 @end
 
 @interface Amplitude (Tests)
+
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
-- (id) truncate:(id) obj;
+- (id)truncate:(id) obj;
 - (long long)getNextSequenceNumber;
+
 @end
 
 @interface AmplitudeTests : BaseTestCase
@@ -943,6 +946,28 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"city"]);
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"country"]);
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
+}
+
+- (void)testEnableMinorGuard {
+    NSDictionary *event = nil;
+    NSDictionary *apiProperties = nil;
+    
+    [self.amplitude disableMinorGuard];
+    
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    event = [self.amplitude getLastEvent];
+
+    // verify api properties contains tracking options for location filtering
+    apiProperties = [event objectForKey:@"api_properties"];
+    XCTAssertNotNil([apiProperties objectForKey:AMP_TRACKING_OPTION_IDFV]);
+    
+    [self.amplitude enableMinorGuard];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    event = [self.amplitude getLastEvent];
+    apiProperties = [event objectForKey:@"api_properties"];
+    XCTAssertNil([apiProperties objectForKey:AMP_TRACKING_OPTION_IDFV]);
 }
 
 @end

@@ -8,7 +8,6 @@ FOUNDATION_EXPORT const unsigned char AmplitudeVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Amplitude/PublicHeader.h>
 
-#import <Amplitude/AMPARCMacros.h>
 #import <Amplitude/AMPConstants.h>
 #import <Amplitude/AMPDatabaseHelper.h>
 #import <Amplitude/AMPDeviceInfo.h>

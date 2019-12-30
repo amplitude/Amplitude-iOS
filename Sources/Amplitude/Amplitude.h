@@ -530,6 +530,10 @@
 
 - (void)setTrackingOptions:(AMPTrackingOptions*) options;
 
+- (void)enableMinorGuard;
+
+- (void)disableMinorGuard;
+
 - (void)setServerUrl:(NSString*) serverUrl;
 
 - (void)setBearerToken:(NSString *) token;

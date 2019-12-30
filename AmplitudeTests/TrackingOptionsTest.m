@@ -8,7 +8,6 @@
 
 #import <XCTest/XCTest.h>
 #import "AMPTrackingOptions.h"
-#import "AMPARCMacros.h"
 #import "AMPConstants.h"
 
 @interface TrackingOptionsTests : XCTestCase
@@ -56,4 +55,36 @@
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"ip_address"], [NSNumber numberWithBool:NO]);
     XCTAssertEqual([apiPropertiesTrackingOptions objectForKey:@"lat_lng"], [NSNumber numberWithBool:NO]);
 }
+
+- (void)testGetMinorGuardTrackingOptions {
+    AMPTrackingOptions *options = [AMPTrackingOptions forMinorGuard];
+    XCTAssertFalse(options.shouldTrackIDFA);
+    XCTAssertFalse(options.shouldTrackCity);
+    XCTAssertFalse(options.shouldTrackIPAddress);
+    XCTAssertFalse(options.shouldTrackLatLng);
+}
+
+- (void)testMerging {
+    AMPTrackingOptions *options1 = [AMPTrackingOptions forMinorGuard];
+    AMPTrackingOptions *options2 = [[[AMPTrackingOptions options] disableCountry] disableLanguage];
+    [options1 mergeIn:options2];
+    
+    XCTAssertFalse(options1.shouldTrackIDFA);
+    XCTAssertFalse(options1.shouldTrackCity);
+    XCTAssertFalse(options1.shouldTrackIPAddress);
+    XCTAssertFalse(options1.shouldTrackLatLng);
+    
+    XCTAssertFalse(options1.shouldTrackCountry);
+    XCTAssertFalse(options1.shouldTrackLanguage);
+}
+
+- (void)testCopyOf {
+    AMPTrackingOptions *options = [AMPTrackingOptions copyOf:[AMPTrackingOptions forMinorGuard]];
+    
+    XCTAssertFalse(options.shouldTrackIDFA);
+    XCTAssertFalse(options.shouldTrackCity);
+    XCTAssertFalse(options.shouldTrackIPAddress);
+    XCTAssertFalse(options.shouldTrackLatLng);
+}
+
 @end

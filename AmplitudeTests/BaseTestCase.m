@@ -13,7 +13,6 @@
 #import "Amplitude+SSLPinning.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
-#import "AMPARCMacros.h"
 #import "AMPDatabaseHelper.h"
 
 NSString *const apiKey = @"000000";

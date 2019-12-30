@@ -6,3 +6,6 @@
 /DerivedData/
 *.xcworkspace/xcshareddata/*.xcscmblueprint
 Carthage/Build
+
+.swiftpm
+Podfile.lock

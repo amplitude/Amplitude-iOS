@@ -95,9 +95,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     CLLocationManager *_locationManager;
     AMPLocationManagerDelegate *_locationManagerDelegate;
 
-    AMPTrackingOptions *_trackingOptions;
+    AMPTrackingOptions *_inputTrackingOptions;
+    AMPTrackingOptions *_appliedTrackingOptions;
     NSDictionary *_apiPropertiesTrackingOptions;
-
+    BOOL _minorGuardEnabled;
+    
     BOOL _inForeground;
     BOOL _offline;
 
@@ -231,8 +233,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _backoffUpload = NO;
         _offline = NO;
         _serverUrl = kAMPEventLogUrl;
-        _trackingOptions = [AMPTrackingOptions options];
+        _inputTrackingOptions = [AMPTrackingOptions options];
+        _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
+        _minorGuardEnabled = NO;
         _instanceName = instanceName;
         _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
 
@@ -634,31 +638,31 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)annotateEvent:(NSMutableDictionary*) event {
     [event setValue:_userId forKey:@"user_id"];
     [event setValue:_deviceId forKey:@"device_id"];
-    if ([self->_trackingOptions shouldTrackPlatform]) {
+    if ([_appliedTrackingOptions shouldTrackPlatform]) {
         [event setValue:kAMPPlatform forKey:@"platform"];
     }
-    if ([self->_trackingOptions shouldTrackVersionName]) {
+    if ([_appliedTrackingOptions shouldTrackVersionName]) {
         [event setValue:_deviceInfo.appVersion forKey:@"version_name"];
     }
-    if ([self->_trackingOptions shouldTrackOSName]) {
+    if ([_appliedTrackingOptions shouldTrackOSName]) {
         [event setValue:_deviceInfo.osName forKey:@"os_name"];
     }
-    if ([self->_trackingOptions shouldTrackOSVersion]) {
+    if ([_appliedTrackingOptions shouldTrackOSVersion]) {
         [event setValue:_deviceInfo.osVersion forKey:@"os_version"];
     }
-    if ([self->_trackingOptions shouldTrackDeviceModel]) {
+    if ([_appliedTrackingOptions shouldTrackDeviceModel]) {
         [event setValue:_deviceInfo.model forKey:@"device_model"];
     }
-    if ([self->_trackingOptions shouldTrackDeviceManufacturer]) {
+    if ([_appliedTrackingOptions shouldTrackDeviceManufacturer]) {
         [event setValue:_deviceInfo.manufacturer forKey:@"device_manufacturer"];
     }
-    if ([self->_trackingOptions shouldTrackCarrier]) {
+    if ([_appliedTrackingOptions shouldTrackCarrier]) {
         [event setValue:_deviceInfo.carrier forKey:@"carrier"];
     }
-    if ([self->_trackingOptions shouldTrackCountry]) {
+    if ([_appliedTrackingOptions shouldTrackCountry]) {
         [event setValue:_deviceInfo.country forKey:@"country"];
     }
-    if ([self->_trackingOptions shouldTrackLanguage]) {
+    if ([_appliedTrackingOptions shouldTrackLanguage]) {
         [event setValue:_deviceInfo.language forKey:@"language"];
     }
     NSDictionary *library = @{
@@ -672,15 +676,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
     NSString* advertiserID = _deviceInfo.advertiserID;
-    if ([self->_trackingOptions shouldTrackIDFA] && advertiserID) {
+    if ([_appliedTrackingOptions shouldTrackIDFA] && advertiserID) {
         [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
     }
     NSString* vendorID = _deviceInfo.vendorID;
-    if ([self->_trackingOptions shouldTrackIDFV] && vendorID) {
+    if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
     
-    if ([self->_trackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
+    if ([_appliedTrackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
         @synchronized (_locationManager) {
             NSMutableDictionary *location = [NSMutableDictionary dictionary];
 
@@ -1301,8 +1305,27 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 
-    self->_trackingOptions = options;
+    _inputTrackingOptions = options;
+    _appliedTrackingOptions = [AMPTrackingOptions copyOf:options];
+    
+    if (_minorGuardEnabled) {
+        [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forMinorGuard]];
+    }
+
     self->_apiPropertiesTrackingOptions = [NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]];
+}
+
+- (void)enableMinorGuard {
+    _minorGuardEnabled = YES;
+    [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forMinorGuard]];
+    _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];
+}
+
+- (void)disableMinorGuard {
+    _minorGuardEnabled = NO;
+    // Restore it to original input.
+    _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
+    _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];
 }
 
 - (void)setUserId:(NSString*)userId {
@@ -1443,12 +1466,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSString*)_getDeviceId {
     NSString *deviceId = nil;
-    if (_useAdvertisingIdForDeviceId && [self->_trackingOptions shouldTrackIDFA]) {
+    if (_useAdvertisingIdForDeviceId && [_appliedTrackingOptions shouldTrackIDFA]) {
         deviceId = _deviceInfo.advertiserID;
     }
 
     // return identifierForVendor
-    if ([self->_trackingOptions shouldTrackIDFV] && !deviceId) {
+    if ([_appliedTrackingOptions shouldTrackIDFV] && !deviceId) {
         deviceId = _deviceInfo.vendorID;
     }
 
