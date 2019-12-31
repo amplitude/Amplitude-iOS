@@ -126,8 +126,6 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     if (_queue) {
         _queue = NULL;
     }
-    
-    [super dealloc];
 }
 
 /**

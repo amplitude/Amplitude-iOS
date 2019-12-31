@@ -958,16 +958,22 @@
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
 
-    // verify api properties contains tracking options for location filtering
     apiProperties = [event objectForKey:@"api_properties"];
-    XCTAssertNotNil([apiProperties objectForKey:AMP_TRACKING_OPTION_IDFV]);
+    XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
     
     [self.amplitude enableMinorGuard];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
     apiProperties = [event objectForKey:@"api_properties"];
-    XCTAssertNil([apiProperties objectForKey:AMP_TRACKING_OPTION_IDFV]);
+    XCTAssertNil([apiProperties objectForKey:@"ios_idfv"]);
+    
+    // Minor guard covers 3 server configs. city, lat_lng, ip
+    NSDictionary *trackingOptions = [apiProperties objectForKey:@"tracking_options"];
+    XCTAssertEqual(3, trackingOptions.count);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"city"]);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"lat_lng"]);
+    XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
 @end
