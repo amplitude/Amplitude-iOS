@@ -530,9 +530,16 @@
 
 - (void)setTrackingOptions:(AMPTrackingOptions*) options;
 
-- (void)enableMinorGuard;
+/**
+ Enable COPPA (Children's Online Privacy Protection Act) restrictions on IDFA, IDFV, city, IP address and location tracking.
+ This can be used by any customer that does not want to collect IDFA, IDFV, city, IP address and location tracking.
+ */
+- (void)enableCoppaControl;
 
-- (void)disableMinorGuard;
+/**
+ Disable COPPA (Children's Online Privacy Protection Act) restrictions on IDFA, IDFV, city, IP address and location tracking.
+ */
+- (void)disableCoppaControl;
 
 - (void)setServerUrl:(NSString*) serverUrl;
 
