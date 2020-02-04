@@ -1,3 +1,10 @@
+## 4.10.0 (February 4, 2020)
+
+* Now you can enable or disable COPPA (Children's Online Privacy Protection Act) restrictions on IDFA, IDFV, city, IP address and location tracking. 
+* To enable COPPA, please call `[[Amplitude instance] enableCoppaControl];`.
+* To disable COPPA, please call `[[Amplitude instance] disableCoppaControl];`.
+* Fix partial truncation for string with unicode (e.g. emoji).
+
 ## 4.9.3 (November 22, 2019)
 
 * Fix error for not finding declaration for NSObject when using Swift Package Manager
