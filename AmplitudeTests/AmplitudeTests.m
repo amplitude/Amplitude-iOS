@@ -402,8 +402,8 @@
     NSString *productId = @"testProductId";
     NSString *revenueType = @"testRevenueType";
     NSDictionary *props = [NSDictionary dictionaryWithObject:@"San Francisco" forKey:@"city"];
-    AMPRevenue *revenue = [[[[AMPRevenue revenue] setProductIdentifier:productId] setPrice:@(price.doubleValue)] setQuantity:quantity];
-//    [[revenue setRevenueType:revenueType] setEventProperties:props];
+    AMPRevenue *revenue = [[[[AMPRevenue revenue] setProductIdentifier:productId] setPrice:price] setQuantity:quantity];
+    [[revenue setRevenueType:revenueType] setEventProperties:props];
 
     [self.amplitude logRevenueV2:revenue];
     [self.amplitude flushQueue];
