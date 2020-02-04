@@ -224,15 +224,15 @@
     return self;
 }
 
-+ (AMPTrackingOptions *)forMinorGuard {
-    NSArray *minorGuardOptions = @[AMP_TRACKING_OPTION_IDFA,
++ (AMPTrackingOptions *)forCoppaControl {
+    NSArray *coppaControlOptions = @[AMP_TRACKING_OPTION_IDFA,
                                      AMP_TRACKING_OPTION_IDFV,
                                      AMP_TRACKING_OPTION_CITY,
                                      AMP_TRACKING_OPTION_IP_ADDRESS,
                                      AMP_TRACKING_OPTION_LAT_LNG];
     
     AMPTrackingOptions *options = [[AMPTrackingOptions alloc] init];
-    for (NSString *field in minorGuardOptions) {
+    for (NSString *field in coppaControlOptions) {
         [options disableTrackingField:field];
     }
     return options;

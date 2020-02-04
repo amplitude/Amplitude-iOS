@@ -98,7 +98,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPTrackingOptions *_inputTrackingOptions;
     AMPTrackingOptions *_appliedTrackingOptions;
     NSDictionary *_apiPropertiesTrackingOptions;
-    BOOL _minorGuardEnabled;
+    BOOL _coppaControlEnabled;
     
     BOOL _inForeground;
     BOOL _offline;
@@ -236,7 +236,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _inputTrackingOptions = [AMPTrackingOptions options];
         _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
-        _minorGuardEnabled = NO;
+        _coppaControlEnabled = NO;
         _instanceName = instanceName;
         _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
 
@@ -1308,21 +1308,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     _inputTrackingOptions = options;
     _appliedTrackingOptions = [AMPTrackingOptions copyOf:options];
     
-    if (_minorGuardEnabled) {
-        [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forMinorGuard]];
+    if (_coppaControlEnabled) {
+        [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forCoppaControl]];
     }
 
     self->_apiPropertiesTrackingOptions = [NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]];
 }
 
-- (void)enableMinorGuard {
-    _minorGuardEnabled = YES;
-    [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forMinorGuard]];
+- (void)enableCoppaControl {
+    _coppaControlEnabled = YES;
+    [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forCoppaControl]];
     _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];
 }
 
-- (void)disableMinorGuard {
-    _minorGuardEnabled = NO;
+- (void)disableCoppaControl {
+    _coppaControlEnabled = NO;
     // Restore it to original input.
     _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
     _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];

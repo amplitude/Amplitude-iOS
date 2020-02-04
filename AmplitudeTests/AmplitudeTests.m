@@ -402,8 +402,8 @@
     NSString *productId = @"testProductId";
     NSString *revenueType = @"testRevenueType";
     NSDictionary *props = [NSDictionary dictionaryWithObject:@"San Francisco" forKey:@"city"];
-    AMPRevenue *revenue = [[[[AMPRevenue revenue] setProductIdentifier:productId] setPrice:price] setQuantity:quantity];
-    [[revenue setRevenueType:revenueType] setEventProperties:props];
+    AMPRevenue *revenue = [[[[AMPRevenue revenue] setProductIdentifier:productId] setPrice:@(price.doubleValue)] setQuantity:quantity];
+//    [[revenue setRevenueType:revenueType] setEventProperties:props];
 
     [self.amplitude logRevenueV2:revenue];
     [self.amplitude flushQueue];
@@ -948,11 +948,11 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
-- (void)testEnableMinorGuard {
+- (void)testEnableCoppaControl {
     NSDictionary *event = nil;
     NSDictionary *apiProperties = nil;
     
-    [self.amplitude disableMinorGuard];
+    [self.amplitude disableCoppaControl];
     
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
@@ -961,7 +961,7 @@
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
     
-    [self.amplitude enableMinorGuard];
+    [self.amplitude enableCoppaControl];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
