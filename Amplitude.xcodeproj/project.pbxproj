@@ -589,11 +589,11 @@
 			};
 			buildConfigurationList = E98C051E1A48E7FE00800C63 /* Build configuration list for PBXProject "Amplitude" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = E98C051A1A48E7FE00800C63;
 			productRefGroup = E98C05241A48E7FE00800C63 /* Products */;
