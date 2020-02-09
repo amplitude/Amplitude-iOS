@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
 #import <OCMock/OCMock.h>
 #import "Amplitude.h"
 #import "Amplitude+SSLPinning.h"

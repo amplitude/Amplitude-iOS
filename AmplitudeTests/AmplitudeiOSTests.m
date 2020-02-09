@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
 #import <OCMock/OCMock.h>
 #import "Amplitude.h"
 #import "AMPConstants.h"
@@ -86,8 +85,13 @@
     NSDictionary *event = [self.amplitude getLastEvent];
 
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test");
+#if TARGET_OS_IPHONE
     XCTAssertEqualObjects([event objectForKey:@"os_name"], @"ios");
     XCTAssertEqualObjects([event objectForKey:@"platform"], @"iOS");
+#elif TARGET_OS_OSX
+    XCTAssertEqualObjects([event objectForKey:@"os_name"], @"macos");
+    XCTAssertEqualObjects([event objectForKey:@"platform"], @"macOS");
+#endif
 }
 
 @end

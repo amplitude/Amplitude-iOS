@@ -8,6 +8,11 @@
 
 #import <XCTest/XCTest.h>
 #import "AMPDatabaseHelper.h"
+#if TARGET_OS_OSX
+#import <Cocoa/Cocoa.h>
+#else
+#import <UIKit/UIKit.h>
+#endif
 
 extern NSString *const apiKey;
 extern NSString *const userId;

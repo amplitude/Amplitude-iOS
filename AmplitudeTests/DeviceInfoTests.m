@@ -49,11 +49,19 @@
 }
 
 - (void)testOsName {
+#if !TARGET_OS_OSX
     XCTAssertEqualObjects(@"ios", _deviceInfo.osName);
+#else
+    XCTAssertEqualObjects(@"macos", _deviceInfo.osName);
+#endif
 }
 
 - (void)testOsVersion {
+#if !TARGET_OS_OSX
     XCTAssertEqualObjects([[UIDevice currentDevice] systemVersion], _deviceInfo.osVersion);
+#else
+    XCTAssertEqualObjects([[NSProcessInfo processInfo] operatingSystemVersionString], _deviceInfo.osVersion);
+#endif
 }
 
 - (void)testManufacturer {
@@ -61,7 +69,11 @@
 }
 
 - (void)testModel {
+#if !TARGET_OS_OSX
     XCTAssertEqualObjects(@"Simulator", _deviceInfo.model);
+#else
+    XCTAssertTrue([_deviceInfo.model containsString:@"Mac"]);
+#endif
 }
 
 - (void)testCarrier {
@@ -94,9 +106,11 @@
     [mockDeviceInfo stopMocking];
 }
 
+#if TARGET_OS_IPHONE
 - (void)testVendorID {
     XCTAssertEqualObjects(_deviceInfo.vendorID, [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
 }
+#endif
 
 
 - (void)testGenerateUUID {

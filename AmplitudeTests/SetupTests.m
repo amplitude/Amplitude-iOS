@@ -38,7 +38,11 @@
     [self.amplitude initializeApiKey:apiKey];
     [self.amplitude flushQueue];
     XCTAssertNotNil([self.amplitude deviceId]);
+#if !TARGET_OS_OSX
     XCTAssertEqual([self.amplitude deviceId].length, 36);
+#else
+    XCTAssertEqual([self.amplitude deviceId].length, 12);
+#endif
     XCTAssertEqualObjects([self.amplitude deviceId], [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
 }
 
@@ -114,7 +118,11 @@
     NSString *generatedDeviceId = [self.amplitude getDeviceId];
     XCTAssertNotNil(generatedDeviceId);
     XCTAssertNotEqualObjects(initialDeviceId, generatedDeviceId);
+#if !TARGET_OS_OSX
     XCTAssertEqual(generatedDeviceId.length, 36);
+#else
+    XCTAssertEqual(generatedDeviceId.length, 12);
+#endif
     XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
 
     // test setting invalid device ids

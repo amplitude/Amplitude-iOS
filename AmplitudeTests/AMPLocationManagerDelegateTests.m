@@ -50,8 +50,6 @@ CLLocationManager *locationManager;
                 didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
     [locationManagerDelegate locationManager:locationManager
                 didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
-    [locationManagerDelegate locationManager:locationManager
-                didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorizedWhenInUse];
 #if !TARGET_OS_OSX
     [locationManagerDelegate locationManager:locationManager
                 didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorizedWhenInUse];
