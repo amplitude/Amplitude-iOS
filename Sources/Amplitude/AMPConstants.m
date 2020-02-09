@@ -12,22 +12,26 @@ const int kAMPApiVersion = 3;
 const int kAMPDBVersion = 3;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
 
-// for tvOS, upload events immediately, don't save too many events locally
-#if TARGET_OS_TV
-const int kAMPEventUploadThreshold = 1;
-const int kAMPEventMaxCount = 100;
-NSString *const kAMPPlatform = @"tvOS";
-NSString *const kAMPOSName = @"tvos";
-#else  // macOS/iOS
-const int kAMPEventUploadThreshold = 30;
-const int kAMPEventMaxCount = 1000;
-#if TARGET_OS_MACCATALYST
-NSString *const kAMPPlatform = @"mac";
-NSString *const kAMPOSName = @"mac";
-#else
-NSString *const kAMPPlatform = @"iOS";
-NSString *const kAMPOSName = @"ios";
-#endif
+#if TARGET_OS_OSX
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"macOS";
+    NSString *const kAMPOSName = @"macos";
+#elif TARGET_OS_TV // For tvOS, upload events immediately, don't save too many events locally.
+    const int kAMPEventUploadThreshold = 1;
+    const int kAMPEventMaxCount = 100;
+    NSString *const kAMPPlatform = @"tvOS";
+    NSString *const kAMPOSName = @"tvos";
+#elif TARGET_OS_MACCATALYST // This is when iPad app runs on mac.
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"macOS";
+    NSString *const kAMPOSName = @"macos";
+#else // iOS, simulator, etc.
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"iOS";
+    NSString *const kAMPOSName = @"ios";
 #endif
 
 const int kAMPEventUploadMaxBatchSize = 100;
