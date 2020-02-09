@@ -7,9 +7,14 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
-#import "AMPLocationManagerDelegate.h"
 
+#if !TARGET_OS_OSX
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
+
+#import "AMPLocationManagerDelegate.h"
 
 @interface AMPLocationManagerDelegateTests : XCTestCase
 
@@ -47,6 +52,9 @@ CLLocationManager *locationManager;
                 didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
     [locationManagerDelegate locationManager:locationManager
                 didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorizedWhenInUse];
-    
+#if !TARGET_OS_OSX
+    [locationManagerDelegate locationManager:locationManager
+                didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorizedWhenInUse];
+#endif
 }
 @end

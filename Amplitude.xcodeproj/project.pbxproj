@@ -78,7 +78,6 @@
 		600CBC791E2EF637001F58A9 /* AMPDatabaseHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BA927D1C23768E0043178E /* AMPDatabaseHelperTests.m */; };
 		600CBC7A1E2EF63A001F58A9 /* Amplitude+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C61AB0D1DD0017F703 /* Amplitude+Test.m */; };
 		600CBC7C1E2EF63F001F58A9 /* AmplitudeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 602A9A6A1B754E7B0067230C /* AmplitudeTests.m */; };
-		600CBC7D1E2EF646001F58A9 /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 601AF94C1E2EF332006CE4BA /* AmplitudeTVOSTests.m */; };
 		600CBC7F1E2EF64C001F58A9 /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DFBB9C91AB0D26E0017F703 /* BaseTestCase.m */; };
 		600CBC801E2EF64E001F58A9 /* IdentifyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BA927E1C23768E0043178E /* IdentifyTests.m */; };
 		600CBC811E2EF651001F58A9 /* RevenueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 60227C0D1CC5BC07007C117B /* RevenueTests.m */; };
@@ -164,9 +163,7 @@
 		37802BF31E86AF65003E5A8B /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E837BC70064214FD8C88C1 /* Pods-AmplitudeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmplitudeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AmplitudeTests/Pods-AmplitudeTests.release.xcconfig"; sourceTree = "<group>"; };
 		600CBC5C1E2EF5B0001F58A9 /* AmplitudeTVOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmplitudeTVOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		600CBC631E2EF5B0001F58A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		601AF94A1E2EF2A1006CE4BA /* AmplitudeiOSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmplitudeiOSTests.m; sourceTree = "<group>"; };
-		601AF94C1E2EF332006CE4BA /* AmplitudeTVOSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AmplitudeTVOSTests.m; path = ../AmplitudeTests/AmplitudeTVOSTests.m; sourceTree = "<group>"; };
 		60227C091CC5AB8A007C117B /* AMPRevenue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPRevenue.h; sourceTree = "<group>"; };
 		60227C0A1CC5AB8A007C117B /* AMPRevenue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPRevenue.m; sourceTree = "<group>"; };
 		60227C0D1CC5BC07007C117B /* RevenueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RevenueTests.m; sourceTree = "<group>"; };
@@ -283,16 +280,6 @@
 			path = AmplitudeFramework;
 			sourceTree = "<group>";
 		};
-		600CBC601E2EF5B0001F58A9 /* AmplitudeTVOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				601AF94C1E2EF332006CE4BA /* AmplitudeTVOSTests.m */,
-				600CBC631E2EF5B0001F58A9 /* Info.plist */,
-			);
-			name = AmplitudeTVOSTests;
-			path = AmplitudeTVOSTestsTests;
-			sourceTree = "<group>";
-		};
 		9D55C176B7CB02D142328C19 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -338,7 +325,6 @@
 				02267F682355C80800E1F8E2 /* Sources */,
 				E98C052F1A48E7FE00800C63 /* AmplitudeTests */,
 				343AB4181CC99F4F00962943 /* AmplitudeFramework */,
-				600CBC601E2EF5B0001F58A9 /* AmplitudeTVOSTests */,
 				E98C05241A48E7FE00800C63 /* Products */,
 				DA44019A1FBCE41A7F8C6968 /* Pods */,
 				9D55C176B7CB02D142328C19 /* Frameworks */,
@@ -751,7 +737,6 @@
 				600CBC6C1E2EF60C001F58A9 /* AMPDatabaseHelper.m in Sources */,
 				600CBC811E2EF651001F58A9 /* RevenueTests.m in Sources */,
 				600CBC801E2EF64E001F58A9 /* IdentifyTests.m in Sources */,
-				600CBC7D1E2EF646001F58A9 /* AmplitudeTVOSTests.m in Sources */,
 				600CBC711E2EF619001F58A9 /* AMPRevenue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

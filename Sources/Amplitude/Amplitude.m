@@ -89,7 +89,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     BOOL _updateScheduled;
     BOOL _updatingCurrently;
+    
+#if !TARGET_OS_OSX
     UIBackgroundTaskIdentifier _uploadTaskID;
+#endif
 
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
@@ -263,7 +266,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         
         [_initializerQueue addOperationWithBlock:^{
 
+        #if !TARGET_OS_OSX
             self->_uploadTaskID = UIBackgroundTaskInvalid;
+        #endif
             
             NSString *eventsDataDirectory = [AMPUtils platformDataDirectory];
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
@@ -389,8 +394,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return success;
 }
 
-- (void) addObservers {
+- (void)addObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if !TARGET_OS_OSX
     [center addObserver:self
                selector:@selector(enterForeground)
                    name:UIApplicationWillEnterForegroundNotification
@@ -399,12 +405,27 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                selector:@selector(enterBackground)
                    name:UIApplicationDidEnterBackgroundNotification
                  object:nil];
+#else
+    [center addObserver:self
+               selector:@selector(enterForeground)
+                   name:NSApplicationDidBecomeActiveNotification
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(enterBackground)
+                   name:NSApplicationDidResignActiveNotification
+                 object:nil];
+#endif
 }
 
-- (void) removeObservers {
+- (void)removeObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+#if !TARGET_OS_OSX
     [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+#else
+    [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
+    [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
+#endif
 }
 
 - (void) dealloc {
@@ -461,24 +482,29 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // notification is already triggered, so we need to manually check and set it now.
         // UIApplication methods are only allowed on the main thread so need to dispatch this synchronously to the main thread.
         void (^checkInForeground)(void) = ^{
+        #if !TARGET_OS_OSX
             UIApplication *app = [self getSharedApplication];
             if (app != nil) {
                 UIApplicationState state = app.applicationState;
                 if (state != UIApplicationStateBackground) {
                     [self runOnBackgroundQueue:^{
+        #endif
                         NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
                         [self startOrContinueSessionNSNumber:now];
                         self->_inForeground = YES;
+        #if !TARGET_OS_OSX
                     }];
 
                 }
             }
+        #endif
         };
         [self runSynchronouslyOnMainQueue:checkInForeground];
         _initialized = YES;
     }
 }
 
+#if !TARGET_OS_OSX
 - (UIApplication *)getSharedApplication {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
@@ -486,6 +512,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
     return nil;
 }
+#endif
 
 - (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession {
     [self initializeApiKey:apiKey userId:userId];
@@ -1029,7 +1056,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         if (uploadSuccessful && [self.dbHelper getEventCount] > self.eventUploadThreshold) {
             int limit = self->_backoffUpload ? self->_backoffUploadBatchSize : 0;
             [self uploadEventsWithLimit:limit];
-
+    #if !TARGET_OS_OSX
         } else if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
             if (uploadSuccessful) {
                 self->_backoffUpload = NO;
@@ -1039,23 +1066,30 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             // Upload finished, allow background task to be ended
             [self endBackgroundTaskIfNeeded];
         }
+    #else
+        }
+    #endif
     }] resume];
 }
 
 #pragma mark - application lifecycle methods
 
 - (void)enterForeground {
+#if !TARGET_OS_OSX
     UIApplication *app = [self getSharedApplication];
     if (app == nil) {
         return;
     }
+#endif
 
     [self updateLocation];
 
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
+#if !TARGET_OS_OSX
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
+#endif
     [self runOnBackgroundQueue:^{
         [self startOrContinueSessionNSNumber:now];
         self->_inForeground = YES;
@@ -1064,15 +1098,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)enterBackground {
+#if !TARGET_OS_OSX
     UIApplication *app = [self getSharedApplication];
     if (app == nil) {
         return;
     }
+#endif
 
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
+#if !TARGET_OS_OSX
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
+#endif
     _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         [self endBackgroundTaskIfNeeded];
@@ -1657,8 +1695,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (id)unarchive:(NSString*)path {
+#if !TARGET_OS_OSX
     // unarchive using new NSKeyedUnarchiver method from iOS 9.0 that doesn't throw exceptions
     if (@available(iOS 9.0, *)) {
+#endif
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if ([fileManager fileExistsAtPath:path]) {
             NSData *inputData = [fileManager contentsAtPath:path];
@@ -1684,9 +1724,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 AMPLITUDE_ERROR(@"ERROR: Can't remove corrupt file %@: %@", path, error);
             }
         }
+#if !TARGET_OS_OSX
     } else {
         AMPLITUDE_LOG(@"WARNING: user is using a version of iOS that is older than 9.0, skipping unarchiving of file: %@", path);
     }
+#endif
     return nil;
 }
 
