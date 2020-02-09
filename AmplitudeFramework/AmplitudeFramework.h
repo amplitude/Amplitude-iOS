@@ -21,3 +21,5 @@ FOUNDATION_EXPORT const unsigned char AmplitudeVersionString[];
 #import <Amplitude/ISPCertificatePinning.h>
 #import <Amplitude/ISPPinnedNSURLConnectionDelegate.h>
 #import <Amplitude/ISPPinnedNSURLSessionDelegate.h>
+
+dsdf

@@ -1,12 +1,18 @@
 //
 //  AMPDeviceInfo.m
 
+#import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
 #import "AMPUtils.h"
-#import "AMPConstants.h"
-#import <UIKit/UIKit.h>
+
 #import <sys/sysctl.h>
-#include <sys/types.h>
+#import <sys/types.h>
+
+#if !TARGET_OS_OSX
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
 @interface AMPDeviceInfo()
 @end

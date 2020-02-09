@@ -43,9 +43,14 @@
 #import <net/if.h>
 #import <net/if_dl.h>
 #import <CommonCrypto/CommonDigest.h>
-#import <UIKit/UIKit.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
+
+#if !TARGET_OS_OSX
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
 @interface Amplitude()
 
