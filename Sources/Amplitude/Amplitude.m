@@ -1110,11 +1110,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #if !TARGET_OS_OSX
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
-#endif
     _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
         //Took too long, manually stop
         [self endBackgroundTaskIfNeeded];
     }];
+#endif
 
     [self runOnBackgroundQueue:^{
         self->_inForeground = NO;
