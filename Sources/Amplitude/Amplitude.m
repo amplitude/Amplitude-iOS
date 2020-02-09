@@ -1123,6 +1123,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
+#if !TARGET_OS_OSX
 - (void)endBackgroundTaskIfNeeded {
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         UIApplication *app = [self getSharedApplication];
@@ -1134,7 +1135,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_uploadTaskID = UIBackgroundTaskInvalid;
     }
 }
-
+#endif
 #pragma mark - Sessions
 
 /**
