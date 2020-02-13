@@ -26,7 +26,7 @@ See our [iOS SDK Reference](https://amplitude.zendesk.com/hc/en-us/articles/1150
 * A [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing an integration in an iOS extension.
 * A [demo application](https://github.com/amplitude/GTM-iOS-Demo) demonstrating a potential integration with Google Tag Manager.
 
-# Demo Applications #
+# Contributors #
 | **Contributor** | 
 | --- |
 | [haoliu-amp](https://github.com/haoliu-amp) |
