@@ -26,6 +26,17 @@ See our [iOS SDK Reference](https://amplitude.zendesk.com/hc/en-us/articles/1150
 * A [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing an integration in an iOS extension.
 * A [demo application](https://github.com/amplitude/GTM-iOS-Demo) demonstrating a potential integration with Google Tag Manager.
 
+# Demo Applications #
+| **Contributor** | 
+| --- |
+| [haoliu-amp](https://github.com/haoliu-amp) |
+| [djih](https://github.com/djih) |
+| [sskates](https://github.com/sskates) |
+| [curtisliu](https://github.com/curtisliu) |
+| [blazzy](https://github.com/blazzy) |
+| [sputh](https://github.com/sputh) |
+| [mayur1407](https://github.com/mayur1407) |
+
 # Changelog #
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md) to view the iOS SDK Changelog.
 
