@@ -135,27 +135,32 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
  */
 - (BOOL)inDatabase:(void (^)(sqlite3 *db)) block
 {
-    // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
-    AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
-    if (currentSyncQueue == self) {
-        AMPLITUDE_LOG(@"Should not call inDatabase in block passed to inDatabase");
+    @try {
+        // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
+        AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
+        if (currentSyncQueue == self) {
+            AMPLITUDE_LOG(@"Should not call inDatabase in block passed to inDatabase");
+            return NO;
+        }
+        
+        __block BOOL success = YES;
+        
+        dispatch_sync(_queue, ^() {
+            if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
+                AMPLITUDE_LOG(@"Failed to open database");
+                sqlite3_close(self->_database);
+                success = NO;
+                return;
+            }
+            block(self->_database);
+            sqlite3_close(self->_database);
+        });
+        
+        return success;
+    }
+    @catch(NSException *e) {
         return NO;
     }
-
-    __block BOOL success = YES;
-
-    dispatch_sync(_queue, ^() {
-        if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
-            AMPLITUDE_LOG(@"Failed to open database");
-            sqlite3_close(self->_database);
-            success = NO;
-            return;
-        }
-        block(self->_database);
-        sqlite3_close(self->_database);
-    });
-
-    return success;
 }
 
 /**
@@ -164,39 +169,44 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
  * This version also handles preparing a statement from SQL string, and finalizing it as well.
  * Returns YES if successfully opened database and prepared statement, else NO.
  */
-- (BOOL)inDatabaseWithStatement:(NSString*) SQLString block:(void (^)(sqlite3_stmt *stmt)) block
+- (BOOL)inDatabaseWithStatement:(NSString*)SQLString block:(void (^)(sqlite3_stmt *stmt)) block
 {
-    // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
-    AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
-    if (currentSyncQueue == self) {
-        AMPLITUDE_LOG(@"Should not call inDatabase in block passed to inDatabase");
+    @try {
+        // check that the block doesn't isn't calling inDatabase itself, which would lead to a deadlock
+        AMPDatabaseHelper *currentSyncQueue = (__bridge id)dispatch_get_specific(kDispatchQueueKey);
+        if (currentSyncQueue == self) {
+            AMPLITUDE_LOG(@"Should not call inDatabase in block passed to inDatabase");
+            return NO;
+        }
+        
+        __block BOOL success = YES;
+        
+        dispatch_sync(_queue, ^() {
+            if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
+                AMPLITUDE_LOG(@"Failed to open database");
+                sqlite3_close(self->_database);
+                success = NO;
+                return;
+            }
+            
+            sqlite3_stmt *stmt;
+            if (sqlite3_prepare_v2(self->_database, [SQLString UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
+                AMPLITUDE_LOG(@"Failed to prepare statement for query %@", SQLString);
+                sqlite3_close(self->_database);
+                success = NO;
+                return;
+            }
+            
+            block(stmt);
+            sqlite3_finalize(stmt);
+            sqlite3_close(self->_database);
+        });
+        
+        return success;
+    }
+    @catch(NSException *e) {
         return NO;
     }
-
-    __block BOOL success = YES;
-
-    dispatch_sync(_queue, ^() {
-        if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
-            AMPLITUDE_LOG(@"Failed to open database");
-            sqlite3_close(self->_database);
-            success = NO;
-            return;
-        }
-
-        sqlite3_stmt *stmt;
-        if (sqlite3_prepare_v2(self->_database, [SQLString UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
-            AMPLITUDE_LOG(@"Failed to prepare statement for query %@", SQLString);
-            sqlite3_close(self->_database);
-            success = NO;
-            return;
-        }
-
-        block(stmt);
-        sqlite3_finalize(stmt);
-        sqlite3_close(self->_database);
-    });
-
-    return success;
 }
 
 // Assumes db is already opened
