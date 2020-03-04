@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1130"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "343AB4161CC99F4F00962943"
-               BuildableName = "Amplitude.framework"
-               BlueprintName = "AmplitudeFramework"
+               BlueprintIdentifier = "124CDD9C23EFEFFD004C7B27"
+               BuildableName = "AmplitudeMacOS.framework"
+               BlueprintName = "AmplitudeMacOS"
                ReferencedContainer = "container:Amplitude.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,9 +28,17 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "124CDDB723EFF1B0004C7B27"
+               BuildableName = "AmplitudeMacOSTests.xctest"
+               BlueprintName = "AmplitudeMacOSTests"
+               ReferencedContainer = "container:Amplitude.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -42,17 +50,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "343AB4161CC99F4F00962943"
-            BuildableName = "Amplitude.framework"
-            BlueprintName = "AmplitudeFramework"
-            ReferencedContainer = "container:Amplitude.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -63,9 +60,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "343AB4161CC99F4F00962943"
-            BuildableName = "Amplitude.framework"
-            BlueprintName = "AmplitudeFramework"
+            BlueprintIdentifier = "124CDD9C23EFEFFD004C7B27"
+            BuildableName = "AmplitudeMacOS.framework"
+            BlueprintName = "AmplitudeMacOS"
             ReferencedContainer = "container:Amplitude.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
