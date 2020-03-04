@@ -322,11 +322,6 @@
 		9D55C176B7CB02D142328C19 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				124CDD7823EFD2A9004C7B27 /* Amplitude-iOS.podspec */,
-				124CDD7A23EFD2C5004C7B27 /* Podfile */,
-				124CDD7923EFD2C5004C7B27 /* Podfile.lock */,
-				124CDD7B23EFD2D4004C7B27 /* LICENSE */,
-				124CDD7C23EFD2D4004C7B27 /* Package.swift */,
 				C1E203B94A494052A38E53DF /* libPods-AmplitudeTVOSTests.a */,
 				1BA856C8A370EEFD82B1A3E0 /* libPods-shared-AmplitudeMacOSTests.a */,
 				1FF658830718163F3F03BA5D /* libPods-shared-AmplitudeTVOSTests.a */,
@@ -376,8 +371,13 @@
 				124CDD9E23EFEFFD004C7B27 /* AmplitudeFrameworkMacOS */,
 				124CDDB923EFF1B0004C7B27 /* AmplitudeMacOSTests */,
 				E98C05241A48E7FE00800C63 /* Products */,
-				DA44019A1FBCE41A7F8C6968 /* Pods */,
 				9D55C176B7CB02D142328C19 /* Frameworks */,
+				DA44019A1FBCE41A7F8C6968 /* Pods */,
+				124CDD7823EFD2A9004C7B27 /* Amplitude-iOS.podspec */,
+				124CDD7A23EFD2C5004C7B27 /* Podfile */,
+				124CDD7923EFD2C5004C7B27 /* Podfile.lock */,
+				124CDD7B23EFD2D4004C7B27 /* LICENSE */,
+				124CDD7C23EFD2D4004C7B27 /* Package.swift */,
 			);
 			sourceTree = "<group>";
 		};
