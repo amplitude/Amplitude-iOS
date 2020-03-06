@@ -6,16 +6,16 @@ abstract_target 'shared' do
   
   pod 'OCMock', '~> 3.2.1'
   
-  target 'AmplitudeTests' do
-      platform :ios, '7.0'
+  target 'Amplitude_iOSTests' do
+      platform :ios, '8.0'
   end
 
-  target 'AmplitudeTVOSTests' do
+  target 'Amplitude_tvOSTests' do
       platform :tvos, '9.0'
   end
 
-  target 'AmplitudeMacOSTests' do
-      platform :osx, '10.12'
+  target 'Amplitude_macOSTests' do
+      platform :osx, '10.10'
   end
   
 end
