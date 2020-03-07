@@ -46,8 +46,10 @@ CLLocationManager *locationManager;
 }
 
 - (void)testDidChangeAuthorizationStatus {
+#if !TARGET_OS_TV
     [locationManagerDelegate locationManager:locationManager
                 didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
+#endif
     [locationManagerDelegate locationManager:locationManager
                 didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorizedAlways];
 #if !TARGET_OS_OSX

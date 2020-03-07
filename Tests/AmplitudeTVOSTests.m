@@ -14,7 +14,6 @@
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
-#import "AMPARCMacros.h"
 #import "AMPUtils.h"
 
 // expose private methods for unit testing

@@ -12,8 +12,14 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
 #import <OCMock/OCMock.h>
+
+#if !TARGET_OS_OSX
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
+
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
