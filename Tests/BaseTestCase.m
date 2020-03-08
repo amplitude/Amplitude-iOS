@@ -8,7 +8,6 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-//#import "Amplitude.h"
 #import "Amplitude+SSLPinning.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
