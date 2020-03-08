@@ -55,10 +55,10 @@
 }
 
 - (void)testOsName {
-#if !TARGET_OS_OSX
-    XCTAssertEqualObjects(@"ios", _deviceInfo.osName);
-#else
+#if TARGET_OS_MACCATALYST || TARGET_OS_OSX
     XCTAssertEqualObjects(@"macos", _deviceInfo.osName);
+#elif TARGET_OS_IPHONE
+    XCTAssertEqualObjects(@"ios", _deviceInfo.osName);
 #endif
 }
 
