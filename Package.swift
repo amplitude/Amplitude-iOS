@@ -16,7 +16,7 @@ let package = Package(
     targets: [
         .target(
             name: "Amplitude",
-            exclude: [],
+            exclude: ["Sources/Amplitude/AmplitudeFramework.h", "Sources/Amplitude/Amplitude.modulemap"],
             publicHeadersPath: "."),
     ]
 )
