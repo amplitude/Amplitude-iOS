@@ -17,4 +17,5 @@ FOUNDATION_EXPORT const unsigned char AmplitudeVersionString[];
 #import <Amplitude/Amplitude.h>
 #import <Amplitude/AMPIdentify.h>
 #import <Amplitude/AMPRevenue.h>
+#import <Amplitude/AMPTrackingOptions.h>
 #import <Amplitude/Amplitude+SSLPinning.h>
