@@ -167,11 +167,11 @@
 
 /* Begin PBXFileReference section */
 		06C7F03B80723C98EEE07DBA /* Pods-shared-Amplitude_iOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1213D80B2416F3EA00300E98 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		124CDD7823EFD2A9004C7B27 /* Amplitude-iOS.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Amplitude-iOS.podspec"; sourceTree = "<group>"; };
 		124CDD7923EFD2C5004C7B27 /* Podfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile.lock; sourceTree = "<group>"; };
 		124CDD7A23EFD2C5004C7B27 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		124CDD7B23EFD2D4004C7B27 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		124CDD7C23EFD2D4004C7B27 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		12C972AF24105B2C00E9CDDB /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		12C972B724105B2C00E9CDDB /* Amplitude_tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Amplitude_tvOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		12C972CB24105C3600E9CDDB /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -329,7 +329,7 @@
 			children = (
 				124CDD7823EFD2A9004C7B27 /* Amplitude-iOS.podspec */,
 				124CDD7B23EFD2D4004C7B27 /* LICENSE */,
-				124CDD7C23EFD2D4004C7B27 /* Package.swift */,
+				1213D80B2416F3EA00300E98 /* Package.swift */,
 			);
 			name = Deployment;
 			sourceTree = "<group>";

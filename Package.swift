@@ -1,10 +1,13 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "Amplitude",
+    platforms: [.macOS(.v10_10),
+                .iOS(.v10),
+                .tvOS(.v10)],
     products: [
         .library(
             name: "Amplitude",
@@ -13,9 +16,7 @@ let package = Package(
     targets: [
         .target(
             name: "Amplitude",
-            path: "Sources",
             exclude: [],
-            sources: ["Amplitude", "Amplitude/"],
-            publicHeadersPath: "Amplitude"),
+            publicHeadersPath: "."),
     ]
 )
