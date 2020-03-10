@@ -7,8 +7,14 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
 #import <OCMock/OCMock.h>
+
+#if !TARGET_OS_OSX
+#import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
+
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
@@ -38,8 +44,12 @@
     [self.amplitude initializeApiKey:apiKey];
     [self.amplitude flushQueue];
     XCTAssertNotNil([self.amplitude deviceId]);
+#if !TARGET_OS_OSX
     XCTAssertEqual([self.amplitude deviceId].length, 36);
     XCTAssertEqualObjects([self.amplitude deviceId], [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
+#else
+    XCTAssertEqual([self.amplitude deviceId].length, 12);
+#endif
 }
 
 - (void)testUserIdNotSet {
@@ -114,7 +124,11 @@
     NSString *generatedDeviceId = [self.amplitude getDeviceId];
     XCTAssertNotNil(generatedDeviceId);
     XCTAssertNotEqualObjects(initialDeviceId, generatedDeviceId);
+#if !TARGET_OS_OSX
     XCTAssertEqual(generatedDeviceId.length, 36);
+#else
+    XCTAssertEqual(generatedDeviceId.length, 12);
+#endif
     XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
 
     // test setting invalid device ids

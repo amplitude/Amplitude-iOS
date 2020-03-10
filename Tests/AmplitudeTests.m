@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <UIKit/UIKit.h>
 #import <OCMock/OCMock.h>
 #import "Amplitude.h"
 #import "AMPConstants.h"
@@ -792,11 +791,15 @@
     XCTAssertTrue([self.amplitude archive:event toFile:archiveName]);
 
     NSDictionary *unarchived = [self.amplitude unarchive:archiveName];
+#if !TARGET_OS_OSX
     if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_8_4) {
         XCTAssertEqualObjects(unarchived, event);
     } else {
         XCTAssertNil(unarchived);
     }
+#else
+    XCTAssertEqualObjects(unarchived, event);
+#endif
 }
 
 -(void)testBlockTooManyProperties {
@@ -878,7 +881,7 @@
     [mockDeviceInfo stopMocking];
 }
 
--(void)testDisableIdfa {
+- (void)testDisableIdfa {
     id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
     [[mockDeviceInfo reject] getAdvertiserID:5];
 
@@ -895,8 +898,14 @@
     [mockDeviceInfo stopMocking];
 }
 
--(void)testIdfvAsDeviceId {
+- (void)testIdfvAsDeviceId {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:@"idfv"];
+    if (dbHelper != nil) {
+        [dbHelper deleteDB];
+    }
+    
     Amplitude *client = [Amplitude instanceWithName:@"idfv"];
+    
     AMPDeviceInfo * deviceInfo = [[AMPDeviceInfo alloc] init];
 
     [client flushQueueWithQueue:client.initializerQueue];
