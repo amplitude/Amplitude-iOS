@@ -5,9 +5,6 @@ import PackageDescription
 
 let package = Package(
     name: "Amplitude",
-    platforms: [.macOS(.v10_10),
-                .iOS(.v10),
-                .tvOS(.v10)],
     products: [
         .library(
             name: "Amplitude",
@@ -16,9 +13,7 @@ let package = Package(
     targets: [
         .target(
             name: "Amplitude",
-            path: "Sources",
             exclude: [],
-            sources: ["Amplitude", "Amplitude/"],
-            publicHeadersPath: "Amplitude"),
+            publicHeadersPath: "."),
     ]
 )
