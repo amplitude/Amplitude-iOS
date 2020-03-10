@@ -16,7 +16,9 @@ let package = Package(
     targets: [
         .target(
             name: "Amplitude",
+            path: "Sources",
             exclude: [],
-            publicHeadersPath: "."),
+            sources: ["Amplitude", "Amplitude/"],
+            publicHeadersPath: "Amplitude"),
     ]
 )
