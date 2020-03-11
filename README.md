@@ -41,8 +41,8 @@ See our [iOS SDK Reference](https://amplitude.zendesk.com/hc/en-us/articles/1150
 # Changelog #
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md) to view the iOS SDK Changelog.
 
-# Questions? #
-If you have questions about using or installing our iOS SDK, you can send an email to [Amplitude Support](mailto:platform@amplitude.com).
+# Need Help? #
+If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).
 
 # License #
 ```text
