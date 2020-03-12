@@ -4,6 +4,7 @@
 * Covered both cases. (1) pure macOS App, (2) Mac Catalyst (Running iPad App on macOS)
 * NOTE 1: CocoaPods users! `Amplitude-iOS` pod is deprecated (4.10.0 is the last version we support). Please use the new one  `Amplitude` going forward.
 * NOTE 2: If you encounter any issues when instrumenting your macOS App, please reach out to us!
+* NOTE 3: Minimum supported iOS version is now 10.0 instead of 8.0 in the past. We made this decision since usages for 9.0 and 8.0 are extremely low now. (<= 1%)
 
 ## 4.10.0 (Feb 4, 2020)
 
