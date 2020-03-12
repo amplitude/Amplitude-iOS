@@ -83,7 +83,11 @@
         #if !TARGET_OS_OSX
         _osVersion = [[UIDevice currentDevice] systemVersion];
         #else
-        _osVersion = [[NSProcessInfo processInfo] operatingSystemVersionString];
+        NSOperatingSystemVersion systemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
+        _osVersion = [NSString stringWithFormat:@"%ld.%ld.%ld",
+                      systemVersion.majorVersion,
+                      systemVersion.minorVersion,
+                      systemVersion.patchVersion];
         #endif
     }
     return _osVersion;

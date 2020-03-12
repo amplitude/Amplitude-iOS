@@ -10,13 +10,9 @@
 		1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; };
 		1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; };
 		1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; };
-		1213D89E24176E4700300E98 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1213D89A24176E4700300E98 /* Info.plist */; };
-		1213D89F24176E4700300E98 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1213D89A24176E4700300E98 /* Info.plist */; };
-		1213D8A024176E4700300E98 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1213D89A24176E4700300E98 /* Info.plist */; };
 		12C972B824105B2C00E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972AF24105B2C00E9CDDB /* Amplitude.framework */; };
 		12C972D424105C3600E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972CB24105C3600E9CDDB /* Amplitude.framework */; };
 		12C972F024105C6500E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972E724105C6500E9CDDB /* Amplitude.framework */; };
-		12C9732824108DFF00E9CDDB /* InvalidCertificationAuthority.der in Resources */ = {isa = PBXBuildFile; fileRef = 12C9731624108DFF00E9CDDB /* InvalidCertificationAuthority.der */; };
 		12C973352412416B00E9CDDB /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E96785E21A48E93F00887CCD /* AMPConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		12C973362412416C00E9CDDB /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E96785E21A48E93F00887CCD /* AMPConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		12C973372412416D00E9CDDB /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E96785E21A48E93F00887CCD /* AMPConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -429,9 +425,9 @@
 			children = (
 				12C973012410758400E9CDDB /* Deployment */,
 				02267F682355C80800E1F8E2 /* Sources */,
-				E98C05241A48E7FE00800C63 /* Products */,
 				12C9730F24108DFF00E9CDDB /* Tests */,
 				1213D89724176E4700300E98 /* Framework */,
+				E98C05241A48E7FE00800C63 /* Products */,
 				9D55C176B7CB02D142328C19 /* Frameworks */,
 				DA44019A1FBCE41A7F8C6968 /* Pods */,
 				124CDD7A23EFD2C5004C7B27 /* Podfile */,
@@ -685,6 +681,7 @@
 					};
 					12C972B624105B2C00E9CDDB = {
 						CreatedOnToolsVersion = 11.3;
+						DevelopmentTeam = 58E7PCQE77;
 						ProvisioningStyle = Automatic;
 					};
 					12C972CA24105C3600E9CDDB = {
@@ -693,7 +690,8 @@
 					};
 					12C972D224105C3600E9CDDB = {
 						CreatedOnToolsVersion = 11.3;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = 58E7PCQE77;
+						ProvisioningStyle = Manual;
 					};
 					12C972E624105C6500E9CDDB = {
 						CreatedOnToolsVersion = 11.3;
@@ -733,7 +731,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1213D89F24176E4700300E98 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,8 +745,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1213D89E24176E4700300E98 /* Info.plist in Resources */,
-				12C9732824108DFF00E9CDDB /* InvalidCertificationAuthority.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -764,7 +759,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1213D8A024176E4700300E98 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1070,6 +1064,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1096,6 +1091,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1186,8 +1182,11 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1196,6 +1195,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.amplitude.Amplitude-iOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1211,9 +1212,12 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -1221,6 +1225,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.amplitude.Amplitude-iOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1307,6 +1313,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
@@ -1333,6 +1340,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
