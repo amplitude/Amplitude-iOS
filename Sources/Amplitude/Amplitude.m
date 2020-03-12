@@ -1720,6 +1720,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #if !TARGET_OS_OSX
     // unarchive using new NSKeyedUnarchiver method from iOS 9.0 that doesn't throw exceptions
     if (@available(iOS 9.0, *)) {
+#else
+    if (@available(macOS 10.11, *)) {
 #endif
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if ([fileManager fileExistsAtPath:path]) {
@@ -1749,6 +1751,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #if !TARGET_OS_OSX
     } else {
         AMPLITUDE_LOG(@"WARNING: user is using a version of iOS that is older than 9.0, skipping unarchiving of file: %@", path);
+    }
+#else
     }
 #endif
     return nil;
