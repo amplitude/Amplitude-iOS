@@ -1,7 +1,7 @@
-#PLEASE READ!
-#This podspec is not maintained anymore since we add macOS support. The name of this pod won't make sense anymore.
-#It's been renamed to `Amplitude`. Please use `Amplitude.podspec` in the future.
-#v4.10.0, 3/11/2020
+# PLEASE READ!
+# This podspec is not maintained anymore since we add macOS support. The name of this pod won't make sense anymore.
+# It's been renamed to `Amplitude`. Please use `Amplitude.podspec` in the future.
+# v4.10.0, 3/11/2020
 
 Pod::Spec.new do |s|
   s.name                   = "Amplitude-iOS"

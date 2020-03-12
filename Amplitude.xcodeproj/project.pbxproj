@@ -202,6 +202,8 @@
 		12C9732124108DFF00E9CDDB /* AMPLocationManagerDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPLocationManagerDelegateTests.m; sourceTree = "<group>"; };
 		12D0A22B241A0A960072CB4C /* Amplitude.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Amplitude.podspec; sourceTree = "<group>"; };
 		12D0A22C241A10030072CB4C /* Amplitude-iOS.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Amplitude-iOS.podspec"; sourceTree = "<group>"; };
+		12D0A22D241A134D0072CB4C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		12D0A22E241A13950072CB4C /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		12E8A613238740AF00921FC7 /* Amplitude+SSLPinning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Amplitude+SSLPinning.h"; sourceTree = "<group>"; };
 		1BA856C8A370EEFD82B1A3E0 /* libPods-shared-AmplitudeMacOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-AmplitudeMacOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FF658830718163F3F03BA5D /* libPods-shared-AmplitudeTVOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-AmplitudeTVOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -332,8 +334,10 @@
 			children = (
 				12D0A22C241A10030072CB4C /* Amplitude-iOS.podspec */,
 				12D0A22B241A0A960072CB4C /* Amplitude.podspec */,
-				124CDD7B23EFD2D4004C7B27 /* LICENSE */,
 				1213D80B2416F3EA00300E98 /* Package.swift */,
+				124CDD7B23EFD2D4004C7B27 /* LICENSE */,
+				12D0A22D241A134D0072CB4C /* README.md */,
+				12D0A22E241A13950072CB4C /* CHANGELOG.md */,
 			);
 			name = Deployment;
 			sourceTree = "<group>";

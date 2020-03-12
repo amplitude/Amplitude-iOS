@@ -24,7 +24,7 @@
 #import "AMPConstants.h"
 
 NSString *const kAMPLibrary = @"amplitude-ios";
-NSString *const kAMPVersion = @"4.10.0";
+NSString *const kAMPVersion = @"5.0.0";
 NSString *const kAMPEventLogDomain = @"api.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";
