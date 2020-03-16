@@ -24,9 +24,11 @@
 #import <Foundation/Foundation.h>
 
 extern NSString *const kAMPLibrary;
+extern NSString *const kAMPVersion;
+extern NSString *const kAMPUnknownLibrary;
+extern NSString *const kAMPUnknownVersion;
 extern NSString *const kAMPPlatform;
 extern NSString *const kAMPOSName;
-extern NSString *const kAMPVersion;
 extern NSString *const kAMPEventLogDomain;
 extern NSString *const kAMPEventLogUrl;
 extern NSString *const kAMPDefaultInstance;
@@ -52,12 +54,14 @@ extern NSString *const AMP_OP_SET;
 extern NSString *const AMP_OP_SET_ONCE;
 extern NSString *const AMP_OP_UNSET;
 
+// Revenue
 extern NSString *const AMP_REVENUE_PRODUCT_ID;
 extern NSString *const AMP_REVENUE_QUANTITY;
 extern NSString *const AMP_REVENUE_PRICE;
 extern NSString *const AMP_REVENUE_REVENUE_TYPE;
 extern NSString *const AMP_REVENUE_RECEIPT;
 
+// Options
 extern NSString *const AMP_TRACKING_OPTION_CARRIER;
 extern NSString *const AMP_TRACKING_OPTION_CITY;
 extern NSString *const AMP_TRACKING_OPTION_COUNTRY;

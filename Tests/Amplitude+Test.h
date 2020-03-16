@@ -24,6 +24,7 @@
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;
 - (void)flushUploads:(void (^)(void))handler;
 - (NSDictionary *)getLastEvent;
+- (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName;
 - (NSDictionary *)getLastIdentify;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;

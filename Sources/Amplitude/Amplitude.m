@@ -47,6 +47,7 @@
 
 
 #import "Amplitude.h"
+#import "AmplitudePrivate.h"
 #import "AMPLocationManagerDelegate.h"
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
@@ -58,13 +59,13 @@
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
 #import <math.h>
-#import <sys/socket.h>
-#import <sys/sysctl.h>
+#import <CommonCrypto/CommonDigest.h>
+
 #import <net/if.h>
 #import <net/if_dl.h>
-#import <CommonCrypto/CommonDigest.h>
-#include <sys/types.h>
-#include <sys/sysctl.h>
+#import <sys/socket.h>
+#import <sys/sysctl.h>
+#import <sys/types.h>
 
 #if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
@@ -261,11 +262,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _backoffUpload = NO;
         _offline = NO;
         _serverUrl = kAMPEventLogUrl;
+        self.libraryName = kAMPLibrary;
+        self.libraryVersion = kAMPVersion;
         _inputTrackingOptions = [AMPTrackingOptions options];
         _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
         _coppaControlEnabled = NO;
-        _instanceName = instanceName;
+        self.instanceName = instanceName;
         _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
@@ -292,8 +295,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             
             NSString *eventsDataDirectory = [AMPUtils platformDataDirectory];
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
-            if (![self->_instanceName isEqualToString:kAMPDefaultInstance]) {
-                propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, self->_instanceName]; // namespace pList with instance name
+            if (![self.instanceName isEqualToString:kAMPDefaultInstance]) {
+                propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, self.instanceName]; // namespace pList with instance name
             }
             self->_propertyListPath = propertyListPath;
             self->_eventsDataPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
@@ -328,7 +331,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
 
             // only on default instance, migrate all of old _eventsData object to database store if database just created
-            if ([self->_instanceName isEqualToString:kAMPDefaultInstance] && oldDBVersion < kAMPDBFirstVersion) {
+            if ([self.instanceName isEqualToString:kAMPDefaultInstance] && oldDBVersion < kAMPDBFirstVersion) {
                 if ([self migrateEventsDataToDB]) {
                     // delete events data so don't need to migrate next time
                     if ([[NSFileManager defaultManager] fileExistsAtPath:self->_eventsDataPath]) {
@@ -448,18 +451,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #endif
 }
 
-- (void) dealloc {
+- (void)dealloc {
     [self removeObservers];
 }
 
-- (void)initializeApiKey:(NSString*) apiKey {
+- (void)initializeApiKey:(NSString*)apiKey {
     [self initializeApiKey:apiKey userId:nil setUserId: NO];
 }
 
 /**
  * Initialize Amplitude with a given apiKey and userId.
  */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId {
+- (void)initializeApiKey:(NSString*)apiKey
+                  userId:(NSString*)userId {
     [self initializeApiKey:apiKey userId:userId setUserId: YES];
 }
 
@@ -467,7 +471,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  * SetUserId: client explicitly initialized with a userId (can be nil).
  * If setUserId is NO, then attempt to load userId from saved eventsData.
  */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId setUserId:(BOOL) setUserId {
+- (void)initializeApiKey:(NSString*)apiKey
+                  userId:(NSString*) userId
+               setUserId:(BOOL) setUserId {
     if (apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
@@ -486,7 +492,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     if (!_initialized) {
-        _apiKey = apiKey;
+        self.apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
             self->_deviceInfo = [[AMPDeviceInfo alloc] init:self->_disableIdfaTracking];
@@ -494,7 +500,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (setUserId) {
                 [self setUserId:userId];
             } else {
-                self->_userId = [self.dbHelper getValue:USER_ID];
+                self.userId = [self.dbHelper getValue:USER_ID];
             }
         }];
 
@@ -594,7 +600,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withApiProperties:(NSDictionary*) apiProperties withUserProperties:(NSDictionary*) userProperties withGroups:(NSDictionary*) groups withGroupProperties:(NSDictionary*) groupProperties withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL) outOfSession {
-    if (_apiKey == nil) {
+    if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
         return;
     }
@@ -688,8 +694,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)annotateEvent:(NSMutableDictionary*) event {
-    [event setValue:_userId forKey:@"user_id"];
-    [event setValue:_deviceId forKey:@"device_id"];
+    [event setValue:self.userId forKey:@"user_id"];
+    [event setValue:self.deviceId forKey:@"device_id"];
     if ([_appliedTrackingOptions shouldTrackPlatform]) {
         [event setValue:kAMPPlatform forKey:@"platform"];
     }
@@ -718,8 +724,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [event setValue:_deviceInfo.language forKey:@"language"];
     }
     NSDictionary *library = @{
-        @"name": kAMPLibrary,
-        @"version": kAMPVersion
+        @"name": self.libraryName == nil ? kAMPUnknownLibrary : self.libraryName,
+        @"version": self.libraryVersion == nil ? kAMPUnknownVersion : self.libraryVersion
     };
     [event setValue:library forKey:@"library"];
     [event setValue:[AMPUtils generateUUID] forKey:@"uuid"];
@@ -778,7 +784,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt
 {
-    if (_apiKey == nil) {
+    if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
         return;
     }
@@ -804,7 +810,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)logRevenueV2:(AMPRevenue*) revenue {
-    if (_apiKey == nil) {
+    if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenueV2");
         return;
     }
@@ -840,7 +846,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)uploadEventsWithLimit:(int)limit {
-    if (_apiKey == nil) {
+    if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
     }
@@ -976,7 +982,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [postData appendData:[@"v=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[apiVersionString dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&client=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postData appendData:[_apiKey dataUsingEncoding:NSUTF8StringEncoding]];
+    [postData appendData:[self.apiKey dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[@"&e=" dataUsingEncoding:NSUTF8StringEncoding]];
     [postData appendData:[[self urlEncodeString:events] dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -987,7 +993,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     // Add checksum
     [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, _apiKey, events, timestampString];
+    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, self.apiKey, events, timestampString];
     NSString *checksum = [self md5HexDigest: checksumData];
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -1215,7 +1221,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)sendSessionEvent:(NSString*)sessionEvent {
-    if (_apiKey == nil) {
+    if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before sending session event");
         return;
     }
@@ -1349,7 +1355,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)setGroup:(NSString *)groupType groupName:(NSObject *)groupName {
-    if (_apiKey == nil) {
+    if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling setGroupType");
         return;
     }
@@ -1408,7 +1414,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
 
         self->_userId = userId;
-        (void) [self.dbHelper insertOrReplaceKeyValue:USER_ID value:self->_userId];
+        [self.dbHelper insertOrReplaceKeyValue:USER_ID value:self.userId];
 
         if (startNewSession) {
             NSNumber* timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
@@ -1510,7 +1516,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 #pragma mark - Getters for device data
 - (NSString*)getDeviceId {
-    return _deviceId;
+    return self.deviceId;
 }
 
 - (long long)getSessionId {
@@ -1518,15 +1524,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (NSString*)initializeDeviceId {
-    if (_deviceId == nil) {
-        _deviceId = [self.dbHelper getValue:DEVICE_ID];
-        if (![self isValidDeviceId:_deviceId]) {
-            NSString *newDeviceId = [self _getDeviceId];
-            _deviceId = newDeviceId;
-            (void) [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:newDeviceId];
+    if (self.deviceId == nil) {
+        self.deviceId = [self.dbHelper getValue:DEVICE_ID];
+        if (![self isValidDeviceId:self.deviceId]) {
+            self.deviceId = [self _getDeviceId];
+            [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self.deviceId];
         }
     }
-    return _deviceId;
+    return self.deviceId;
 }
 
 - (NSString*)_getDeviceId {
