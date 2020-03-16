@@ -35,6 +35,11 @@
     return [events objectAtIndex:[events count] - fromEnd - 1];
 }
 
+- (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName {
+    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper: instanceName] getEvents:-1 limit:-1];
+    return [events lastObject];
+}
+
 - (NSDictionary *)getLastEvent {
     NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
     return [events lastObject];

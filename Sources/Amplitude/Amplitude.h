@@ -52,36 +52,31 @@
 
 #pragma mark - Properties
 
- /**-----------------------------------------------------------------------------
- * @name Instance Properties
- * -----------------------------------------------------------------------------
- */
-
 /**
-  API key for your Amplitude App.
+ API key for your Amplitude App.
  */
-@property (nonatomic, strong, readonly) NSString *apiKey;
+@property (nonatomic, copy, readonly) NSString *apiKey;
 
 /**
  Identifier for the current user.
  */
-@property (nonatomic, strong, readonly) NSString *userId;
+@property (nonatomic, copy, readonly) NSString *userId;
 
 /**
  Identifier for the current device.
  */
-@property (nonatomic, strong, readonly) NSString *deviceId;
+@property (nonatomic, copy, readonly) NSString *deviceId;
 
 /**
  Name of the SDK instance (ex: no name for default instance, or custom name for a named instance)
  */
-@property (nonatomic, strong, readonly) NSString *instanceName;
-@property (nonatomic, strong, readonly) NSString *propertyListPath;
+@property (nonatomic, copy, readonly) NSString *instanceName;
+@property (nonatomic, copy, readonly) NSString *propertyListPath;
 
 /**
  Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.
  */
-@property (nonatomic, assign) BOOL optOut;
+@property (nonatomic, assign, readwrite) BOOL optOut;
 
 
 /**-----------------------------------------------------------------------------
@@ -119,6 +114,21 @@
  */
 @property (nonatomic, assign) BOOL trackingSessionEvents;
 
+/**
+ Library name is default as `amplitude-ios`.
+ Notice: You will only want to set it when following conditions are met.
+ 1. You develop your own library which bridges Amplitude iOS native library.
+ 2. You want to track your library as one of the data sources.
+ */
+@property (nonatomic, copy, readwrite) NSString *libraryName;
+
+/**
+ Library version is default as the latest Amplitude iOS SDK version.
+ Notice: You will only want to set it when following conditions are met.
+ 1. You develop your own library which bridges Amplitude iOS native library.
+ 2. You want to track your library as one of the data sources.
+*/
+@property (nonatomic, copy, readwrite) NSString *libraryVersion;
 
 #pragma mark - Methods
 

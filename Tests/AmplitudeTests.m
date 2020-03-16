@@ -985,4 +985,80 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
+- (void)testCustomizedLibrary {
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
+    [client initializeApiKey:@"blah"];
+    
+    client.libraryName = @"amplitude-unity";
+    client.libraryVersion = @"1.0.0";
+    
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:@"custom_lib"];
+    NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
+                                          @"version" : @"1.0.0"
+    };
+    
+    NSDictionary *currentLibraryValue = event[@"library"];
+    XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
+}
+
+- (void)testCustomizedLibraryWithNilVersion {
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
+    [client initializeApiKey:@"blah"];
+    
+    client.libraryName = @"amplitude-unity";
+    client.libraryVersion = nil;
+    
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:@"custom_lib"];
+    NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
+                                          @"version" : kAMPUnknownVersion
+    };
+    
+    NSDictionary *currentLibraryValue = event[@"library"];
+    XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
+}
+
+- (void)testCustomizedLibraryWithNilLibrary {
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
+    [client initializeApiKey:@"blah"];
+    
+    client.libraryName = nil;
+    client.libraryVersion = @"1.0.0";
+    
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:@"custom_lib"];
+    NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
+                                          @"version" : @"1.0.0"
+    };
+    
+    NSDictionary *currentLibraryValue = event[@"library"];
+    XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
+}
+
+- (void)testCustomizedLibraryWithNilLibraryAndVersion {
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
+    [client initializeApiKey:@"blah"];
+    
+    client.libraryName = nil;
+    client.libraryVersion = nil;
+    
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:@"custom_lib"];
+    NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
+                                          @"version" : kAMPUnknownVersion
+    };
+    
+    NSDictionary *currentLibraryValue = event[@"library"];
+    XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
+}
+
 @end
