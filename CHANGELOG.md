@@ -1,3 +1,7 @@
+## 5.1.0 (Mar 16, 2020)
+
+* Added APIs to `Amplitude` to let users set `library` name and version. This should be only used when you develop your own library which wraps Amplitude iOS SDK. 
+
 ## 5.0.0 (Mar 12, 2020)
 
 * Now macOS support!
