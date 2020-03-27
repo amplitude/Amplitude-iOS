@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		120A6DD1241F571C0007C375 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 120A6DD0241F571C0007C375 /* AmplitudePrivate.h */; };
-		120A6DD2241F571C0007C375 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 120A6DD0241F571C0007C375 /* AmplitudePrivate.h */; };
-		120A6DD3241F571C0007C375 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 120A6DD0241F571C0007C375 /* AmplitudePrivate.h */; };
-		1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; };
-		1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; };
-		1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; };
+		120A6DD1241F571C0007C375 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 120A6DD0241F571C0007C375 /* AmplitudePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		120A6DD2241F571C0007C375 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 120A6DD0241F571C0007C375 /* AmplitudePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		120A6DD3241F571C0007C375 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 120A6DD0241F571C0007C375 /* AmplitudePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		12C972B824105B2C00E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972AF24105B2C00E9CDDB /* Amplitude.framework */; };
 		12C972D424105C3600E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972CB24105C3600E9CDDB /* Amplitude.framework */; };
 		12C972F024105C6500E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972E724105C6500E9CDDB /* Amplitude.framework */; };
@@ -472,6 +472,7 @@
 				E96785E61A48E93F00887CCD /* Amplitude.h */,
 				E96785E71A48E93F00887CCD /* Amplitude.m */,
 				12E8A613238740AF00921FC7 /* Amplitude+SSLPinning.h */,
+				120A6DD0241F571C0007C375 /* AmplitudePrivate.h */,
 				E96785E81A48E93F00887CCD /* AMPLocationManagerDelegate.h */,
 				E96785E91A48E93F00887CCD /* AMPLocationManagerDelegate.m */,
 				60227C091CC5AB8A007C117B /* AMPRevenue.h */,
@@ -486,7 +487,6 @@
 				60BA92761C2376680043178E /* AMPUtils.m */,
 				12C9738A2412426700E9CDDB /* Resources */,
 				9D6E194B1ACCDE1C00352C6C /* SSLCertificatePinning */,
-				120A6DD0241F571C0007C375 /* AmplitudePrivate.h */,
 			);
 			path = Amplitude;
 			sourceTree = "<group>";
