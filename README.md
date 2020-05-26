@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="https://static.amplitude.com/lightning/46c85bfd91905de8047f1ee65c7c93d6fa9ee6ea/static/media/amplitude-logo-with-text.4fb9e463.svg" alt="Amplitude iOS/tvOS/macOS SDK" height="150"/>
+  <a href="https://amplitude.com" target="_blank" align="center">
+    <img src="https://static.amplitude.com/lightning/46c85bfd91905de8047f1ee65c7c93d6fa9ee6ea/static/media/amplitude-logo-with-text.4fb9e463.svg" width="280">
+  </a>
+  <br />
 </p>
 
 Amplitude iOS SDK
@@ -13,7 +16,7 @@ Please see our [installation guide](https://amplitude.zendesk.com/hc/en-us/artic
 # Latest Version #
 [5.1.0 - Released on Mar 16, 2020](https://github.com/amplitude/Amplitude-iOS/releases/latest)
 [![Circle CI](https://circleci.com/gh/amplitude/Amplitude-iOS.svg?style=shield&circle-token=e1b2a7d2cd6dd64ac3643bc8cb2117c0ed5cbb75)](https://circleci.com/gh/amplitude/Amplitude-iOS/tree/master)
-[![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude)](http://cocoadocs.org/docsets/Amplitude/)
+[![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude)](https://cocoapods.org/pods/Amplitude)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 # iOS SDK Reference #
@@ -43,30 +46,3 @@ Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md
 
 # Need Help? #
 If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).
-
-# License #
-```text
-Amplitude
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Amplitude
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
