@@ -622,41 +622,6 @@
  */
 - (BOOL)startOrContinueSession:(long long) timestamp;
 
-#pragma mark - Deprecated methods
-
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession __attribute((deprecated()));
-
-- (void)startSession __attribute((deprecated()));
-
-+ (void)initializeApiKey:(NSString*) apiKey __attribute((deprecated()));
-
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId __attribute((deprecated()));
-
-+ (void)logEvent:(NSString*) eventType __attribute((deprecated()));
-
-+ (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties __attribute((deprecated()));
-
-+ (void)logRevenue:(NSNumber*) amount __attribute((deprecated()));
-
-+ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price __attribute((deprecated())) __attribute((deprecated()));
-
-+ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt __attribute((deprecated()));
-
-+ (void)uploadEvents __attribute((deprecated()));
-
-+ (void)setUserProperties:(NSDictionary*) userProperties __attribute((deprecated()));
-
-+ (void)setUserId:(NSString*) userId __attribute((deprecated()));
-
-+ (void)enableLocationListening __attribute((deprecated()));
-
-+ (void)disableLocationListening __attribute((deprecated()));
-
-+ (void)useAdvertisingIdForDeviceId __attribute((deprecated()));
-
-+ (void)printEventsCount __attribute((deprecated()));
-
-+ (NSString*)getDeviceId __attribute((deprecated()));
 @end
 
 #pragma mark - constants

@@ -169,70 +169,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return client;
 }
 
-+ (void)initializeApiKey:(NSString*) apiKey {
-    [[Amplitude instance] initializeApiKey:apiKey];
-}
-
-+ (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId {
-    [[Amplitude instance] initializeApiKey:apiKey userId:userId];
-}
-
-+ (void)logEvent:(NSString*) eventType {
-    [[Amplitude instance] logEvent:eventType];
-}
-
-+ (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties {
-    [[Amplitude instance] logEvent:eventType withEventProperties:eventProperties];
-}
-
-+ (void)logRevenue:(NSNumber*) amount {
-    [[Amplitude instance] logRevenue:amount];
-}
-
-+ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price {
-    [[Amplitude instance] logRevenue:productIdentifier quantity:quantity price:price];
-}
-
-+ (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt {
-    [[Amplitude instance] logRevenue:productIdentifier quantity:quantity price:price receipt:receipt];
-}
-
-+ (void)uploadEvents {
-    [[Amplitude instance] uploadEvents];
-}
-
-+ (void)setUserProperties:(NSDictionary*) userProperties {
-    [[Amplitude instance] setUserProperties:userProperties];
-}
-
-+ (void)setUserId:(NSString*) userId {
-    [[Amplitude instance] setUserId:userId];
-}
-
-+ (void)enableLocationListening {
-    [[Amplitude instance] enableLocationListening];
-}
-
-+ (void)disableLocationListening {
-    [[Amplitude instance] disableLocationListening];
-}
-
-+ (void)useAdvertisingIdForDeviceId {
-    [[Amplitude instance] useAdvertisingIdForDeviceId];
-}
-
-+ (void)printEventsCount {
-    [[Amplitude instance] printEventsCount];
-}
-
-+ (NSString*)getDeviceId {
-    return [[Amplitude instance] getDeviceId];
-}
-
-+ (void)updateLocation {
-    [[Amplitude instance] updateLocation];
-}
-
 #pragma mark - Main class methods
 - (instancetype)init {
     return [self initWithInstanceName:nil];
@@ -539,10 +475,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return nil;
 }
 #endif
-
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId startSession:(BOOL)startSession {
-    [self initializeApiKey:apiKey userId:userId];
-}
 
 /**
  * Run a block in the background. If already in the background, run immediately.
@@ -1284,10 +1216,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSNumber*)lastEventTime {
     return [self.dbHelper getLongValue:PREVIOUS_SESSION_TIME];
-}
-
-- (void)startSession {
-    return;
 }
 
 - (void)identify:(AMPIdentify *)identify {
