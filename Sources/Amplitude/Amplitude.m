@@ -169,6 +169,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return client;
 }
 
++ (void)updateLocation {
+    [[Amplitude instance] updateLocation];
+}
+
 #pragma mark - Main class methods
 - (instancetype)init {
     return [self initWithInstanceName:nil];
