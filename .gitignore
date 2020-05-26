@@ -7,5 +7,6 @@
 *.xcworkspace/xcshareddata/*.xcscmblueprint
 Carthage/Build
 
+doc/
 .swiftpm
 Podfile.lock
