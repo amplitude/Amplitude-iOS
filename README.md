@@ -9,7 +9,7 @@
 iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.amplitude.com).
 
 ## Installation and Quick Start
-Please visit our [Developer Center](https://developers.amplitude.com/docs/ios) for instructions on installing and using our the SDK.
+Please visit our :100:[Developer Center](https://developers.amplitude.com/docs/ios) for instructions on installing and using our the SDK.
 
 ## Latest Version
 [5.1.0 - Released on Mar 16, 2020](https://github.com/amplitude/Amplitude-iOS/releases/latest)
