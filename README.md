@@ -5,31 +5,26 @@
   <br />
 </p>
 
-Amplitude iOS SDK
-====================
-
+# Official Amplitude iOS SDK
 iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.amplitude.com).
 
-# Setup #
-Please see our [installation guide](https://amplitude.zendesk.com/hc/en-us/articles/115002278527-iOS-SDK-Installation) for instructions on installing and using our iOS SDK.
+## Installation and Quick Start
+Please visit our [Developer Center](https://developers.amplitude.com/docs/ios) for instructions on installing and using our the SDK.
 
-# Latest Version #
+## Latest Version
 [5.1.0 - Released on Mar 16, 2020](https://github.com/amplitude/Amplitude-iOS/releases/latest)
 [![Circle CI](https://circleci.com/gh/amplitude/Amplitude-iOS.svg?style=shield&circle-token=e1b2a7d2cd6dd64ac3643bc8cb2117c0ed5cbb75)](https://circleci.com/gh/amplitude/Amplitude-iOS/tree/master)
 [![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude)](https://cocoapods.org/pods/Amplitude)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-# iOS SDK Reference #
-See our [iOS SDK Reference](https://amplitude.zendesk.com/hc/en-us/articles/115003970027-iOS-SDK-Reference) for a list and description of all available SDK methods.
-
-# Demo Applications #
+## Demo Applications
 * A [demo application](https://github.com/amplitude/iOS-Demo) showing the integration of our SDK using Cocoapods.
 * A [demo application](https://github.com/amplitude/iOS-Demo-Carthage) showing the integration of our SDK using Carthage.
 * A [demo application](https://github.com/amplitude/Segment-iOS-Demo) showing the integration of our SDK via [Segment's](https://segment.com/) iOS SDK.
 * A [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing an integration in an iOS extension.
 * A [demo application](https://github.com/amplitude/GTM-iOS-Demo) demonstrating a potential integration with Google Tag Manager.
 
-# Contributors #
+## Contributors
 | **Contributor** | 
 | --- |
 | [haoliu-amp](https://github.com/haoliu-amp) |
@@ -41,8 +36,8 @@ See our [iOS SDK Reference](https://amplitude.zendesk.com/hc/en-us/articles/1150
 | [Mayur Sharma / mayur1407](https://github.com/mayur1407) |
 | [rob-keepsafe](https://github.com/rob-keepsafe) |
 
-# Changelog #
+## Changelog
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md) to view the iOS SDK Changelog.
 
-# Need Help? #
+## Need Help?
 If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).
