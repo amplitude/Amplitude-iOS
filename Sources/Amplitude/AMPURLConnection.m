@@ -54,7 +54,7 @@
 
 + (void)initialize {
     if (self == [AMPURLConnection class]) {
-        [AMPURLConnection pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
+        [AMPURLConnection pinSSLCertificate:@[@"ComodoRsaDomainValidationCA"]];
     }
 }
 

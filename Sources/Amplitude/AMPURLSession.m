@@ -59,7 +59,7 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        [AMPURLSession pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
+        [AMPURLSession pinSSLCertificate:@[@"ComodoRsaDomainValidationCA"]];
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         _sharedSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     }

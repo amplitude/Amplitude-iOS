@@ -120,9 +120,11 @@
 
         NSArray *anchorArray = [NSArray arrayWithObject:(__bridge id)(anchorCertificate)];
         if (SecTrustSetAnchorCertificates(trust, (__bridge CFArrayRef)(anchorArray)) != 0) {
+            SecTrustSetAnchorCertificates(trust, NULL);
             CFRelease(anchorCertificate);
             break;
         }
+        SecTrustSetAnchorCertificates(trust, NULL);
 
         SecTrustResultType trustResult;
         SecTrustEvaluate(trust, &trustResult);
