@@ -1,3 +1,7 @@
+## 5.2.0 (Jun 2, 2020)
+
+* Fixed an implementation issue in SSL pinning. If you're using SSL pinning, please update your SDK ASAP.
+
 ## 5.1.0 (Mar 16, 2020)
 
 * Added APIs to `Amplitude` to let users set `library` name and version. This should be only used when you develop your own library which wraps Amplitude iOS SDK. 
