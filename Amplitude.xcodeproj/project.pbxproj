@@ -16,18 +16,18 @@
 		1277132D24A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */; };
 		1277132E24A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */; };
 		1277132F24A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */; };
-		1277133024A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1277133124A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1277133224A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1277133024A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1277133124A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1277133224A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1277133324A2711F003B5D8F /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132924A2711F003B5D8F /* ISPCertificatePinning.m */; };
 		1277133424A2711F003B5D8F /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132924A2711F003B5D8F /* ISPCertificatePinning.m */; };
 		1277133524A2711F003B5D8F /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132924A2711F003B5D8F /* ISPCertificatePinning.m */; };
-		1277133624A2711F003B5D8F /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1277133724A2711F003B5D8F /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1277133824A2711F003B5D8F /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1277133924A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1277133A24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1277133B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1277133624A2711F003B5D8F /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1277133724A2711F003B5D8F /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1277133824A2711F003B5D8F /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1277133924A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1277133A24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1277133B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1277133C24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132C24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m */; };
 		1277133D24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132C24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m */; };
 		1277133E24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132C24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m */; };
@@ -333,6 +333,19 @@
 			path = Framework;
 			sourceTree = "<group>";
 		};
+		1277135124A277EE003B5D8F /* SSLPinning */ = {
+			isa = PBXGroup;
+			children = (
+				1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */,
+				1277132924A2711F003B5D8F /* ISPCertificatePinning.m */,
+				1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */,
+				1277132C24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m */,
+				1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */,
+				1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */,
+			);
+			name = SSLPinning;
+			sourceTree = "<group>";
+		};
 		12C973012410758400E9CDDB /* Deployment */ = {
 			isa = PBXGroup;
 			children = (
@@ -472,13 +485,8 @@
 				60AFE7311F6B636F00DF9A88 /* AMPURLSession.m */,
 				60BA92751C2376680043178E /* AMPUtils.h */,
 				60BA92761C2376680043178E /* AMPUtils.m */,
-				1277132A24A2711F003B5D8F /* ISPCertificatePinning.h */,
-				1277132924A2711F003B5D8F /* ISPCertificatePinning.m */,
-				1277132B24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.h */,
-				1277132C24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m */,
-				1277132824A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.h */,
-				1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */,
 				12C9738A2412426700E9CDDB /* Resources */,
+				1277135124A277EE003B5D8F /* SSLPinning */,
 			);
 			path = Amplitude;
 			sourceTree = "<group>";
