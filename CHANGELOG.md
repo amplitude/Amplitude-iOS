@@ -1,3 +1,7 @@
+## 5.2.1 (Jul 6, 2020)
+
+* Removed obsolete certificates used for SSL Pinning before.
+
 ## 5.2.0 (Jun 2, 2020)
 
 * Fixed an implementation issue in SSL pinning. If you're using SSL pinning, please update your SDK ASAP.
