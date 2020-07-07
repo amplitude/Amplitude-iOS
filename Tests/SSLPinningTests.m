@@ -86,7 +86,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"Testing Pinning"];
 
     self.amplitude.sslPinningEnabled = YES;
-    [AMPURLSession pinSSLCertificate:@[@"ComodoRsaCA", @"ComodoRsaDomainValidationCA"]];
+    [AMPURLSession pinSSLCertificate:@[@"ComodoRsaDomainValidationCA"]];
 
     [self.amplitude initializeApiKey:@"1cc2c1978ebab0f6451112a8f5df4f4e"];
     [self.amplitude logEvent:@"Test SSL Pinning"];
