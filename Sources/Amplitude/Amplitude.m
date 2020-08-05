@@ -50,6 +50,7 @@
 #import "AmplitudePrivate.h"
 #import "AMPLocationManagerDelegate.h"
 #import "AMPConstants.h"
+#import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
 #import "AMPURLConnection.h"
 #import "AMPURLSession.h"
@@ -1053,6 +1054,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self endBackgroundTaskIfNeeded];
 #endif
     [self runOnBackgroundQueue:^{
+        // Fetch the data ingestion endpoint based on current device's geo location.
+        
+        if (self.useDynamicConfig) {
+            __weak typeof(self) weakSelf = self;
+            [[AMPConfigManager sharedInstance] refreshWithCompletionHandler:^{
+                __strong typeof(self) strongSelf = weakSelf;
+                strongSelf->_serverUrl = [AMPConfigManager sharedInstance].ingestionEndpoint;
+            }];
+        }
         [self startOrContinueSessionNSNumber:now];
         self->_inForeground = YES;
         [self uploadEvents];
