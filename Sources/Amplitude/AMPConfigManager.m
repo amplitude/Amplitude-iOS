@@ -42,9 +42,9 @@
         if (!error) {
             NSError *jsonError = nil;
             NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
-            NSString *ingestionEndpoint = [dictionary objectForKey:@"ingestionEndpoint"];
+            NSString *ingestionEndpoint = [NSString stringWithFormat:@"https://%@", [dictionary objectForKey:@"ingestionEndpoint"]];
             
-            NSURL *url = [NSURL URLWithString:ingestionEndpoint];
+            NSURL *url = [NSURL URLWithString: ingestionEndpoint];
             if (url && url.scheme && url.host) {
                 self.ingestionEndpoint = ingestionEndpoint;
             }

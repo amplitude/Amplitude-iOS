@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSString* ingestionEndpoint;
 
 + (instancetype)sharedInstance;
-- (void)refreshWithCompletionHandler:(void(^)(void))completionHandler;
+- (void)refresh:(void(^)(void))completionHandler;
 
 @end
 
