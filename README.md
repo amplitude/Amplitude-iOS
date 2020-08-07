@@ -29,6 +29,7 @@ Please visit our :100:[Developer Center](https://developers.amplitude.com/docs/i
 <table>
   <tr>
     <td align="center"><a href="https://github.com/haoliu-amp"><img src="https://avatars2.githubusercontent.com/u/57638692?v=4" width="100px;" alt=""/><br /><sub><b>Hao Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=haoliu-amp" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://www.spenserskates.com"><img src="https://avatars3.githubusercontent.com/u/605873?v=4" width="100px;" alt=""/><br /><sub><b>Spenser Skates</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Documentation">📖</a> <a href="#ideas-sskates" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
