@@ -13,6 +13,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "djih",
+      "name": "Daniel Jih",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/4776584?v=4",
+      "profile": "http://www.danieljih.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
