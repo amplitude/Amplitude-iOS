@@ -1,3 +1,10 @@
+## 5.3.0 (Aug 6, 2020)
+
+* Introducing `useDynamicConfig` flag!! Turning this flag on will find the best server url automatically based on users' geo location.
+* Note 1. If you have your own proxy server and use `setServerUrl` API, please leave this OFF.
+* Note 2. If you have users in China Mainland, we suggest you turn this on.
+* Note 3. By default, this feature is OFF. So you need to explicitly set it to ON to use it.
+
 ## 5.2.1 (Jul 6, 2020)
 
 * Removed obsolete certificates used for SSL Pinning before.
