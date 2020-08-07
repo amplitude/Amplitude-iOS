@@ -57,11 +57,14 @@
         if (!error) {
             NSError *jsonError = nil;
             NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
-            NSString *ingestionEndpoint = [NSString stringWithFormat:@"https://%@", [dictionary objectForKey:@"ingestionEndpoint"]];
-            
-            NSURL *url = [NSURL URLWithString: ingestionEndpoint];
-            if (url && url.scheme && url.host) {
-                self.ingestionEndpoint = ingestionEndpoint;
+            NSString *urlString = [dictionary objectForKey:@"ingestionEndpoint"];
+            if (urlString) {
+                NSString *ingestionEndpoint = [NSString stringWithFormat:@"https://%@", urlString];
+                
+                NSURL *url = [NSURL URLWithString: ingestionEndpoint];
+                if (url && url.scheme && url.host) {
+                    self.ingestionEndpoint = ingestionEndpoint;
+                }
             }
         } else {
             // Error
