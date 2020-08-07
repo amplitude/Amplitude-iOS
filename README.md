@@ -1,6 +1,6 @@
 <p align="center">
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
   <a href="https://amplitude.com" target="_blank" align="center">
     <img src="https://static.amplitude.com/lightning/46c85bfd91905de8047f1ee65c7c93d6fa9ee6ea/static/media/amplitude-logo-with-text.4fb9e463.svg" width="280">
@@ -37,6 +37,7 @@ Please visit our :100:[Developer Center](https://developers.amplitude.com/docs/i
     <td align="center"><a href="http://www.spenserskates.com"><img src="https://avatars3.githubusercontent.com/u/605873?v=4" width="100px;" alt=""/><br /><sub><b>Spenser Skates</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Documentation">📖</a> <a href="#ideas-sskates" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="http://emptybox.org"><img src="https://avatars3.githubusercontent.com/u/238374?v=4" width="100px;" alt=""/><br /><sub><b>Krishna Rajendran</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=blazzy" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/sputh"><img src="https://avatars0.githubusercontent.com/u/7856822?v=4" width="100px;" alt=""/><br /><sub><b>samantha puth</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sputh" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mayur1407"><img src="https://avatars2.githubusercontent.com/u/3079325?v=4" width="100px;" alt=""/><br /><sub><b>Mayur</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=mayur1407" title="Code">💻</a></td>
   </tr>
 </table>
 
