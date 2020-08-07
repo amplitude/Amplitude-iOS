@@ -13,6 +13,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "sskates",
+      "name": "Spenser Skates",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/605873?v=4",
+      "profile": "http://www.spenserskates.com",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
