@@ -10,6 +10,7 @@
 
 [![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude)](https://cocoapods.org/pods/Amplitude)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat)](#contributors-)
 
 # Official Amplitude iOS SDK
 iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.amplitude.com).
@@ -25,28 +26,21 @@ Please visit our :100:[Developer Center](https://developers.amplitude.com/docs/i
 * A [demo application](https://github.com/amplitude/GTM-iOS-Demo) demonstrating a potential integration with Google Tag Manager.
 
 ## Contributors
-| **Contributor** | 
-| --- |
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
     <td align="center"><a href="https://github.com/haoliu-amp"><img src="https://avatars2.githubusercontent.com/u/57638692?v=4" width="100px;" alt=""/><br /><sub><b>Hao Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=haoliu-amp" title="Documentation">📖</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=haoliu-amp" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.danieljih.com"><img src="https://avatars0.githubusercontent.com/u/4776584?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Jih</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=djih" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=djih" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/curtisliu"><img src="https://avatars2.githubusercontent.com/u/3248421?v=4" width="100px;" alt=""/><br /><sub><b>Curtis Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=curtisliu" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=curtisliu" title="Documentation">📖</a> <a href="#ideas-curtisliu" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://www.spenserskates.com"><img src="https://avatars3.githubusercontent.com/u/605873?v=4" width="100px;" alt=""/><br /><sub><b>Spenser Skates</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Documentation">📖</a> <a href="#ideas-sskates" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-| [haoliu-amp](https://github.com/haoliu-amp) |
-| [djih](https://github.com/djih) |
-| [sskates](https://github.com/sskates) |
-| [curtisliu](https://github.com/curtisliu) |
-| [blazzy](https://github.com/blazzy) |
-| [sputh](https://github.com/sputh) |
-| [Mayur Sharma / mayur1407](https://github.com/mayur1407) |
-| [rob-keepsafe](https://github.com/rob-keepsafe) |
 
 ## Changelog
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md) to view the iOS SDK Changelog.

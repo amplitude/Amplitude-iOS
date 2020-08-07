@@ -14,7 +14,39 @@
         "doc",
         "code"
       ]
-    }
+    },
+    {
+      "login": "djih",
+      "name": "Daniel Jih",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/4776584?v=4",
+      "profile": "http://www.danieljih.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "curtisliu",
+      "name": "Curtis Liu",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/3248421?v=4",
+      "profile": "https://github.com/curtisliu",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
+    },
+    {
+      "login": "sskates",
+      "name": "Spenser Skates",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/605873?v=4",
+      "profile": "http://www.spenserskates.com",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
+    },
   ],
   "contributorsPerLine": 7,
   "projectName": "Amplitude-iOS",
