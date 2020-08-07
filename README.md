@@ -29,6 +29,8 @@ Please visit our :100:[Developer Center](https://developers.amplitude.com/docs/i
 <table>
   <tr>
     <td align="center"><a href="https://github.com/haoliu-amp"><img src="https://avatars2.githubusercontent.com/u/57638692?v=4" width="100px;" alt=""/><br /><sub><b>Hao Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=haoliu-amp" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://www.danieljih.com"><img src="https://avatars0.githubusercontent.com/u/4776584?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Jih</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=djih" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=djih" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/curtisliu"><img src="https://avatars2.githubusercontent.com/u/3248421?v=4" width="100px;" alt=""/><br /><sub><b>Curtis Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=curtisliu" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=curtisliu" title="Documentation">📖</a> <a href="#ideas-curtisliu" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="http://www.spenserskates.com"><img src="https://avatars3.githubusercontent.com/u/605873?v=4" width="100px;" alt=""/><br /><sub><b>Spenser Skates</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Documentation">📖</a> <a href="#ideas-sskates" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
