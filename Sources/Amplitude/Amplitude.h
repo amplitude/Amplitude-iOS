@@ -78,6 +78,14 @@
  */
 @property (nonatomic, assign, readwrite) BOOL optOut;
 
+/**
+ Turning this flag on will find the best server url automatically based on users' geo location.
+ Note:
+ 1. If you have your own proxy server and use `setServerUrl` API, please leave this off.
+ 2. If you have users in China Mainland, we suggest you turn this on.
+ */
+@property (nonatomic, assign, readwrite) BOOL useDynamicConfig;
+
 
 /**-----------------------------------------------------------------------------
  * @name Configurable SDK thresholds and parameters

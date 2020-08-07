@@ -13,6 +13,12 @@
 		1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		12470D1224DB2AB700E2B9A2 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 12470D1024DB2AB700E2B9A2 /* AMPConfigManager.h */; };
+		12470D1324DB2AB700E2B9A2 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 12470D1024DB2AB700E2B9A2 /* AMPConfigManager.h */; };
+		12470D1424DB2AB700E2B9A2 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 12470D1024DB2AB700E2B9A2 /* AMPConfigManager.h */; };
+		12470D1524DB2AB700E2B9A2 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 12470D1124DB2AB700E2B9A2 /* AMPConfigManager.m */; };
+		12470D1624DB2AB700E2B9A2 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 12470D1124DB2AB700E2B9A2 /* AMPConfigManager.m */; };
+		12470D1724DB2AB700E2B9A2 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 12470D1124DB2AB700E2B9A2 /* AMPConfigManager.m */; };
 		1277132D24A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */; };
 		1277132E24A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */; };
 		1277132F24A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1277132724A2711E003B5D8F /* ISPPinnedNSURLSessionDelegate.m */; };
@@ -177,6 +183,8 @@
 		1213D89824176E4700300E98 /* AmplitudeFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		1213D89924176E4700300E98 /* Amplitude.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = Amplitude.modulemap; sourceTree = "<group>"; };
 		1213D89A24176E4700300E98 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		12470D1024DB2AB700E2B9A2 /* AMPConfigManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPConfigManager.h; sourceTree = "<group>"; };
+		12470D1124DB2AB700E2B9A2 /* AMPConfigManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPConfigManager.m; sourceTree = "<group>"; };
 		124CDD7923EFD2C5004C7B27 /* Podfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile.lock; sourceTree = "<group>"; };
 		124CDD7A23EFD2C5004C7B27 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		124CDD7B23EFD2D4004C7B27 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -459,6 +467,8 @@
 		E98C05251A48E7FE00800C63 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
+				12470D1024DB2AB700E2B9A2 /* AMPConfigManager.h */,
+				12470D1124DB2AB700E2B9A2 /* AMPConfigManager.m */,
 				E96785E21A48E93F00887CCD /* AMPConstants.h */,
 				9DC708591AD4B28300949778 /* AMPConstants.m */,
 				60BA92711C2376680043178E /* AMPDatabaseHelper.h */,
@@ -503,6 +513,7 @@
 				12C97398241242CD00E9CDDB /* AMPTrackingOptions.h in Headers */,
 				12C973822412423800E9CDDB /* AMPURLConnection.h in Headers */,
 				12C973872412424F00E9CDDB /* AMPUtils.h in Headers */,
+				12470D1324DB2AB700E2B9A2 /* AMPConfigManager.h in Headers */,
 				12C973852412424200E9CDDB /* AMPURLSession.h in Headers */,
 				12C9738F2412429400E9CDDB /* Amplitude.h in Headers */,
 				1277133124A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */,
@@ -527,6 +538,7 @@
 				12C973882412424F00E9CDDB /* AMPUtils.h in Headers */,
 				12C9738E2412429200E9CDDB /* Amplitude.h in Headers */,
 				12C97394241242B400E9CDDB /* AMPIdentify.h in Headers */,
+				12470D1224DB2AB700E2B9A2 /* AMPConfigManager.h in Headers */,
 				12C97391241242A100E9CDDB /* Amplitude+SSLPinning.h in Headers */,
 				12C973842412424100E9CDDB /* AMPURLSession.h in Headers */,
 				1277133024A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */,
@@ -551,6 +563,7 @@
 				12C97399241242CE00E9CDDB /* AMPTrackingOptions.h in Headers */,
 				12C973832412423900E9CDDB /* AMPURLConnection.h in Headers */,
 				12C973892412425000E9CDDB /* AMPUtils.h in Headers */,
+				12470D1424DB2AB700E2B9A2 /* AMPConfigManager.h in Headers */,
 				12C973862412424300E9CDDB /* AMPURLSession.h in Headers */,
 				12C973902412429400E9CDDB /* Amplitude.h in Headers */,
 				1277133224A2711F003B5D8F /* ISPPinnedNSURLSessionDelegate.h in Headers */,
@@ -865,6 +878,7 @@
 				12C9735E241241CE00E9CDDB /* Amplitude.m in Sources */,
 				12C97361241241CE00E9CDDB /* AMPTrackingOptions.m in Sources */,
 				12C97364241241CE00E9CDDB /* AMPUtils.m in Sources */,
+				12470D1624DB2AB700E2B9A2 /* AMPConfigManager.m in Sources */,
 				1277133D24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				1277133424A2711F003B5D8F /* ISPCertificatePinning.m in Sources */,
 				12C9735D241241CE00E9CDDB /* AMPIdentify.m in Sources */,
@@ -910,6 +924,7 @@
 				12C9736B241241CF00E9CDDB /* AMPTrackingOptions.m in Sources */,
 				12C97368241241CF00E9CDDB /* Amplitude.m in Sources */,
 				12C9736E241241CF00E9CDDB /* AMPUtils.m in Sources */,
+				12470D1524DB2AB700E2B9A2 /* AMPConfigManager.m in Sources */,
 				12C97366241241CF00E9CDDB /* AMPDeviceInfo.m in Sources */,
 				12C97338241241BA00E9CDDB /* AMPConstants.m in Sources */,
 				12C9736D241241CF00E9CDDB /* AMPURLSession.m in Sources */,
@@ -947,6 +962,7 @@
 				12C97354241241CD00E9CDDB /* Amplitude.m in Sources */,
 				12C97357241241CD00E9CDDB /* AMPTrackingOptions.m in Sources */,
 				12C9735A241241CD00E9CDDB /* AMPUtils.m in Sources */,
+				12470D1724DB2AB700E2B9A2 /* AMPConfigManager.m in Sources */,
 				1277133E24A2711F003B5D8F /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				1277133524A2711F003B5D8F /* ISPCertificatePinning.m in Sources */,
 				12C97353241241CD00E9CDDB /* AMPIdentify.m in Sources */,

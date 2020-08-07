@@ -50,6 +50,7 @@
 #import "AmplitudePrivate.h"
 #import "AMPLocationManagerDelegate.h"
 #import "AMPConstants.h"
+#import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
 #import "AMPURLConnection.h"
 #import "AMPURLSession.h"
@@ -304,8 +305,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 // maintain backwards compatibility on default instance
-- (BOOL) migrateEventsDataToDB
-{
+- (BOOL)migrateEventsDataToDB {
     NSDictionary *eventsData = [self unarchive:_eventsDataPath];
     if (eventsData == nil) {
         return NO;
@@ -455,6 +455,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 if (state != UIApplicationStateBackground) {
                     [self runOnBackgroundQueue:^{
         #endif
+                        // The earliest time to fetch dynamic config
+                        [self refreshDynamicConfig];
+                        
                         NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
                         [self startOrContinueSessionNSNumber:now];
                         self->_inForeground = YES;
@@ -840,6 +843,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
+- (void)refreshDynamicConfig {
+    if (self.useDynamicConfig) {
+        __weak typeof(self) weakSelf = self;
+        [[AMPConfigManager sharedInstance] refresh:^{
+            __strong typeof(self) strongSelf = weakSelf;
+            strongSelf->_serverUrl = [AMPConfigManager sharedInstance].ingestionEndpoint;
+        }];
+    }
+}
+
 - (long long)getNextSequenceNumber {
     NSNumber *sequenceNumberFromDB = [self.dbHelper getLongValue:SEQUENCE_NUMBER];
     long long sequenceNumber = 0;
@@ -1053,6 +1066,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self endBackgroundTaskIfNeeded];
 #endif
     [self runOnBackgroundQueue:^{
+        // Fetch the data ingestion endpoint based on current device's geo location.
+        
+        [self refreshDynamicConfig];
         [self startOrContinueSessionNSNumber:now];
         self->_inForeground = YES;
         [self uploadEvents];

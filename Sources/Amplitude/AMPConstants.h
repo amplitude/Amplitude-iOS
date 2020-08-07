@@ -31,6 +31,7 @@ extern NSString *const kAMPPlatform;
 extern NSString *const kAMPOSName;
 extern NSString *const kAMPEventLogDomain;
 extern NSString *const kAMPEventLogUrl;
+extern NSString *const kAMPDyanmicConfigUrl;
 extern NSString *const kAMPDefaultInstance;
 extern const int kAMPApiVersion;
 extern const int kAMPDBVersion;
