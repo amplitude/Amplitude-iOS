@@ -23,6 +23,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "curtisliu",
+      "name": "Curtis Liu",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/3248421?v=4",
+      "profile": "https://github.com/curtisliu",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
