@@ -46,6 +46,15 @@
         "doc",
         "ideas"
       ]
+    },
+    {
+      "login": "blazzy",
+      "name": "Krishna Rajendran",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/238374?v=4",
+      "profile": "http://emptybox.org",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
