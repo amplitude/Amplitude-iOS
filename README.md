@@ -1,4 +1,7 @@
 <p align="center">
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
   <a href="https://amplitude.com" target="_blank" align="center">
     <img src="https://static.amplitude.com/lightning/46c85bfd91905de8047f1ee65c7c93d6fa9ee6ea/static/media/amplitude-logo-with-text.4fb9e463.svg" width="280">
   </a>
@@ -24,6 +27,18 @@ Please visit our :100:[Developer Center](https://developers.amplitude.com/docs/i
 ## Contributors
 | **Contributor** | 
 | --- |
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/haoliu-amp"><img src="https://avatars2.githubusercontent.com/u/57638692?v=4" width="100px;" alt=""/><br /><sub><b>Hao Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=haoliu-amp" title="Documentation">📖</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 | [haoliu-amp](https://github.com/haoliu-amp) |
 | [djih](https://github.com/djih) |
 | [sskates](https://github.com/sskates) |
