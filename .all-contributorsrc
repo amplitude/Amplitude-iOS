@@ -11,7 +11,9 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/57638692?v=4",
       "profile": "https://github.com/haoliu-amp",
       "contributions": [
-        "doc"
+        "code",
+        "doc",
+        "ideas"
       ]
     },
     {
@@ -34,7 +36,18 @@
         "doc",
         "ideas"
       ]
-    }
+    },
+    {
+      "login": "sskates",
+      "name": "Spenser Skates",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/605873?v=4",
+      "profile": "http://www.spenserskates.com",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
+    },
   ],
   "contributorsPerLine": 7,
   "projectName": "Amplitude-iOS",
