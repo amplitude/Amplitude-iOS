@@ -2,9 +2,9 @@
 // Amplitude.h
 
 #import <Foundation/Foundation.h>
-#import "AMPIdentify.h"
-#import "AMPRevenue.h"
-#import "AMPTrackingOptions.h"
+#import <Amplitude/AMPIdentify.h>
+#import <Amplitude/AMPRevenue.h>
+#import <Amplitude/AMPTrackingOptions.h>
 
 
 /**
