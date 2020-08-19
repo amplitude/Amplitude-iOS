@@ -180,7 +180,7 @@
 }
 
 + (NSString*)getAdvertiserID:(int) maxAttempts {
-#ifdef AMPLITUDE_IDFA_TRACKING
+#if AMPLITUDE_IDFA_TRACKING
     Class ASIdentifierManager = NSClassFromString(@"ASIdentifierManager");
     SEL sharedManager = NSSelectorFromString(@"sharedManager");
     SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
