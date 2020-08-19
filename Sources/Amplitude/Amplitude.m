@@ -118,7 +118,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
-    BOOL _disableIdfaTracking;
 
     CLLocation *_lastKnownLocation;
     BOOL _locationListeningEnabled;
@@ -199,7 +198,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _updateScheduled = NO;
         _updatingCurrently = NO;
         _useAdvertisingIdForDeviceId = NO;
-        _disableIdfaTracking = NO;
         _backoffUpload = NO;
         _offline = NO;
         _serverUrl = kAMPEventLogUrl;
@@ -435,7 +433,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self.apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
-            self->_deviceInfo = [[AMPDeviceInfo alloc] init:self->_disableIdfaTracking];
+            self->_deviceInfo = [[AMPDeviceInfo alloc] init];
             [self initializeDeviceId];
             if (setUserId) {
                 [self setUserId:userId];
@@ -1456,10 +1454,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)useAdvertisingIdForDeviceId {
     _useAdvertisingIdForDeviceId = YES;
-}
-
-- (void)disableIdfaTracking {
-    _disableIdfaTracking = YES;
 }
 
 #pragma mark - Getters for device data
