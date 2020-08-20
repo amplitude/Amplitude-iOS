@@ -49,7 +49,6 @@
 
 @implementation AMPDeviceInfo {
     NSObject* networkInfo;
-    BOOL _disableIdfaTracking;
 }
 
 @synthesize appVersion = _appVersion;
@@ -60,12 +59,6 @@
 @synthesize language = _language;
 @synthesize advertiserID = _advertiserID;
 @synthesize vendorID = _vendorID;
-
-- (instancetype)init: (BOOL) disableIdfaTracking {
-    self = [super init];
-    _disableIdfaTracking = disableIdfaTracking;
-    return self;
-}
 
 - (NSString*)appVersion {
     if (!_appVersion) {
@@ -146,7 +139,8 @@
 }
 
 - (NSString*)advertiserID {
-    if (!_disableIdfaTracking && !_advertiserID) {
+#if AMPLITUDE_IDFA_TRACKING
+    if (!_advertiserID) {
 #if !TARGET_OS_OSX
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
 #endif
@@ -160,6 +154,10 @@
     }
 #endif
     return _advertiserID;
+
+#else
+    return nil;
+#endif
 }
 
 - (NSString*)vendorID {
@@ -180,6 +178,7 @@
 }
 
 + (NSString*)getAdvertiserID:(int) maxAttempts {
+#if AMPLITUDE_IDFA_TRACKING
     Class ASIdentifierManager = NSClassFromString(@"ASIdentifierManager");
     SEL sharedManager = NSSelectorFromString(@"sharedManager");
     SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
@@ -205,9 +204,9 @@
         } else {
             return identifier;
         }
-    } else {
-        return nil;
     }
+#endif
+    return nil;
 }
 
 + (NSString*)getVendorID:(int) maxAttempts {
