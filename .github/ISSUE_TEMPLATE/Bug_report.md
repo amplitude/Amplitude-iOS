@@ -25,5 +25,5 @@ labels: 'bug'
 
 ## Environment
 - SDK Version: <!-- E.g. v6.0.0 -->
-- iOS Version: <!-- E.g. iOS 13.3.1 -->
-- Device: <!--- E.g. iPhone 11 Pro Max-->
+- Device: <!--- E.g. iPhone 11, 2020 MacBook Pro 16-inch -->
+- OS Version: <!-- E.g. iOS 13.3.1, MacOS 10.14 -->
