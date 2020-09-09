@@ -1,6 +1,8 @@
 //
-//  AMPUtils.h
-//  Copyright (c) 2015 Amplitude Inc. (https://amplitude.com/)
+//  AMPBubbleView.h
+//  Amplitude
+//
+//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,16 +26,10 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface AMPUtils : NSObject
+NS_ASSUME_NONNULL_BEGIN
 
-+ (NSString*)generateUUID;
-+ (id)makeJSONSerializable:(id) obj;
-+ (BOOL)isEmptyString:(NSString*) str;
-+ (NSDictionary*)validateGroups:(NSDictionary*) obj;
-+ (NSString*)platformDataDirectory;
-
-+ (UIApplication *)getSharedApplication;
-+ (NSInteger)barBottomOffset;
-+ (CGFloat)statusBarHeight;
+@interface AMPBubbleView : UIView
 
 @end
+
+NS_ASSUME_NONNULL_END

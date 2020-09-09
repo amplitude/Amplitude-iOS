@@ -34,6 +34,7 @@
 #endif
 
 #import "AMPUtils.h"
+#import <UIKit/UIKit.h>
 
 @interface AMPUtils()
 @end
@@ -152,6 +153,28 @@
 #else
     return [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 #endif
+}
+
++ (UIApplication *)getSharedApplication {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return [UIApplication performSelector:@selector(sharedApplication)];
+    }
+    return nil;
+}
+
++ (NSInteger)barBottomOffset {
+    return [self statusBarHeight] > 24.0 ? 30 : 0;
+}
+
++ (CGFloat)statusBarHeight {
+    CGSize statusBarSize;
+    if (@available(iOS 13.0, *)) {
+        statusBarSize = [[[[AMPUtils getSharedApplication].keyWindow windowScene] statusBarManager] statusBarFrame].size;
+    } else {
+        statusBarSize = [[AMPUtils getSharedApplication] statusBarFrame].size;
+    }
+    return MIN(statusBarSize.width, statusBarSize.height);
 }
 
 @end

@@ -1,6 +1,8 @@
 //
-//  AMPUtils.h
-//  Copyright (c) 2015 Amplitude Inc. (https://amplitude.com/)
+//  AMPBubbleView.m
+//  Amplitude
+//
+//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -21,19 +23,39 @@
 //  THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "AMPBubbleView.h"
 
-@interface AMPUtils : NSObject
+@implementation AMPBubbleView
 
-+ (NSString*)generateUUID;
-+ (id)makeJSONSerializable:(id) obj;
-+ (BOOL)isEmptyString:(NSString*) str;
-+ (NSDictionary*)validateGroups:(NSDictionary*) obj;
-+ (NSString*)platformDataDirectory;
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    
+    if (self) {
+        [self loadViewFromNib];
+    }
+    
+    return self;
+}
 
-+ (UIApplication *)getSharedApplication;
-+ (NSInteger)barBottomOffset;
-+ (CGFloat)statusBarHeight;
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    
+    if (self) {
+        [self loadViewFromNib];
+    }
+    
+    return self;
+}
+
+- (void)loadViewFromNib {
+    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"Amplitude.bundle"];
+    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
+    UINib *nib = [UINib nibWithNibName:@"AMPBubbleView" bundle:resBundle];
+    NSArray *views = [nib instantiateWithOwner:self options:nil];
+    UIView *view = [views objectAtIndex:0];
+    view.frame = self.bounds;
+    [self addSubview:view];
+}
+
 
 @end

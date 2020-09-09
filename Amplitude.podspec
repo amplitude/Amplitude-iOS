@@ -13,4 +13,5 @@ Pod::Spec.new do |s|
   s.resources              = 'Sources/Amplitude/*.der'
   s.requires_arc           = true
   s.library 	           = 'sqlite3.0'
+  s.resource_bundles       = {'Amplitude' => ['Sources/Amplitude/*.xcassets', 'Sources/Amplitude/*.xib']}
 end

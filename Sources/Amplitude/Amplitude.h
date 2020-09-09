@@ -138,6 +138,11 @@
 */
 @property (nonatomic, copy, readwrite) NSString *libraryVersion;
 
+/**
+ Show Amplitude Event Explorer when you're running a debug build.
+ */
+@property (nonatomic, assign, readwrite) BOOL showEventExplorer;
+
 #pragma mark - Methods
 
 /**-----------------------------------------------------------------------------
