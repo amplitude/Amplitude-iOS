@@ -26,6 +26,8 @@
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
 
+typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
+
 /**
  Amplitude iOS SDK.
 
@@ -128,7 +130,7 @@
  1. You develop your own library which bridges Amplitude iOS native library.
  2. You want to track your library as one of the data sources.
  */
-@property (nonatomic, copy, readwrite) NSString *libraryName;
+@property (nonatomic, copy) NSString *libraryName;
 
 /**
  Library version is default as the latest Amplitude iOS SDK version.
@@ -136,7 +138,21 @@
  1. You develop your own library which bridges Amplitude iOS native library.
  2. You want to track your library as one of the data sources.
 */
-@property (nonatomic, copy, readwrite) NSString *libraryVersion;
+@property (nonatomic, copy) NSString *libraryVersion;
+
+/**
+ * Sets a block to be called when location (latitude, longitude) information is set for an event.
+ * If you want to track locations for some events, you can use this callback to pass location information into events.
+ *
+ * Example:
+ * [Amplitude instance].locationInfoBlock = ^{
+ *     return @{
+ *         @"lat" : @37.7,
+ *         @"lng" : @122.4
+ *     };
+ * };
+ */
+@property (nonatomic, strong) AMPLocationInfoBlock locationInfoBlock;
 
 #pragma mark - Methods
 
@@ -528,27 +544,6 @@
  @param offline                  Whether logged events should be sent to Amplitude servers.
  */
 - (void)setOffline:(BOOL)offline;
-
-/**
- Enables location tracking.
-
- If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.
-
- **Note:** the user's location is only fetched once per session. Use `updateLocation` to force the SDK to fetch the user's latest location.
- */
-- (void)enableLocationListening;
-
-/**
- Disables location tracking. If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.
- */
-- (void)disableLocationListening;
-
-/**
- Forces the SDK to update with the user's last known location if possible.
-
- If you want to manually force the SDK to update with the user's last known location, call updateLocation.
- */
-- (void)updateLocation;
 
 /**
  Uses advertisingIdentifier instead of identifierForVendor as the device ID

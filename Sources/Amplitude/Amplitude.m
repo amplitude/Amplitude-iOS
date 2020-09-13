@@ -48,7 +48,6 @@
 
 #import "Amplitude.h"
 #import "AmplitudePrivate.h"
-#import "AMPLocationManagerDelegate.h"
 #import "AMPConstants.h"
 #import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
@@ -119,11 +118,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
 
-    CLLocation *_lastKnownLocation;
-    BOOL _locationListeningEnabled;
-    CLLocationManager *_locationManager;
-    AMPLocationManagerDelegate *_locationManagerDelegate;
-
     AMPTrackingOptions *_inputTrackingOptions;
     AMPTrackingOptions *_appliedTrackingOptions;
     NSDictionary *_apiPropertiesTrackingOptions;
@@ -169,10 +163,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return client;
 }
 
-+ (void)updateLocation {
-    [[Amplitude instance] updateLocation];
-}
-
 #pragma mark - Main class methods
 - (instancetype)init {
     return [self initWithInstanceName:nil];
@@ -193,7 +183,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #endif
 
         _initialized = NO;
-        _locationListeningEnabled = YES;
         _sessionId = -1;
         _updateScheduled = NO;
         _updatingCurrently = NO;
@@ -287,15 +276,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
             [self->_backgroundQueue setSuspended:NO];
         }];
-
-        // CLLocationManager must be created on the main thread
-        dispatch_async(dispatch_get_main_queue(), ^{
-            Class CLLocationManager = NSClassFromString(@"CLLocationManager");
-            self->_locationManager = [[CLLocationManager alloc] init];
-            self->_locationManagerDelegate = [[AMPLocationManagerDelegate alloc] init];
-            SEL setDelegate = NSSelectorFromString(@"setDelegate:");
-            [self->_locationManager performSelector:setDelegate withObject:self->_locationManagerDelegate];
-        });
 
         [self addObservers];
     }
@@ -678,24 +658,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
-    
-    if ([_appliedTrackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
-        @synchronized (_locationManager) {
-            NSMutableDictionary *location = [NSMutableDictionary dictionary];
 
-            // Need to use NSInvocation because coordinate selector returns a C struct
-            SEL coordinateSelector = NSSelectorFromString(@"coordinate");
-            NSMethodSignature *coordinateMethodSignature = [_lastKnownLocation methodSignatureForSelector:coordinateSelector];
-            NSInvocation *coordinateInvocation = [NSInvocation invocationWithMethodSignature:coordinateMethodSignature];
-            [coordinateInvocation setTarget:_lastKnownLocation];
-            [coordinateInvocation setSelector:coordinateSelector];
-            [coordinateInvocation invoke];
-            CLLocationCoordinate2D lastKnownLocationCoordinate;
-            [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
-
-            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
-            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
-
+    if ([_appliedTrackingOptions shouldTrackLatLng] != nil && self.locationInfoBlock != nil) {
+        NSMutableDictionary *location = self.locationInfoBlock();
+        if (location != nil) {
             [apiProperties setValue:location forKey:@"location"];
         }
     }
@@ -1054,8 +1020,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 #endif
-
-    [self updateLocation];
 
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
@@ -1428,32 +1392,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
         [self setDeviceId:[AMPDeviceInfo generateUUID]];
     }];
-}
-
-#pragma mark - location methods
-
-- (void)updateLocation {
-    if (_locationListeningEnabled) {
-        CLLocation *location = [_locationManager location];
-        @synchronized (_locationManager) {
-            if (location != nil) {
-                _lastKnownLocation = location;
-            }
-        }
-    }
-}
-
-- (void)enableLocationListening {
-    _locationListeningEnabled = YES;
-    [self updateLocation];
-}
-
-- (void)disableLocationListening {
-    _locationListeningEnabled = NO;
-}
-
-- (void)useAdvertisingIdForDeviceId {
-    _useAdvertisingIdForDeviceId = YES;
 }
 
 #pragma mark - Getters for device data
