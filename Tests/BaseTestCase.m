@@ -27,6 +27,9 @@ NSString *const userId = @"userId";
     XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
     [self.amplitude init];
+    AMPTrackingOptions *opts = [AMPTrackingOptions options];
+    XCTAssertTrue([opts shouldTrackIDFA]);
+    [self.amplitude setTrackingOptions:opts];
     self.amplitude.sslPinningEnabled = NO;
 }
 
