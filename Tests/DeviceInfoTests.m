@@ -95,22 +95,6 @@
     XCTAssertEqualObjects(@"English", _deviceInfo.language);
 }
 
-- (void)testAdvertiserID {
-    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
-    [[mockDeviceInfo expect] getAdvertiserID:5];
-    XCTAssertEqualObjects(nil, _deviceInfo.advertiserID);
-    [mockDeviceInfo verify];
-    [mockDeviceInfo stopMocking];
-}
-
-- (void)testDisableIDFATracking {
-    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
-    [[mockDeviceInfo reject] getAdvertiserID:5];
-    AMPDeviceInfo *newDeviceInfo = [[AMPDeviceInfo alloc] init:YES];
-    XCTAssertEqualObjects(nil, newDeviceInfo.advertiserID);
-    [mockDeviceInfo verify];
-    [mockDeviceInfo stopMocking];
-}
 
 #if TARGET_OS_IPHONE
 - (void)testVendorID {
