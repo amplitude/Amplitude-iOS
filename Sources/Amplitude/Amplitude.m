@@ -670,9 +670,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
-    NSString* advertiserID = _deviceInfo.advertiserID;
-    if ([_appliedTrackingOptions shouldTrackIDFA] && advertiserID) {
-        [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
+    if ([_appliedTrackingOptions shouldTrackIDFA]) {
+        NSString* advertiserID = [self getAdSupportID];
+        if (advertiserID != nil) {
+            [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
+        }
     }
     NSString* vendorID = _deviceInfo.vendorID;
     if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
@@ -1456,7 +1458,20 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     _useAdvertisingIdForDeviceId = YES;
 }
 
-#pragma mark - Getters for device data
+#pragma mark - Getters/Setters for device data
+
+- (NSString*)getAdSupportID {
+    NSString *result = nil;
+    if (self.adSupportBlock != nil && [_appliedTrackingOptions shouldTrackIDFA]) {
+        result = self.adSupportBlock();
+    }
+    // IDFA access was denied or still in progress.
+    if ([result isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+        result = nil;
+    }
+    return result;
+}
+
 - (NSString*)getDeviceId {
     return self.deviceId;
 }
@@ -1479,7 +1494,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSString*)_getDeviceId {
     NSString *deviceId = nil;
     if (_useAdvertisingIdForDeviceId && [_appliedTrackingOptions shouldTrackIDFA]) {
-        deviceId = _deviceInfo.advertiserID;
+        deviceId = [self getAdSupportID];
     }
 
     // return identifierForVendor
