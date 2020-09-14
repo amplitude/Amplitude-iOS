@@ -57,7 +57,6 @@
 @synthesize carrier = _carrier;
 @synthesize country = _country;
 @synthesize language = _language;
-@synthesize advertiserID = _advertiserID;
 @synthesize vendorID = _vendorID;
 
 - (NSString*)appVersion {
@@ -138,28 +137,6 @@
     return _language;
 }
 
-- (NSString*)advertiserID {
-#if AMPLITUDE_IDFA_TRACKING
-    if (!_advertiserID) {
-#if !TARGET_OS_OSX
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= (float) 6.0) {
-#endif
-            NSString *advertiserId = [AMPDeviceInfo getAdvertiserID:5];
-            if (advertiserId != nil &&
-                ![advertiserId isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
-                _advertiserID = advertiserId;
-            }
-        }
-#if !TARGET_OS_OSX
-    }
-#endif
-    return _advertiserID;
-
-#else
-    return nil;
-#endif
-}
-
 - (NSString*)vendorID {
     if (!_vendorID) {
 #if !TARGET_OS_OSX
@@ -175,38 +152,6 @@
     }
 #endif
     return _vendorID;
-}
-
-+ (NSString*)getAdvertiserID:(int) maxAttempts {
-#if AMPLITUDE_IDFA_TRACKING
-    Class ASIdentifierManager = NSClassFromString(@"ASIdentifierManager");
-    SEL sharedManager = NSSelectorFromString(@"sharedManager");
-    SEL advertisingIdentifier = NSSelectorFromString(@"advertisingIdentifier");
-    if (ASIdentifierManager && sharedManager && advertisingIdentifier) {
-        id (*imp1)(id, SEL) = (id (*)(id, SEL))[ASIdentifierManager methodForSelector:sharedManager];
-        id manager = nil;
-        NSUUID *adid = nil;
-        NSString *identifier = nil;
-        if (imp1) {
-            manager = imp1(ASIdentifierManager, sharedManager);
-        }
-        NSUUID* (*imp2)(id, SEL) = (NSUUID* (*)(id, SEL))[manager methodForSelector:advertisingIdentifier];
-        if (imp2) {
-            adid = imp2(manager, advertisingIdentifier);
-        }
-        if (adid) {
-            identifier = [adid UUIDString];
-        }
-        if (identifier == nil && maxAttempts > 0) {
-            // Try again every 5 seconds
-            [NSThread sleepForTimeInterval:5.0];
-            return [AMPDeviceInfo getAdvertiserID:maxAttempts - 1];
-        } else {
-            return identifier;
-        }
-    }
-#endif
-    return nil;
 }
 
 + (NSString*)getVendorID:(int) maxAttempts {
