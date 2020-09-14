@@ -1,7 +1,7 @@
 ## 6.0.0 (Aug 19, 2020)
 
 * To accommodate the new rules over IDFA in iOS 14, we make some changes over our IDFA logic.
-* Added `AMPLITUDE_IDFA_TRACKING` MARCO to control if IDFA logic is included in the binary.
+* Added `AMPLITUDE_IDFA_TRACKING` MACRO to control if IDFA logic is included in the binary.
 * Removed `disableIdfaTracking` API.
 * [Documentation](https://developers.amplitude.com/docs/ios-ios-advertising-id-idfa#ios)
 
