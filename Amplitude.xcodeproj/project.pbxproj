@@ -314,7 +314,6 @@
 				0B6192D1C908F4E6D376162D /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */,
 				5F70334CA7CB86ECCCB1472A /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

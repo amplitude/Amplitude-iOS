@@ -1,3 +1,11 @@
+## 7.0.0 (Sep 14, 2020)
+
+### BREAKING CHANGES
+Background: Users reported that IDFA MACRO still do not prevent app rejections. So we make both idfa and location tracking to be fully customer driven.
+* Add `adSupportBlock` to let idfa tracking to be customer driven. 
+* Add `locationInfoBlock` to let location tracking to be customer driven.
+* Remove `enableLocationListening`, `disableLocationListening` and `updateLocation` APIs.
+
 ## 6.0.0 (Aug 19, 2020)
 
 * To accommodate the new rules over IDFA in iOS 14, we make some changes over our IDFA logic.
