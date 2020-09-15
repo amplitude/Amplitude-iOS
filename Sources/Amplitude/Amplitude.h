@@ -158,7 +158,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 @property (nonatomic, strong, nullable) AMPAdSupportBlock adSupportBlock;
 
 /**
- * Sets a block to be called when location (latitude, longitude) information is needed for an event.
+ * Sets a block to be called when location (latitude, longitude) information can be passed into an event.
  * This is to allow for apps that do not want location tracking to function without defining location permission while
  * still allowing apps that do location tracking to continue to function.  This block will be called repeatedly when
  * location information is needed for constructing an event.
