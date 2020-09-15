@@ -26,6 +26,8 @@
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
 typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
@@ -63,7 +65,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 /**
  Identifier for the current user.
  */
-@property (nonatomic, copy, readonly) NSString *userId;
+@property (nonatomic, copy, readonly, nullable) NSString *userId;
 
 /**
  Identifier for the current device.
@@ -73,8 +75,8 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 /**
  Name of the SDK instance (ex: no name for default instance, or custom name for a named instance)
  */
-@property (nonatomic, copy, readonly) NSString *instanceName;
-@property (nonatomic, copy, readonly) NSString *propertyListPath;
+@property (nonatomic, copy, readonly, nullable) NSString *instanceName;
+@property (nonatomic, copy, readonly, nullable) NSString *propertyListPath;
 
 /**
  Whether or to opt the current user out of tracking. If true then this blocks the logging of any events and properties, and blocks the sending of events to Amplitude servers.
@@ -131,7 +133,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  1. You develop your own library which bridges Amplitude iOS native library.
  2. You want to track your library as one of the data sources.
  */
-@property (nonatomic, copy) NSString *libraryName;
+@property (nonatomic, copy, nullable) NSString *libraryName;
 
 /**
  Library version is default as the latest Amplitude iOS SDK version.
@@ -139,7 +141,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  1. You develop your own library which bridges Amplitude iOS native library.
  2. You want to track your library as one of the data sources.
 */
-@property (nonatomic, copy) NSString *libraryVersion;
+@property (nonatomic, copy, nullable) NSString *libraryVersion;
 
 /**
  * Sets a block to be called when IDFA / AdSupport identifier is created.
@@ -197,7 +199,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
  */
-+ (Amplitude *)instanceWithName:(NSString*) instanceName;
++ (Amplitude *)instanceWithName:(nullable NSString*)instanceName;
 
 /**-----------------------------------------------------------------------------
  * @name Initialize the Amplitude SDK with your Amplitude API Key
@@ -213,7 +215,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @param apiKey Your Amplitude key obtained from your dashboard at https://amplitude.com/settings
  */
-- (void)initializeApiKey:(NSString*) apiKey;
+- (void)initializeApiKey:(NSString*)apiKey;
 
 /**
  Initializes the Amplitude instance with your Amplitude API key and sets a user identifier for the current user.
@@ -227,7 +229,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  @param userId If your app has its own login system that you want to track users with, you can set the userId.
 
 */
-- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*) userId;
+- (void)initializeApiKey:(NSString*) apiKey userId:(NSString*)userId;
 
 
 /**-----------------------------------------------------------------------------
@@ -244,7 +246,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Tracking Events](https://github.com/amplitude/amplitude-ios#tracking-events)
  */
-- (void)logEvent:(NSString*) eventType;
+- (void)logEvent:(NSString*)eventType;
 
 /**
  Tracks an event. Events are saved locally.
@@ -256,7 +258,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Tracking Events](https://github.com/amplitude/amplitude-ios#tracking-events)
  */
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties;
+- (void)logEvent:(NSString*)eventType withEventProperties:(nullable NSDictionary*)eventProperties;
 
 /**
  Tracks an event. Events are saved locally.
@@ -270,7 +272,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  @see [Tracking Events](https://github.com/amplitude/amplitude-ios#tracking-events)
  @see [Tracking Sessions](https://github.com/amplitude/Amplitude-iOS#tracking-sessions)
  */
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties outOfSession:(BOOL) outOfSession;
+- (void)logEvent:(NSString*)eventType withEventProperties:(nullable NSDictionary*)eventProperties outOfSession:(BOOL)outOfSession;
 
 /**
  Tracks an event. Events are saved locally.
@@ -285,7 +287,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Setting Groups](https://github.com/amplitude/Amplitude-iOS#setting-groups)
  */
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups;
+- (void)logEvent:(NSString*)eventType withEventProperties:(nullable NSDictionary*)eventProperties withGroups:(nullable NSDictionary*)groups;
 
 /**
  Tracks an event. Events are saved locally.
@@ -303,7 +305,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Tracking Sessions](https://github.com/amplitude/Amplitude-iOS#tracking-sessions)
  */
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups outOfSession:(BOOL) outOfSession;
+- (void)logEvent:(NSString*)eventType withEventProperties:(nullable NSDictionary*)eventProperties withGroups:(nullable NSDictionary*)groups outOfSession:(BOOL)outOfSession;
 
 /**
  Tracks an event. Events are saved locally.
@@ -322,7 +324,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Tracking Sessions](https://github.com/amplitude/Amplitude-iOS#tracking-sessions)
  */
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups withLongLongTimestamp:(long long) longLongTimestamp outOfSession:(BOOL)outOfSession;
+- (void)logEvent:(NSString*)eventType withEventProperties:(nullable NSDictionary*)eventProperties withGroups:(nullable NSDictionary*)groups withLongLongTimestamp:(long long)longLongTimestamp outOfSession:(BOOL)outOfSession;
 
 /**
  Tracks an event. Events are saved locally.
@@ -341,7 +343,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Tracking Sessions](https://github.com/amplitude/Amplitude-iOS#tracking-sessions)
  */
-- (void)logEvent:(NSString*) eventType withEventProperties:(NSDictionary*) eventProperties withGroups:(NSDictionary*) groups withTimestamp:(NSNumber*) timestamp outOfSession:(BOOL)outOfSession;
+- (void)logEvent:(NSString*)eventType withEventProperties:(nullable NSDictionary*)eventProperties withGroups:(nullable NSDictionary*)groups withTimestamp:(NSNumber*)timestamp outOfSession:(BOOL)outOfSession;
 
 /**-----------------------------------------------------------------------------
  * @name Logging Revenue
@@ -359,7 +361,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [LogRevenue Backwards Compatability](https://github.com/amplitude/Amplitude-iOS#backwards-compatibility)
  */
-- (void)logRevenue:(NSNumber*) amount;
+- (void)logRevenue:(NSNumber*)amount;
 
 /**
  **Note: this is deprecated** - please use `logRevenueV2` and `AMPRevenue`
@@ -373,7 +375,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  @see [LogRevenueV2](https://github.com/amplitude/Amplitude-iOS#tracking-revenue)
  @see [LogRevenue Backwards Compatability](https://github.com/amplitude/Amplitude-iOS#backwards-compatibility)
  */
-- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price;
+- (void)logRevenue:(nullable NSString*)productIdentifier quantity:(NSInteger)quantity price:(NSNumber*)price;
 
 /**
  **Note: this is deprecated** - please use `logRevenueV2` and `AMPRevenue`
@@ -391,7 +393,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  @see [LogRevenue Backwards Compatability](https://github.com/amplitude/Amplitude-iOS#backwards-compatibility)
  @see [Revenue Verification](https://github.com/amplitude/Amplitude-iOS#revenue-verification)
  */
-- (void)logRevenue:(NSString*) productIdentifier quantity:(NSInteger) quantity price:(NSNumber*) price receipt:(NSData*) receipt;
+- (void)logRevenue:(NSString*)productIdentifier quantity:(NSInteger)quantity price:(NSNumber*)price receipt:(nullable NSData*)receipt;
 
 /**
  Tracks revenue - API v2. This uses the `AMPRevenue` object to store transaction properties such as quantity, price, and revenue type. This is the recommended method for tracking revenue in Amplitude.
@@ -404,7 +406,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Tracking Revenue](https://github.com/amplitude/Amplitude-iOS#tracking-revenue)
  */
-- (void)logRevenueV2:(AMPRevenue*) revenue;
+- (void)logRevenueV2:(AMPRevenue*)revenue;
 
 /**-----------------------------------------------------------------------------
  * @name User Properties and User Property Operations
@@ -448,7 +450,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  */
 
-- (void)identify:(AMPIdentify *)identify outOfSession:(BOOL) outOfSession;
+- (void)identify:(AMPIdentify *)identify outOfSession:(BOOL)outOfSession;
 
 /**
 
@@ -460,7 +462,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Setting Multiple Properties with setUserProperties](https://github.com/amplitude/Amplitude-iOS#setting-multiple-properties-with-setuserproperties)
  */
-- (void)setUserProperties:(NSDictionary*) userProperties;
+- (void)setUserProperties:(NSDictionary*)userProperties;
 
 /**
 
@@ -475,7 +477,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Setting Multiple Properties with setUserProperties](https://github.com/amplitude/Amplitude-iOS#setting-multiple-properties-with-setuserproperties)
  */
-- (void)setUserProperties:(NSDictionary*) userProperties replace:(BOOL) replace;
+- (void)setUserProperties:(NSDictionary*)userProperties replace:(BOOL)replace;
 
 /**
  Clears all properties that are tracked on the user level.
@@ -503,11 +505,11 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  @see [Setting Groups](https://github.com/amplitude/Amplitude-iOS#setting-groups)
  */
 
-- (void)setGroup:(NSString*) groupType groupName:(NSObject*) groupName;
+- (void)setGroup:(NSString*)groupType groupName:(NSObject*)groupName;
 
-- (void)groupIdentifyWithGroupType:(NSString*) groupType groupName:(NSObject*) groupName groupIdentify:(AMPIdentify *) groupIdentify;
+- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify;
 
-- (void)groupIdentifyWithGroupType:(NSString*) groupType groupName:(NSObject*) groupName groupIdentify:(AMPIdentify *) groupIdentify outOfSession:(BOOL) outOfSession;
+- (void)groupIdentifyWithGroupType:(NSString*)groupType groupName:(NSObject*)groupName groupIdentify:(AMPIdentify *)groupIdentify outOfSession:(BOOL)outOfSession;
 
 /**-----------------------------------------------------------------------------
  * @name Setting User and Device Identifiers
@@ -520,7 +522,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  @see [Setting Custom UserIds](https://github.com/amplitude/Amplitude-iOS#setting-custom-user-ids)
  */
 
-- (void)setUserId:(NSString*) userId;
+- (void)setUserId:(NSString*)userId;
 
 /**
  Sets the userId and starts a new session. The previous session for the previous user will be terminated and a new session will begin for the new user id.
@@ -529,7 +531,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Setting Custom UserIds](https://github.com/amplitude/Amplitude-iOS#setting-custom-user-ids)
  */
-- (void)setUserId:(NSString*) userId startNewSession:(BOOL) startNewSession;
+- (void)setUserId:(NSString*)userId startNewSession:(BOOL)startNewSession;
 
 /**
  Sets the deviceId.
@@ -540,7 +542,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
  @see [Setting Custom Device Ids](https://github.com/amplitude/Amplitude-iOS#custom-device-ids)
  */
-- (void)setDeviceId:(NSString*) deviceId;
+- (void)setDeviceId:(NSString*)deviceId;
 
 /**-----------------------------------------------------------------------------
  * @name Configuring the SDK instance
@@ -574,7 +576,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  */
 - (void)useAdvertisingIdForDeviceId;
 
-- (void)setTrackingOptions:(AMPTrackingOptions*) options;
+- (void)setTrackingOptions:(AMPTrackingOptions*)options;
 
 /**
  Enable COPPA (Children's Online Privacy Protection Act) restrictions on IDFA, IDFV, city, IP address and location tracking.
@@ -587,9 +589,9 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  */
 - (void)disableCoppaControl;
 
-- (void)setServerUrl:(NSString*) serverUrl;
+- (void)setServerUrl:(NSString*)serverUrl;
 
-- (void)setBearerToken:(NSString *) token;
+- (void)setBearerToken:(NSString *)token;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods
@@ -636,7 +638,7 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 /**
  Call to check if the SDK is ready to start a new session at timestamp. Returns YES if a new session was started, otherwise NO and current session is extended. Only use if you know what you are doing. Recommended to use current time in UTC milliseconds for timestamp.
  */
-- (BOOL)startOrContinueSession:(long long) timestamp;
+- (BOOL)startOrContinueSession:(long long)timestamp;
 
 @end
 
@@ -645,3 +647,5 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 extern NSString *const kAMPSessionStartEvent;
 extern NSString *const kAMPSessionEndEvent;
 extern NSString *const kAMPRevenueEvent;
+
+NS_ASSUME_NONNULL_END
