@@ -357,23 +357,24 @@
 		12C9730F24108DFF00E9CDDB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				12C9731824108DFF00E9CDDB /* BaseTestCase.h */,
+				12C9731E24108DFF00E9CDDB /* BaseTestCase.m */,
+				12C9731924108DFF00E9CDDB /* Amplitude+Test.h */,
+				12C9731224108DFF00E9CDDB /* Amplitude+Test.m */,
 				12C9731024108DFF00E9CDDB /* SSLPinningTests.m */,
 				12C9731124108DFF00E9CDDB /* DeviceInfoTests.m */,
-				12C9731224108DFF00E9CDDB /* Amplitude+Test.m */,
 				12C9731324108DFF00E9CDDB /* AmplitudeTests.m */,
 				12C9731424108DFF00E9CDDB /* AMPDatabaseHelperTests.m */,
 				12C9731524108DFF00E9CDDB /* RevenueTests.m */,
-				12C9731624108DFF00E9CDDB /* InvalidCertificationAuthority.der */,
 				12C9731724108DFF00E9CDDB /* SetupTests.m */,
-				12C9731824108DFF00E9CDDB /* BaseTestCase.h */,
-				12C9731924108DFF00E9CDDB /* Amplitude+Test.h */,
 				12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */,
 				12C9731B24108DFF00E9CDDB /* SessionTests.m */,
 				12C9731C24108DFF00E9CDDB /* TrackingOptionsTest.m */,
 				12C9731D24108DFF00E9CDDB /* IdentifyTests.m */,
-				12C9731E24108DFF00E9CDDB /* BaseTestCase.m */,
-				12C9731F24108DFF00E9CDDB /* Info.plist */,
 				12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */,
+				12C9732124108DFF00E9CDDB /* AMPLocationManagerDelegateTests.m */,
+				12C9731624108DFF00E9CDDB /* InvalidCertificationAuthority.der */,
+				12C9731F24108DFF00E9CDDB /* Info.plist */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

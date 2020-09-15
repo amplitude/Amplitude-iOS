@@ -866,39 +866,69 @@
 }
 
 -(void)testTrackIdfa {
-    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
-    [[mockDeviceInfo expect] getAdvertiserID:5];
-
-    Amplitude *client = [Amplitude instanceWithName:@"has_idfa"];
-    [client flushQueueWithQueue:client.initializerQueue];
-    [client initializeApiKey:@"blah"];
-    [client flushQueue];
-
-    [client logEvent:@"test"];
-    [client flushQueue];
-
-    [mockDeviceInfo verify];
-    [mockDeviceInfo stopMocking];
+    NSString *value = @"12340000-0000-0000-0000-000000000000";
+    
+    self.amplitude.adSupportBlock = ^NSString * _Nonnull{
+        return value;
+    };
+    
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+    
+    self.amplitude.adSupportBlock = nil;
+    
+    NSDictionary *apiProps = [self.amplitude getLastEvent][@"api_properties"];
+    XCTAssertTrue([[apiProps objectForKey:@"ios_idfa"] isEqualToString:value]);
 }
 
-- (void)testDisableIdfa {
-    id mockDeviceInfo = OCMClassMock([AMPDeviceInfo class]);
-    [[mockDeviceInfo reject] getAdvertiserID:5];
+-(void)testIdfaAsDeviceId {
+    AMPTrackingOptions *opts = [AMPTrackingOptions options]; // has shouldTrackIDFA set.
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:@"idfa"];
+    if (dbHelper != nil) {
+        [dbHelper deleteDB];
+    }
+    
+    NSString *value = @"12340000-0000-0000-0000-000000000000";
+    
+    Amplitude *client = [Amplitude instanceWithName:@"idfa"];
+    client.adSupportBlock = ^NSString * _Nonnull{
+        return value;
+    };
+    [client setTrackingOptions:opts];
+    [client flushQueueWithQueue:client.initializerQueue];
+    [client initializeApiKey:@"api key"];
+    [client useAdvertisingIdForDeviceId];
+    [client flushQueue];
 
+    NSString *deviceId = [client getDeviceId];
+    XCTAssertTrue([deviceId isEqual:value]);
+}
+
+-(void)testDisableIdfaAsDeviceId {
+    AMPTrackingOptions *options = [[AMPTrackingOptions options] disableIDFA];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:@"disable_idfa"];
+    if (dbHelper != nil) {
+        [dbHelper deleteDB];
+    }
+    
+    NSString *value = @"12340000-0000-0000-0000-000000000000";
+    
     Amplitude *client = [Amplitude instanceWithName:@"disable_idfa"];
+    client.adSupportBlock = ^NSString * _Nonnull{
+        return value;
+    };
+
     [client flushQueueWithQueue:client.initializerQueue];
-    [client disableIdfaTracking];
-    [client initializeApiKey:@"blah"];
+    [client setTrackingOptions:options];
+    [client initializeApiKey:@"api key"];
+    [client useAdvertisingIdForDeviceId];
     [client flushQueue];
 
-    [client logEvent:@"test"];
-    [client flushQueue];
-
-    [mockDeviceInfo verify];
-    [mockDeviceInfo stopMocking];
+    NSString *deviceId = [client getDeviceId];
+    XCTAssertFalse([deviceId isEqual:value]);
 }
 
-- (void)testIdfvAsDeviceId {
+-(void)testIdfvAsDeviceId {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:@"idfv"];
     if (dbHelper != nil) {
         [dbHelper deleteDB];

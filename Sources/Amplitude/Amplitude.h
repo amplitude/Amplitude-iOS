@@ -26,6 +26,7 @@
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
 
+typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
 typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
 /**
@@ -153,6 +154,22 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  * };
  */
 @property (nonatomic, strong) AMPLocationInfoBlock locationInfoBlock;
+
+/**
+ * Sets a block to be called when IDFA / AdSupport identifier is created.
+ * This is to allow for apps that do not want ad tracking to pass App Store guidelines in certain categories while
+ * still allowing apps that do ad tracking to continue to function.  This block will be called repeatedly during
+ * the life of the application as IDFA is needed.
+ *
+ * This achieve the previous SDK behavior use the example as follows.  It assumes you've handled any setup
+ * and dialogs necessary to receive permissions from the user.
+ *
+ * Example:
+ *      amplitude.adSupportBlock = ^{
+ *          return [[ASIdentifierManager sharedManager] advertisingIdentifier];
+ *      }
+ */
+@property (nonatomic, strong, nullable) AMPAdSupportBlock adSupportBlock;
 
 #pragma mark - Methods
 
