@@ -661,7 +661,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
 
-    if ([_appliedTrackingOptions shouldTrackLatLng] != nil && self.locationInfoBlock != nil) {
+    if ([_appliedTrackingOptions shouldTrackLatLng] && self.locationInfoBlock != nil) {
         NSMutableDictionary *location = self.locationInfoBlock();
         if (location != nil) {
             [apiProperties setValue:location forKey:@"location"];
