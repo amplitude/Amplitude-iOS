@@ -1396,6 +1396,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
+- (void)useAdvertisingIdForDeviceId {
+    _useAdvertisingIdForDeviceId = YES;
+}
+
 #pragma mark - Getters for device data
 - (NSString*)getAdSupportID {
     NSString *result = nil;
