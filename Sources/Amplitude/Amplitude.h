@@ -142,20 +142,6 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 @property (nonatomic, copy) NSString *libraryVersion;
 
 /**
- * Sets a block to be called when location (latitude, longitude) information is set for an event.
- * If you want to track locations for some events, you can use this callback to pass location information into events.
- *
- * Example:
- * [Amplitude instance].locationInfoBlock = ^{
- *     return @{
- *         @"lat" : @37.7,
- *         @"lng" : @122.4
- *     };
- * };
- */
-@property (nonatomic, strong) AMPLocationInfoBlock locationInfoBlock;
-
-/**
  * Sets a block to be called when IDFA / AdSupport identifier is created.
  * This is to allow for apps that do not want ad tracking to pass App Store guidelines in certain categories while
  * still allowing apps that do ad tracking to continue to function.  This block will be called repeatedly during
@@ -167,9 +153,26 @@ typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
  * Example:
  *      amplitude.adSupportBlock = ^{
  *          return [[ASIdentifierManager sharedManager] advertisingIdentifier];
- *      }
+ *      };
  */
 @property (nonatomic, strong, nullable) AMPAdSupportBlock adSupportBlock;
+
+/**
+ * Sets a block to be called when location (latitude, longitude) information is needed for an event.
+ * This is to allow for apps that do not want location tracking to function without defining location permission while
+ * still allowing apps that do location tracking to continue to function.  This block will be called repeatedly when
+ * location information is needed for constructing an event.
+ *
+ * Location information is a NSDictionary with 2 keys in it, "lat" and "lng".
+ * Example:
+ *      amplitude.locationInfoBlock = ^{
+ *          return @{
+ *              @"lat" : @37.7,
+ *              @"lng" : @122.4
+ *              };
+ *      };
+ */
+@property (nonatomic, strong, nullable) AMPLocationInfoBlock locationInfoBlock;
 
 #pragma mark - Methods
 
