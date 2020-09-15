@@ -27,6 +27,7 @@
 #import "AMPTrackingOptions.h"
 
 typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
+typedef NSDictionary *_Nonnull (^AMPLocationInfoBlock)(void);
 
 /**
  Amplitude iOS SDK.
@@ -130,7 +131,7 @@ typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
  1. You develop your own library which bridges Amplitude iOS native library.
  2. You want to track your library as one of the data sources.
  */
-@property (nonatomic, copy, readwrite) NSString *libraryName;
+@property (nonatomic, copy) NSString *libraryName;
 
 /**
  Library version is default as the latest Amplitude iOS SDK version.
@@ -138,7 +139,7 @@ typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
  1. You develop your own library which bridges Amplitude iOS native library.
  2. You want to track your library as one of the data sources.
 */
-@property (nonatomic, copy, readwrite) NSString *libraryVersion;
+@property (nonatomic, copy) NSString *libraryVersion;
 
 /**
  * Sets a block to be called when IDFA / AdSupport identifier is created.
@@ -152,9 +153,26 @@ typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
  * Example:
  *      amplitude.adSupportBlock = ^{
  *          return [[ASIdentifierManager sharedManager] advertisingIdentifier];
- *      }
+ *      };
  */
 @property (nonatomic, strong, nullable) AMPAdSupportBlock adSupportBlock;
+
+/**
+ * Sets a block to be called when location (latitude, longitude) information can be passed into an event.
+ * This is to allow for apps that do not want location tracking to function without defining location permission while
+ * still allowing apps that do location tracking to continue to function.  This block will be called repeatedly when
+ * location information is needed for constructing an event.
+ *
+ * Location information is a NSDictionary with 2 keys in it, "lat" and "lng".
+ * Example:
+ *      amplitude.locationInfoBlock = ^{
+ *          return @{
+ *              @"lat" : @37.7,
+ *              @"lng" : @122.4
+ *              };
+ *      };
+ */
+@property (nonatomic, strong, nullable) AMPLocationInfoBlock locationInfoBlock;
 
 #pragma mark - Methods
 
@@ -546,27 +564,6 @@ typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
  @param offline                  Whether logged events should be sent to Amplitude servers.
  */
 - (void)setOffline:(BOOL)offline;
-
-/**
- Enables location tracking.
-
- If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.
-
- **Note:** the user's location is only fetched once per session. Use `updateLocation` to force the SDK to fetch the user's latest location.
- */
-- (void)enableLocationListening;
-
-/**
- Disables location tracking. If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.
- */
-- (void)disableLocationListening;
-
-/**
- Forces the SDK to update with the user's last known location if possible.
-
- If you want to manually force the SDK to update with the user's last known location, call updateLocation.
- */
-- (void)updateLocation;
 
 /**
  Uses advertisingIdentifier instead of identifierForVendor as the device ID
