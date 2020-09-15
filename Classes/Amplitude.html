@@ -14,11 +14,11 @@
 		<div class="container" class="hide-in-xcode">
 			
 			<h1 id="library-title">
-				<a href="../index.html">Amplitude-iOS </a>
+				<a href="../index.html">Amplitude </a>
 			</h1>
 
 			<p id="developer-home">
-				<a href="../index.html">Amplitude</a>
+				<a href="../index.html">Amplitude Inc</a>
 			</p>
 			
 		</div>
@@ -56,6 +56,8 @@
 	
 	<optgroup label="Properties">
 		
+		<option value="//api/name/adSupportBlock">adSupportBlock</option>
+		
 		<option value="//api/name/apiKey">apiKey</option>
 		
 		<option value="//api/name/deviceId">deviceId</option>
@@ -73,6 +75,8 @@
 		<option value="//api/name/libraryName">libraryName</option>
 		
 		<option value="//api/name/libraryVersion">libraryVersion</option>
+		
+		<option value="//api/name/locationInfoBlock">locationInfoBlock</option>
 		
 		<option value="//api/name/minTimeBetweenSessionsMillis">minTimeBetweenSessionsMillis</option>
 		
@@ -104,11 +108,7 @@
 		
 		<option value="//api/name/disableCoppaControl">- disableCoppaControl</option>
 		
-		<option value="//api/name/disableLocationListening">- disableLocationListening</option>
-		
 		<option value="//api/name/enableCoppaControl">- enableCoppaControl</option>
-		
-		<option value="//api/name/enableLocationListening">- enableLocationListening</option>
 		
 		<option value="//api/name/getDeviceId">- getDeviceId</option>
 		
@@ -177,8 +177,6 @@
 		<option value="//api/name/startOrContinueSession:">- startOrContinueSession:</option>
 		
 		<option value="//api/name/startOrContinueSessionNSNumber:">- startOrContinueSessionNSNumber:</option>
-		
-		<option value="//api/name/updateLocation">- updateLocation</option>
 		
 		<option value="//api/name/upgradePrefs">- upgradePrefs</option>
 		
@@ -321,7 +319,7 @@
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, readonly) NSString *userId</code></div>
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, readonly, nullable) NSString *userId</code></div>
 
 		    
 			
@@ -413,7 +411,7 @@
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, readonly) NSString *instanceName</code></div>
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, readonly, nullable) NSString *instanceName</code></div>
 
 		    
 			
@@ -844,7 +842,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, readwrite) NSString *libraryName</code></div>
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, nullable) NSString *libraryName</code></div>
 
 		    
 			
@@ -896,7 +894,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, readwrite) NSString *libraryVersion</code></div>
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, nullable) NSString *libraryVersion</code></div>
 
 		    
 			
@@ -912,6 +910,127 @@ Notice: You will only want to set it when following conditions are met.
 Notice: You will only want to set it when following conditions are met.
 1. You develop your own library which bridges Amplitude iOS native library.
 2. You want to track your library as one of the data sources.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/adSupportBlock" title="adSupportBlock"></a>
+	<h3 class="method-title"><code><a href="#//api/name/adSupportBlock">&nbsp;&nbsp;adSupportBlock</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets a block to be called when IDFA / AdSupport identifier is created.
+This is to allow for apps that do not want ad tracking to pass App Store guidelines in certain categories while
+still allowing apps that do ad tracking to continue to function.  This block will be called repeatedly during
+the life of the application as IDFA is needed.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, nullable) AMPAdSupportBlock adSupportBlock</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets a block to be called when IDFA / AdSupport identifier is created.
+This is to allow for apps that do not want ad tracking to pass App Store guidelines in certain categories while
+still allowing apps that do ad tracking to continue to function.  This block will be called repeatedly during
+the life of the application as IDFA is needed.</p>
+
+<p>This achieve the previous SDK behavior use the example as follows.  It assumes you&rsquo;ve handled any setup
+and dialogs necessary to receive permissions from the user.</p>
+
+<p>Example:
+amplitude.adSupportBlock = ^{
+return [[ASIdentifierManager sharedManager] advertisingIdentifier];
+};</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/locationInfoBlock" title="locationInfoBlock"></a>
+	<h3 class="method-title"><code><a href="#//api/name/locationInfoBlock">&nbsp;&nbsp;locationInfoBlock</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets a block to be called when location (latitude, longitude) information can be passed into an event.
+This is to allow for apps that do not want location tracking to function without defining location permission while
+still allowing apps that do location tracking to continue to function.  This block will be called repeatedly when
+location information is needed for constructing an event.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, nullable) AMPLocationInfoBlock locationInfoBlock</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets a block to be called when location (latitude, longitude) information can be passed into an event.
+This is to allow for apps that do not want location tracking to function without defining location permission while
+still allowing apps that do location tracking to continue to function.  This block will be called repeatedly when
+location information is needed for constructing an event.</p>
+
+<p>Location information is a NSDictionary with 2 keys in it, &ldquo;lat&rdquo; and &ldquo;lng&rdquo;.
+Example:
+amplitude.locationInfoBlock = ^{
+return @{
+@&ldquo;lat&rdquo; : @37.7,
+@&ldquo;lng&rdquo; : @122.4
+};
+};</p>
 			</div>
 			
 
@@ -1004,7 +1123,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>+ (Amplitude *)instanceWithName:(NSString *)<em>instanceName</em></code></div>
+			<div class="method-subsection method-declaration"><code>+ (Amplitude *)instanceWithName:(nullable NSString *)<em>instanceName</em></code></div>
 
 		    
 			
@@ -1290,7 +1409,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(nullable NSDictionary *)<em>eventProperties</em></code></div>
 
 		    
 			
@@ -1364,7 +1483,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(nullable NSDictionary *)<em>eventProperties</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
 
 		    
 			
@@ -1445,7 +1564,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(nullable NSDictionary *)<em>eventProperties</em> withGroups:(nullable NSDictionary *)<em>groups</em></code></div>
 
 		    
 			
@@ -1526,7 +1645,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(nullable NSDictionary *)<em>eventProperties</em> withGroups:(nullable NSDictionary *)<em>groups</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
 
 		    
 			
@@ -1614,7 +1733,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em> withLongLongTimestamp:(long long)<em>longLongTimestamp</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(nullable NSDictionary *)<em>eventProperties</em> withGroups:(nullable NSDictionary *)<em>groups</em> withLongLongTimestamp:(long long)<em>longLongTimestamp</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
 
 		    
 			
@@ -1707,7 +1826,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(NSDictionary *)<em>eventProperties</em> withGroups:(NSDictionary *)<em>groups</em> withTimestamp:(NSNumber *)<em>timestamp</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logEvent:(NSString *)<em>eventType</em> withEventProperties:(nullable NSDictionary *)<em>eventProperties</em> withGroups:(nullable NSDictionary *)<em>groups</em> withTimestamp:(NSNumber *)<em>timestamp</em> outOfSession:(BOOL)<em>outOfSession</em></code></div>
 
 		    
 			
@@ -1879,7 +1998,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(nullable NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em></code></div>
 
 		    
 			
@@ -1960,7 +2079,7 @@ Notice: You will only want to set it when following conditions are met.
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em> receipt:(NSData *)<em>receipt</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em> receipt:(nullable NSData *)<em>receipt</em></code></div>
 
 		    
 			
@@ -2889,150 +3008,6 @@ Notice: You will only want to set it when following conditions are met.
 		</div>
 	</div>
 </div><div class="section-method">
-	<a name="//api/name/enableLocationListening" title="enableLocationListening"></a>
-	<h3 class="method-title"><code><a href="#//api/name/enableLocationListening">&ndash;&nbsp;enableLocationListening</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Enables location tracking.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)enableLocationListening</code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Enables location tracking.</p>
-
-<p>If the user has granted your app location permissions, the SDK will also grab the location of the user. Amplitude will never prompt the user for location permissions itself, this must be done by your app.</p>
-
-<p><strong>Note:</strong> the user&rsquo;s location is only fetched once per session. Use <a href="#//api/name/updateLocation"><code>updateLocation</code></a> to force the SDK to fetch the user&rsquo;s latest location.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.h</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
-	<a name="//api/name/disableLocationListening" title="disableLocationListening"></a>
-	<h3 class="method-title"><code><a href="#//api/name/disableLocationListening">&ndash;&nbsp;disableLocationListening</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Disables location tracking. If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)disableLocationListening</code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Disables location tracking. If you want location tracking disabled on startup of the app, call disableLocationListening before you call initializeApiKey.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.h</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
-	<a name="//api/name/updateLocation" title="updateLocation"></a>
-	<h3 class="method-title"><code><a href="#//api/name/updateLocation">&ndash;&nbsp;updateLocation</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Forces the SDK to update with the user&rsquo;s last known location if possible.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)updateLocation</code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Forces the SDK to update with the user&rsquo;s last known location if possible.</p>
-
-<p>If you want to manually force the SDK to update with the user&rsquo;s last known location, call updateLocation.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.h</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
 	<a name="//api/name/useAdvertisingIdForDeviceId" title="useAdvertisingIdForDeviceId"></a>
 	<h3 class="method-title"><code><a href="#//api/name/useAdvertisingIdForDeviceId">&ndash;&nbsp;useAdvertisingIdForDeviceId</a></code>
 </h3>
@@ -3849,7 +3824,7 @@ location in NSLibraryDirectory.</p>
 				<footer>
 					<div class="footer-copyright">
 						
-						<p class="copyright">Copyright &copy; 2020 Amplitude. All rights reserved. Updated: 2020-08-19</p>
+						<p class="copyright">Copyright &copy; 2020 Amplitude Inc. All rights reserved. Updated: 2020-09-14</p>
 						
 						
 						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1333)</a>.</p>
