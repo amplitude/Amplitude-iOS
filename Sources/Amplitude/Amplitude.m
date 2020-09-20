@@ -389,9 +389,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  * SetUserId: client explicitly initialized with a userId (can be nil).
  * If setUserId is NO, then attempt to load userId from saved eventsData.
  */
-- (void)initializeApiKey:(NSString*)apiKey
-                  userId:(NSString*) userId
-               setUserId:(BOOL) setUserId {
+- (void)initializeApiKey:(NSString *)apiKey
+                  userId:(NSString *)userId
+               setUserId:(BOOL)setUserId {
     if (apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
