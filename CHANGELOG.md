@@ -1,3 +1,8 @@
+## 7.0.1 (Sep 20, 2020)
+* Fix issues for nullable/nonnull declaration in `Amplitude.h`
+* Fix [#286](https://github.com/amplitude/Amplitude-iOS/issues/286)
+* Fix [#285](https://github.com/amplitude/Amplitude-iOS/issues/285)
+
 ## 7.0.0 (Sep 14, 2020)
 
 ### BREAKING CHANGES
