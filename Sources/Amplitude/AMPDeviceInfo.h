@@ -33,7 +33,6 @@
 @property (readonly, strong, nonatomic) NSString *carrier;
 @property (readonly, strong, nonatomic) NSString *country;
 @property (readonly, strong, nonatomic) NSString *language;
-@property (readonly, strong, nonatomic) NSString *advertiserID;
 @property (readonly, strong, nonatomic) NSString *vendorID;
 
 + (NSString*) generateUUID;

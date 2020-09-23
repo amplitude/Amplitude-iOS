@@ -48,7 +48,6 @@
 
 #import "Amplitude.h"
 #import "AmplitudePrivate.h"
-#import "AMPLocationManagerDelegate.h"
 #import "AMPConstants.h"
 #import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
@@ -121,11 +120,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
 
-    CLLocation *_lastKnownLocation;
-    BOOL _locationListeningEnabled;
-    CLLocationManager *_locationManager;
-    AMPLocationManagerDelegate *_locationManagerDelegate;
-
     AMPTrackingOptions *_inputTrackingOptions;
     AMPTrackingOptions *_appliedTrackingOptions;
     NSDictionary *_apiPropertiesTrackingOptions;
@@ -171,10 +165,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return client;
 }
 
-+ (void)updateLocation {
-    [[Amplitude instance] updateLocation];
-}
-
 #pragma mark - Main class methods
 - (instancetype)init {
     return [self initWithInstanceName:nil];
@@ -195,7 +185,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #endif
 
         _initialized = NO;
-        _locationListeningEnabled = YES;
         _sessionId = -1;
         _updateScheduled = NO;
         _updatingCurrently = NO;
@@ -289,15 +278,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
             [self->_backgroundQueue setSuspended:NO];
         }];
-
-        // CLLocationManager must be created on the main thread
-        dispatch_async(dispatch_get_main_queue(), ^{
-            Class CLLocationManager = NSClassFromString(@"CLLocationManager");
-            self->_locationManager = [[CLLocationManager alloc] init];
-            self->_locationManagerDelegate = [[AMPLocationManagerDelegate alloc] init];
-            SEL setDelegate = NSSelectorFromString(@"setDelegate:");
-            [self->_locationManager performSelector:setDelegate withObject:self->_locationManagerDelegate];
-        });
 
         [self addObservers];
     }
@@ -411,9 +391,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  * SetUserId: client explicitly initialized with a userId (can be nil).
  * If setUserId is NO, then attempt to load userId from saved eventsData.
  */
-- (void)initializeApiKey:(NSString*)apiKey
-                  userId:(NSString*) userId
-               setUserId:(BOOL) setUserId {
+- (void)initializeApiKey:(NSString *)apiKey
+                  userId:(NSString *)userId
+               setUserId:(BOOL)setUserId {
     if (apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
@@ -675,32 +655,20 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
-    NSString* advertiserID = _deviceInfo.advertiserID;
-    if ([_appliedTrackingOptions shouldTrackIDFA] && advertiserID) {
-        [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
+    if ([_appliedTrackingOptions shouldTrackIDFA]) {
+        NSString* advertiserID = [self getAdSupportID];
+        if (advertiserID != nil) {
+            [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
+        }
     }
     NSString* vendorID = _deviceInfo.vendorID;
     if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
-    
-    if ([_appliedTrackingOptions shouldTrackLatLng] && _lastKnownLocation != nil) {
-        @synchronized (_locationManager) {
-            NSMutableDictionary *location = [NSMutableDictionary dictionary];
 
-            // Need to use NSInvocation because coordinate selector returns a C struct
-            SEL coordinateSelector = NSSelectorFromString(@"coordinate");
-            NSMethodSignature *coordinateMethodSignature = [_lastKnownLocation methodSignatureForSelector:coordinateSelector];
-            NSInvocation *coordinateInvocation = [NSInvocation invocationWithMethodSignature:coordinateMethodSignature];
-            [coordinateInvocation setTarget:_lastKnownLocation];
-            [coordinateInvocation setSelector:coordinateSelector];
-            [coordinateInvocation invoke];
-            CLLocationCoordinate2D lastKnownLocationCoordinate;
-            [coordinateInvocation getReturnValue:&lastKnownLocationCoordinate];
-
-            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.latitude] forKey:@"lat"];
-            [location setValue:[NSNumber numberWithDouble:lastKnownLocationCoordinate.longitude] forKey:@"lng"];
-
+    if ([_appliedTrackingOptions shouldTrackLatLng] && self.locationInfoBlock != nil) {
+        NSDictionary *location = self.locationInfoBlock();
+        if (location != nil) {
             [apiProperties setValue:location forKey:@"location"];
         }
     }
@@ -1059,8 +1027,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 #endif
-
-    [self updateLocation];
 
     NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
@@ -1435,33 +1401,23 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
-#pragma mark - location methods
-
-- (void)updateLocation {
-    if (_locationListeningEnabled) {
-        CLLocation *location = [_locationManager location];
-        @synchronized (_locationManager) {
-            if (location != nil) {
-                _lastKnownLocation = location;
-            }
-        }
-    }
-}
-
-- (void)enableLocationListening {
-    _locationListeningEnabled = YES;
-    [self updateLocation];
-}
-
-- (void)disableLocationListening {
-    _locationListeningEnabled = NO;
-}
-
 - (void)useAdvertisingIdForDeviceId {
     _useAdvertisingIdForDeviceId = YES;
 }
 
 #pragma mark - Getters for device data
+- (NSString*)getAdSupportID {
+    NSString *result = nil;
+    if (self.adSupportBlock != nil && [_appliedTrackingOptions shouldTrackIDFA]) {
+        result = self.adSupportBlock();
+    }
+    // IDFA access was denied or still in progress.
+    if ([result isEqualToString:@"00000000-0000-0000-0000-000000000000"]) {
+        result = nil;
+    }
+    return result;
+}
+
 - (NSString*)getDeviceId {
     return self.deviceId;
 }
@@ -1484,7 +1440,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSString*)_getDeviceId {
     NSString *deviceId = nil;
     if (_useAdvertisingIdForDeviceId && [_appliedTrackingOptions shouldTrackIDFA]) {
-        deviceId = _deviceInfo.advertiserID;
+        deviceId = [self getAdSupportID];
     }
 
     // return identifierForVendor
