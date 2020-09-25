@@ -176,6 +176,14 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 @property (nonatomic, strong, nullable) AMPLocationInfoBlock locationInfoBlock;
 
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+/**
+ Show Amplitude Event Explorer when you're running a debug build.
+ */
+@property (nonatomic, assign, readwrite) BOOL showEventExplorer;
+
+#endif
+
 #pragma mark - Methods
 
 /**-----------------------------------------------------------------------------

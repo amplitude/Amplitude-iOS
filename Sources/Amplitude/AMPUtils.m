@@ -154,4 +154,30 @@
 #endif
 }
 
+#if !TARGET_OS_OSX
++ (UIApplication *)getSharedApplication {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return [UIApplication performSelector:@selector(sharedApplication)];
+    }
+    return nil;
+}
+#endif
+
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
++ (NSInteger)barBottomOffset {
+    return [self statusBarHeight] > 24.0 ? 30 : 0;
+}
+
++ (CGFloat)statusBarHeight {
+    CGSize statusBarSize;
+    if (@available(iOS 13.0, *)) {
+        statusBarSize = [[[[AMPUtils getSharedApplication].keyWindow windowScene] statusBarManager] statusBarFrame].size;
+    } else {
+        statusBarSize = [[AMPUtils getSharedApplication] statusBarFrame].size;
+    }
+    return MIN(statusBarSize.width, statusBarSize.height);
+}
+#endif
+
 @end

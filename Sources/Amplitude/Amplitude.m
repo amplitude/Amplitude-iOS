@@ -73,6 +73,10 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+#import "AMPEventExplorer.h"
+#endif
+
 @interface Amplitude()
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
@@ -83,7 +87,9 @@
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, assign) BOOL backoffUpload;
 @property (nonatomic, assign) int backoffUploadBatchSize;
-
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+@property (nonatomic, strong) AMPEventExplorer *eventExplorer;
+#endif
 @end
 
 NSString *const kAMPSessionStartEvent = @"session_start";
@@ -427,7 +433,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // UIApplication methods are only allowed on the main thread so need to dispatch this synchronously to the main thread.
         void (^checkInForeground)(void) = ^{
         #if !TARGET_OS_OSX
-            UIApplication *app = [self getSharedApplication];
+            UIApplication *app = [AMPUtils getSharedApplication];
             if (app != nil) {
                 UIApplicationState state = app.applicationState;
                 if (state != UIApplicationStateBackground) {
@@ -448,18 +454,23 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         };
         [self runSynchronouslyOnMainQueue:checkInForeground];
         _initialized = YES;
-    }
-}
+        
+        #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+        // Release build
+        #if !RELEASE
+        if (self.showEventExplorer) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void) {
 
-#if !TARGET_OS_OSX
-- (UIApplication *)getSharedApplication {
-    Class UIApplicationClass = NSClassFromString(@"UIApplication");
-    if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
-        return [UIApplication performSelector:@selector(sharedApplication)];
+                if (self.eventExplorer == nil) {
+                    self.eventExplorer = [[AMPEventExplorer alloc] initWithInstanceName:self.instanceName];
+                }
+                [self.eventExplorer showBubbleView];
+            });
+        }
+        #endif
+        #endif
     }
-    return nil;
 }
-#endif
 
 /**
  * Run a block in the background. If already in the background, run immediately.
@@ -1017,7 +1028,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterForeground {
 #if !TARGET_OS_OSX
-    UIApplication *app = [self getSharedApplication];
+    UIApplication *app = [AMPUtils getSharedApplication];
     if (app == nil) {
         return;
     }
@@ -1041,7 +1052,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)enterBackground {
 #if !TARGET_OS_OSX
-    UIApplication *app = [self getSharedApplication];
+    UIApplication *app = [AMPUtils getSharedApplication];
     if (app == nil) {
         return;
     }
@@ -1068,7 +1079,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (void)endBackgroundTaskIfNeeded {
 #if !TARGET_OS_OSX
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
-        UIApplication *app = [self getSharedApplication];
+        UIApplication *app = [AMPUtils getSharedApplication];
         if (app == nil) {
             return;
         }

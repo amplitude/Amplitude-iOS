@@ -18,13 +18,6 @@
 #import "AMPConstants.h"
 #import "AMPDeviceInfo.h"
 
-// expose private methods for unit testing
-@interface AMPDeviceInfo (Tests)
-
-+ (NSString*)getAdvertiserID:(int)maxAttempts;
-
-@end
-
 @interface DeviceInfoTests : XCTestCase
 
 @end
@@ -57,8 +50,10 @@
 - (void)testOsName {
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
     XCTAssertEqualObjects(@"macos", _deviceInfo.osName);
-#elif TARGET_OS_IPHONE
+#elif TARGET_OS_IOS
     XCTAssertEqualObjects(@"ios", _deviceInfo.osName);
+#elif TARGET_OS_TV
+    XCTAssertEqualObjects(@"tvos", _deviceInfo.osName);
 #endif
 }
 
@@ -66,7 +61,7 @@
 #if !TARGET_OS_OSX
     XCTAssertEqualObjects([[UIDevice currentDevice] systemVersion], _deviceInfo.osVersion);
 #else
-    XCTAssertEqualObjects([[NSProcessInfo processInfo] operatingSystemVersionString], _deviceInfo.osVersion);
+    XCTAssertTrue([[[NSProcessInfo processInfo] operatingSystemVersionString] containsString: _deviceInfo.osVersion]);
 #endif
 }
 
@@ -80,11 +75,6 @@
 #else
     XCTAssertTrue([_deviceInfo.model containsString:@"Mac"]);
 #endif
-}
-
-- (void)testCarrier {
-    // TODO: Not sure how to test this on the simulator
-//    XCTAssertEqualObjects(nil, _deviceInfo.carrier);
 }
 
 - (void)testCountry {
@@ -101,7 +91,6 @@
     XCTAssertEqualObjects(_deviceInfo.vendorID, [[[UIDevice currentDevice] identifierForVendor] UUIDString]);
 }
 #endif
-
 
 - (void)testGenerateUUID {
     NSString *a = [AMPDeviceInfo generateUUID];
