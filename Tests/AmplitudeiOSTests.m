@@ -88,9 +88,12 @@
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
     XCTAssertEqualObjects([event objectForKey:@"os_name"], @"macos");
     XCTAssertEqualObjects([event objectForKey:@"platform"], @"macOS");
-#elif TARGET_OS_IPHONE
+#elif TARGET_OS_IOS
     XCTAssertEqualObjects([event objectForKey:@"os_name"], @"ios");
     XCTAssertEqualObjects([event objectForKey:@"platform"], @"iOS");
+#elif TARGET_OS_TV
+    XCTAssertEqualObjects([event objectForKey:@"os_name"], @"tvos");
+    XCTAssertEqualObjects([event objectForKey:@"platform"], @"tvOS");
 #endif
 }
 

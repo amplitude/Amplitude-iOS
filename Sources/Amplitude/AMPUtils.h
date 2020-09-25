@@ -22,7 +22,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
+#endif
 
 @interface AMPUtils : NSObject
 
@@ -32,8 +34,13 @@
 + (NSDictionary*)validateGroups:(NSDictionary*) obj;
 + (NSString*)platformDataDirectory;
 
+#if !TARGET_OS_OSX
 + (UIApplication *)getSharedApplication;
+#endif
+
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 + (NSInteger)barBottomOffset;
 + (CGFloat)statusBarHeight;
+#endif
 
 @end

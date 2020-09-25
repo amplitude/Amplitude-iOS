@@ -58,7 +58,6 @@
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
-#import "AMPEventExplorer.h"
 #import <math.h>
 #import <CommonCrypto/CommonDigest.h>
 
@@ -74,6 +73,10 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+#import "AMPEventExplorer.h"
+#endif
+
 @interface Amplitude()
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
@@ -84,8 +87,9 @@
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, assign) BOOL backoffUpload;
 @property (nonatomic, assign) int backoffUploadBatchSize;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 @property (nonatomic, strong) AMPEventExplorer *eventExplorer;
-
+#endif
 @end
 
 NSString *const kAMPSessionStartEvent = @"session_start";
@@ -451,6 +455,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self runSynchronouslyOnMainQueue:checkInForeground];
         _initialized = YES;
         
+        #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
         // Release build
         #if !RELEASE
         if (self.showEventExplorer) {
@@ -462,6 +467,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 [self.eventExplorer showBubbleView];
             });
         }
+        #endif
         #endif
     }
 }

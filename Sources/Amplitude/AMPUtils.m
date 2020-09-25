@@ -34,7 +34,6 @@
 #endif
 
 #import "AMPUtils.h"
-#import <UIKit/UIKit.h>
 
 @interface AMPUtils()
 @end
@@ -155,6 +154,7 @@
 #endif
 }
 
+#if !TARGET_OS_OSX
 + (UIApplication *)getSharedApplication {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
@@ -162,7 +162,9 @@
     }
     return nil;
 }
+#endif
 
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 + (NSInteger)barBottomOffset {
     return [self statusBarHeight] > 24.0 ? 30 : 0;
 }
@@ -176,5 +178,6 @@
     }
     return MIN(statusBarSize.width, statusBarSize.height);
 }
+#endif
 
 @end

@@ -16,13 +16,6 @@
 #import "AMPUtils.h"
 #import "AMPTrackingOptions.h"
 
-// expose private methods for unit testing
-@interface AMPDeviceInfo (Tests)
-
-+ (NSString*)getAdvertiserID:(int) maxAttempts;
-
-@end
-
 @interface Amplitude (Tests)
 
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
@@ -881,6 +874,7 @@
     XCTAssertTrue([[apiProps objectForKey:@"ios_idfa"] isEqualToString:value]);
 }
 
+#if TARGET_OS_IOS
 -(void)testIdfaAsDeviceId {
     AMPTrackingOptions *opts = [AMPTrackingOptions options]; // has shouldTrackIDFA set.
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:@"idfa"];
@@ -927,6 +921,7 @@
     NSString *deviceId = [client getDeviceId];
     XCTAssertFalse([deviceId isEqual:value]);
 }
+#endif
 
 -(void)testIdfvAsDeviceId {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:@"idfv"];
