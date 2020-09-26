@@ -1,3 +1,6 @@
+### As of September 25, 2020 CHANGELOG.md is no longer manually updated. 
+Please check the [releases page](https://github.com/amplitude/Amplitude-iOS/releases) for up to date changes.
+
 ## 7.0.1 (Sep 20, 2020)
 * Fix issues for nullable/nonnull declaration in `Amplitude.h`
 * Fix [#286](https://github.com/amplitude/Amplitude-iOS/issues/286)
