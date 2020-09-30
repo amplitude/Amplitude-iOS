@@ -1,0 +1,30 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+        # os: [macos-10.14, ubuntu-18.04] @TODO See if MacOS test can be fixed
+        os: [ubuntu-18.04]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Check out Git repository
+      uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: yarn install
+      run: |
+        yarn install --frozen-lockfile
+
+    - name: Build and run tests
+      run: |
+        make test
