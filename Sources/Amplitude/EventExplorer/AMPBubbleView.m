@@ -48,9 +48,9 @@
 }
 
 - (void)loadViewFromNib {
-    NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"Amplitude.bundle"];
-    NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
-    UINib *nib = [UINib nibWithNibName:@"AMPBubbleView" bundle:resBundle];
+    NSBundle *bundle = [NSBundle bundleForClass:[AMPBubbleView class]];
+    UINib *nib = [UINib nibWithNibName:@"AMPBubbleView" bundle:bundle];
+    
     NSArray *views = [nib instantiateWithOwner:self options:nil];
     UIView *view = [views objectAtIndex:0];
     view.frame = self.bounds;

@@ -6,12 +6,18 @@ Pod::Spec.new do |s|
   s.license                = { :type => "MIT" }
   s.author                 = { "Amplitude" => "dev@amplitude.com" }
   s.source                 = { :git => "https://github.com/amplitude/Amplitude-iOS.git", :tag => "v#{s.version}" }
-  s.ios.deployment_target  = '10.0'
-  s.tvos.deployment_target = '9.0'
-  s.osx.deployment_target  = '10.10'
-  s.source_files           = 'Sources/Amplitude/*.{h,m}', 'Sources/Amplitude/SSLCertificatePinning/*.{h,m}'
-  s.resources              = 'Sources/Amplitude/*.der'
   s.requires_arc           = true
-  s.library 	           = 'sqlite3.0'
-  s.ios.resource_bundles   = {'Amplitude' => ['Sources/Amplitude/*.xcassets', 'Sources/Amplitude/*.xib']}
+  s.library                = 'sqlite3.0'
+  
+  s.ios.deployment_target  = '10.0'
+  s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}'
+  s.ios.resources          = 'Sources/Amplitude/**/*.{der,xib,png}'
+  
+  s.tvos.deployment_target = '9.0'
+  s.tvos.source_files      = 'Sources/Amplitude/*.{h,m}', 'Sources/Amplitude/SSLPinning/*.{h,m}'
+  s.tvos.resources          = 'Sources/Amplitude/**/*.{der}'
+  
+  s.osx.deployment_target  = '10.10'
+  s.osx.source_files       = 'Sources/Amplitude/*.{h,m}', 'Sources/Amplitude/SSLPinning/*.{h,m}'
+  s.osx.resources          = 'Sources/Amplitude/**/*.{der}'
 end

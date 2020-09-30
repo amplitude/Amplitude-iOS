@@ -10,102 +10,101 @@
 		1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F78F2521B811003DCE07 /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76C2521B70D003DCE07 /* AMPTrackingOptions.m */; };
-		1279F7902521B811003DCE07 /* Amplitude.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7732521B70D003DCE07 /* Amplitude.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7912521B811003DCE07 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7772521B70D003DCE07 /* AMPURLConnection.m */; };
-		1279F7922521B811003DCE07 /* AMPIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7642521B70D003DCE07 /* AMPIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7932521B811003DCE07 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76E2521B70D003DCE07 /* AMPURLSession.m */; };
-		1279F7942521B811003DCE07 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7672521B70D003DCE07 /* AMPUtils.m */; };
-		1279F7952521B811003DCE07 /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7752521B70D003DCE07 /* AMPDeviceInfo.m */; };
-		1279F7962521B811003DCE07 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7802521B70D003DCE07 /* AMPURLSession.h */; };
-		1279F7972521B811003DCE07 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F77E2521B70D003DCE07 /* AMPConstants.m */; };
-		1279F7982521B811003DCE07 /* AMPRevenue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77B2521B70D003DCE07 /* AMPRevenue.h */; };
-		1279F7992521B811003DCE07 /* AMPURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7632521B70D003DCE07 /* AMPURLConnection.h */; };
-		1279F79A2521B811003DCE07 /* AMPDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7662521B70D003DCE07 /* AMPDatabaseHelper.h */; };
-		1279F79B2521B811003DCE07 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7792521B70D003DCE07 /* AmplitudePrivate.h */; };
-		1279F79C2521B811003DCE07 /* AMPDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7652521B70D003DCE07 /* AMPDeviceInfo.h */; };
-		1279F79D2521B811003DCE07 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7762521B70D003DCE07 /* AMPIdentify.m */; };
-		1279F79E2521B811003DCE07 /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7692521B70D003DCE07 /* AMPConstants.h */; };
-		1279F79F2521B811003DCE07 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7742521B70D003DCE07 /* AMPDatabaseHelper.m */; };
-		1279F7A02521B811003DCE07 /* Amplitude.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7832521B70D003DCE07 /* Amplitude.m */; };
-		1279F7A12521B811003DCE07 /* AMPRevenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76B2521B70D003DCE07 /* AMPRevenue.m */; };
-		1279F7A22521B811003DCE07 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7682521B70D003DCE07 /* AMPConfigManager.m */; };
-		1279F7A32521B811003DCE07 /* Amplitude+SSLPinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77A2521B70D003DCE07 /* Amplitude+SSLPinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7A42521B811003DCE07 /* AMPTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7822521B70D003DCE07 /* AMPTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7A52521B811003DCE07 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77D2521B70D003DCE07 /* AMPConfigManager.h */; };
-		1279F7A62521B811003DCE07 /* AMPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77F2521B70D003DCE07 /* AMPUtils.h */; };
-		1279F7AD2521B812003DCE07 /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76C2521B70D003DCE07 /* AMPTrackingOptions.m */; };
-		1279F7AE2521B812003DCE07 /* Amplitude.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7732521B70D003DCE07 /* Amplitude.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7AF2521B812003DCE07 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7772521B70D003DCE07 /* AMPURLConnection.m */; };
-		1279F7B02521B812003DCE07 /* AMPIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7642521B70D003DCE07 /* AMPIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7B12521B812003DCE07 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76E2521B70D003DCE07 /* AMPURLSession.m */; };
-		1279F7B22521B812003DCE07 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7672521B70D003DCE07 /* AMPUtils.m */; };
-		1279F7B32521B812003DCE07 /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7752521B70D003DCE07 /* AMPDeviceInfo.m */; };
-		1279F7B42521B812003DCE07 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7802521B70D003DCE07 /* AMPURLSession.h */; };
-		1279F7B52521B812003DCE07 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F77E2521B70D003DCE07 /* AMPConstants.m */; };
-		1279F7B62521B812003DCE07 /* AMPRevenue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77B2521B70D003DCE07 /* AMPRevenue.h */; };
-		1279F7B72521B812003DCE07 /* AMPURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7632521B70D003DCE07 /* AMPURLConnection.h */; };
-		1279F7B82521B812003DCE07 /* AMPDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7662521B70D003DCE07 /* AMPDatabaseHelper.h */; };
-		1279F7B92521B812003DCE07 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7792521B70D003DCE07 /* AmplitudePrivate.h */; };
-		1279F7BA2521B812003DCE07 /* AMPDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7652521B70D003DCE07 /* AMPDeviceInfo.h */; };
-		1279F7BB2521B812003DCE07 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7762521B70D003DCE07 /* AMPIdentify.m */; };
-		1279F7BC2521B812003DCE07 /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7692521B70D003DCE07 /* AMPConstants.h */; };
-		1279F7BD2521B812003DCE07 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7742521B70D003DCE07 /* AMPDatabaseHelper.m */; };
-		1279F7BE2521B812003DCE07 /* Amplitude.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7832521B70D003DCE07 /* Amplitude.m */; };
-		1279F7BF2521B812003DCE07 /* AMPRevenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76B2521B70D003DCE07 /* AMPRevenue.m */; };
-		1279F7C02521B812003DCE07 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7682521B70D003DCE07 /* AMPConfigManager.m */; };
-		1279F7C12521B812003DCE07 /* Amplitude+SSLPinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77A2521B70D003DCE07 /* Amplitude+SSLPinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7C22521B812003DCE07 /* AMPTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7822521B70D003DCE07 /* AMPTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7C32521B812003DCE07 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77D2521B70D003DCE07 /* AMPConfigManager.h */; };
-		1279F7C42521B812003DCE07 /* AMPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77F2521B70D003DCE07 /* AMPUtils.h */; };
-		1279F7CB2521B812003DCE07 /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76C2521B70D003DCE07 /* AMPTrackingOptions.m */; };
-		1279F7CC2521B812003DCE07 /* Amplitude.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7732521B70D003DCE07 /* Amplitude.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7CD2521B812003DCE07 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7772521B70D003DCE07 /* AMPURLConnection.m */; };
-		1279F7CE2521B812003DCE07 /* AMPIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7642521B70D003DCE07 /* AMPIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7CF2521B812003DCE07 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76E2521B70D003DCE07 /* AMPURLSession.m */; };
-		1279F7D02521B812003DCE07 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7672521B70D003DCE07 /* AMPUtils.m */; };
-		1279F7D12521B812003DCE07 /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7752521B70D003DCE07 /* AMPDeviceInfo.m */; };
-		1279F7D22521B812003DCE07 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7802521B70D003DCE07 /* AMPURLSession.h */; };
-		1279F7D32521B812003DCE07 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F77E2521B70D003DCE07 /* AMPConstants.m */; };
-		1279F7D42521B812003DCE07 /* AMPRevenue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77B2521B70D003DCE07 /* AMPRevenue.h */; };
-		1279F7D52521B812003DCE07 /* AMPURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7632521B70D003DCE07 /* AMPURLConnection.h */; };
-		1279F7D62521B812003DCE07 /* AMPDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7662521B70D003DCE07 /* AMPDatabaseHelper.h */; };
-		1279F7D72521B812003DCE07 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7792521B70D003DCE07 /* AmplitudePrivate.h */; };
-		1279F7D82521B812003DCE07 /* AMPDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7652521B70D003DCE07 /* AMPDeviceInfo.h */; };
-		1279F7D92521B812003DCE07 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7762521B70D003DCE07 /* AMPIdentify.m */; };
-		1279F7DA2521B812003DCE07 /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7692521B70D003DCE07 /* AMPConstants.h */; };
-		1279F7DB2521B812003DCE07 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7742521B70D003DCE07 /* AMPDatabaseHelper.m */; };
-		1279F7DC2521B812003DCE07 /* Amplitude.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7832521B70D003DCE07 /* Amplitude.m */; };
-		1279F7DD2521B812003DCE07 /* AMPRevenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76B2521B70D003DCE07 /* AMPRevenue.m */; };
-		1279F7DE2521B812003DCE07 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7682521B70D003DCE07 /* AMPConfigManager.m */; };
-		1279F7DF2521B812003DCE07 /* Amplitude+SSLPinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77A2521B70D003DCE07 /* Amplitude+SSLPinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7E02521B812003DCE07 /* AMPTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7822521B70D003DCE07 /* AMPTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1279F7E12521B812003DCE07 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77D2521B70D003DCE07 /* AMPConfigManager.h */; };
-		1279F7E22521B812003DCE07 /* AMPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F77F2521B70D003DCE07 /* AMPUtils.h */; };
-		1279F7E92521B81F003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7782521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */; };
-		1279F7EA2521B81F003DCE07 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76F2521B70D003DCE07 /* ISPCertificatePinning.m */; };
-		1279F7EB2521B81F003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F76A2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */; };
-		1279F7EC2521B81F003DCE07 /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7862521B70D003DCE07 /* ISPCertificatePinning.h */; };
-		1279F7ED2521B81F003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7622521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */; };
-		1279F7EE2521B81F003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F77C2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */; };
-		1279F7F52521B820003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7782521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */; };
-		1279F7F62521B820003DCE07 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76F2521B70D003DCE07 /* ISPCertificatePinning.m */; };
-		1279F7F72521B820003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F76A2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */; };
-		1279F7F82521B820003DCE07 /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7862521B70D003DCE07 /* ISPCertificatePinning.h */; };
-		1279F7F92521B820003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7622521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */; };
-		1279F7FA2521B820003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F77C2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */; };
-		1279F8012521B821003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7782521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */; };
-		1279F8022521B821003DCE07 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76F2521B70D003DCE07 /* ISPCertificatePinning.m */; };
-		1279F8032521B821003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F76A2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */; };
-		1279F8042521B821003DCE07 /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7862521B70D003DCE07 /* ISPCertificatePinning.h */; };
-		1279F8052521B821003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7622521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */; };
-		1279F8062521B821003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F77C2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */; };
-		1279F83D2521B970003DCE07 /* AMPBubbleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7722521B70D003DCE07 /* AMPBubbleView.h */; };
-		1279F84A2521B97A003DCE07 /* AMPEventExplorer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7812521B70D003DCE07 /* AMPEventExplorer.h */; };
-		1279F8572521B980003DCE07 /* AMPInfoViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F7712521B70D003DCE07 /* AMPInfoViewController.h */; };
-		1279F87C2521BDDA003DCE07 /* AMPBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7842521B70D003DCE07 /* AMPBubbleView.m */; };
-		1279F87D2521BDDA003DCE07 /* AMPInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F7852521B70D003DCE07 /* AMPInfoViewController.m */; };
-		1279F87E2521BDDA003DCE07 /* AMPEventExplorer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F76D2521B70D003DCE07 /* AMPEventExplorer.m */; };
+		1279F8F125244E8D003DCE07 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
+		1279F8F225244E8D003DCE07 /* AMPDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */; };
+		1279F8F325244E8D003DCE07 /* AMPIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C125244D78003DCE07 /* AMPIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F8F425244E8D003DCE07 /* Amplitude+SSLPinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D925244D78003DCE07 /* Amplitude+SSLPinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F8F525244E8D003DCE07 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E825244D78003DCE07 /* AMPURLSession.h */; };
+		1279F8F625244E8D003DCE07 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D825244D78003DCE07 /* AmplitudePrivate.h */; };
+		1279F8F725244E8D003DCE07 /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C625244D78003DCE07 /* AMPConstants.h */; };
+		1279F8F825244E8D003DCE07 /* AMPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E725244D78003DCE07 /* AMPUtils.h */; };
+		1279F8F925244E8D003DCE07 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E525244D78003DCE07 /* AMPConfigManager.h */; };
+		1279F8FA25244E8D003DCE07 /* Amplitude.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D325244D78003DCE07 /* Amplitude.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F8FB25244E8D003DCE07 /* AMPTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E925244D78003DCE07 /* AMPTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F8FC25244E8D003DCE07 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C425244D78003DCE07 /* AMPUtils.m */; };
+		1279F8FD25244E8D003DCE07 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D625244D78003DCE07 /* AMPIdentify.m */; };
+		1279F8FE25244E8D003DCE07 /* AMPRevenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C725244D78003DCE07 /* AMPRevenue.m */; };
+		1279F8FF25244E8D003DCE07 /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */; };
+		1279F90025244E8D003DCE07 /* AMPURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C025244D78003DCE07 /* AMPURLConnection.h */; };
+		1279F90125244E8D003DCE07 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D125244D78003DCE07 /* AMPURLSession.m */; };
+		1279F90225244E8D003DCE07 /* AMPDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C325244D78003DCE07 /* AMPDatabaseHelper.h */; };
+		1279F90325244E8D003DCE07 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D725244D78003DCE07 /* AMPURLConnection.m */; };
+		1279F90425244E8D003DCE07 /* Amplitude.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8EA25244D78003DCE07 /* Amplitude.m */; };
+		1279F90525244E8D003DCE07 /* AMPRevenue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8DA25244D78003DCE07 /* AMPRevenue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F90625244E8D003DCE07 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
+		1279F90725244E8D003DCE07 /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */; };
+		1279F90825244E8D003DCE07 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */; };
+		1279F90F25244E8E003DCE07 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
+		1279F91025244E8E003DCE07 /* AMPDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */; };
+		1279F91125244E8E003DCE07 /* AMPIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C125244D78003DCE07 /* AMPIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F91225244E8E003DCE07 /* Amplitude+SSLPinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D925244D78003DCE07 /* Amplitude+SSLPinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F91325244E8E003DCE07 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E825244D78003DCE07 /* AMPURLSession.h */; };
+		1279F91425244E8E003DCE07 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D825244D78003DCE07 /* AmplitudePrivate.h */; };
+		1279F91525244E8E003DCE07 /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C625244D78003DCE07 /* AMPConstants.h */; };
+		1279F91625244E8E003DCE07 /* AMPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E725244D78003DCE07 /* AMPUtils.h */; };
+		1279F91725244E8E003DCE07 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E525244D78003DCE07 /* AMPConfigManager.h */; };
+		1279F91825244E8E003DCE07 /* Amplitude.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D325244D78003DCE07 /* Amplitude.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F91925244E8E003DCE07 /* AMPTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E925244D78003DCE07 /* AMPTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F91A25244E8E003DCE07 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C425244D78003DCE07 /* AMPUtils.m */; };
+		1279F91B25244E8E003DCE07 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D625244D78003DCE07 /* AMPIdentify.m */; };
+		1279F91C25244E8E003DCE07 /* AMPRevenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C725244D78003DCE07 /* AMPRevenue.m */; };
+		1279F91D25244E8E003DCE07 /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */; };
+		1279F91E25244E8E003DCE07 /* AMPURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C025244D78003DCE07 /* AMPURLConnection.h */; };
+		1279F91F25244E8E003DCE07 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D125244D78003DCE07 /* AMPURLSession.m */; };
+		1279F92025244E8E003DCE07 /* AMPDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C325244D78003DCE07 /* AMPDatabaseHelper.h */; };
+		1279F92125244E8E003DCE07 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D725244D78003DCE07 /* AMPURLConnection.m */; };
+		1279F92225244E8E003DCE07 /* Amplitude.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8EA25244D78003DCE07 /* Amplitude.m */; };
+		1279F92325244E8E003DCE07 /* AMPRevenue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8DA25244D78003DCE07 /* AMPRevenue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F92425244E8E003DCE07 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
+		1279F92525244E8E003DCE07 /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */; };
+		1279F92625244E8E003DCE07 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */; };
+		1279F92D25244E8F003DCE07 /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
+		1279F92E25244E8F003DCE07 /* AMPDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */; };
+		1279F92F25244E8F003DCE07 /* AMPIdentify.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C125244D78003DCE07 /* AMPIdentify.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F93025244E8F003DCE07 /* Amplitude+SSLPinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D925244D78003DCE07 /* Amplitude+SSLPinning.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F93125244E8F003DCE07 /* AMPURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E825244D78003DCE07 /* AMPURLSession.h */; };
+		1279F93225244E8F003DCE07 /* AmplitudePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D825244D78003DCE07 /* AmplitudePrivate.h */; };
+		1279F93325244E8F003DCE07 /* AMPConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C625244D78003DCE07 /* AMPConstants.h */; };
+		1279F93425244E8F003DCE07 /* AMPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E725244D78003DCE07 /* AMPUtils.h */; };
+		1279F93525244E8F003DCE07 /* AMPConfigManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E525244D78003DCE07 /* AMPConfigManager.h */; };
+		1279F93625244E8F003DCE07 /* Amplitude.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8D325244D78003DCE07 /* Amplitude.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F93725244E8F003DCE07 /* AMPTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E925244D78003DCE07 /* AMPTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F93825244E8F003DCE07 /* AMPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C425244D78003DCE07 /* AMPUtils.m */; };
+		1279F93925244E8F003DCE07 /* AMPIdentify.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D625244D78003DCE07 /* AMPIdentify.m */; };
+		1279F93A25244E8F003DCE07 /* AMPRevenue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C725244D78003DCE07 /* AMPRevenue.m */; };
+		1279F93B25244E8F003DCE07 /* AMPTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */; };
+		1279F93C25244E8F003DCE07 /* AMPURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C025244D78003DCE07 /* AMPURLConnection.h */; };
+		1279F93D25244E8F003DCE07 /* AMPURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D125244D78003DCE07 /* AMPURLSession.m */; };
+		1279F93E25244E8F003DCE07 /* AMPDatabaseHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C325244D78003DCE07 /* AMPDatabaseHelper.h */; };
+		1279F93F25244E8F003DCE07 /* AMPURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D725244D78003DCE07 /* AMPURLConnection.m */; };
+		1279F94025244E8F003DCE07 /* Amplitude.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8EA25244D78003DCE07 /* Amplitude.m */; };
+		1279F94125244E8F003DCE07 /* AMPRevenue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8DA25244D78003DCE07 /* AMPRevenue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1279F94225244E8F003DCE07 /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
+		1279F94325244E8F003DCE07 /* AMPDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */; };
+		1279F94425244E8F003DCE07 /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */; };
+		1279F96325244EBA003DCE07 /* AMPInfoViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8DF25244D78003DCE07 /* AMPInfoViewController.h */; };
+		1279F96425244EBA003DCE07 /* AMPEventExplorer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8DD25244D78003DCE07 /* AMPEventExplorer.m */; };
+		1279F96525244EBA003DCE07 /* AMPInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E425244D78003DCE07 /* AMPInfoViewController.m */; };
+		1279F96625244EBA003DCE07 /* AMPBubbleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1279F8DC25244D78003DCE07 /* AMPBubbleView.xib */; };
+		1279F96725244EBA003DCE07 /* AMPBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E325244D78003DCE07 /* AMPBubbleView.m */; };
+		1279F96825244EBA003DCE07 /* AMPEventExplorer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E125244D78003DCE07 /* AMPEventExplorer.h */; };
+		1279F96925244EBA003DCE07 /* AMPBubbleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8E025244D78003DCE07 /* AMPBubbleView.h */; };
+		1279F96A25244EBA003DCE07 /* AMPInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1279F8E225244D78003DCE07 /* AMPInfoViewController.xib */; };
+		1279F97825244EC8003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8CD25244D78003DCE07 /* ISPPinnedNSURLSessionDelegate.m */; };
+		1279F97925244EC8003DCE07 /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8CF25244D78003DCE07 /* ISPCertificatePinning.h */; };
+		1279F97A25244EC8003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8C925244D78003DCE07 /* ISPPinnedNSURLSessionDelegate.h */; };
+		1279F97B25244EC8003DCE07 /* ISPCertificatePinning.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8CC25244D78003DCE07 /* ISPCertificatePinning.m */; };
+		1279F97C25244EC8003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8CE25244D78003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */; };
+		1279F97D25244EC8003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279F8CA25244D78003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */; };
+		1279F9A625245CE1003DCE07 /* logo-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F99D25245CE1003DCE07 /* logo-button.png */; };
+		1279F9A725245CE1003DCE07 /* cancel@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F99E25245CE1003DCE07 /* cancel@3x.png */; };
+		1279F9A825245CE1003DCE07 /* cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F99F25245CE1003DCE07 /* cancel.png */; };
+		1279F9A925245CE1003DCE07 /* cancel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F9A025245CE1003DCE07 /* cancel@2x.png */; };
+		1279F9AA25245CE1003DCE07 /* logo-button@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F9A125245CE1003DCE07 /* logo-button@3x.png */; };
+		1279F9AB25245CE1003DCE07 /* logo-banner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F9A225245CE1003DCE07 /* logo-banner@2x.png */; };
+		1279F9AC25245CE1003DCE07 /* logo-banner@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F9A325245CE1003DCE07 /* logo-banner@3x.png */; };
+		1279F9AD25245CE1003DCE07 /* logo-button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F9A425245CE1003DCE07 /* logo-button@2x.png */; };
+		1279F9AE25245CE1003DCE07 /* logo-banner.png in Resources */ = {isa = PBXBuildFile; fileRef = 1279F9A525245CE1003DCE07 /* logo-banner.png */; };
 		12C972B824105B2C00E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972AF24105B2C00E9CDDB /* Amplitude.framework */; };
 		12C972D424105C3600E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972CB24105C3600E9CDDB /* Amplitude.framework */; };
 		12C972F024105C6500E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972E724105C6500E9CDDB /* Amplitude.framework */; };
@@ -183,47 +182,55 @@
 		124CDD7923EFD2C5004C7B27 /* Podfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile.lock; sourceTree = "<group>"; };
 		124CDD7A23EFD2C5004C7B27 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		124CDD7B23EFD2D4004C7B27 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		1279F7622521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLSessionDelegate.h; sourceTree = "<group>"; };
-		1279F7632521B70D003DCE07 /* AMPURLConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPURLConnection.h; sourceTree = "<group>"; };
-		1279F7642521B70D003DCE07 /* AMPIdentify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPIdentify.h; sourceTree = "<group>"; };
-		1279F7652521B70D003DCE07 /* AMPDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPDeviceInfo.h; sourceTree = "<group>"; };
-		1279F7662521B70D003DCE07 /* AMPDatabaseHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPDatabaseHelper.h; sourceTree = "<group>"; };
-		1279F7672521B70D003DCE07 /* AMPUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPUtils.m; sourceTree = "<group>"; };
-		1279F7682521B70D003DCE07 /* AMPConfigManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPConfigManager.m; sourceTree = "<group>"; };
-		1279F7692521B70D003DCE07 /* AMPConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPConstants.h; sourceTree = "<group>"; };
-		1279F76A2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLConnectionDelegate.h; sourceTree = "<group>"; };
-		1279F76B2521B70D003DCE07 /* AMPRevenue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPRevenue.m; sourceTree = "<group>"; };
-		1279F76C2521B70D003DCE07 /* AMPTrackingOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPTrackingOptions.m; sourceTree = "<group>"; };
-		1279F76D2521B70D003DCE07 /* AMPEventExplorer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPEventExplorer.m; sourceTree = "<group>"; };
-		1279F76E2521B70D003DCE07 /* AMPURLSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPURLSession.m; sourceTree = "<group>"; };
-		1279F76F2521B70D003DCE07 /* ISPCertificatePinning.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISPCertificatePinning.m; sourceTree = "<group>"; };
-		1279F7702521B70D003DCE07 /* AppledocSettings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppledocSettings.plist; sourceTree = "<group>"; };
-		1279F7712521B70D003DCE07 /* AMPInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPInfoViewController.h; sourceTree = "<group>"; };
-		1279F7722521B70D003DCE07 /* AMPBubbleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPBubbleView.h; sourceTree = "<group>"; };
-		1279F7732521B70D003DCE07 /* Amplitude.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Amplitude.h; sourceTree = "<group>"; };
-		1279F7742521B70D003DCE07 /* AMPDatabaseHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPDatabaseHelper.m; sourceTree = "<group>"; };
-		1279F7752521B70D003DCE07 /* AMPDeviceInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPDeviceInfo.m; sourceTree = "<group>"; };
-		1279F7762521B70D003DCE07 /* AMPIdentify.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPIdentify.m; sourceTree = "<group>"; };
-		1279F7772521B70D003DCE07 /* AMPURLConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPURLConnection.m; sourceTree = "<group>"; };
-		1279F7782521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLSessionDelegate.m; sourceTree = "<group>"; };
-		1279F7792521B70D003DCE07 /* AmplitudePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudePrivate.h; sourceTree = "<group>"; };
-		1279F77A2521B70D003DCE07 /* Amplitude+SSLPinning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Amplitude+SSLPinning.h"; sourceTree = "<group>"; };
-		1279F77B2521B70D003DCE07 /* AMPRevenue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPRevenue.h; sourceTree = "<group>"; };
-		1279F77C2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLConnectionDelegate.m; sourceTree = "<group>"; };
-		1279F77D2521B70D003DCE07 /* AMPConfigManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPConfigManager.h; sourceTree = "<group>"; };
-		1279F77E2521B70D003DCE07 /* AMPConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPConstants.m; sourceTree = "<group>"; };
-		1279F77F2521B70D003DCE07 /* AMPUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPUtils.h; sourceTree = "<group>"; };
-		1279F7802521B70D003DCE07 /* AMPURLSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPURLSession.h; sourceTree = "<group>"; };
-		1279F7812521B70D003DCE07 /* AMPEventExplorer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPEventExplorer.h; sourceTree = "<group>"; };
-		1279F7822521B70D003DCE07 /* AMPTrackingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPTrackingOptions.h; sourceTree = "<group>"; };
-		1279F7832521B70D003DCE07 /* Amplitude.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Amplitude.m; sourceTree = "<group>"; };
-		1279F7842521B70D003DCE07 /* AMPBubbleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPBubbleView.m; sourceTree = "<group>"; };
-		1279F7852521B70D003DCE07 /* AMPInfoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPInfoViewController.m; sourceTree = "<group>"; };
-		1279F7862521B70D003DCE07 /* ISPCertificatePinning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISPCertificatePinning.h; sourceTree = "<group>"; };
-		1279F7882521B70D003DCE07 /* AMPBubbleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AMPBubbleView.xib; sourceTree = "<group>"; };
-		1279F7892521B70D003DCE07 /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
-		1279F78A2521B70D003DCE07 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1279F78B2521B70D003DCE07 /* AMPInfoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AMPInfoViewController.xib; sourceTree = "<group>"; };
+		1279F8C025244D78003DCE07 /* AMPURLConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPURLConnection.h; sourceTree = "<group>"; };
+		1279F8C125244D78003DCE07 /* AMPIdentify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPIdentify.h; sourceTree = "<group>"; };
+		1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPDeviceInfo.h; sourceTree = "<group>"; };
+		1279F8C325244D78003DCE07 /* AMPDatabaseHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPDatabaseHelper.h; sourceTree = "<group>"; };
+		1279F8C425244D78003DCE07 /* AMPUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPUtils.m; sourceTree = "<group>"; };
+		1279F8C525244D78003DCE07 /* AMPConfigManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPConfigManager.m; sourceTree = "<group>"; };
+		1279F8C625244D78003DCE07 /* AMPConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPConstants.h; sourceTree = "<group>"; };
+		1279F8C725244D78003DCE07 /* AMPRevenue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPRevenue.m; sourceTree = "<group>"; };
+		1279F8C925244D78003DCE07 /* ISPPinnedNSURLSessionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLSessionDelegate.h; sourceTree = "<group>"; };
+		1279F8CA25244D78003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLConnectionDelegate.h; sourceTree = "<group>"; };
+		1279F8CB25244D78003DCE07 /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
+		1279F8CC25244D78003DCE07 /* ISPCertificatePinning.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISPCertificatePinning.m; sourceTree = "<group>"; };
+		1279F8CD25244D78003DCE07 /* ISPPinnedNSURLSessionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLSessionDelegate.m; sourceTree = "<group>"; };
+		1279F8CE25244D78003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLConnectionDelegate.m; sourceTree = "<group>"; };
+		1279F8CF25244D78003DCE07 /* ISPCertificatePinning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISPCertificatePinning.h; sourceTree = "<group>"; };
+		1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPTrackingOptions.m; sourceTree = "<group>"; };
+		1279F8D125244D78003DCE07 /* AMPURLSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPURLSession.m; sourceTree = "<group>"; };
+		1279F8D225244D78003DCE07 /* AppledocSettings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppledocSettings.plist; sourceTree = "<group>"; };
+		1279F8D325244D78003DCE07 /* Amplitude.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Amplitude.h; sourceTree = "<group>"; };
+		1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPDatabaseHelper.m; sourceTree = "<group>"; };
+		1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPDeviceInfo.m; sourceTree = "<group>"; };
+		1279F8D625244D78003DCE07 /* AMPIdentify.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPIdentify.m; sourceTree = "<group>"; };
+		1279F8D725244D78003DCE07 /* AMPURLConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPURLConnection.m; sourceTree = "<group>"; };
+		1279F8D825244D78003DCE07 /* AmplitudePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmplitudePrivate.h; sourceTree = "<group>"; };
+		1279F8D925244D78003DCE07 /* Amplitude+SSLPinning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Amplitude+SSLPinning.h"; sourceTree = "<group>"; };
+		1279F8DA25244D78003DCE07 /* AMPRevenue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPRevenue.h; sourceTree = "<group>"; };
+		1279F8DC25244D78003DCE07 /* AMPBubbleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AMPBubbleView.xib; sourceTree = "<group>"; };
+		1279F8DD25244D78003DCE07 /* AMPEventExplorer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPEventExplorer.m; sourceTree = "<group>"; };
+		1279F8DF25244D78003DCE07 /* AMPInfoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPInfoViewController.h; sourceTree = "<group>"; };
+		1279F8E025244D78003DCE07 /* AMPBubbleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPBubbleView.h; sourceTree = "<group>"; };
+		1279F8E125244D78003DCE07 /* AMPEventExplorer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPEventExplorer.h; sourceTree = "<group>"; };
+		1279F8E225244D78003DCE07 /* AMPInfoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AMPInfoViewController.xib; sourceTree = "<group>"; };
+		1279F8E325244D78003DCE07 /* AMPBubbleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPBubbleView.m; sourceTree = "<group>"; };
+		1279F8E425244D78003DCE07 /* AMPInfoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPInfoViewController.m; sourceTree = "<group>"; };
+		1279F8E525244D78003DCE07 /* AMPConfigManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPConfigManager.h; sourceTree = "<group>"; };
+		1279F8E625244D78003DCE07 /* AMPConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPConstants.m; sourceTree = "<group>"; };
+		1279F8E725244D78003DCE07 /* AMPUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPUtils.h; sourceTree = "<group>"; };
+		1279F8E825244D78003DCE07 /* AMPURLSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPURLSession.h; sourceTree = "<group>"; };
+		1279F8E925244D78003DCE07 /* AMPTrackingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPTrackingOptions.h; sourceTree = "<group>"; };
+		1279F8EA25244D78003DCE07 /* Amplitude.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Amplitude.m; sourceTree = "<group>"; };
+		1279F99D25245CE1003DCE07 /* logo-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-button.png"; sourceTree = "<group>"; };
+		1279F99E25245CE1003DCE07 /* cancel@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel@3x.png"; sourceTree = "<group>"; };
+		1279F99F25245CE1003DCE07 /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel.png; sourceTree = "<group>"; };
+		1279F9A025245CE1003DCE07 /* cancel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel@2x.png"; sourceTree = "<group>"; };
+		1279F9A125245CE1003DCE07 /* logo-button@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-button@3x.png"; sourceTree = "<group>"; };
+		1279F9A225245CE1003DCE07 /* logo-banner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-banner@2x.png"; sourceTree = "<group>"; };
+		1279F9A325245CE1003DCE07 /* logo-banner@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-banner@3x.png"; sourceTree = "<group>"; };
+		1279F9A425245CE1003DCE07 /* logo-button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-button@2x.png"; sourceTree = "<group>"; };
+		1279F9A525245CE1003DCE07 /* logo-banner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-banner.png"; sourceTree = "<group>"; };
 		12C972AF24105B2C00E9CDDB /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		12C972B724105B2C00E9CDDB /* Amplitude_tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Amplitude_tvOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		12C972CB24105C3600E9CDDB /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -248,7 +255,6 @@
 		12C9731F24108DFF00E9CDDB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmplitudeTVOSTests.m; sourceTree = "<group>"; };
 		12D0A22B241A0A960072CB4C /* Amplitude.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Amplitude.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		12D0A22C241A10030072CB4C /* Amplitude-iOS.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Amplitude-iOS.podspec"; sourceTree = "<group>"; };
 		12D0A22D241A134D0072CB4C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		12D0A22E241A13950072CB4C /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -319,14 +325,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		02267F682355C80800E1F8E2 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				1279F7602521B70D003DCE07 /* Amplitude */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
 		06E8DCECB8F2131A0DDB73E3 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -350,90 +348,97 @@
 			path = Framework;
 			sourceTree = "<group>";
 		};
-		1279F7602521B70D003DCE07 /* Amplitude */ = {
+		1279F8BE25244D78003DCE07 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1279F7612521B70D003DCE07 /* Sources */,
-				1279F7872521B70D003DCE07 /* Assets */,
-			);
-			path = Amplitude;
-			sourceTree = SOURCE_ROOT;
-		};
-		1279F7612521B70D003DCE07 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				1279F77D2521B70D003DCE07 /* AMPConfigManager.h */,
-				1279F7682521B70D003DCE07 /* AMPConfigManager.m */,
-				1279F7692521B70D003DCE07 /* AMPConstants.h */,
-				1279F77E2521B70D003DCE07 /* AMPConstants.m */,
-				1279F7662521B70D003DCE07 /* AMPDatabaseHelper.h */,
-				1279F7742521B70D003DCE07 /* AMPDatabaseHelper.m */,
-				1279F7652521B70D003DCE07 /* AMPDeviceInfo.h */,
-				1279F7752521B70D003DCE07 /* AMPDeviceInfo.m */,
-				1279F7642521B70D003DCE07 /* AMPIdentify.h */,
-				1279F7762521B70D003DCE07 /* AMPIdentify.m */,
-				1279F7732521B70D003DCE07 /* Amplitude.h */,
-				1279F7832521B70D003DCE07 /* Amplitude.m */,
-				1279F77A2521B70D003DCE07 /* Amplitude+SSLPinning.h */,
-				1279F7792521B70D003DCE07 /* AmplitudePrivate.h */,
-				1279F77B2521B70D003DCE07 /* AMPRevenue.h */,
-				1279F76B2521B70D003DCE07 /* AMPRevenue.m */,
-				1279F7822521B70D003DCE07 /* AMPTrackingOptions.h */,
-				1279F76C2521B70D003DCE07 /* AMPTrackingOptions.m */,
-				1279F7632521B70D003DCE07 /* AMPURLConnection.h */,
-				1279F7772521B70D003DCE07 /* AMPURLConnection.m */,
-				1279F7802521B70D003DCE07 /* AMPURLSession.h */,
-				1279F76E2521B70D003DCE07 /* AMPURLSession.m */,
-				1279F77F2521B70D003DCE07 /* AMPUtils.h */,
-				1279F7672521B70D003DCE07 /* AMPUtils.m */,
-				1279F7702521B70D003DCE07 /* AppledocSettings.plist */,
-				1279F78E2521B7A4003DCE07 /* EventExplorer */,
-				1279F78D2521B77A003DCE07 /* SSLPinning */,
+				1279F8BF25244D78003DCE07 /* Amplitude */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		1279F7872521B70D003DCE07 /* Assets */ = {
+		1279F8BF25244D78003DCE07 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
-				1279F78A2521B70D003DCE07 /* Assets.xcassets */,
-				1279F7882521B70D003DCE07 /* AMPBubbleView.xib */,
-				1279F7892521B70D003DCE07 /* ComodoRsaDomainValidationCA.der */,
-				1279F78B2521B70D003DCE07 /* AMPInfoViewController.xib */,
+				1279F8E525244D78003DCE07 /* AMPConfigManager.h */,
+				1279F8C525244D78003DCE07 /* AMPConfigManager.m */,
+				1279F8C625244D78003DCE07 /* AMPConstants.h */,
+				1279F8E625244D78003DCE07 /* AMPConstants.m */,
+				1279F8C325244D78003DCE07 /* AMPDatabaseHelper.h */,
+				1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */,
+				1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */,
+				1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */,
+				1279F8C125244D78003DCE07 /* AMPIdentify.h */,
+				1279F8D625244D78003DCE07 /* AMPIdentify.m */,
+				1279F8D325244D78003DCE07 /* Amplitude.h */,
+				1279F8EA25244D78003DCE07 /* Amplitude.m */,
+				1279F8D925244D78003DCE07 /* Amplitude+SSLPinning.h */,
+				1279F8D825244D78003DCE07 /* AmplitudePrivate.h */,
+				1279F8DA25244D78003DCE07 /* AMPRevenue.h */,
+				1279F8C725244D78003DCE07 /* AMPRevenue.m */,
+				1279F8E925244D78003DCE07 /* AMPTrackingOptions.h */,
+				1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */,
+				1279F8C025244D78003DCE07 /* AMPURLConnection.h */,
+				1279F8D725244D78003DCE07 /* AMPURLConnection.m */,
+				1279F8E825244D78003DCE07 /* AMPURLSession.h */,
+				1279F8D125244D78003DCE07 /* AMPURLSession.m */,
+				1279F8E725244D78003DCE07 /* AMPUtils.h */,
+				1279F8C425244D78003DCE07 /* AMPUtils.m */,
+				1279F8D225244D78003DCE07 /* AppledocSettings.plist */,
+				1279F8DB25244D78003DCE07 /* EventExplorer */,
+				1279F8C825244D78003DCE07 /* SSLPinning */,
 			);
-			path = Assets;
+			path = Amplitude;
 			sourceTree = "<group>";
 		};
-		1279F78D2521B77A003DCE07 /* SSLPinning */ = {
+		1279F8C825244D78003DCE07 /* SSLPinning */ = {
 			isa = PBXGroup;
 			children = (
-				1279F7862521B70D003DCE07 /* ISPCertificatePinning.h */,
-				1279F76F2521B70D003DCE07 /* ISPCertificatePinning.m */,
-				1279F76A2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */,
-				1279F77C2521B70D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */,
-				1279F7622521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */,
-				1279F7782521B70D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */,
+				1279F8CB25244D78003DCE07 /* ComodoRsaDomainValidationCA.der */,
+				1279F8CF25244D78003DCE07 /* ISPCertificatePinning.h */,
+				1279F8CC25244D78003DCE07 /* ISPCertificatePinning.m */,
+				1279F8CA25244D78003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */,
+				1279F8CE25244D78003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */,
+				1279F8C925244D78003DCE07 /* ISPPinnedNSURLSessionDelegate.h */,
+				1279F8CD25244D78003DCE07 /* ISPPinnedNSURLSessionDelegate.m */,
 			);
 			path = SSLPinning;
 			sourceTree = "<group>";
 		};
-		1279F78E2521B7A4003DCE07 /* EventExplorer */ = {
+		1279F8DB25244D78003DCE07 /* EventExplorer */ = {
 			isa = PBXGroup;
 			children = (
-				1279F7722521B70D003DCE07 /* AMPBubbleView.h */,
-				1279F7842521B70D003DCE07 /* AMPBubbleView.m */,
-				1279F7812521B70D003DCE07 /* AMPEventExplorer.h */,
-				1279F76D2521B70D003DCE07 /* AMPEventExplorer.m */,
-				1279F7712521B70D003DCE07 /* AMPInfoViewController.h */,
-				1279F7852521B70D003DCE07 /* AMPInfoViewController.m */,
+				1279F99C25245CE1003DCE07 /* Resources */,
+				1279F8E025244D78003DCE07 /* AMPBubbleView.h */,
+				1279F8E325244D78003DCE07 /* AMPBubbleView.m */,
+				1279F8E125244D78003DCE07 /* AMPEventExplorer.h */,
+				1279F8DD25244D78003DCE07 /* AMPEventExplorer.m */,
+				1279F8DF25244D78003DCE07 /* AMPInfoViewController.h */,
+				1279F8E425244D78003DCE07 /* AMPInfoViewController.m */,
 			);
 			path = EventExplorer;
+			sourceTree = "<group>";
+		};
+		1279F99C25245CE1003DCE07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1279F99F25245CE1003DCE07 /* cancel.png */,
+				1279F9A025245CE1003DCE07 /* cancel@2x.png */,
+				1279F99E25245CE1003DCE07 /* cancel@3x.png */,
+				1279F9A525245CE1003DCE07 /* logo-banner.png */,
+				1279F9A225245CE1003DCE07 /* logo-banner@2x.png */,
+				1279F9A325245CE1003DCE07 /* logo-banner@3x.png */,
+				1279F99D25245CE1003DCE07 /* logo-button.png */,
+				1279F9A425245CE1003DCE07 /* logo-button@2x.png */,
+				1279F9A125245CE1003DCE07 /* logo-button@3x.png */,
+				1279F8DC25244D78003DCE07 /* AMPBubbleView.xib */,
+				1279F8E225244D78003DCE07 /* AMPInfoViewController.xib */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		12C973012410758400E9CDDB /* Deployment */ = {
 			isa = PBXGroup;
 			children = (
-				12D0A22C241A10030072CB4C /* Amplitude-iOS.podspec */,
 				12D0A22B241A0A960072CB4C /* Amplitude.podspec */,
 				1213D80B2416F3EA00300E98 /* Package.swift */,
 				124CDD7B23EFD2D4004C7B27 /* LICENSE */,
@@ -490,8 +495,8 @@
 		E98C051A1A48E7FE00800C63 = {
 			isa = PBXGroup;
 			children = (
+				1279F8BE25244D78003DCE07 /* Sources */,
 				12C973012410758400E9CDDB /* Deployment */,
-				02267F682355C80800E1F8E2 /* Sources */,
 				12C9730F24108DFF00E9CDDB /* Tests */,
 				1213D89724176E4700300E98 /* Framework */,
 				E98C05241A48E7FE00800C63 /* Products */,
@@ -523,23 +528,20 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1279F7F92521B820003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
-				1279F7C32521B812003DCE07 /* AMPConfigManager.h in Headers */,
-				1279F7C12521B812003DCE07 /* Amplitude+SSLPinning.h in Headers */,
-				1279F7B92521B812003DCE07 /* AmplitudePrivate.h in Headers */,
-				1279F7BC2521B812003DCE07 /* AMPConstants.h in Headers */,
-				1279F7C22521B812003DCE07 /* AMPTrackingOptions.h in Headers */,
-				1279F7F72521B820003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
-				1279F7B62521B812003DCE07 /* AMPRevenue.h in Headers */,
-				1279F7AE2521B812003DCE07 /* Amplitude.h in Headers */,
-				1279F7BA2521B812003DCE07 /* AMPDeviceInfo.h in Headers */,
 				1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */,
-				1279F7C42521B812003DCE07 /* AMPUtils.h in Headers */,
-				1279F7B72521B812003DCE07 /* AMPURLConnection.h in Headers */,
-				1279F7B42521B812003DCE07 /* AMPURLSession.h in Headers */,
-				1279F7B02521B812003DCE07 /* AMPIdentify.h in Headers */,
-				1279F7B82521B812003DCE07 /* AMPDatabaseHelper.h in Headers */,
-				1279F7F82521B820003DCE07 /* ISPCertificatePinning.h in Headers */,
+				1279F91225244E8E003DCE07 /* Amplitude+SSLPinning.h in Headers */,
+				1279F91825244E8E003DCE07 /* Amplitude.h in Headers */,
+				1279F91525244E8E003DCE07 /* AMPConstants.h in Headers */,
+				1279F91925244E8E003DCE07 /* AMPTrackingOptions.h in Headers */,
+				1279F91425244E8E003DCE07 /* AmplitudePrivate.h in Headers */,
+				1279F92325244E8E003DCE07 /* AMPRevenue.h in Headers */,
+				1279F91325244E8E003DCE07 /* AMPURLSession.h in Headers */,
+				1279F91025244E8E003DCE07 /* AMPDeviceInfo.h in Headers */,
+				1279F91125244E8E003DCE07 /* AMPIdentify.h in Headers */,
+				1279F92025244E8E003DCE07 /* AMPDatabaseHelper.h in Headers */,
+				1279F91E25244E8E003DCE07 /* AMPURLConnection.h in Headers */,
+				1279F91725244E8E003DCE07 /* AMPConfigManager.h in Headers */,
+				1279F91625244E8E003DCE07 /* AMPUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -547,26 +549,26 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1279F7ED2521B81F003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
-				1279F7A52521B811003DCE07 /* AMPConfigManager.h in Headers */,
-				1279F83D2521B970003DCE07 /* AMPBubbleView.h in Headers */,
-				1279F7A32521B811003DCE07 /* Amplitude+SSLPinning.h in Headers */,
-				1279F79B2521B811003DCE07 /* AmplitudePrivate.h in Headers */,
-				1279F79E2521B811003DCE07 /* AMPConstants.h in Headers */,
-				1279F7A42521B811003DCE07 /* AMPTrackingOptions.h in Headers */,
-				1279F84A2521B97A003DCE07 /* AMPEventExplorer.h in Headers */,
-				1279F7EB2521B81F003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
-				1279F7982521B811003DCE07 /* AMPRevenue.h in Headers */,
-				1279F7902521B811003DCE07 /* Amplitude.h in Headers */,
-				1279F79C2521B811003DCE07 /* AMPDeviceInfo.h in Headers */,
 				1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */,
-				1279F7A62521B811003DCE07 /* AMPUtils.h in Headers */,
-				1279F7992521B811003DCE07 /* AMPURLConnection.h in Headers */,
-				1279F7962521B811003DCE07 /* AMPURLSession.h in Headers */,
-				1279F7922521B811003DCE07 /* AMPIdentify.h in Headers */,
-				1279F79A2521B811003DCE07 /* AMPDatabaseHelper.h in Headers */,
-				1279F8572521B980003DCE07 /* AMPInfoViewController.h in Headers */,
-				1279F7EC2521B81F003DCE07 /* ISPCertificatePinning.h in Headers */,
+				1279F8F425244E8D003DCE07 /* Amplitude+SSLPinning.h in Headers */,
+				1279F96925244EBA003DCE07 /* AMPBubbleView.h in Headers */,
+				1279F8FA25244E8D003DCE07 /* Amplitude.h in Headers */,
+				1279F8F725244E8D003DCE07 /* AMPConstants.h in Headers */,
+				1279F97D25244EC8003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
+				1279F8FB25244E8D003DCE07 /* AMPTrackingOptions.h in Headers */,
+				1279F8F625244E8D003DCE07 /* AmplitudePrivate.h in Headers */,
+				1279F90525244E8D003DCE07 /* AMPRevenue.h in Headers */,
+				1279F8F525244E8D003DCE07 /* AMPURLSession.h in Headers */,
+				1279F97925244EC8003DCE07 /* ISPCertificatePinning.h in Headers */,
+				1279F8F225244E8D003DCE07 /* AMPDeviceInfo.h in Headers */,
+				1279F96825244EBA003DCE07 /* AMPEventExplorer.h in Headers */,
+				1279F8F325244E8D003DCE07 /* AMPIdentify.h in Headers */,
+				1279F97A25244EC8003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
+				1279F90225244E8D003DCE07 /* AMPDatabaseHelper.h in Headers */,
+				1279F90025244E8D003DCE07 /* AMPURLConnection.h in Headers */,
+				1279F8F925244E8D003DCE07 /* AMPConfigManager.h in Headers */,
+				1279F96325244EBA003DCE07 /* AMPInfoViewController.h in Headers */,
+				1279F8F825244E8D003DCE07 /* AMPUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -574,23 +576,20 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1279F8052521B821003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
-				1279F7E12521B812003DCE07 /* AMPConfigManager.h in Headers */,
-				1279F7DF2521B812003DCE07 /* Amplitude+SSLPinning.h in Headers */,
-				1279F7D72521B812003DCE07 /* AmplitudePrivate.h in Headers */,
-				1279F7DA2521B812003DCE07 /* AMPConstants.h in Headers */,
-				1279F7E02521B812003DCE07 /* AMPTrackingOptions.h in Headers */,
-				1279F8032521B821003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
-				1279F7D42521B812003DCE07 /* AMPRevenue.h in Headers */,
-				1279F7CC2521B812003DCE07 /* Amplitude.h in Headers */,
-				1279F7D82521B812003DCE07 /* AMPDeviceInfo.h in Headers */,
 				1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */,
-				1279F7E22521B812003DCE07 /* AMPUtils.h in Headers */,
-				1279F7D52521B812003DCE07 /* AMPURLConnection.h in Headers */,
-				1279F7D22521B812003DCE07 /* AMPURLSession.h in Headers */,
-				1279F7CE2521B812003DCE07 /* AMPIdentify.h in Headers */,
-				1279F7D62521B812003DCE07 /* AMPDatabaseHelper.h in Headers */,
-				1279F8042521B821003DCE07 /* ISPCertificatePinning.h in Headers */,
+				1279F93025244E8F003DCE07 /* Amplitude+SSLPinning.h in Headers */,
+				1279F93625244E8F003DCE07 /* Amplitude.h in Headers */,
+				1279F93325244E8F003DCE07 /* AMPConstants.h in Headers */,
+				1279F93725244E8F003DCE07 /* AMPTrackingOptions.h in Headers */,
+				1279F93225244E8F003DCE07 /* AmplitudePrivate.h in Headers */,
+				1279F94125244E8F003DCE07 /* AMPRevenue.h in Headers */,
+				1279F93125244E8F003DCE07 /* AMPURLSession.h in Headers */,
+				1279F92E25244E8F003DCE07 /* AMPDeviceInfo.h in Headers */,
+				1279F92F25244E8F003DCE07 /* AMPIdentify.h in Headers */,
+				1279F93E25244E8F003DCE07 /* AMPDatabaseHelper.h in Headers */,
+				1279F93C25244E8F003DCE07 /* AMPURLConnection.h in Headers */,
+				1279F93525244E8F003DCE07 /* AMPConfigManager.h in Headers */,
+				1279F93425244E8F003DCE07 /* AMPUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -787,6 +786,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1279F96625244EBA003DCE07 /* AMPBubbleView.xib in Resources */,
+				1279F9AA25245CE1003DCE07 /* logo-button@3x.png in Resources */,
+				1279F9A725245CE1003DCE07 /* cancel@3x.png in Resources */,
+				1279F9AB25245CE1003DCE07 /* logo-banner@2x.png in Resources */,
+				1279F96A25244EBA003DCE07 /* AMPInfoViewController.xib in Resources */,
+				1279F9AD25245CE1003DCE07 /* logo-button@2x.png in Resources */,
+				1279F9AC25245CE1003DCE07 /* logo-banner@3x.png in Resources */,
+				1279F9A825245CE1003DCE07 /* cancel.png in Resources */,
+				1279F9A925245CE1003DCE07 /* cancel@2x.png in Resources */,
+				1279F9AE25245CE1003DCE07 /* logo-banner.png in Resources */,
+				1279F9A625245CE1003DCE07 /* logo-button.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -887,20 +897,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1279F7B22521B812003DCE07 /* AMPUtils.m in Sources */,
-				1279F7BD2521B812003DCE07 /* AMPDatabaseHelper.m in Sources */,
-				1279F7B32521B812003DCE07 /* AMPDeviceInfo.m in Sources */,
-				1279F7F52521B820003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
-				1279F7B52521B812003DCE07 /* AMPConstants.m in Sources */,
-				1279F7AF2521B812003DCE07 /* AMPURLConnection.m in Sources */,
-				1279F7BF2521B812003DCE07 /* AMPRevenue.m in Sources */,
-				1279F7C02521B812003DCE07 /* AMPConfigManager.m in Sources */,
-				1279F7FA2521B820003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
-				1279F7F62521B820003DCE07 /* ISPCertificatePinning.m in Sources */,
-				1279F7AD2521B812003DCE07 /* AMPTrackingOptions.m in Sources */,
-				1279F7BB2521B812003DCE07 /* AMPIdentify.m in Sources */,
-				1279F7BE2521B812003DCE07 /* Amplitude.m in Sources */,
-				1279F7B12521B812003DCE07 /* AMPURLSession.m in Sources */,
+				1279F91A25244E8E003DCE07 /* AMPUtils.m in Sources */,
+				1279F92125244E8E003DCE07 /* AMPURLConnection.m in Sources */,
+				1279F92625244E8E003DCE07 /* AMPDatabaseHelper.m in Sources */,
+				1279F92425244E8E003DCE07 /* AMPConstants.m in Sources */,
+				1279F90F25244E8E003DCE07 /* AMPConfigManager.m in Sources */,
+				1279F92225244E8E003DCE07 /* Amplitude.m in Sources */,
+				1279F91B25244E8E003DCE07 /* AMPIdentify.m in Sources */,
+				1279F92525244E8E003DCE07 /* AMPDeviceInfo.m in Sources */,
+				1279F91D25244E8E003DCE07 /* AMPTrackingOptions.m in Sources */,
+				1279F91C25244E8E003DCE07 /* AMPRevenue.m in Sources */,
+				1279F91F25244E8E003DCE07 /* AMPURLSession.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -926,24 +933,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1279F87E2521BDDA003DCE07 /* AMPEventExplorer.m in Sources */,
-				1279F7EE2521B81F003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
-				1279F7A12521B811003DCE07 /* AMPRevenue.m in Sources */,
-				1279F7952521B811003DCE07 /* AMPDeviceInfo.m in Sources */,
-				1279F7EA2521B81F003DCE07 /* ISPCertificatePinning.m in Sources */,
-				1279F79F2521B811003DCE07 /* AMPDatabaseHelper.m in Sources */,
-				1279F78F2521B811003DCE07 /* AMPTrackingOptions.m in Sources */,
-				1279F7E92521B81F003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
-				1279F79D2521B811003DCE07 /* AMPIdentify.m in Sources */,
-				1279F7912521B811003DCE07 /* AMPURLConnection.m in Sources */,
-				1279F7942521B811003DCE07 /* AMPUtils.m in Sources */,
+				1279F97C25244EC8003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
+				1279F8FE25244E8D003DCE07 /* AMPRevenue.m in Sources */,
+				1279F96525244EBA003DCE07 /* AMPInfoViewController.m in Sources */,
+				1279F90825244E8D003DCE07 /* AMPDatabaseHelper.m in Sources */,
+				1279F8FC25244E8D003DCE07 /* AMPUtils.m in Sources */,
+				1279F8F125244E8D003DCE07 /* AMPConfigManager.m in Sources */,
+				1279F96425244EBA003DCE07 /* AMPEventExplorer.m in Sources */,
+				1279F8FD25244E8D003DCE07 /* AMPIdentify.m in Sources */,
+				1279F97825244EC8003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
+				1279F90125244E8D003DCE07 /* AMPURLSession.m in Sources */,
+				1279F8FF25244E8D003DCE07 /* AMPTrackingOptions.m in Sources */,
+				1279F90625244E8D003DCE07 /* AMPConstants.m in Sources */,
+				1279F90325244E8D003DCE07 /* AMPURLConnection.m in Sources */,
+				1279F96725244EBA003DCE07 /* AMPBubbleView.m in Sources */,
+				1279F90725244E8D003DCE07 /* AMPDeviceInfo.m in Sources */,
+				1279F90425244E8D003DCE07 /* Amplitude.m in Sources */,
 				12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */,
-				1279F7A22521B811003DCE07 /* AMPConfigManager.m in Sources */,
-				1279F87D2521BDDA003DCE07 /* AMPInfoViewController.m in Sources */,
-				1279F7A02521B811003DCE07 /* Amplitude.m in Sources */,
-				1279F7932521B811003DCE07 /* AMPURLSession.m in Sources */,
-				1279F7972521B811003DCE07 /* AMPConstants.m in Sources */,
-				1279F87C2521BDDA003DCE07 /* AMPBubbleView.m in Sources */,
+				1279F97B25244EC8003DCE07 /* ISPCertificatePinning.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -969,20 +976,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1279F7D02521B812003DCE07 /* AMPUtils.m in Sources */,
-				1279F7DB2521B812003DCE07 /* AMPDatabaseHelper.m in Sources */,
-				1279F7D12521B812003DCE07 /* AMPDeviceInfo.m in Sources */,
-				1279F8012521B821003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
-				1279F7D32521B812003DCE07 /* AMPConstants.m in Sources */,
-				1279F7CD2521B812003DCE07 /* AMPURLConnection.m in Sources */,
-				1279F7DD2521B812003DCE07 /* AMPRevenue.m in Sources */,
-				1279F7DE2521B812003DCE07 /* AMPConfigManager.m in Sources */,
-				1279F8062521B821003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
-				1279F8022521B821003DCE07 /* ISPCertificatePinning.m in Sources */,
-				1279F7CB2521B812003DCE07 /* AMPTrackingOptions.m in Sources */,
-				1279F7D92521B812003DCE07 /* AMPIdentify.m in Sources */,
-				1279F7DC2521B812003DCE07 /* Amplitude.m in Sources */,
-				1279F7CF2521B812003DCE07 /* AMPURLSession.m in Sources */,
+				1279F93825244E8F003DCE07 /* AMPUtils.m in Sources */,
+				1279F93F25244E8F003DCE07 /* AMPURLConnection.m in Sources */,
+				1279F94425244E8F003DCE07 /* AMPDatabaseHelper.m in Sources */,
+				1279F94225244E8F003DCE07 /* AMPConstants.m in Sources */,
+				1279F92D25244E8F003DCE07 /* AMPConfigManager.m in Sources */,
+				1279F94025244E8F003DCE07 /* Amplitude.m in Sources */,
+				1279F93925244E8F003DCE07 /* AMPIdentify.m in Sources */,
+				1279F94325244E8F003DCE07 /* AMPDeviceInfo.m in Sources */,
+				1279F93B25244E8F003DCE07 /* AMPTrackingOptions.m in Sources */,
+				1279F93A25244E8F003DCE07 /* AMPRevenue.m in Sources */,
+				1279F93D25244E8F003DCE07 /* AMPURLSession.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
