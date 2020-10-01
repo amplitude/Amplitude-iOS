@@ -50,30 +50,24 @@ jobs:
         with:
           node-version: 10.x
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      # - name: Release --dry-run  # Uses release.config.js
+      #   if: ${{ github.event.inputs.dryRun == 'true'}}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_REGION: ${{ secrets.AWS_REGION }}
+      #     S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      #   run: npx semantic-release --dry-run
 
-      - name: Run tests
-        run: make test
-
-      - name: Release --dry-run  # Uses release.config.js
-        if: ${{ github.event.inputs.dryRun == 'true'}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-        run: npx semantic-release --dry-run
-
-      - name: Release # Uses release.config.js
-        if: ${{ github.event.inputs.dryRun == 'false'}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-        run: npx semantic-release
+      # - name: Release # Uses release.config.js
+      #   if: ${{ github.event.inputs.dryRun == 'false'}}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_REGION: ${{ secrets.AWS_REGION }}
+      #     S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      #   run: npx semantic-release
