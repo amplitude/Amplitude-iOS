@@ -31,24 +31,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          ruby-version: "2.6"
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8.x'
-      - name: Install boto3 for deploy_s3.python
-        run: pip install boto3==1.14.63
+      - name: Setup Cocoapods
+        run: |
+          gem install cocoapods
+          pod install
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 10.x
+      - name: Validate Pod
+        run: |
+          pod lib lint
 
       # - name: Release --dry-run  # Uses release.config.js
       #   if: ${{ github.event.inputs.dryRun == 'true'}}
