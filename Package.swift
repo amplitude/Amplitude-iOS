@@ -17,8 +17,8 @@ let package = Package(
         .target(
             name: "Amplitude",
             path: "Sources/Amplitude",
-            sources: [".", "EventExplorer", "SSLPinning"]
             exclude: [],
+            sources: [".", "EventExplorer", "SSLPinning"],
             resources: [
                 .process("EventExplorer/Resources")
             ],
