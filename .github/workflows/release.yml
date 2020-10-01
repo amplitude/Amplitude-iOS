@@ -1,10 +1,10 @@
 name: Release
 
-# on: 
+# on:
 #   workflow_dispatch:
 #     inputs:
 #       dryRun:
-#         description: 'Do a dry run to preview instead of a real release'     
+#         description: 'Do a dry run to preview instead of a real release'
 #         required: true
 #         default: 'true'
 
