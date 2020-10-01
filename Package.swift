@@ -18,9 +18,6 @@ let package = Package(
             name: "Amplitude",
             path: "Sources/Amplitude",
             exclude: [],
-            resources: [
-                .process("Resources")
-            ],
             publicHeadersPath: ".")
     ]
 )
