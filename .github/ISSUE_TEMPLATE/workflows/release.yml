@@ -11,9 +11,9 @@ name: Release
 on: push # @TODO Change to workflow dispatch
 
 jobs:
-  authorize: 
+  authorize:
     name: Authorize
-    runs-on: ubuntu-18.04
+    runs-on: macos-10.14
     steps:
       - name: ${{ github.actor }} permission check to do a release
         uses: octokit/request-action@v2.0.0
