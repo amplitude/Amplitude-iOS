@@ -72,10 +72,8 @@
         if (self.bubbleView != nil) {
             UIViewController *rootViewController = [[[AMPUtils getSharedApplication] keyWindow] rootViewController];
             
-            NSURL *bundleURL = [[[NSBundle bundleForClass:self.class] resourceURL] URLByAppendingPathComponent:@"Amplitude.bundle"];
-            NSBundle *resBundle = [NSBundle bundleWithURL:bundleURL];
-            
-            AMPInfoViewController *infoVC = [[AMPInfoViewController alloc] initWithNibName:@"AMPInfoViewController" bundle:resBundle];
+            NSBundle *bundle = [NSBundle bundleForClass:[AMPInfoViewController class]];
+            AMPInfoViewController *infoVC = [[AMPInfoViewController alloc] initWithNibName:@"AMPInfoViewController" bundle:bundle];
             infoVC.instanceName = self.instanceName;
             
             [infoVC setModalPresentationStyle:UIModalPresentationFullScreen];
