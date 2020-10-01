@@ -7,7 +7,7 @@ let package = Package(
     name: "Amplitude",
     platforms: [
         .iOS(.v10),
-        .tvOS(.v9)
+        .tvOS(.v9),
         .macOS(.v10_10)
     ],
     products: [
