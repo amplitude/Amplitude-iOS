@@ -17,13 +17,11 @@ let package = Package(
         .target(
             name: "Amplitude",
             path: "Sources/Amplitude",
+            sources: [".", "EventExplorer", "SSLPinning"]
             exclude: [],
             resources: [
                 .process("EventExplorer/Resources")
             ],
-            publicHeadersPath: ".",
-            cSettings: [.headerSearchPath("."),
-                        .headerSearchPath("EventExplorer"),
-                        .headerSearchPath("SSLPinning")]),
+            publicHeadersPath: "."
     ]
 )
