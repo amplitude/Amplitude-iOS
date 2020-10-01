@@ -22,6 +22,6 @@ let package = Package(
             resources: [
                 .process("EventExplorer/Resources")
             ],
-            publicHeadersPath: "."
+            publicHeadersPath: ".")
     ]
 )
