@@ -19,9 +19,6 @@ let package = Package(
             path: "Sources/Amplitude",
             exclude: [],
             sources: [".", "EventExplorer", "SSLPinning"],
-            resources: [
-                .process("EventExplorer/Resources")
-            ],
             publicHeadersPath: ".")
     ]
 )
