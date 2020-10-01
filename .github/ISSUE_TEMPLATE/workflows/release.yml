@@ -1,12 +1,14 @@
 name: Release
 
-on: 
-  workflow_dispatch:
-    inputs:
-      dryRun:
-        description: 'Do a dry run to preview instead of a real release'     
-        required: true
-        default: 'true'
+# on: 
+#   workflow_dispatch:
+#     inputs:
+#       dryRun:
+#         description: 'Do a dry run to preview instead of a real release'     
+#         required: true
+#         default: 'true'
+
+on: push # @TODO Change to workflow dispatch
 
 jobs:
   authorize: 
