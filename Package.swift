@@ -18,7 +18,6 @@ let package = Package(
             name: "Amplitude",
             path: "Sources/Amplitude",
             exclude: [],
-            sources: [".", "EventExplorer", "SSLPinning"],
             publicHeadersPath: ".")
     ]
 )
