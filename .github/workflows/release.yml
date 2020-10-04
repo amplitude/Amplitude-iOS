@@ -25,7 +25,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: ubuntu-18.04
+    runs-on: macos-10.14
     needs: [authorize]
     steps:
       - name: Checkout
@@ -33,7 +33,7 @@ jobs:
       
       - name: Set Xcode
         run: |
-          xcode-select -switch /Applications/Xcode_12.app
+          sudo xcode-select -switch /Applications/Xcode_12.app
 
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
@@ -42,7 +42,7 @@ jobs:
 
       - name: Setup Cocoapods
         run: |
-          gem install cocoapods
+          sudo gem install cocoapods
           pod install
 
       - name: Validate Pod

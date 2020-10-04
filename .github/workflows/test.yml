@@ -4,20 +4,15 @@ on: [push, pull_request]
 
 jobs:
   test:
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [10.x, 12.x, 14.x]
-        os: [ubuntu-18.04]
-    runs-on: ${{ matrix.os }}
-
+    name: Test
+    runs-on: macos-10.14
     steps:
     - name: Check out Git repository
       uses: actions/checkout@v2
 
     - name: Set Xcode
       run: |
-        xcode-select -switch /Applications/Xcode_12.app
+        sudo xcode-select -switch /Applications/Xcode_12.app
 
     - name: Setup Ruby
       uses: actions/setup-ruby@v1
@@ -26,7 +21,7 @@ jobs:
     
     - name: Setup Cocoapods
       run: |
-        gem install cocoapods
+        sudo gem install cocoapods
         pod install
 
     - name: Build and run tests
