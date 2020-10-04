@@ -15,6 +15,10 @@ jobs:
     - name: Check out Git repository
       uses: actions/checkout@v2
 
+    - name: Set Xcode
+      run: |
+        xcode-select -switch /Applications/Xcode_12.app
+
     - name: Setup Ruby
       uses: actions/setup-ruby@v1
       with:
@@ -27,9 +31,8 @@ jobs:
 
     - name: Build and run tests
       run: |    
-        xcodebuild \
-          -workspace MyAwesomeApp.xcworkspace \
-          -scheme MyAwesomeApp \
+        xcodebuild test \
+          -workspace Amplitude.xcworkspace \
+          -scheme Amplitude_iOSTests \
           -sdk iphonesimulator \
-          -destination 'platform=iOS Simulator,name=iPhone 6,OS=8.1' \
-          test
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'

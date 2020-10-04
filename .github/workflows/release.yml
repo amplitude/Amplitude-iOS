@@ -29,7 +29,11 @@ jobs:
     needs: [authorize]
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+      
+      - name: Set Xcode
+        run: |
+          xcode-select -switch /Applications/Xcode_12.app
 
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
@@ -45,6 +49,14 @@ jobs:
         run: |
           pod lib lint
       
+    - name: Run tests
+      run: |    
+        xcodebuild test \
+          -workspace Amplitude.xcworkspace \
+          -scheme Amplitude_iOSTests \
+          -sdk iphonesimulator \
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+
       # - name: Generate docs
       #   run: |
       #     appledoc --project-name Amplitude --project-company "Amplitude Inc" --company-id com.amplitude --no-create-docset --output ./doc/ .
