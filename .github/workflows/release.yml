@@ -27,62 +27,75 @@ jobs:
     name: Release
     runs-on: macos-10.14
     needs: [authorize]
+    strategy:
+      matrix:
+        ruby-version: ["2.6.x"]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      
-      - name: Set Xcode
-        run: |
-          sudo xcode-select -switch /Applications/Xcode_12.app
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Set Xcode
+      run: |
+        sudo xcode-select -switch /Applications/Xcode_12.app
 
-      - name: Setup Ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: "2.6"
+    - name: Setup Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+    
+    - name: Cache Cocoapods
+      uses: actions/cache@v2
+      with:
+        path: |
+          Pods
+          vendor/bundle
+        key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
+    
+    - name: Install Cocoapods
+      run: |
+        gem install bundler
+        bundle config path vendor/bundle
+        bundle install
+        pod install
 
-      - name: Setup Cocoapods
-        run: |
-          sudo gem install cocoapods
-          pod install
+    - name: Validate Pod
+      run: |
+        pod lib lint
 
-      - name: Validate Pod
-        run: |
-          pod lib lint
+    - name: Run tests
+      run: |
+        xcodebuild test \
+          -workspace Amplitude.xcworkspace \
+          -scheme Amplitude_iOSTests \
+          -sdk iphonesimulator \
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
 
-      - name: Run tests
-        run: |
-          xcodebuild test \
-            -workspace Amplitude.xcworkspace \
-            -scheme Amplitude_iOSTests \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+    - name: Publish Cocoapod
+      run: |
+        pod trunk push jooohhn-Amplitude.podspec
 
-      - name: Publish Cocoapod
-        run: |
-          pod trunk push jooohhn-Amplitude.podspec
+    # - name: Generate docs
+    #   run: |
+    #     appledoc --project-name Amplitude --project-company "Amplitude Inc" --company-id com.amplitude --no-create-docset --output ./doc/ .
 
-      # - name: Generate docs
-      #   run: |
-      #     appledoc --project-name Amplitude --project-company "Amplitude Inc" --company-id com.amplitude --no-create-docset --output ./doc/ .
+    # - name: Release --dry-run  # Uses release.config.js
+    #   if: ${{ github.event.inputs.dryRun == 'true'}}
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     AWS_REGION: ${{ secrets.AWS_REGION }}
+    #     S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+    #   run: npx semantic-release --dry-run
 
-      # - name: Release --dry-run  # Uses release.config.js
-      #   if: ${{ github.event.inputs.dryRun == 'true'}}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_REGION: ${{ secrets.AWS_REGION }}
-      #     S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-      #   run: npx semantic-release --dry-run
-
-      # - name: Release # Uses release.config.js
-      #   if: ${{ github.event.inputs.dryRun == 'false'}}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_REGION: ${{ secrets.AWS_REGION }}
-      #     S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-      #   run: npx semantic-release
+    # - name: Release # Uses release.config.js
+    #   if: ${{ github.event.inputs.dryRun == 'false'}}
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     AWS_REGION: ${{ secrets.AWS_REGION }}
+    #     S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+    #   run: npx semantic-release

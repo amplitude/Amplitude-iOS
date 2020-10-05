@@ -6,6 +6,9 @@ jobs:
   test:
     name: Test
     runs-on: macos-10.14
+    strategy:
+      matrix:
+        ruby-version: ["2.6.x"]
     steps:
     - name: Check out Git repository
       uses: actions/checkout@v2
@@ -17,11 +20,21 @@ jobs:
     - name: Setup Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: '2.6'
+        ruby-version: ${{ matrix.ruby-version }}
     
-    - name: Setup Cocoapods
+    - name: Cache Cocoapods
+      uses: actions/cache@v2
+      with:
+        path: |
+          Pods
+          vendor/bundle
+        key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
+    
+    - name: Install Cocoapods
       run: |
-        sudo gem install cocoapods
+        gem install bundler
+        bundle config path vendor/bundle
+        bundle install
         pod install
 
     - name: Build and run tests

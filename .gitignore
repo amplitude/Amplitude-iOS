@@ -9,4 +9,3 @@ Carthage/Build
 
 doc/
 .swiftpm
-Podfile.lock
