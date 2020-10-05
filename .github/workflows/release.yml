@@ -51,8 +51,6 @@ jobs:
 
       - name: Run tests
         run: |
-      run: |    
-        run: |
           xcodebuild test \
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
