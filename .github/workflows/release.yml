@@ -58,10 +58,6 @@ jobs:
         bundle install
         pod install
 
-    - name: Validate Pod
-      run: |
-        pod lib lint
-
     - name: Run tests
       run: |
         xcodebuild test \
@@ -69,10 +65,17 @@ jobs:
           -scheme Amplitude_iOSTests \
           -sdk iphonesimulator \
           -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+    
+    - name: Validate Podfile
+      run: |
+        pod spec lint
 
     - name: Publish Cocoapod
+      env:
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
       run: |
         pod trunk push jooohhn-Amplitude.podspec
+      
 
     # - name: Generate docs
     #   run: |
