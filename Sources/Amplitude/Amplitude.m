@@ -825,6 +825,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         __weak typeof(self) weakSelf = self;
         [[AMPConfigManager sharedInstance] refresh:^{
             __strong typeof(self) strongSelf = weakSelf;
+            if (strongSelf == nil) {
+                return;
+            }
             strongSelf->_serverUrl = [AMPConfigManager sharedInstance].ingestionEndpoint;
         }];
     }
