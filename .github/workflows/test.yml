@@ -23,6 +23,7 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
     
     - name: Cache Cocoapods
+      id: cache-gems-pods
       uses: actions/cache@v2
       with:
         path: |
@@ -31,6 +32,7 @@ jobs:
         key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
     
     - name: Install Cocoapods
+      if: steps.cache-gems-pods.outputs.cache-hit == 'false'
       run: |
         gem install bundler
         bundle config path vendor/bundle
