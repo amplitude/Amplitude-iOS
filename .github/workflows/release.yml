@@ -70,6 +70,7 @@ jobs:
       run: |
         pod spec lint
 
+    # @TODO replace with Amplitude.podspec
     - name: Publish Cocoapod
       env:
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
