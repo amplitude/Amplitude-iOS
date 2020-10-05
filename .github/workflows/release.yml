@@ -57,6 +57,10 @@ jobs:
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
 
+      - name: Publish Cocoapod
+        run: |
+          pod trunk push jooohhn-Amplitude.podspec
+
       # - name: Generate docs
       #   run: |
       #     appledoc --project-name Amplitude --project-company "Amplitude Inc" --company-id com.amplitude --no-create-docset --output ./doc/ .
