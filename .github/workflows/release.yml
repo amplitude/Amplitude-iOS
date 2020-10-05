@@ -48,14 +48,16 @@ jobs:
       - name: Validate Pod
         run: |
           pod lib lint
-      
-    - name: Run tests
+
+      - name: Run tests
+        run: |
       run: |    
-        xcodebuild test \
-          -workspace Amplitude.xcworkspace \
-          -scheme Amplitude_iOSTests \
-          -sdk iphonesimulator \
-          -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+        run: |
+          xcodebuild test \
+            -workspace Amplitude.xcworkspace \
+            -scheme Amplitude_iOSTests \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
 
       # - name: Generate docs
       #   run: |
