@@ -30,6 +30,7 @@ jobs:
     strategy:
       matrix:
         ruby-version: ["2.6.x"]
+        node-version: ["12.x"]
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -42,7 +43,7 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
-    
+
     - name: Cache Bundle Gems and Cocoapods
       id: cache-gems-pods
       uses: actions/cache@v2
@@ -72,13 +73,35 @@ jobs:
       run: |
         pod spec lint
 
-    # @TODO replace with Amplitude.podspec
-    - name: Publish Cocoapod
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: semantic-release cache
+      id: cache-semantic-release-deps
+      uses: actions/cache@v2
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Install semantic-release
+      if: steps.cache-semantic-release-deps.outputs.cache-hit == 'false'
+      run: npm install semantic-release@17 @semantic-release/changelog@5 @semantic-release/git@9
+
+    - name: Release --dry-run  # Uses release.config.js
+      # if: ${{ github.event.inputs.dryRun == 'true'}}
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-      run: |
-        pod trunk push jooohhn-Amplitude.podspec
-      
+      run: npm run semantic-release --dry-run
+
+    # - name: Release # Uses release.config.js
+    #   if: ${{ github.event.inputs.dryRun == 'false'}}
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+    #   run: npm run semantic-release
 
     # - name: Generate docs
     #   run: |
