@@ -1,6 +1,8 @@
+amplitude_version = "8.0.1"
+
 Pod::Spec.new do |s|
   s.name                   = "jooohhn-Amplitude"
-  s.version                = "8.0.1"
+  s.version                = amplitude_version 
   s.summary                = "Amplitude iOS/tvOS/macOS SDK."
   s.homepage               = "https://amplitude.com"
   s.license                = { :type => "MIT" }
