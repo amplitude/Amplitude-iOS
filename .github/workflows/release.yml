@@ -85,7 +85,22 @@ jobs:
     #     path: '**/node_modules'
     #     key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/package-lock.json') }}
 
-    - name: Semantic Release --dry-run
+    # - name: Semantic Release --dry-run
+    #   # if: steps.cache-semantic-release-deps.outputs.cache-hit == 'false'
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+    #   run: |
+    #     npx \
+    #     -p lodash \
+    #     -p semantic-release@17 \
+    #     -p @semantic-release/changelog@5 \
+    #     -p @semantic-release/git@9 \
+    #     -p @google/semantic-release-replace-plugin@1 \
+    #     -p @semantic-release/exec@5 \
+    #     semantic-release --dry-run
+
+    - name: Semantic Release
       # if: steps.cache-semantic-release-deps.outputs.cache-hit == 'false'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -98,14 +113,7 @@ jobs:
         -p @semantic-release/git@9 \
         -p @google/semantic-release-replace-plugin@1 \
         -p @semantic-release/exec@5 \
-        semantic-release --dry-run
-
-    # - name: Release --dry-run  # Uses release.config.js
-    #   # if: ${{ github.event.inputs.dryRun == 'true'}}
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-    #   run: semantic-release --dry-run
+        semantic-release
 
     # - name: Release # Uses release.config.js
     #   if: ${{ github.event.inputs.dryRun == 'false'}}
