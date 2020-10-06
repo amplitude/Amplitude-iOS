@@ -106,6 +106,6 @@ jobs:
         -p @semantic-release/exec@5 \
         semantic-release
 
-    # - name: Generate docs @TODO re-enable
-    #   run: |
-    #     appledoc --project-name Amplitude --project-company "Amplitude Inc" --company-id com.amplitude --no-create-docset --output ./doc/ .
+    - name: Generate docs
+      run: |
+        appledoc --project-name Amplitude --project-company "Amplitude Inc" --company-id com.amplitude --no-create-docset --output ./doc/ .
