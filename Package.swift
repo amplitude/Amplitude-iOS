@@ -17,7 +17,21 @@ let package = Package(
         .target(
             name: "Amplitude",
             path: "Sources/Amplitude",
-            exclude: [],
+            exclude: ["AppledocSettings.plist"],
+            resources: [
+                .process("Resources/AMPBubbleView.xib"),
+                .process("Resources/AMPInfoViewController.xib"),
+                .process("Resources/cancel.png"),
+                .process("Resources/cancel@2x.png"),
+                .process("Resources/cancel@3x.png"),
+                .process("Resources/ComodoRsaDomainValidationCA.der"),
+                .process("Resources/logo-banner.png"),
+                .process("Resources/logo-banner@2x.png"),
+                .process("Resources/logo-banner@3x.png"),
+                .process("Resources/logo-button.png"),
+                .process("Resources/logo-button@2x.png"),
+                .process("Resources/logo-button@3x.png")
+            ],
             publicHeadersPath: ".")
     ]
 )
