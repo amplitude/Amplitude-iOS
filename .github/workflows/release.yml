@@ -33,7 +33,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     
-    - name: Set Xcode
+    - name: Set Xcode 12
       run: |
         sudo xcode-select -switch /Applications/Xcode_12.app
 

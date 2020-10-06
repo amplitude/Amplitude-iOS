@@ -13,7 +13,7 @@ jobs:
     - name: Check out Git repository
       uses: actions/checkout@v2
 
-    - name: Set Xcode
+    - name: Set Xcode 12
       run: |
         sudo xcode-select -switch /Applications/Xcode_12.app
 
@@ -22,7 +22,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
     
-    - name: Cache Cocoapods
+    - name: Cache Bundle Gems and Cocoapods
       id: cache-gems-pods
       uses: actions/cache@v2
       with:
