@@ -47,14 +47,14 @@ jobs:
           -sdk iphonesimulator \
           -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
     
-    - name: macOS Tests
-      run: |
-        xcodebuild \
-          -workspace Amplitude.xcworkspace \
-          -scheme Amplitude_macOS \
-          -sdk macosx \
-          -destination 'platform=macosx' \
-          test
+    # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
+    #   run: |
+    #     xcodebuild \
+    #       -workspace Amplitude.xcworkspace \
+    #       -scheme Amplitude_macOS \
+    #       -sdk macosx \
+    #       -destination 'platform=macosx' \
+    #       test
     
     - name: tvOS Tests
       run: |
@@ -64,5 +64,4 @@ jobs:
           -sdk appletvsimulator \
           -destination 'platform=tvOS Simulator,name=Apple TV' \
           test
-    
     
