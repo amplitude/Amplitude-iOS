@@ -59,13 +59,31 @@ jobs:
         bundle install
         pod install
 
-    - name: Run tests
-      run: |
+    - name: iOS Tests
+      run: |    
         xcodebuild test \
           -workspace Amplitude.xcworkspace \
           -scheme Amplitude_iOSTests \
           -sdk iphonesimulator \
           -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+    
+    - name: macOS Tests
+      run: |
+        xcodebuild \
+          -workspace Amplitude.xcworkspace \
+          -scheme Amplitude_macOS \
+          -sdk macosx \
+          -destination 'platform=macosx' \
+          test
+    
+    - name: tvOS Tests
+      run: |
+        xcodebuild \
+          -workspace Amplitude.xcworkspace \
+          -scheme Amplitude_tvOS \
+          -sdk appletvsimulator \
+          -destination 'platform=tvOS Simulator,name=Apple TV' \
+          test
     
     - name: Validate Podfile
       run: |
