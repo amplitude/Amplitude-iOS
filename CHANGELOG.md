@@ -1,3 +1,10 @@
+## [8.0.2](https://github.com/jooohhn/Amplitude-iOS/compare/v8.0.1...v8.0.2) (2020-10-06)
+
+
+### Bug Fixes
+
+* test patch release 1 ([89813f7](https://github.com/jooohhn/Amplitude-iOS/commit/89813f79090c93ec84736b115b526f33cf75c98a))
+
 ### As of September 25, 2020 CHANGELOG.md is no longer manually updated. 
 Please check the [releases page](https://github.com/amplitude/Amplitude-iOS/releases) for up to date changes.
 
