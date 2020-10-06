@@ -32,7 +32,7 @@ jobs:
         key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
     
     - name: Install Cocoapods
-      if: steps.cache-gems-pods.outputs.cache-hit == 'false'
+      if: steps.cache-gems-pods.outputs.cache-hit != 'true'
       run: |
         gem install bundler
         bundle config path vendor/bundle
