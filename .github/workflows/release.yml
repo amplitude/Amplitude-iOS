@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: 'Do a dry run to preview instead of a real release'
+        required: true
+        default: 'true'
+
+jobs:
+  authorize:
+    name: Authorize
+    runs-on: macos-10.14
+    steps:
+      - name: ${{ github.actor }} permission check to do a release
+        uses: octokit/request-action@v2.0.0
+        with:
+          route: GET /repos/:repository/collaborators/${{ github.actor }}
+          repository: ${{ github.repository }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    name: Release
+    runs-on: macos-10.14
+    needs: [authorize]
+    strategy:
+      matrix:
+        ruby-version: ["2.7.x"]
+        node-version: ["12.x"]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Set Xcode 12
+      run: |
+        sudo xcode-select -switch /Applications/Xcode_12.app
+
+    - name: Setup Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+
+    - name: Cache Bundle Gems and Cocoapods
+      id: cache-gems-pods
+      uses: actions/cache@v2
+      with:
+        path: |
+          Pods
+          vendor/bundle
+        key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
+    
+    - name: Install Cocoapods
+      if: steps.cache-gems-pods.outputs.cache-hit != 'true'
+      run: |
+        gem install bundler
+        bundle config path vendor/bundle
+        bundle install
+        pod install
+
+    - name: iOS Tests
+      run: |    
+        xcodebuild test \
+          -workspace Amplitude.xcworkspace \
+          -scheme Amplitude_iOSTests \
+          -sdk iphonesimulator \
+          -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+    
+    # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
+    #   run: |
+    #     xcodebuild \
+    #       -workspace Amplitude.xcworkspace \
+    #       -scheme Amplitude_macOS \
+    #       -sdk macosx \
+    #       -destination 'platform=macosx' \
+    #       test
+    
+    - name: tvOS Tests
+      run: |
+        xcodebuild \
+          -workspace Amplitude.xcworkspace \
+          -scheme Amplitude_tvOS \
+          -sdk appletvsimulator \
+          -destination 'platform=tvOS Simulator,name=Apple TV' \
+          test
+    
+    - name: Validate Podfile
+      run: |
+        pod spec lint
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Semantic Release --dry-run
+      if: ${{ github.event.inputs.dryRun == 'true'}}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      run: |
+        npx \
+        -p lodash \
+        -p semantic-release@17 \
+        -p @semantic-release/changelog@5 \
+        -p @semantic-release/git@9 \
+        -p @google/semantic-release-replace-plugin@1 \
+        -p @semantic-release/exec@5 \
+        semantic-release --dry-run
+
+    - name: Semantic Release
+      if: ${{ github.event.inputs.dryRun == 'false'}}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      run: |
+        npx \
+        -p lodash \
+        -p semantic-release@17 \
+        -p @semantic-release/changelog@5 \
+        -p @semantic-release/git@9 \
+        -p @google/semantic-release-replace-plugin@1 \
+        -p @semantic-release/exec@5 \
+        semantic-release
+
+    - name: Generate docs
+      run: |
+        appledoc --project-name Amplitude --project-company "Amplitude Inc" --company-id com.amplitude --no-create-docset --output ./doc/ .
