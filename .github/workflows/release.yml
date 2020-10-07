@@ -99,6 +99,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        GIT_AUTHOR_NAME: amplitude-sdk-bot
+        GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
+        GIT_COMMITTER_NAME: amplitude-sdk-bot
+        GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
       run: |
         npx \
         -p lodash \
@@ -114,6 +118,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        GIT_AUTHOR_NAME: amplitude-sdk-bot
+        GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
+        GIT_COMMITTER_NAME: amplitude-sdk-bot
+        GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
       run: |
         npx \
         -p lodash \
