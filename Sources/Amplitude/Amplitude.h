@@ -541,7 +541,10 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 
 /**
- Sets the userId.
+ Sets the userId and starts a new session.
+
+  **Note: this is deprecated** - please use `setUserId:(NSString*) userId startNewSession:(BOOL)startNewSession`
+
  @param userId                  If your app has its own login system that you want to track users with, you can set the userId.
  @see [Setting Custom UserIds](https://github.com/amplitude/Amplitude-iOS#setting-custom-user-ids)
  */
@@ -549,7 +552,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 - (void)setUserId:(nullable NSString *)userId;
 
 /**
- Sets the userId and starts a new session. The previous session for the previous user will be terminated and a new session will begin for the new user id.
+ Sets the userId. If startNewSession is true, the previous session for the previous user will be terminated and a new session will begin for the new userId.
 
  @param userId                  If your app has its own login system that you want to track users with, you can set the userId.
 
