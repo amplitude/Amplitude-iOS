@@ -554,6 +554,8 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 
  @param userId                  If your app has its own login system that you want to track users with, you can set the userId.
 
+ @param startNewSession         Terminates previous user session and creates a new one for the new user
+
  @see [Setting Custom UserIds](https://github.com/amplitude/Amplitude-iOS#setting-custom-user-ids)
  */
 - (void)setUserId:(nullable NSString *)userId startNewSession:(BOOL)startNewSession;
