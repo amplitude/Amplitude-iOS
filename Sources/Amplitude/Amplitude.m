@@ -1693,7 +1693,34 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (BOOL)archive:(id) obj toFile:(NSString*)path {
-    return [NSKeyedArchiver archiveRootObject:obj toFile:path];
+    if (@available(iOS 12, *)) {
+        NSError *archiveError = nil;
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:obj requiringSecureCoding:NO error:&archiveError];
+        if (archiveError != nil) {
+            AMPLITUDE_ERROR(@"ERROR: Unable to archive object %@: %@", obj, archiveError);
+            return NO;
+        }
+        if (data == nil) {
+            AMPLITUDE_ERROR(@"ERROR: Archived data is nil for obj: %@", obj);
+            return NO;
+        }
+        NSError *writeError = nil;
+        BOOL writeSuccessful = [data writeToFile:path options:NSDataWritingAtomic error:&writeError];
+        if (writeError != nil || !writeSuccessful) {
+            AMPLITUDE_ERROR(@"ERROR: Unable to write data to file for object %@: %@", obj, archiveError);
+            return NO;
+        }
+        return YES;
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        // Even with the availability check above, Xcode would still emit a deprecation warning here.
+        // Since there's no way that this path could be reached on iOS's >= 12.0
+        // (where `[NSKeyedArchiver archiveRootObject:toFile:]` was deprecated),
+        // we simply ignore the warning.
+        return [NSKeyedArchiver archiveRootObject:obj toFile:path];
+#pragma clang diagnostic pop
+    }
 }
 
 - (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to {
