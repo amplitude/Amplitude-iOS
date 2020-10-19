@@ -1647,7 +1647,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             NSData *inputData = [fileManager contentsAtPath:path];
             NSError *error = nil;
             if (inputData != nil) {
-                id data = [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:inputData error:&error];
+                id data = [self unarchive:inputData error:&error];
                 if (error == nil) {
                     if (data != nil) {
                         return data;
@@ -1675,6 +1675,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 #endif
     return nil;
+}
+
+- (id)unarchive:(NSData *)data error:(NSError **)error {
+    if (@available(iOS 12, *)) {
+        return [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class] fromData:data error:error];
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        // Even with the availability check above, Xcode would still emit a deprecation warning here.
+        // Since there's no way that it could be reached on iOS's >= 12.0
+        // (where `[NSKeyedUnarchiver unarchiveTopLevelObjectWithData:error:]` was deprecated),
+        // we simply ignore the warning.
+        return [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:error];
+#pragma clang diagnostic pop
+    }
 }
 
 - (BOOL)archive:(id) obj toFile:(NSString*)path {
