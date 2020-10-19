@@ -41,6 +41,7 @@
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 + (NSInteger)barBottomOffset;
 + (CGFloat)statusBarHeight;
++ (UIWindow *)getKeyWindow;
 #endif
 
 @end
