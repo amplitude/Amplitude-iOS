@@ -188,7 +188,9 @@
 + (UIWindow *)getKeyWindow {
     if (@available(iOS 13.0, *)) {
         for (UIWindow *window in [[AMPUtils getSharedApplication] windows]) {
-            if (window.isKeyWindow) { return window; }
+            if ([window isKeyWindow]) {
+                return window;
+            }
         }
         return nil;
     } else {
