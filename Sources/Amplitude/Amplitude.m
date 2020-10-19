@@ -1534,7 +1534,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSString*)md5HexDigest:(NSString*)input {
     const char* str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // As mentioned by @haoliu-amp in // https://github.com/amplitude/Amplitude-iOS/issues/250#issuecomment-655224554,
+    // > This crypto algorithm is used for our checksum field, actually you don't need to worry about the security concern for that.
+    // > However, we will see if we wanna switch it to SHA256.
+    // Based on this, we can silence the compile warning here until a fix is implemented.
     CC_MD5(str, (CC_LONG) strlen(str), result);
+#pragma clang diagnostic pop
 
     NSMutableString *ret = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH*2];
     for(int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {
