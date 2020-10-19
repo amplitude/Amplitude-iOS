@@ -174,7 +174,13 @@
     if (@available(iOS 13.0, *)) {
         statusBarSize = [[[[AMPUtils getKeyWindow] windowScene] statusBarManager] statusBarFrame].size;
     } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        // Even with the availability check above, Xcode would still emit a deprecation warning here.
+        // Since there's no way that it could be reached on iOS's >= 13.0
+        // (where `[UIApplication statusBarFrame]` was deprecated), we simply ignore the warning.
         statusBarSize = [[AMPUtils getSharedApplication] statusBarFrame].size;
+#pragma clang diagnostic pop
     }
     return MIN(statusBarSize.width, statusBarSize.height);
 }
