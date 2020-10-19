@@ -87,6 +87,8 @@
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, assign) BOOL backoffUpload;
 @property (nonatomic, assign) int backoffUploadBatchSize;
+@property (nonatomic, copy, readwrite, nullable) NSString *userId;
+@property (nonatomic, copy, readwrite) NSString *deviceId;
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 @property (nonatomic, strong) AMPEventExplorer *eventExplorer;
 #endif
