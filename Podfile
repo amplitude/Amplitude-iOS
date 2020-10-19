@@ -1,5 +1,3 @@
-source 'https://github.com/CocoaPods/Specs.git'
-
 project 'Amplitude'
 
 abstract_target 'shared' do
