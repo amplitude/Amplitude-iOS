@@ -86,8 +86,7 @@ jobs:
           test
     
     - name: Validate Podfile
-      run: |
-        pod spec lint
+      run: pod lib lint
 
     - name: Setup Node.js
       uses: actions/setup-node@v1
