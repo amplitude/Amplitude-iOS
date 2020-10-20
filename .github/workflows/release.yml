@@ -30,7 +30,7 @@ jobs:
         ruby-version: ["2.7.x"]
         node-version: ["12.x"]
     steps:
-    - name: Checkout
+    - name: Checkout Amplitude-iOS
       uses: actions/checkout@v2
     
     - name: Set Xcode 12
