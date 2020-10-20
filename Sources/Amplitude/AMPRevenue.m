@@ -65,7 +65,7 @@
     return YES;
 }
 
-- (AMPRevenue *)setProductIdentifier:(NSString *) productIdentifier {
+- (AMPRevenue *)setProductIdentifier:(NSString *)productIdentifier {
     if ([AMPUtils isEmptyString:productIdentifier]) {
         AMPLITUDE_LOG(@"Invalid empty productIdentifier");
         return self;

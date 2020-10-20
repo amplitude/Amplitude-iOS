@@ -50,7 +50,7 @@
 #if __has_feature(objc_arc)
     NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
 #else
-    NSString *uuidStr = (NSString *) CFUUIDCreateString(kCFAllocatorDefault, uuid);
+    NSString *uuidStr = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
 #endif
     CFRelease(uuid);
     return uuidStr;
@@ -100,7 +100,7 @@
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
 }
 
-+ (NSString *)coerceToString: (id) obj withName:(NSString *) name
++ (NSString *)coerceToString: (id) obj withName:(NSString *)name
 {
     NSString *coercedString;
     if (![obj isKindOfClass:[NSString class]]) {
@@ -146,7 +146,7 @@
     return [NSDictionary dictionaryWithDictionary:dict];
 }
 
-+ (NSString *) platformDataDirectory {
++ (NSString *)platformDataDirectory {
 #if TARGET_OS_TV
     return [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 #else

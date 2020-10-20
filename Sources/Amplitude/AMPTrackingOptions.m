@@ -209,7 +209,7 @@
     return ![self.disabledFields containsObject:field];
 }
 
-- (NSMutableDictionary *) getApiPropertiesTrackingOption {
+- (NSMutableDictionary *)getApiPropertiesTrackingOption {
     NSMutableDictionary *apiPropertiesTrackingOptions = [[NSMutableDictionary alloc] init];
     if (self.disabledFields.count == 0) {
         return apiPropertiesTrackingOptions;

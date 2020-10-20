@@ -392,10 +392,10 @@
     }
 
     // Map msgbuffer to interface message structure
-    interfaceMsgStruct = (struct if_msghdr *) msgBuffer;
+    interfaceMsgStruct = (struct if_msghdr *)msgBuffer;
 
     // Map to link-level socket structure
-    socketStruct = (struct sockaddr_dl *) (interfaceMsgStruct + 1);
+    socketStruct = (struct sockaddr_dl *)(interfaceMsgStruct + 1);
 
     // Copy link layer address data in socket structure to an array
     memcpy(&macAddress, socketStruct->sdl_data + socketStruct->sdl_nlen, 6);

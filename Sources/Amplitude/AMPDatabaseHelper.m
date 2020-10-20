@@ -218,7 +218,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 }
 
 // Assumes db is already opened
-- (BOOL)execSQLString:(sqlite3 *) db SQLString:(NSString *) SQLString {
+- (BOOL)execSQLString:(sqlite3 *)db SQLString:(NSString *)SQLString {
     @try {
         char *errMsg;
         if (sqlite3_exec(db, [SQLString UTF8String], NULL, NULL, &errMsg) != SQLITE_OK) {
@@ -411,7 +411,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
     return events;
 }
 
-- (BOOL)insertOrReplaceKeyValue:(NSString *)key value:(NSString *) value {
+- (BOOL)insertOrReplaceKeyValue:(NSString *)key value:(NSString *)value {
     if (value == nil) return [self deleteKeyFromTable:STORE_TABLE_NAME key:key];
     return [self insertOrReplaceKeyValueToTable:STORE_TABLE_NAME key:key value:value];
 }

@@ -35,8 +35,8 @@
 - (BOOL)resetDB:(BOOL) deleteDB;
 - (BOOL)deleteDB;
 
-- (BOOL)addEvent:(NSString *) event;
-- (BOOL)addIdentify:(NSString *) identify;
+- (BOOL)addEvent:(NSString *)event;
+- (BOOL)addIdentify:(NSString *)identify;
 - (NSMutableArray *)getEvents:(long long)upToId limit:(long long)limit;
 - (NSMutableArray *)getIdentifys:(long long)upToId limit:(long long)limit;
 - (int)getEventCount;
