@@ -39,6 +39,9 @@ jobs:
         bundle install
         pod install
 
+    - name: Validate Podfile
+      run: pod lib lint
+
     - name: iOS Tests
       run: |    
         xcodebuild test \
