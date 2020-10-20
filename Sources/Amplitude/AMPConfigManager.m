@@ -26,7 +26,7 @@
 
 @interface AMPConfigManager()
 
-@property (nonatomic, strong, readwrite) NSString* ingestionEndpoint;
+@property (nonatomic, strong, readwrite) NSString *ingestionEndpoint;
 
 @end
 

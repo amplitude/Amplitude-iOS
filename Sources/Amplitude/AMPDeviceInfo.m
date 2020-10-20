@@ -48,7 +48,7 @@
 @end
 
 @implementation AMPDeviceInfo {
-    NSObject* networkInfo;
+    NSObject *networkInfo;
 }
 
 @synthesize appVersion = _appVersion;

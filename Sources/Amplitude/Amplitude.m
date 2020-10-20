@@ -134,8 +134,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     BOOL _inForeground;
     BOOL _offline;
 
-    NSString* _serverUrl;
-    NSString* _token;
+    NSString *_serverUrl;
+    NSString *_token;
 }
 
 #pragma clang diagnostic push
@@ -444,7 +444,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                         // The earliest time to fetch dynamic config
                         [self refreshDynamicConfig];
                         
-                        NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+                        NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
                         [self startOrContinueSessionNSNumber:now];
                         self->_inForeground = YES;
         #if !TARGET_OS_OSX
@@ -664,12 +664,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
     if ([_appliedTrackingOptions shouldTrackIDFA]) {
-        NSString* advertiserID = [self getAdSupportID];
+        NSString *advertiserID = [self getAdSupportID];
         if (advertiserID != nil) {
             [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
         }
     }
-    NSString* vendorID = _deviceInfo.vendorID;
+    NSString *vendorID = _deviceInfo.vendorID;
     if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
@@ -1039,7 +1039,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 #endif
 
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
 #if !TARGET_OS_OSX
     // Stop uploading
@@ -1063,7 +1063,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 #endif
 
-    NSNumber* now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+    NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
 #if !TARGET_OS_OSX
     // Stop uploading
@@ -1164,7 +1164,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSMutableDictionary *apiProperties = [NSMutableDictionary dictionary];
     [apiProperties setValue:sessionEvent forKey:@"special"];
-    NSNumber* timestamp = [self lastEventTime];
+    NSNumber *timestamp = [self lastEventTime];
     [self logEvent:sessionEvent withEventProperties:nil withApiProperties:apiProperties withUserProperties:nil withGroups:nil withGroupProperties:nil withTimestamp:timestamp outOfSession:NO];
 }
 
@@ -1203,7 +1203,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (long long)previousSessionId {
-    NSNumber* previousSessionId = [self.dbHelper getLongValue:PREVIOUS_SESSION_ID];
+    NSNumber *previousSessionId = [self.dbHelper getLongValue:PREVIOUS_SESSION_ID];
     if (previousSessionId == nil) {
         return -1;
     }
@@ -1345,7 +1345,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self.dbHelper insertOrReplaceKeyValue:USER_ID value:self.userId];
 
         if (startNewSession) {
-            NSNumber* timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+            NSNumber *timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
             [self setSessionId:[timestamp longLongValue]];
             [self refreshSessionTime:timestamp];
             if (self->_trackingSessionEvents) {
@@ -1532,7 +1532,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (NSString *)md5HexDigest:(NSString *)input {
-    const char* str = [input UTF8String];
+    const char *str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
     
 #pragma clang diagnostic push

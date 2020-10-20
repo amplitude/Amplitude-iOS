@@ -102,7 +102,7 @@
 
             // Extract the certificate
             SecCertificateRef certificate = SecTrustGetCertificateAtIndex(trust, i);
-            NSData* DERCertificate = (__bridge NSData *)SecCertificateCopyData(certificate);
+            NSData *DERCertificate = (__bridge NSData *)SecCertificateCopyData(certificate);
 
             // Compare the two certificates
             if ([pinnedCertificate isEqualToData:DERCertificate]) {
