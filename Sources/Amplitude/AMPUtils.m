@@ -137,7 +137,7 @@
                 }
             }
             dict[coercedKey] = [NSArray arrayWithArray:arr];
-        } else if ([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSDate class]]){
+        } else if ([value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[NSDate class]]) {
             dict[coercedKey] = [self coerceToString:value withName:@"groupName"];
         } else {
             AMPLITUDE_LOG(@"WARNING: Invalid groupName value for groupType %@ (received class %@). Please use NSString or NSArray of NSStrings", coercedKey, [value class]);
