@@ -365,8 +365,6 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 
 /**
- **Note: this is deprecated** - please use `logRevenueV2` and `AMPRevenue`
-
  Tracks revenue.
 
  To track revenue from a user, call [[Amplitude instance] logRevenue:[NSNumber numberWithDouble:3.99]] each time the user generates revenue. logRevenue: takes in an NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
@@ -375,11 +373,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 
  @see [LogRevenue Backwards Compatability](https://github.com/amplitude/Amplitude-iOS#backwards-compatibility)
  */
-- (void)logRevenue:(NSNumber *)amount;
+- (void)logRevenue:(NSNumber *)amount DEPRECATED_MSG_ATTRIBUTE("Use `logRevenueV2` and `AMPRevenue` instead");
 
 /**
- **Note: this is deprecated** - please use `logRevenueV2` and `AMPRevenue`
-
  Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
 
  @param productIdentifier        The identifier for the product in the transaction, e.g. "com.amplitude.productId"
@@ -391,11 +387,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)logRevenue:(nullable NSString *)productIdentifier
           quantity:(NSInteger)quantity
-             price:(NSNumber *)price;
+             price:(NSNumber *)price DEPRECATED_MSG_ATTRIBUTE("Use `logRevenueV2` and `AMPRevenue` instead");
 
 /**
- **Note: this is deprecated** - please use `logRevenueV2` and `AMPRevenue`
-
  Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.
 
  For validating revenue, use [[Amplitude instance] logRevenue:@"com.company.app.productId" quantity:1 price:[NSNumber numberWithDouble:3.99] receipt:transactionReceipt]
@@ -412,7 +406,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 - (void)logRevenue:(nullable NSString *)productIdentifier
           quantity:(NSInteger)quantity
              price:(NSNumber *)price
-           receipt:(nullable NSData *)receipt;
+           receipt:(nullable NSData *)receipt DEPRECATED_MSG_ATTRIBUTE("Use `logRevenueV2` and `AMPRevenue` instead");
 
 /**
  Tracks revenue - API v2. This uses the `AMPRevenue` object to store transaction properties such as quantity, price, and revenue type. This is the recommended method for tracking revenue in Amplitude.
@@ -484,19 +478,16 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 - (void)setUserProperties:(NSDictionary *)userProperties;
 
 /**
-
- **NOTE: this method is deprecated** - use `setUserProperties` instead. In earlier versions of the SDK, replace = YES replaced the in-memory userProperties dictionary with the input; however, now userProperties are no longer stored in memory, so the flag does nothing.
-
  Adds properties that are tracked on the user level.
 
  **Note:** Property keys must be <code>NSString</code> objects and values must be serializable.
 
  @param userProperties          An NSDictionary containing any additional data to be tracked.
- @param replace                 This is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.
+ @param replace                 In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory, so this parameter does nothing.
 
  @see [Setting Multiple Properties with setUserProperties](https://github.com/amplitude/Amplitude-iOS#setting-multiple-properties-with-setuserproperties)
  */
-- (void)setUserProperties:(NSDictionary *)userProperties replace:(BOOL)replace;
+- (void)setUserProperties:(NSDictionary *)userProperties replace:(BOOL)replace DEPRECATED_MSG_ATTRIBUTE("Use `- setUserProperties` instead. In earlier versions of the SDK, `replace: YES` replaced the in-memory userProperties dictionary with the input. However, userProperties are no longer stored in memory, so the flag does nothing.");
 
 /**
  Clears all properties that are tracked on the user level.
