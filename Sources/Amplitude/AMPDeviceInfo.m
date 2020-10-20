@@ -154,7 +154,7 @@
     return _vendorID;
 }
 
-+ (NSString *)getVendorID:(int) maxAttempts {
++ (NSString *)getVendorID:(int)maxAttempts {
 #if !TARGET_OS_OSX
     NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 #else

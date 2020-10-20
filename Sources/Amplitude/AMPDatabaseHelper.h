@@ -31,8 +31,8 @@
 + (AMPDatabaseHelper *)getDatabaseHelper:(NSString *)instanceName;
 - (BOOL)createTables;
 - (BOOL)dropTables;
-- (BOOL)upgrade:(int) oldVersion newVersion:(int)newVersion;
-- (BOOL)resetDB:(BOOL) deleteDB;
+- (BOOL)upgrade:(int)oldVersion newVersion:(int)newVersion;
+- (BOOL)resetDB:(BOOL)deleteDB;
 - (BOOL)deleteDB;
 
 - (BOOL)addEvent:(NSString *)event;

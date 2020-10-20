@@ -131,7 +131,7 @@
 
  @returns the same [AMPRevenue](#) object, allowing you to chain multiple method calls together.
  */
-- (AMPRevenue *)setQuantity:(NSInteger) quantity;
+- (AMPRevenue *)setQuantity:(NSInteger)quantity;
 
 
 /**

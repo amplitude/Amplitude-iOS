@@ -509,7 +509,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil];
 }
 
-- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties outOfSession:(BOOL) outOfSession {
+- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties outOfSession:(BOOL)outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil outOfSession:outOfSession];
 }
 
@@ -521,7 +521,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:nil withTimestamp:nil outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withGroups:(NSDictionary *)groups withLongLongTimestamp:(long long) timestamp outOfSession:(BOOL)outOfSession {
+- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withGroups:(NSDictionary *)groups withLongLongTimestamp:(long long)timestamp outOfSession:(BOOL)outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:nil withTimestamp:[NSNumber numberWithLongLong:timestamp] outOfSession:outOfSession];
 }
 
@@ -529,7 +529,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:nil withTimestamp:timestamp outOfSession:outOfSession];
 }
 
-- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL) outOfSession {
+- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession {
     if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
         return;
@@ -695,12 +695,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logRevenue:nil quantity:1 price:amount];
 }
 
-- (void)logRevenue:(NSString *)productIdentifier quantity:(NSInteger) quantity price:(NSNumber *)price
+- (void)logRevenue:(NSString *)productIdentifier quantity:(NSInteger)quantity price:(NSNumber *)price
 {
     [self logRevenue:productIdentifier quantity:quantity price:price receipt:nil];
 }
 
-- (void)logRevenue:(NSString *)productIdentifier quantity:(NSInteger) quantity price:(NSNumber *)price receipt:(NSData *)receipt
+- (void)logRevenue:(NSString *)productIdentifier quantity:(NSInteger)quantity price:(NSNumber *)price receipt:(NSData *)receipt
 {
     if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logRevenue:");
@@ -903,7 +903,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return results;
 }
 
-- (void)makeEventUploadPostRequest:(NSString *)url events:(NSString *)events numEvents:(long) numEvents maxEventId:(long long) maxEventId maxIdentifyId:(long long) maxIdentifyId {
+- (void)makeEventUploadPostRequest:(NSString *)url events:(NSString *)events numEvents:(long)numEvents maxEventId:(long long)maxEventId maxIdentifyId:(long long)maxIdentifyId {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
 
@@ -1197,7 +1197,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self setLastEventTime:timestamp];
 }
 
-- (void)setPreviousSessionId:(long long) previousSessionId {
+- (void)setPreviousSessionId:(long long)previousSessionId {
     NSNumber *value = [NSNumber numberWithLongLong:previousSessionId];
     (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:value];
 }
@@ -1222,7 +1222,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self identify:identify outOfSession:NO];
 }
 
-- (void)identify:(AMPIdentify *)identify outOfSession:(BOOL) outOfSession {
+- (void)identify:(AMPIdentify *)identify outOfSession:(BOOL)outOfSession {
     if (identify == nil || [identify.userPropertyOperations count] == 0) {
         return;
     }
@@ -1233,7 +1233,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self groupIdentifyWithGroupType:groupType groupName:groupName groupIdentify:groupIdentify outOfSession:NO];
 }
 
-- (void)groupIdentifyWithGroupType:(NSString *)groupType groupName:(NSObject *)groupName groupIdentify:(AMPIdentify *)groupIdentify outOfSession:(BOOL) outOfSession {
+- (void)groupIdentifyWithGroupType:(NSString *)groupType groupName:(NSObject *)groupName groupIdentify:(AMPIdentify *)groupIdentify outOfSession:(BOOL)outOfSession {
     if (groupIdentify == nil || [groupIdentify.userPropertyOperations count] == 0) {
         return;
     }
@@ -1273,7 +1273,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 // maintain for legacy
 // replace argument is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.
-- (void)setUserProperties:(NSDictionary *)userProperties replace:(BOOL) replace {
+- (void)setUserProperties:(NSDictionary *)userProperties replace:(BOOL)replace {
     [self setUserProperties:userProperties];
 }
 
@@ -1386,7 +1386,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     self->_token = token;
 }
 
-- (void)setEventUploadMaxBatchSize:(int) eventUploadMaxBatchSize {
+- (void)setEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize {
     _eventUploadMaxBatchSize = eventUploadMaxBatchSize;
     _backoffUploadBatchSize = eventUploadMaxBatchSize;
 }
@@ -1522,7 +1522,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return obj;
 }
 
-- (BOOL)isArgument:(id) argument validType:(Class) class methodName:(NSString *)methodName {
+- (BOOL)isArgument:(id)argument validType:(Class)class methodName:(NSString *)methodName {
     if ([argument isKindOfClass:class]) {
         return YES;
     } else {
