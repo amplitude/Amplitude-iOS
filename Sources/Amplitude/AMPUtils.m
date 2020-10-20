@@ -100,7 +100,7 @@
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
 }
 
-+ (NSString *)coerceToString: (id)obj withName:(NSString *)name
++ (NSString *)coerceToString:(id)obj withName:(NSString *)name
 {
     NSString *coercedString;
     if (![obj isKindOfClass:[NSString class]]) {
