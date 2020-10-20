@@ -1534,7 +1534,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSString*)md5HexDigest:(NSString*)input {
     const char* str = [input UTF8String];
     unsigned char result[CC_MD5_DIGEST_LENGTH];
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    // As mentioned by @haoliu-amp in // https://github.com/amplitude/Amplitude-iOS/issues/250#issuecomment-655224554,
+    // > This crypto algorithm is used for our checksum field, actually you don't need to worry about the security concern for that.
+    // > However, we will see if we wanna switch it to SHA256.
+    // Based on this, we can silence the compile warning here until a fix is implemented.
     CC_MD5(str, (CC_LONG) strlen(str), result);
+#pragma clang diagnostic pop
 
     NSMutableString *ret = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH*2];
     for(int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {
@@ -1647,7 +1655,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             NSData *inputData = [fileManager contentsAtPath:path];
             NSError *error = nil;
             if (inputData != nil) {
-                id data = [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:inputData error:&error];
+                id data = [self unarchive:inputData error:&error];
                 if (error == nil) {
                     if (data != nil) {
                         return data;
@@ -1677,8 +1685,50 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return nil;
 }
 
+- (id)unarchive:(NSData *)data error:(NSError **)error {
+    if (@available(iOS 12, tvOS 11.0, *)) {
+        return [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class] fromData:data error:error];
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        // Even with the availability check above, Xcode would still emit a deprecation warning here.
+        // Since there's no way that it could be reached on iOS's >= 12.0 or tvOS's >= 11.0
+        // (where `[NSKeyedUnarchiver unarchiveTopLevelObjectWithData:error:]` was deprecated),
+        // we simply ignore the warning.
+        return [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:error];
+#pragma clang diagnostic pop
+    }
+}
+
 - (BOOL)archive:(id) obj toFile:(NSString*)path {
-    return [NSKeyedArchiver archiveRootObject:obj toFile:path];
+    if (@available(tvOS 11.0, iOS 12, *)) {
+        NSError *archiveError = nil;
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:obj requiringSecureCoding:NO error:&archiveError];
+        if (archiveError != nil) {
+            AMPLITUDE_ERROR(@"ERROR: Unable to archive object %@: %@", obj, archiveError);
+            return NO;
+        }
+        if (data == nil) {
+            AMPLITUDE_ERROR(@"ERROR: Archived data is nil for obj: %@", obj);
+            return NO;
+        }
+        NSError *writeError = nil;
+        BOOL writeSuccessful = [data writeToFile:path options:NSDataWritingAtomic error:&writeError];
+        if (writeError != nil || !writeSuccessful) {
+            AMPLITUDE_ERROR(@"ERROR: Unable to write data to file for object %@: %@", obj, archiveError);
+            return NO;
+        }
+        return YES;
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        // Even with the availability check above, Xcode would still emit a deprecation warning here.
+        // Since there's no way that this path could be reached on iOS's >= 12.0 or tvOS's >= 11.0
+        // (where `[NSKeyedArchiver archiveRootObject:toFile:]` was deprecated),
+        // we simply ignore the warning.
+        return [NSKeyedArchiver archiveRootObject:obj toFile:path];
+#pragma clang diagnostic pop
+    }
 }
 
 - (BOOL)moveFileIfNotExists:(NSString*)from to:(NSString*)to {

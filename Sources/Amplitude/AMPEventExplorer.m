@@ -59,7 +59,7 @@
         
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-            [[[AMPUtils getSharedApplication] keyWindow] addSubview:self.bubbleView];
+            [[AMPUtils getKeyWindow] addSubview:self.bubbleView];
         });
          
         [self.bubbleView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showInfoView)]];
@@ -70,7 +70,7 @@
 - (void)showInfoView {
     dispatch_async(dispatch_get_main_queue(), ^(void){
         if (self.bubbleView != nil) {
-            UIViewController *rootViewController = [[[AMPUtils getSharedApplication] keyWindow] rootViewController];
+            UIViewController *rootViewController = [[AMPUtils getKeyWindow] rootViewController];
             
             NSBundle *bundle = [NSBundle bundleForClass:[AMPInfoViewController class]];
             AMPInfoViewController *infoVC = [[AMPInfoViewController alloc] initWithNibName:@"AMPInfoViewController" bundle:bundle];
