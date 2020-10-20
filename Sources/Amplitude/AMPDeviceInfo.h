@@ -35,6 +35,6 @@
 @property (readonly, strong, nonatomic) NSString *language;
 @property (readonly, strong, nonatomic) NSString *vendorID;
 
-+ (NSString*) generateUUID;
++ (NSString *) generateUUID;
 
 @end

@@ -45,7 +45,7 @@
     return nil;
 }
 
-+ (NSString*)generateUUID {
++ (NSString *)generateUUID {
     CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
 #if __has_feature(objc_arc)
     NSString *uuidStr = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
@@ -96,7 +96,7 @@
     return str;
 }
 
-+ (BOOL)isEmptyString:(NSString*)str {
++ (BOOL)isEmptyString:(NSString *)str {
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
 }
 
@@ -146,7 +146,7 @@
     return [NSDictionary dictionaryWithDictionary:dict];
 }
 
-+ (NSString*) platformDataDirectory {
++ (NSString *) platformDataDirectory {
 #if TARGET_OS_TV
     return [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 #else

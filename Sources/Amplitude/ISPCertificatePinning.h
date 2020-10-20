@@ -44,7 +44,7 @@
  @return BOOL successfully loaded the public keys and domains
 
  */
-+ (BOOL)setupSSLPinsUsingDictionnary:(NSDictionary*)domainsAndCertificates;
++ (BOOL)setupSSLPinsUsingDictionnary:(NSDictionary *)domainsAndCertificates;
 
 
 /**
@@ -61,7 +61,7 @@
  @return BOOL found the domain's pinned certificate in the trust object's certificate chain
 
  */
-+ (BOOL)verifyPinnedCertificateForTrust:(SecTrustRef)trust andDomain:(NSString*)domain;
++ (BOOL)verifyPinnedCertificateForTrust:(SecTrustRef)trust andDomain:(NSString *)domain;
 
 @end
 #endif

@@ -27,22 +27,22 @@
 
 @property (nonatomic, strong, readonly) NSMutableSet *disabledFields;
 
-- (AMPTrackingOptions*)disableCarrier;
-- (AMPTrackingOptions*)disableCity;
-- (AMPTrackingOptions*)disableCountry;
-- (AMPTrackingOptions*)disableDeviceManufacturer;
-- (AMPTrackingOptions*)disableDeviceModel;
-- (AMPTrackingOptions*)disableDMA;
-- (AMPTrackingOptions*)disableIDFA;
-- (AMPTrackingOptions*)disableIDFV;
-- (AMPTrackingOptions*)disableIPAddress;
-- (AMPTrackingOptions*)disableLanguage;
-- (AMPTrackingOptions*)disableLatLng;
-- (AMPTrackingOptions*)disableOSName;
-- (AMPTrackingOptions*)disableOSVersion;
-- (AMPTrackingOptions*)disablePlatform;
-- (AMPTrackingOptions*)disableRegion;
-- (AMPTrackingOptions*)disableVersionName;
+- (AMPTrackingOptions *)disableCarrier;
+- (AMPTrackingOptions *)disableCity;
+- (AMPTrackingOptions *)disableCountry;
+- (AMPTrackingOptions *)disableDeviceManufacturer;
+- (AMPTrackingOptions *)disableDeviceModel;
+- (AMPTrackingOptions *)disableDMA;
+- (AMPTrackingOptions *)disableIDFA;
+- (AMPTrackingOptions *)disableIDFV;
+- (AMPTrackingOptions *)disableIPAddress;
+- (AMPTrackingOptions *)disableLanguage;
+- (AMPTrackingOptions *)disableLatLng;
+- (AMPTrackingOptions *)disableOSName;
+- (AMPTrackingOptions *)disableOSVersion;
+- (AMPTrackingOptions *)disablePlatform;
+- (AMPTrackingOptions *)disableRegion;
+- (AMPTrackingOptions *)disableVersionName;
 
 - (BOOL)shouldTrackCarrier;
 - (BOOL)shouldTrackCity;

@@ -59,18 +59,18 @@
 @synthesize language = _language;
 @synthesize vendorID = _vendorID;
 
-- (NSString*)appVersion {
+- (NSString *)appVersion {
     if (!_appVersion) {
         _appVersion = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"];
     }
     return _appVersion;
 }
 
-- (NSString*)osName {
+- (NSString *)osName {
     return kAMPOSName;
 }
 
-- (NSString*)osVersion {
+- (NSString *)osVersion {
     if (!_osVersion) {
         #if !TARGET_OS_OSX
         _osVersion = [[UIDevice currentDevice] systemVersion];
@@ -85,18 +85,18 @@
     return _osVersion;
 }
 
-- (NSString*)manufacturer {
+- (NSString *)manufacturer {
     return @"Apple";
 }
 
-- (NSString*)model {
+- (NSString *)model {
     if (!_model) {
         _model = [AMPDeviceInfo getDeviceModel];
     }
     return _model;
 }
 
-- (NSString*)carrier {
+- (NSString *)carrier {
     if (!_carrier) {
         Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
@@ -108,7 +108,7 @@
             if (imp1) {
                 carrier = imp1(networkInfo, subscriberCellularProvider);
             }
-            NSString* (*imp2)(id, SEL) = (NSString* (*)(id, SEL))[carrier methodForSelector:carrierName];
+            NSString *(*imp2)(id, SEL) = (NSString *(*)(id, SEL))[carrier methodForSelector:carrierName];
             if (imp2) {
                 _carrier = imp2(carrier, carrierName);
             }
@@ -121,7 +121,7 @@
     return _carrier;
 }
 
-- (NSString*)country {
+- (NSString *)country {
     if (!_country) {
         _country = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey: NSLocaleCountryCode
                                                                                value: [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]];
@@ -129,7 +129,7 @@
     return _country;
 }
 
-- (NSString*)language {
+- (NSString *)language {
     if (!_language) {
         _language = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey: NSLocaleLanguageCode
                                                                                 value: [[NSLocale preferredLanguages] objectAtIndex:0]];
@@ -137,7 +137,7 @@
     return _language;
 }
 
-- (NSString*)vendorID {
+- (NSString *)vendorID {
     if (!_vendorID) {
 #if !TARGET_OS_OSX
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
@@ -154,7 +154,7 @@
     return _vendorID;
 }
 
-+ (NSString*)getVendorID:(int) maxAttempts {
++ (NSString *)getVendorID:(int) maxAttempts {
 #if !TARGET_OS_OSX
     NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 #else
@@ -169,13 +169,13 @@
     }
 }
 
-+ (NSString*)generateUUID {
++ (NSString *)generateUUID {
     // Add "R" at the end of the ID to distinguish it from advertiserId
     NSString *result = [[AMPUtils generateUUID] stringByAppendingString:@"R"];
     return result;
 }
 
-+ (NSString*)getPlatformString {
++ (NSString *)getPlatformString {
 #if !TARGET_OS_OSX
     const char *sysctl_name = "hw.machine";
 #else
@@ -190,7 +190,7 @@
     return platform;
 }
 
-+ (NSString*)getDeviceModel {
++ (NSString *)getDeviceModel {
     NSString *platform = [self getPlatformString];
     // == iPhone ==
     // iPhone 1

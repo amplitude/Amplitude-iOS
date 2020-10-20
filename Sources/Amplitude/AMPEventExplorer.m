@@ -82,7 +82,7 @@
     });
 }
 
-- (void)bubbleViewDragged:(UIPanGestureRecognizer*)sender {
+- (void)bubbleViewDragged:(UIPanGestureRecognizer *)sender {
     CGPoint translation = [sender translationInView:self.bubbleView];
     
     CGFloat statusBarHeight = [AMPUtils statusBarHeight];
