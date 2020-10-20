@@ -557,7 +557,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     
     [self runOnBackgroundQueue:^{
         // Respect the opt-out setting by not sending or storing any events.
-        if ([self optOut])  {
+        if ([self optOut]) {
             AMPLITUDE_LOG(@"User has opted out of tracking. Event %@ not logged.", eventType);
             return;
         }
@@ -779,7 +779,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self runOnBackgroundQueue:^{
 
         // Don't communicate with the server if the user has opted out.
-        if ([self optOut] || self->_offline)  {
+        if ([self optOut] || self->_offline) {
             self->_updatingCurrently = NO;
             [self endBackgroundTaskIfNeeded];
             return;
