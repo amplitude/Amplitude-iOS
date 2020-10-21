@@ -153,7 +153,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         
         __block BOOL success = YES;
         
-        dispatch_sync(_queue, ^() {
+        dispatch_sync(_queue, ^{
             if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
                 AMPLITUDE_LOG(@"Failed to open database");
                 sqlite3_close(self->_database);
@@ -189,7 +189,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
         
         __block BOOL success = YES;
         
-        dispatch_sync(_queue, ^() {
+        dispatch_sync(_queue, ^{
             if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
                 AMPLITUDE_LOG(@"Failed to open database");
                 sqlite3_close(self->_database);

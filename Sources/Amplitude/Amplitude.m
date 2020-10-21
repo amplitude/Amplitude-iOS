@@ -461,7 +461,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Release build
         #if !RELEASE
         if (self.showEventExplorer) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
                 if (self.eventExplorer == nil) {
                     self.eventExplorer = [[AMPEventExplorer alloc] initWithInstanceName:self.instanceName];

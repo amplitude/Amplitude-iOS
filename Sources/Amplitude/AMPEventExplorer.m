@@ -46,7 +46,7 @@
 }
 
 - (void)showBubbleView {
-    dispatch_async(dispatch_get_main_queue(), ^(void){
+    dispatch_async(dispatch_get_main_queue(), ^{
         CGRect screenRect = [[UIScreen mainScreen] bounds];
         CGFloat screenWidth = screenRect.size.width;
         CGFloat screenHeight = screenRect.size.height;
@@ -58,7 +58,7 @@
                                                                            35)];
         
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+        dispatch_after(popTime, dispatch_get_main_queue(), ^{
             [[AMPUtils getKeyWindow] addSubview:self.bubbleView];
         });
          
@@ -68,7 +68,7 @@
 }
 
 - (void)showInfoView {
-    dispatch_async(dispatch_get_main_queue(), ^(void){
+    dispatch_async(dispatch_get_main_queue(), ^{
         if (self.bubbleView != nil) {
             UIViewController *rootViewController = [[AMPUtils getKeyWindow] rootViewController];
             
