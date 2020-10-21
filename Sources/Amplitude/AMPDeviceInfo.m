@@ -123,16 +123,16 @@
 
 - (NSString *)country {
     if (!_country) {
-        _country = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey: NSLocaleCountryCode
-                                                                               value: [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]];
+        _country = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:NSLocaleCountryCode
+                                                                               value:[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]];
     }
     return _country;
 }
 
 - (NSString *)language {
     if (!_language) {
-        _language = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey: NSLocaleLanguageCode
-                                                                                value: [[NSLocale preferredLanguages] objectAtIndex:0]];
+        _language = [[NSLocale localeWithLocaleIdentifier:@"en_US"] displayNameForKey:NSLocaleLanguageCode
+                                                                                value:[[NSLocale preferredLanguages] objectAtIndex:0]];
     }
     return _language;
 }

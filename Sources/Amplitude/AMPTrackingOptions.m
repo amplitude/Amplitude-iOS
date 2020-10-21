@@ -231,7 +231,7 @@
     return apiPropertiesTrackingOptions;
 }
 
-- (AMPTrackingOptions *)mergeIn: (AMPTrackingOptions *)other {
+- (AMPTrackingOptions *)mergeIn:(AMPTrackingOptions *)other {
     for (NSString *field in other.disabledFields) {
         [self disableTrackingField:field];
     }
@@ -253,7 +253,7 @@
     return options;
 }
 
-+ (AMPTrackingOptions *)copyOf: (AMPTrackingOptions *)origin {
++ (AMPTrackingOptions *)copyOf:(AMPTrackingOptions *)origin {
     AMPTrackingOptions *options = [[AMPTrackingOptions alloc] init];
     for (NSString *field in origin.disabledFields) {
         [options disableTrackingField:field];

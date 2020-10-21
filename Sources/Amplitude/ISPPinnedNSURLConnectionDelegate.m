@@ -35,12 +35,12 @@
             }
             else {
                 // The certificate wasn't found in the certificate chain; cancel the connection
-                [[challenge sender] cancelAuthenticationChallenge: challenge];
+                [[challenge sender] cancelAuthenticationChallenge:challenge];
             }
         }
         else {
             // Certificate chain validation failed; cancel the connection
-            [[challenge sender] cancelAuthenticationChallenge: challenge];
+            [[challenge sender] cancelAuthenticationChallenge:challenge];
         }
     }
 }

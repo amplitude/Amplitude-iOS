@@ -62,9 +62,9 @@
 - (BOOL)shouldTrackVersionName;
 
 - (NSMutableDictionary *)getApiPropertiesTrackingOption;
-- (AMPTrackingOptions *)mergeIn: (AMPTrackingOptions *)options;
+- (AMPTrackingOptions *)mergeIn:(AMPTrackingOptions *)options;
 + (instancetype)options;
 + (AMPTrackingOptions *)forCoppaControl;
-+ (AMPTrackingOptions *)copyOf: (AMPTrackingOptions *)origin;
++ (AMPTrackingOptions *)copyOf:(AMPTrackingOptions *)origin;
 
 @end

@@ -382,7 +382,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)initializeApiKey:(NSString *)apiKey {
-    [self initializeApiKey:apiKey userId:nil setUserId: NO];
+    [self initializeApiKey:apiKey userId:nil setUserId:NO];
 }
 
 /**
@@ -390,7 +390,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  */
 - (void)initializeApiKey:(NSString *)apiKey
                   userId:(NSString *)userId {
-    [self initializeApiKey:apiKey userId:userId setUserId: YES];
+    [self initializeApiKey:apiKey userId:userId setUserId:YES];
 }
 
 /**
@@ -896,10 +896,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
         }
 
-        [mergedEvents addObject: event != nil ? event : identify];
+        [mergedEvents addObject:event != nil ? event : identify];
     }
 
-    NSDictionary *results = [[NSDictionary alloc] initWithObjectsAndKeys: mergedEvents, EVENTS, [NSNumber numberWithLongLong:maxEventId], MAX_EVENT_ID, [NSNumber numberWithLongLong:maxIdentifyId], MAX_IDENTIFY_ID, nil];
+    NSDictionary *results = [[NSDictionary alloc] initWithObjectsAndKeys:mergedEvents, EVENTS, [NSNumber numberWithLongLong:maxEventId], MAX_EVENT_ID, [NSNumber numberWithLongLong:maxIdentifyId], MAX_IDENTIFY_ID, nil];
     return results;
 }
 
@@ -924,8 +924,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     // Add checksum
     [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *checksumData = [NSString stringWithFormat: @"%@%@%@%@", apiVersionString, self.apiKey, events, timestampString];
-    NSString *checksum = [self md5HexDigest: checksumData];
+    NSString *checksumData = [NSString stringWithFormat:@"%@%@%@%@", apiVersionString, self.apiKey, events, timestampString];
+    NSString *checksum = [self md5HexDigest:checksumData];
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
 
     [request setHTTPMethod:@"POST"];
@@ -975,10 +975,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 // If blocked by one massive event, drop it
                 if (numEvents == 1) {
                     if (maxEventId >= 0) {
-                        (void) [self.dbHelper removeEvent: maxEventId];
+                        (void) [self.dbHelper removeEvent:maxEventId];
                     }
                     if (maxIdentifyId >= 0) {
-                        (void) [self.dbHelper removeIdentifys: maxIdentifyId];
+                        (void) [self.dbHelper removeIdentifys:maxIdentifyId];
                     }
                 }
 
@@ -1484,7 +1484,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if ([obj isKindOfClass:[NSString class]]) {
         obj = (NSString *)obj;
         if ([obj length] > kAMPMaxStringLength) {
-            obj = [obj substringWithRange: [obj rangeOfComposedCharacterSequencesForRange: NSMakeRange(0, kAMPMaxStringLength)]];
+            obj = [obj substringWithRange:[obj rangeOfComposedCharacterSequencesForRange:NSMakeRange(0, kAMPMaxStringLength)]];
         }
     } else if ([obj isKindOfClass:[NSArray class]]) {
         NSMutableArray *arr = [NSMutableArray array];
@@ -1576,7 +1576,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  */
 - (BOOL)upgradePrefs {
     // Copy any old data files to new file paths
-    NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *oldPropertyListPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
     NSString *oldEventsDataPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
     BOOL success = [self moveFileIfNotExists:oldPropertyListPath to:_propertyListPath];

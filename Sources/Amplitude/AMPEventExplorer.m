@@ -52,10 +52,10 @@
         CGFloat screenHeight = screenRect.size.height;
         NSInteger bottomOffset = [AMPUtils barBottomOffset];
             
-        self.bubbleView = [[AMPBubbleView alloc] initWithFrame: CGRectMake(screenWidth - 50,
-                                                                           screenHeight - 50 - bottomOffset,
-                                                                           35,
-                                                                           35)];
+        self.bubbleView = [[AMPBubbleView alloc] initWithFrame:CGRectMake(screenWidth - 50,
+                                                                          screenHeight - 50 - bottomOffset,
+                                                                          35,
+                                                                          35)];
         
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
         dispatch_after(popTime, dispatch_get_main_queue(), ^{

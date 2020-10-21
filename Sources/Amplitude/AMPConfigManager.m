@@ -61,7 +61,7 @@
             if (urlString) {
                 NSString *ingestionEndpoint = [NSString stringWithFormat:@"https://%@", urlString];
                 
-                NSURL *url = [NSURL URLWithString: ingestionEndpoint];
+                NSURL *url = [NSURL URLWithString:ingestionEndpoint];
                 if (url && url.scheme && url.host) {
                     self.ingestionEndpoint = ingestionEndpoint;
                 }
