@@ -1691,7 +1691,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     } else {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#pragma clang diagnostic ignored "-Wunguarded-availability" // Unarchive only called within context of macOS > 10.11
+#pragma clang diagnostic ignored "-Wunguarded-availability" // Safe to use this flag since API only used with macOS > 10.11 from (id)unarchive:(NSString*)path 
         // Even with the availability check above, Xcode would still emit a deprecation warning here.
         // Since there's no way that it could be reached on iOS's >= 12.0 or tvOS's >= 11.0
         // (where `[NSKeyedUnarchiver unarchiveTopLevelObjectWithData:error:]` was deprecated),
