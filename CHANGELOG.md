@@ -8,6 +8,7 @@
 * **deprecations:** Use DEPRECATED_MSG_ATTRIBUTE instead of notes ([#305](https://github.com/amplitude/Amplitude-iOS/issues/305)) ([f501c6c](https://github.com/amplitude/Amplitude-iOS/commit/f501c6cf60ffa7e224a661527979e58a5a773c1f))
 * nil dynamic config refresh crash ([#288](https://github.com/amplitude/Amplitude-iOS/issues/288)) ([#289](https://github.com/amplitude/Amplitude-iOS/issues/289)) ([9dc896d](https://github.com/amplitude/Amplitude-iOS/commit/9dc896d94aa678a2b70de675ea3acbca587c602f))
 * Swift UserId and DeviceId setter ([#299](https://github.com/amplitude/Amplitude-iOS/issues/299)) ([b7c0f90](https://github.com/amplitude/Amplitude-iOS/commit/b7c0f90e6bb8f2a2b51ed2602eab78b8f099ae1a))
+* Explicitly add files in Resources for SPM ([#292](https://github.com/amplitude/Amplitude-iOS/issues/292)) ([61da6d3](https://github.com/amplitude/Amplitude-iOS/commit/61da6d3a6bfc880c9b73ba8f5260e97875e2b9ee))
 
 ### As of September 25, 2020 CHANGELOG.md is no longer manually updated. 
 Please check the [releases page](https://github.com/amplitude/Amplitude-iOS/releases) for up to date changes.
