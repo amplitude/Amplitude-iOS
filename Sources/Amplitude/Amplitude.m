@@ -1686,8 +1686,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (id)unarchive:(NSData *)data error:(NSError **)error {
-    if (@available(iOS 12, tvOS 11.0, *)) {
-        return [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class] fromData:data error:error];
+    if (@available(iOS 12, tvOS 11.0, macOS 10.13, *)) {
+        return [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class] fromData:data error:error]; // warn 10.13
     } else {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -1695,15 +1695,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Since there's no way that it could be reached on iOS's >= 12.0 or tvOS's >= 11.0
         // (where `[NSKeyedUnarchiver unarchiveTopLevelObjectWithData:error:]` was deprecated),
         // we simply ignore the warning.
-        return [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:error];
+        return [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:error]; // warn 10.11
 #pragma clang diagnostic pop
     }
 }
 
 - (BOOL)archive:(id) obj toFile:(NSString*)path {
-    if (@available(tvOS 11.0, iOS 12, *)) {
+    if (@available(tvOS 11.0, iOS 12, macOS 10.13, *)) {
         NSError *archiveError = nil;
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:obj requiringSecureCoding:NO error:&archiveError];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:obj requiringSecureCoding:NO error:&archiveError]; // warn 10.13
         if (archiveError != nil) {
             AMPLITUDE_ERROR(@"ERROR: Unable to archive object %@: %@", obj, archiveError);
             return NO;
