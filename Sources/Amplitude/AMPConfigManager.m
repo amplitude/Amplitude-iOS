@@ -24,7 +24,7 @@
 #import "AMPConfigManager.h"
 #import "AMPConstants.h"
 
-@interface AMPConfigManager()
+@interface AMPConfigManager ()
 
 @property (nonatomic, strong, readwrite) NSString *ingestionEndpoint;
 

@@ -37,11 +37,11 @@
 #import "AMPConstants.h"
 #import "AMPUtils.h"
 
-@interface AMPRevenue()
+@interface AMPRevenue ()
 
 @end
 
-@implementation AMPRevenue{}
+@implementation AMPRevenue
 
 - (instancetype)init {
     if ((self = [super init])) {

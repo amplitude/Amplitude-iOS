@@ -23,7 +23,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AMPDeviceInfo: NSObject
+@interface AMPDeviceInfo : NSObject
 
 @property (readonly, strong, nonatomic) NSString *appVersion;
 @property (readonly, strong, nonatomic) NSString *osName;

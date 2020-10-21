@@ -77,7 +77,7 @@
 #import "AMPEventExplorer.h"
 #endif
 
-@interface Amplitude()
+@interface Amplitude ()
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) NSOperationQueue *initializerQueue;

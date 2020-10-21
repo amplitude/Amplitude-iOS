@@ -35,7 +35,7 @@
 
 #import "AMPUtils.h"
 
-@interface AMPUtils()
+@interface AMPUtils ()
 @end
 
 @implementation AMPUtils

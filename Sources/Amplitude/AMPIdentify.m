@@ -37,7 +37,7 @@
 #import "AMPConstants.h"
 #import "AMPUtils.h"
 
-@interface AMPIdentify()
+@interface AMPIdentify ()
 @end
 
 @implementation AMPIdentify {

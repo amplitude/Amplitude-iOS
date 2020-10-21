@@ -44,7 +44,7 @@
 #endif
 #endif
 
-@interface AMPDeviceInfo()
+@interface AMPDeviceInfo ()
 @end
 
 @implementation AMPDeviceInfo {

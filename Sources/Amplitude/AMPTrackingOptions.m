@@ -36,7 +36,7 @@
 #import "AMPTrackingOptions.h"
 #import "AMPConstants.h"
 
-@interface AMPTrackingOptions()
+@interface AMPTrackingOptions ()
 
 @property (nonatomic, strong, readwrite) NSMutableSet *disabledFields;
 
