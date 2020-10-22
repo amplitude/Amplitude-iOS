@@ -594,7 +594,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)useAdvertisingIdForDeviceId;
 
-- (void)setTrackingOptions:(AMPTrackingOptions*)options;
+- (void)setTrackingOptions:(AMPTrackingOptions *)options;
 
 /**
  Enable COPPA (Children's Online Privacy Protection Act) restrictions on IDFA, IDFV, city, IP address and location tracking.
@@ -628,7 +628,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 
  @returns the deviceId.
  */
-- (NSString*)getDeviceId;
+- (NSString *)getDeviceId;
 
 /**
  Regenerates a new random deviceId for current user. Note: this is not recommended unless you know what you are doing. This can be used in conjunction with setUserId:nil to anonymize users after they log out. With a nil userId and a completely new deviceId, the current user would appear as a brand new user in dashboard.

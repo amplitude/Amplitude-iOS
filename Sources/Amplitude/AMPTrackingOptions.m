@@ -36,7 +36,7 @@
 #import "AMPTrackingOptions.h"
 #import "AMPConstants.h"
 
-@interface AMPTrackingOptions()
+@interface AMPTrackingOptions ()
 
 @property (nonatomic, strong, readwrite) NSMutableSet *disabledFields;
 
@@ -55,7 +55,7 @@
     return [[self alloc] init];
 }
 
-- (AMPTrackingOptions*)disableCarrier {
+- (AMPTrackingOptions *)disableCarrier {
     [self disableTrackingField:AMP_TRACKING_OPTION_CARRIER];
     return self;
 }
@@ -64,7 +64,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_CARRIER];
 }
 
-- (AMPTrackingOptions*)disableCity {
+- (AMPTrackingOptions *)disableCity {
     [self disableTrackingField:AMP_TRACKING_OPTION_CITY];
     return self;
 }
@@ -73,7 +73,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_CITY];
 }
 
-- (AMPTrackingOptions*)disableCountry {
+- (AMPTrackingOptions *)disableCountry {
     [self disableTrackingField:AMP_TRACKING_OPTION_COUNTRY];
     return self;
 }
@@ -82,7 +82,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_COUNTRY];
 }
 
-- (AMPTrackingOptions*)disableDeviceManufacturer {
+- (AMPTrackingOptions *)disableDeviceManufacturer {
     [self disableTrackingField:AMP_TRACKING_OPTION_DEVICE_MANUFACTURER];
     return self;
 }
@@ -91,7 +91,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_DEVICE_MANUFACTURER];
 }
 
-- (AMPTrackingOptions*)disableDeviceModel {
+- (AMPTrackingOptions *)disableDeviceModel {
     [self disableTrackingField:AMP_TRACKING_OPTION_DEVICE_MODEL];
     return self;
 }
@@ -100,7 +100,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_DEVICE_MODEL];
 }
 
-- (AMPTrackingOptions*)disableDMA {
+- (AMPTrackingOptions *)disableDMA {
     [self disableTrackingField:AMP_TRACKING_OPTION_DMA];
     return self;
 }
@@ -109,7 +109,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_DMA];
 }
 
-- (AMPTrackingOptions*)disableIDFA {
+- (AMPTrackingOptions *)disableIDFA {
     [self disableTrackingField:AMP_TRACKING_OPTION_IDFA];
     return self;
 }
@@ -118,7 +118,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_IDFA];
 }
 
-- (AMPTrackingOptions*)disableIDFV
+- (AMPTrackingOptions *)disableIDFV
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_IDFV];
     return self;
@@ -128,7 +128,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_IDFV];
 }
 
-- (AMPTrackingOptions*)disableIPAddress {
+- (AMPTrackingOptions *)disableIPAddress {
     [self disableTrackingField:AMP_TRACKING_OPTION_IP_ADDRESS];
     return self;
 }
@@ -137,7 +137,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_IP_ADDRESS];
 }
 
-- (AMPTrackingOptions*)disableLanguage
+- (AMPTrackingOptions *)disableLanguage
 {
     [self disableTrackingField:AMP_TRACKING_OPTION_LANGUAGE];
     return self;
@@ -147,7 +147,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_LANGUAGE];
 }
 
-- (AMPTrackingOptions*)disableLatLng {
+- (AMPTrackingOptions *)disableLatLng {
     [self disableTrackingField:AMP_TRACKING_OPTION_LAT_LNG];
     return self;
 }
@@ -156,7 +156,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_LAT_LNG];
 }
 
-- (AMPTrackingOptions*)disableOSName {
+- (AMPTrackingOptions *)disableOSName {
     [self disableTrackingField:AMP_TRACKING_OPTION_OS_NAME];
     return self;
 }
@@ -165,7 +165,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_OS_NAME];
 }
 
-- (AMPTrackingOptions*)disableOSVersion {
+- (AMPTrackingOptions *)disableOSVersion {
     [self disableTrackingField:AMP_TRACKING_OPTION_OS_VERSION];
     return self;
 }
@@ -174,7 +174,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_OS_VERSION];
 }
 
-- (AMPTrackingOptions*)disablePlatform {
+- (AMPTrackingOptions *)disablePlatform {
     [self disableTrackingField:AMP_TRACKING_OPTION_PLATFORM];
     return self;
 }
@@ -183,7 +183,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_PLATFORM];
 }
 
-- (AMPTrackingOptions*)disableRegion {
+- (AMPTrackingOptions *)disableRegion {
     [self disableTrackingField:AMP_TRACKING_OPTION_REGION];
     return self;
 }
@@ -192,7 +192,7 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_REGION];
 }
 
-- (AMPTrackingOptions*)disableVersionName {
+- (AMPTrackingOptions *)disableVersionName {
     [self disableTrackingField:AMP_TRACKING_OPTION_VERSION_NAME];
     return self;
 }
@@ -201,15 +201,15 @@
     return [self shouldTrackField:AMP_TRACKING_OPTION_VERSION_NAME];
 }
 
-- (void) disableTrackingField:(NSString*)field {
+- (void) disableTrackingField:(NSString *)field {
     [self.disabledFields addObject:field];
 }
 
-- (BOOL) shouldTrackField:(NSString*)field {
+- (BOOL) shouldTrackField:(NSString *)field {
     return ![self.disabledFields containsObject:field];
 }
 
-- (NSMutableDictionary*) getApiPropertiesTrackingOption {
+- (NSMutableDictionary *)getApiPropertiesTrackingOption {
     NSMutableDictionary *apiPropertiesTrackingOptions = [[NSMutableDictionary alloc] init];
     if (self.disabledFields.count == 0) {
         return apiPropertiesTrackingOptions;
@@ -231,7 +231,7 @@
     return apiPropertiesTrackingOptions;
 }
 
-- (AMPTrackingOptions *)mergeIn: (AMPTrackingOptions *)other {
+- (AMPTrackingOptions *)mergeIn:(AMPTrackingOptions *)other {
     for (NSString *field in other.disabledFields) {
         [self disableTrackingField:field];
     }
@@ -253,7 +253,7 @@
     return options;
 }
 
-+ (AMPTrackingOptions *)copyOf: (AMPTrackingOptions *)origin {
++ (AMPTrackingOptions *)copyOf:(AMPTrackingOptions *)origin {
     AMPTrackingOptions *options = [[AMPTrackingOptions alloc] init];
     for (NSString *field in origin.disabledFields) {
         [options disableTrackingField:field];

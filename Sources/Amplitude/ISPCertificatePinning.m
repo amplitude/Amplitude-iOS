@@ -44,7 +44,7 @@
 
 
 
-+ (BOOL)setupSSLPinsUsingDictionnary:(NSDictionary*)domainsAndCertificates {
++ (BOOL)setupSSLPinsUsingDictionnary:(NSDictionary *)domainsAndCertificates {
     if (domainsAndCertificates == nil) {
         return NO;
     }
@@ -73,7 +73,7 @@
 }
 
 
-+ (BOOL)verifyPinnedCertificateForTrust:(SecTrustRef)trust andDomain:(NSString*)domain {
++ (BOOL)verifyPinnedCertificateForTrust:(SecTrustRef)trust andDomain:(NSString *)domain {
     if ((trust == NULL) || (domain == nil)) {
         return NO;
     }
@@ -102,7 +102,7 @@
 
             // Extract the certificate
             SecCertificateRef certificate = SecTrustGetCertificateAtIndex(trust, i);
-            NSData* DERCertificate = (__bridge NSData*) SecCertificateCopyData(certificate);
+            NSData *DERCertificate = (__bridge NSData *)SecCertificateCopyData(certificate);
 
             // Compare the two certificates
             if ([pinnedCertificate isEqualToData:DERCertificate]) {

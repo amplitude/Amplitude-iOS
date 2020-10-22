@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AMPConfigManager : NSObject
 
-@property (nonatomic, strong, readonly) NSString* ingestionEndpoint;
+@property (nonatomic, strong, readonly) NSString *ingestionEndpoint;
 
 + (instancetype)sharedInstance;
 - (void)refresh:(void(^)(void))completionHandler;

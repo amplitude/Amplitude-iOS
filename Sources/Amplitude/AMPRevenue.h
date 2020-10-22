@@ -120,7 +120,7 @@
 
  @returns the same [AMPRevenue](#) object, allowing you to chain multiple method calls together.
  */
-- (AMPRevenue*)setProductIdentifier:(NSString*) productIdentifier;
+- (AMPRevenue *)setProductIdentifier:(NSString *)productIdentifier;
 
 /**
  Set a value for the quantity.
@@ -131,7 +131,7 @@
 
  @returns the same [AMPRevenue](#) object, allowing you to chain multiple method calls together.
  */
-- (AMPRevenue*)setQuantity:(NSInteger) quantity;
+- (AMPRevenue *)setQuantity:(NSInteger)quantity;
 
 
 /**
@@ -143,7 +143,7 @@
 
  @returns the same [AMPRevenue](#) object, allowing you to chain multiple method calls together.
  */
-- (AMPRevenue*)setPrice:(NSNumber*) price;
+- (AMPRevenue *)setPrice:(NSNumber *)price;
 
 
 /**
@@ -153,7 +153,7 @@
 
  @returns the same [AMPRevenue](#) object, allowing you to chain multiple method calls together.
  */
-- (AMPRevenue*)setRevenueType:(NSString*) revenueType;
+- (AMPRevenue *)setRevenueType:(NSString *)revenueType;
 
 
 /**
@@ -166,7 +166,7 @@
  @see [Revenue Validation](https://github.com/amplitude/amplitude-ios#revenue-verification)
  @see [Validating Receipts with the App Store](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#//apple_ref/doc/uid/TP40010573-CH104-SW1)
  */
-- (AMPRevenue*)setReceipt:(NSData*) receipt;
+- (AMPRevenue *)setReceipt:(NSData *)receipt;
 
 /**
  Set event properties for the revenue event.
@@ -177,9 +177,9 @@
 
  @see [Setting Event Properties](https://github.com/amplitude/amplitude-ios#setting-event-properties)
  */
-- (AMPRevenue*)setEventProperties:(NSDictionary*) eventProperties;
+- (AMPRevenue *)setEventProperties:(NSDictionary *)eventProperties;
 
 
-- (NSDictionary*)toNSDictionary;
+- (NSDictionary *)toNSDictionary;
 
 @end

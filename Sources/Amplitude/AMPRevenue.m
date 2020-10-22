@@ -37,11 +37,11 @@
 #import "AMPConstants.h"
 #import "AMPUtils.h"
 
-@interface AMPRevenue()
+@interface AMPRevenue ()
 
 @end
 
-@implementation AMPRevenue{}
+@implementation AMPRevenue
 
 - (instancetype)init {
     if ((self = [super init])) {
@@ -65,7 +65,7 @@
     return YES;
 }
 
-- (AMPRevenue*)setProductIdentifier:(NSString *) productIdentifier {
+- (AMPRevenue *)setProductIdentifier:(NSString *)productIdentifier {
     if ([AMPUtils isEmptyString:productIdentifier]) {
         AMPLITUDE_LOG(@"Invalid empty productIdentifier");
         return self;
@@ -75,33 +75,33 @@
     return self;
 }
 
-- (AMPRevenue*)setQuantity:(NSInteger)quantity {
+- (AMPRevenue *)setQuantity:(NSInteger)quantity {
     _quantity = quantity;
     return self;
 }
 
-- (AMPRevenue*)setPrice:(NSNumber *)price {
+- (AMPRevenue *)setPrice:(NSNumber *)price {
     _price = price;
     return self;
 }
 
-- (AMPRevenue*)setRevenueType:(NSString*)revenueType {
+- (AMPRevenue *)setRevenueType:(NSString *)revenueType {
     _revenueType = revenueType;
     return self;
 }
 
-- (AMPRevenue*)setReceipt:(NSData*)receipt {
+- (AMPRevenue *)setReceipt:(NSData *)receipt {
     _receipt = receipt;
     return self;
 }
 
-- (AMPRevenue*)setEventProperties:(NSDictionary*)eventProperties {
+- (AMPRevenue *)setEventProperties:(NSDictionary *)eventProperties {
     eventProperties = [eventProperties copy];
     _properties = eventProperties;
     return self;
 }
 
-- (NSDictionary*)toNSDictionary {
+- (NSDictionary *)toNSDictionary {
     NSMutableDictionary *dict;
     if (_properties == nil) {
         dict = [[NSMutableDictionary alloc] init];

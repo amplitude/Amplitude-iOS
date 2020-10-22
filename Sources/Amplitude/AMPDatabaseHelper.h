@@ -27,18 +27,18 @@
 
 @property (nonatomic, strong, readonly) NSString *databasePath;
 
-+ (AMPDatabaseHelper*)getDatabaseHelper;
-+ (AMPDatabaseHelper*)getDatabaseHelper:(NSString*)instanceName;
++ (AMPDatabaseHelper *)getDatabaseHelper;
++ (AMPDatabaseHelper *)getDatabaseHelper:(NSString *)instanceName;
 - (BOOL)createTables;
 - (BOOL)dropTables;
-- (BOOL)upgrade:(int) oldVersion newVersion:(int)newVersion;
-- (BOOL)resetDB:(BOOL) deleteDB;
+- (BOOL)upgrade:(int)oldVersion newVersion:(int)newVersion;
+- (BOOL)resetDB:(BOOL)deleteDB;
 - (BOOL)deleteDB;
 
-- (BOOL)addEvent:(NSString*) event;
-- (BOOL)addIdentify:(NSString*) identify;
-- (NSMutableArray*)getEvents:(long long)upToId limit:(long long)limit;
-- (NSMutableArray*)getIdentifys:(long long)upToId limit:(long long)limit;
+- (BOOL)addEvent:(NSString *)event;
+- (BOOL)addIdentify:(NSString *)identify;
+- (NSMutableArray *)getEvents:(long long)upToId limit:(long long)limit;
+- (NSMutableArray *)getIdentifys:(long long)upToId limit:(long long)limit;
 - (int)getEventCount;
 - (int)getIdentifyCount;
 - (int)getTotalEventCount;
@@ -49,9 +49,9 @@
 - (long long)getNthEventId:(long long)n;
 - (long long)getNthIdentifyId:(long long)n;
 
-- (BOOL)insertOrReplaceKeyValue:(NSString*)key value:(NSString*)value;
-- (BOOL)insertOrReplaceKeyLongValue:(NSString*)key value:(NSNumber*)value;
-- (NSString*)getValue:(NSString*)key;
-- (NSNumber*)getLongValue:(NSString*)key;
+- (BOOL)insertOrReplaceKeyValue:(NSString *)key value:(NSString *)value;
+- (BOOL)insertOrReplaceKeyLongValue:(NSString *)key value:(NSNumber *)value;
+- (NSString *)getValue:(NSString *)key;
+- (NSNumber *)getLongValue:(NSString *)key;
 
 @end
