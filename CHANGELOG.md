@@ -10,6 +10,10 @@
 * Swift UserId and DeviceId setter ([#299](https://github.com/amplitude/Amplitude-iOS/issues/299)) ([b7c0f90](https://github.com/amplitude/Amplitude-iOS/commit/b7c0f90e6bb8f2a2b51ed2602eab78b8f099ae1a))
 * Explicitly add files in Resources for SPM ([#292](https://github.com/amplitude/Amplitude-iOS/issues/292)) ([61da6d3](https://github.com/amplitude/Amplitude-iOS/commit/61da6d3a6bfc880c9b73ba8f5260e97875e2b9ee))
 
+## 7.1.0 (Sep 30, 2020)
+* Add support to view/copy userId, deviceId to use Event Explorer (BETA). NOTE: This feature doesn't support Swift Package Manager yet.
+* Removed Amplitude-iOS.podspec from repo.
+
 ## 7.0.1 (Sep 20, 2020)
 * Fix issues for nullable/nonnull declaration in `Amplitude.h`
 * Fix [#286](https://github.com/amplitude/Amplitude-iOS/issues/286)
