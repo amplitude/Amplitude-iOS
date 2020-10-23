@@ -14,10 +14,17 @@ let package = Package(
         .library(name: "Amplitude", targets: ["Amplitude"]),
     ],
     targets: [
-        .target(
-            name: "Amplitude",
+          .target(
+            name: "AmplitudeEventExplorer",
             path: "Sources/Amplitude",
-            exclude: ["AppledocSettings.plist"],
+            sources: [
+              "AMPBubbleView.m",
+              "AMPEventExplorer.m",
+              "AMPInfoViewController.m",
+              "AMPBubbleView.h",
+              "AMPEventExplorer.h",
+              "AMPInfoViewController.h"
+            ],
             resources: [
                 .process("Resources/AMPBubbleView.xib"),
                 .process("Resources/AMPInfoViewController.xib"),
@@ -32,6 +39,27 @@ let package = Package(
                 .process("Resources/logo-button@2x.png"),
                 .process("Resources/logo-button@3x.png")
             ],
-            publicHeadersPath: ".")
+            publicHeadersPath: "."),
+          .target(
+            name: "AmplitudeCore",
+            path: "Sources/Amplitude",
+            exclude: [
+              "AMPBubbleView.m",
+              "AMPEventExplorer.m",
+              "AMPInfoViewController.m",
+              "AMPBubbleView.h",
+              "AMPEventExplorer.h",
+              "AMPInfoViewController.h"
+            ],
+            sources: ["."],
+            publicHeadersPath: "."),
+          .target(
+              name: "Amplitude",
+              dependencies: [
+                .target(name: "AmplitudeEventExplorer", condition: .when(platforms: [.iOS])),
+                // .target(name: "AmplitudeEventExplorer"),
+                .target(name: "AmplitudeCore")
+              ]
+          )
     ]
 )
