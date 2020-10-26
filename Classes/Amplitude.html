@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" href="../css/style.css">
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
-	<meta name="generator" content="appledoc 2.2.1 (build 1333)">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
 </head>
 <body class="appledoc">
 	<header>
@@ -81,6 +81,8 @@
 		<option value="//api/name/minTimeBetweenSessionsMillis">minTimeBetweenSessionsMillis</option>
 		
 		<option value="//api/name/optOut">optOut</option>
+		
+		<option value="//api/name/showEventExplorer">showEventExplorer</option>
 		
 		<option value="//api/name/trackingSessionEvents">trackingSessionEvents</option>
 		
@@ -1047,6 +1049,52 @@ return @{
 			
 		</div>
 	</div>
+</div><div class="section-method">
+	<a name="//api/name/showEventExplorer" title="showEventExplorer"></a>
+	<h3 class="method-title"><code><a href="#//api/name/showEventExplorer">&nbsp;&nbsp;showEventExplorer</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Show Amplitude Event Explorer when you&rsquo;re running a debug build.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign, readwrite) BOOL showEventExplorer</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Show Amplitude Event Explorer when you&rsquo;re running a debug build.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
 </div>
 						</div>
 						
@@ -1265,7 +1313,7 @@ return @{
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)initializeApiKey:(NSString *)<em>apiKey</em> userId:(NSString *)<em>userId</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)initializeApiKey:(NSString *)<em>apiKey</em> userId:(nullable NSString *)<em>userId</em></code></div>
 
 		    
 			
@@ -1922,7 +1970,7 @@ return @{
 			
 			
 			<div class="method-subsection brief-description">
-				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
+				<p>Tracks revenue.</p>
 			</div>
 			
 		    
@@ -1951,9 +1999,7 @@ return @{
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
-
-<p>Tracks revenue.</p>
+				<p>Tracks revenue.</p>
 
 <p>To track revenue from a user, call [[Amplitude instance] logRevenue:[NSNumber numberWithDouble:3.99]] each time the user generates revenue. logRevenue: takes in an NSNumber with the dollar amount of the sale as the only argument. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
 			</div>
@@ -1993,7 +2039,7 @@ return @{
 			
 			
 			<div class="method-subsection brief-description">
-				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
+				<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
 			</div>
 			
 		    
@@ -2032,9 +2078,7 @@ return @{
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
-
-<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
+				<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
 			</div>
 			
 
@@ -2074,12 +2118,12 @@ return @{
 			
 			
 			<div class="method-subsection brief-description">
-				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
+				<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
 			</div>
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em> receipt:(nullable NSData *)<em>receipt</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)logRevenue:(nullable NSString *)<em>productIdentifier</em> quantity:(NSInteger)<em>quantity</em> price:(NSNumber *)<em>price</em> receipt:(nullable NSData *)<em>receipt</em></code></div>
 
 		    
 			
@@ -2118,9 +2162,7 @@ return @{
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p><strong>Note: this is deprecated</strong> - please use <code>logRevenueV2</code> and <a href="../Classes/AMPRevenue.html"><code>AMPRevenue</code></a></p>
-
-<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
+				<p>Tracks revenue. This allows us to automatically display data relevant to revenue on the Amplitude website, including average revenue per daily active user (ARPDAU), 7, 30, and 90 day revenue, lifetime value (LTV) estimates, and revenue by advertising campaign cohort and daily/weekly/monthly cohorts.</p>
 
 <p>For validating revenue, use [[Amplitude instance] logRevenue:@&ldquo;com.company.app.productId&rdquo; quantity:1 price:[NSNumber numberWithDouble:3.99] receipt:transactionReceipt]</p>
 			</div>
@@ -2469,7 +2511,7 @@ return @{
 			
 			
 			<div class="method-subsection brief-description">
-				<p><strong>NOTE: this method is deprecated</strong> - use <code>setUserProperties</code> instead. In earlier versions of the SDK, replace = YES replaced the in-memory userProperties dictionary with the input; however, now userProperties are no longer stored in memory, so the flag does nothing.</p>
+				<p>Adds properties that are tracked on the user level.</p>
 			</div>
 			
 		    
@@ -2489,7 +2531,7 @@ return @{
 				
 					<tr>
 						<th scope="row" class="argument-name"><code>replace</code></th>
-						<td><p>This is deprecated. In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory.</p></td>
+						<td><p>In earlier versions of this SDK, this replaced the in-memory userProperties dictionary with the input, but now userProperties are no longer stored in memory, so this parameter does nothing.</p></td>
 					</tr>
 				
 				</table>
@@ -2503,9 +2545,7 @@ return @{
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p><strong>NOTE: this method is deprecated</strong> - use <code>setUserProperties</code> instead. In earlier versions of the SDK, replace = YES replaced the in-memory userProperties dictionary with the input; however, now userProperties are no longer stored in memory, so the flag does nothing.</p>
-
-<p>Adds properties that are tracked on the user level.</p>
+				<p>Adds properties that are tracked on the user level.</p>
 
 <p><strong>Note:</strong> Property keys must be <code>NSString</code> objects and values must be serializable.</p>
 			</div>
@@ -2688,12 +2728,12 @@ return @{
 			
 			
 			<div class="method-subsection brief-description">
-				<p>Sets the <a href="#//api/name/userId">userId</a>.</p>
+				<p>Sets the <a href="#//api/name/userId">userId</a> and starts a new session.</p>
 			</div>
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)setUserId:(NSString *)<em>userId</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)setUserId:(nullable NSString *)<em>userId</em></code></div>
 
 		    
 			
@@ -2717,7 +2757,7 @@ return @{
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>Sets the <a href="#//api/name/userId">userId</a>.</p>
+				<p>Sets the <a href="#//api/name/userId">userId</a> and starts a new session.</p>
 			</div>
 			
 
@@ -2755,12 +2795,12 @@ return @{
 			
 			
 			<div class="method-subsection brief-description">
-				<p>Sets the <a href="#//api/name/userId">userId</a> and starts a new session. The previous session for the previous user will be terminated and a new session will begin for the new user id.</p>
+				<p>Sets the <a href="#//api/name/userId">userId</a>. If startNewSession is true, the previous session for the previous user will be terminated and a new session will begin for the new <a href="#//api/name/userId">userId</a>.</p>
 			</div>
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>- (void)setUserId:(NSString *)<em>userId</em> startNewSession:(BOOL)<em>startNewSession</em></code></div>
+			<div class="method-subsection method-declaration"><code>- (void)setUserId:(nullable NSString *)<em>userId</em> startNewSession:(BOOL)<em>startNewSession</em></code></div>
 
 		    
 			
@@ -2771,6 +2811,11 @@ return @{
 					<tr>
 						<th scope="row" class="argument-name"><code>userId</code></th>
 						<td><p>If your app has its own login system that you want to track users with, you can set the <a href="#//api/name/userId">userId</a>.</p></td>
+					</tr>
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>startNewSession</code></th>
+						<td><p>Terminates previous user session and creates a new one for the new user</p></td>
 					</tr>
 				
 				</table>
@@ -2784,7 +2829,7 @@ return @{
 			
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
-				<p>Sets the <a href="#//api/name/userId">userId</a> and starts a new session. The previous session for the previous user will be terminated and a new session will begin for the new user id.</p>
+				<p>Sets the <a href="#//api/name/userId">userId</a>. If startNewSession is true, the previous session for the previous user will be terminated and a new session will begin for the new <a href="#//api/name/userId">userId</a>.</p>
 			</div>
 			
 
@@ -3358,7 +3403,76 @@ This can be used by any customer that does not want to collect IDFA, IDFV, city,
 				<h4 class="method-subtitle">See Also</h4>
 				<ul>
 					
-					<li><code><p><a href="https://github.com/amplitude/Amplitude-iOS#tracking-sessions">Tracking Sessions</a></p></code></li>
+					<li><code><p><a href="https://help.amplitude.com/hc/en-us/articles/115002323627-Tracking-Session">Tracking Sessions</a></p></code></li>
+					
+				</ul>
+			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setSessionId:" title="setSessionId:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setSessionId:">&ndash;&nbsp;setSessionId:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets the <a href="#//api/name/sessionId">sessionId</a>.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setSessionId:(long long)<em>timestamp</em></code></div>
+
+		    
+			
+			<div class="method-subsection arguments-section parameters">
+				<h4 class="method-subtitle parameter-title">Parameters</h4>
+				<table class="argument-def parameter-def">
+				
+					<tr>
+						<th scope="row" class="argument-name"><code>timestamp</code></th>
+						<td><p>Timestamp representing the <a href="#//api/name/sessionId">sessionId</a></p></td>
+					</tr>
+				
+				</table>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets the <a href="#//api/name/sessionId">sessionId</a>.</p>
+
+<p><strong>NOTE: not recommended unless you know what you are doing</strong></p>
+			</div>
+			
+
+			
+
+			
+			<div class="method-subsection see-also-section">
+				<h4 class="method-subtitle">See Also</h4>
+				<ul>
+					
+					<li><code><p><a href="https://help.amplitude.com/hc/en-us/articles/115002323627-Tracking-Session">Tracking Sessions</a></p></code></li>
 					
 				</ul>
 			</div>
@@ -3668,52 +3782,6 @@ Otherwise extends the session.</p>
 		</div>
 	</div>
 </div><div class="section-method">
-	<a name="//api/name/setSessionId:" title="setSessionId:"></a>
-	<h3 class="method-title"><code><a href="#//api/name/setSessionId:">&ndash;&nbsp;setSessionId:</a></code>
-</h3>
-
-	<div class="method-info">
-		<div class="pointy-thing"></div>
-
-		<div class="method-info-container">
-			
-			
-			<div class="method-subsection brief-description">
-				<p>Sets the session ID in memory and persists it to disk.</p>
-			</div>
-			
-		    
-
-			<div class="method-subsection method-declaration"><code>- (void)setSessionId:(long long)<em>timestamp</em></code></div>
-
-		    
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection discussion-section">
-				<h4 class="method-subtitle">Discussion</h4>
-				<p>Sets the session ID in memory and persists it to disk.</p>
-			</div>
-			
-
-			
-
-			
-
-			
-			<div class="method-subsection declared-in-section">
-				<h4 class="method-subtitle">Declared In</h4>
-				<p><code class="declared-in-ref">Amplitude.m</code></p>
-			</div>
-			
-			
-		</div>
-	</div>
-</div><div class="section-method">
 	<a name="//api/name/refreshSessionTime:" title="refreshSessionTime:"></a>
 	<h3 class="method-title"><code><a href="#//api/name/refreshSessionTime:">&ndash;&nbsp;refreshSessionTime:</a></code>
 </h3>
@@ -3824,10 +3892,10 @@ location in NSLibraryDirectory.</p>
 				<footer>
 					<div class="footer-copyright">
 						
-						<p class="copyright">Copyright &copy; 2020 Amplitude Inc. All rights reserved. Updated: 2020-09-14</p>
+						<p class="copyright">Copyright &copy; 2020 Amplitude Inc. All rights reserved. Updated: 2020-10-26</p>
 						
 						
-						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1333)</a>.</p>
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
 						
 					</div>
 				</footer>
