@@ -642,9 +642,20 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 
  @returns the current session id
 
- @see [Tracking Sessions](https://github.com/amplitude/Amplitude-iOS#tracking-sessions)
+ @see [Tracking Sessions](https://help.amplitude.com/hc/en-us/articles/115002323627-Tracking-Session)
  */
 - (long long)getSessionId;
+
+/**
+ Sets the sessionId.
+
+ **NOTE: not recommended unless you know what you are doing**
+
+ @param timestamp                  Timestamp representing the sessionId
+
+ @see [Tracking Sessions](https://help.amplitude.com/hc/en-us/articles/115002323627-Tracking-Session)
+ */
+- (void)setSessionId:(long long)timestamp;
 
 /**
  Manually forces the instance to immediately upload all unsent events.

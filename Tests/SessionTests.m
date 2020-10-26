@@ -141,6 +141,11 @@
 
     // An out of session event should not continue the session
     XCTAssertEqual([[mockAmplitude lastEventTime] longLongValue], 3000000); // event time of first no session
+
+    // Test setSessionId
+    long testSessionId = 1337;
+    [mockAmplitude setSessionId:testSessionId];
+    XCTAssertEqual([mockAmplitude sessionId], testSessionId);
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
