@@ -1,3 +1,15 @@
+# [7.2.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.1.1...v7.2.0) (2020-10-26)
+
+
+### Bug Fixes
+
+* macOS 10.11/10.13 compile warning fix ([#309](https://github.com/amplitude/Amplitude-iOS/issues/309)) ([d834b6c](https://github.com/amplitude/Amplitude-iOS/commit/d834b6c58d0aae77802399330e751fc418b66f3d))
+
+
+### Features
+
+* Add setSessionId to public API ([#312](https://github.com/amplitude/Amplitude-iOS/issues/312)) ([7db7d34](https://github.com/amplitude/Amplitude-iOS/commit/7db7d3441d16a8a86b712b1e0a8fa9918b3a40ae))
+
 ## [7.1.1](https://github.com/amplitude/Amplitude-iOS/compare/v7.1.0...v7.1.1) (2020-10-20)
 
 
