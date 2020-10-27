@@ -142,6 +142,20 @@
 		12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */; };
 		12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
+		12EAC02C2547D42B00382C8A /* cancel@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC0232547D42B00382C8A /* cancel@3x.png */; };
+		12EAC02D2547D42B00382C8A /* logo-banner@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC0242547D42B00382C8A /* logo-banner@3x.png */; };
+		12EAC02E2547D42B00382C8A /* logo-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC0252547D42B00382C8A /* logo-button.png */; };
+		12EAC02F2547D42B00382C8A /* logo-button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC0262547D42B00382C8A /* logo-button@2x.png */; };
+		12EAC0302547D42B00382C8A /* logo-banner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC0272547D42B00382C8A /* logo-banner@2x.png */; };
+		12EAC0312547D42B00382C8A /* logo-banner.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC0282547D42B00382C8A /* logo-banner.png */; };
+		12EAC0322547D42B00382C8A /* cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC0292547D42B00382C8A /* cancel.png */; };
+		12EAC0332547D42B00382C8A /* cancel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC02A2547D42B00382C8A /* cancel@2x.png */; };
+		12EAC0342547D42B00382C8A /* logo-button@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC02B2547D42B00382C8A /* logo-button@3x.png */; };
+		12EAC03E2547D44300382C8A /* AMPBubbleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC03B2547D44300382C8A /* AMPBubbleView.xib */; };
+		12EAC03F2547D44300382C8A /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC03C2547D44300382C8A /* ComodoRsaDomainValidationCA.der */; };
+		12EAC0402547D44300382C8A /* AMPInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC03D2547D44300382C8A /* AMPInfoViewController.xib */; };
+		12EAC0472547D44E00382C8A /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC03C2547D44300382C8A /* ComodoRsaDomainValidationCA.der */; };
+		12EAC04E2547D44F00382C8A /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = 12EAC03C2547D44300382C8A /* ComodoRsaDomainValidationCA.der */; };
 		2FF530703C32718DA15D4013 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8C962279011799CE1B72F5 /* libPods-shared-Amplitude_macOSTests.a */; };
 		5864D44A49419C011B0B2E05 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */; };
 		60CA723497169C7F79BE0BF9 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA18D859F9EB6DDF9522DF6E /* libPods-shared-Amplitude_tvOSTests.a */; };
@@ -193,7 +207,6 @@
 		1279F8C725244D78003DCE07 /* AMPRevenue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPRevenue.m; sourceTree = "<group>"; };
 		1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPTrackingOptions.m; sourceTree = "<group>"; };
 		1279F8D125244D78003DCE07 /* AMPURLSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPURLSession.m; sourceTree = "<group>"; };
-		1279F8D225244D78003DCE07 /* AppledocSettings.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppledocSettings.plist; sourceTree = "<group>"; };
 		1279F8D325244D78003DCE07 /* Amplitude.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Amplitude.h; sourceTree = "<group>"; };
 		1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPDatabaseHelper.m; sourceTree = "<group>"; };
 		1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPDeviceInfo.m; sourceTree = "<group>"; };
@@ -246,6 +259,18 @@
 		12D0A22B241A0A960072CB4C /* Amplitude.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Amplitude.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		12D0A22D241A134D0072CB4C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		12D0A22E241A13950072CB4C /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		12EAC0232547D42B00382C8A /* cancel@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "cancel@3x.png"; path = "Sources/Amplitude/Resources/cancel@3x.png"; sourceTree = "<group>"; };
+		12EAC0242547D42B00382C8A /* logo-banner@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "logo-banner@3x.png"; path = "Sources/Amplitude/Resources/logo-banner@3x.png"; sourceTree = "<group>"; };
+		12EAC0252547D42B00382C8A /* logo-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "logo-button.png"; path = "Sources/Amplitude/Resources/logo-button.png"; sourceTree = "<group>"; };
+		12EAC0262547D42B00382C8A /* logo-button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "logo-button@2x.png"; path = "Sources/Amplitude/Resources/logo-button@2x.png"; sourceTree = "<group>"; };
+		12EAC0272547D42B00382C8A /* logo-banner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "logo-banner@2x.png"; path = "Sources/Amplitude/Resources/logo-banner@2x.png"; sourceTree = "<group>"; };
+		12EAC0282547D42B00382C8A /* logo-banner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "logo-banner.png"; path = "Sources/Amplitude/Resources/logo-banner.png"; sourceTree = "<group>"; };
+		12EAC0292547D42B00382C8A /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cancel.png; path = Sources/Amplitude/Resources/cancel.png; sourceTree = "<group>"; };
+		12EAC02A2547D42B00382C8A /* cancel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "cancel@2x.png"; path = "Sources/Amplitude/Resources/cancel@2x.png"; sourceTree = "<group>"; };
+		12EAC02B2547D42B00382C8A /* logo-button@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "logo-button@3x.png"; path = "Sources/Amplitude/Resources/logo-button@3x.png"; sourceTree = "<group>"; };
+		12EAC03B2547D44300382C8A /* AMPBubbleView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AMPBubbleView.xib; path = Sources/Amplitude/Resources/AMPBubbleView.xib; sourceTree = "<group>"; };
+		12EAC03C2547D44300382C8A /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; name = ComodoRsaDomainValidationCA.der; path = Sources/Amplitude/Resources/ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
+		12EAC03D2547D44300382C8A /* AMPInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AMPInfoViewController.xib; path = Sources/Amplitude/Resources/AMPInfoViewController.xib; sourceTree = "<group>"; };
 		196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EA2FCA6A86070E086933860 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		1F8C962279011799CE1B72F5 /* libPods-shared-Amplitude_macOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_macOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -372,9 +397,9 @@
 				1279F8D125244D78003DCE07 /* AMPURLSession.m */,
 				1279F8E725244D78003DCE07 /* AMPUtils.h */,
 				1279F8C425244D78003DCE07 /* AMPUtils.m */,
-				1279FA6725259474003DCE07 /* SSLPinning */,
 				1279FA662525946E003DCE07 /* EventExplorer */,
-				1279F8D225244D78003DCE07 /* AppledocSettings.plist */,
+				1279FA6725259474003DCE07 /* SSLPinning */,
+				12EAC0212547D33200382C8A /* Supporting Files */,
 			);
 			path = Amplitude;
 			sourceTree = "<group>";
@@ -449,6 +474,34 @@
 				6174D0A3357C218AF5BDE0FC /* libPods-shared-Amplitude_macOSTests.a */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		12EAC0212547D33200382C8A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				12EAC03B2547D44300382C8A /* AMPBubbleView.xib */,
+				12EAC03D2547D44300382C8A /* AMPInfoViewController.xib */,
+				12EAC03C2547D44300382C8A /* ComodoRsaDomainValidationCA.der */,
+				12EAC0222547D40200382C8A /* Images */,
+			);
+			name = "Supporting Files";
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		12EAC0222547D40200382C8A /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				12EAC0292547D42B00382C8A /* cancel.png */,
+				12EAC02A2547D42B00382C8A /* cancel@2x.png */,
+				12EAC0232547D42B00382C8A /* cancel@3x.png */,
+				12EAC0282547D42B00382C8A /* logo-banner.png */,
+				12EAC0272547D42B00382C8A /* logo-banner@2x.png */,
+				12EAC0242547D42B00382C8A /* logo-banner@3x.png */,
+				12EAC0252547D42B00382C8A /* logo-button.png */,
+				12EAC0262547D42B00382C8A /* logo-button@2x.png */,
+				12EAC02B2547D42B00382C8A /* logo-button@3x.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 		4FEE653130E7AE135280BC48 /* Frameworks */ = {
@@ -747,6 +800,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12EAC0472547D44E00382C8A /* ComodoRsaDomainValidationCA.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -761,6 +815,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12EAC0332547D42B00382C8A /* cancel@2x.png in Resources */,
+				12EAC02D2547D42B00382C8A /* logo-banner@3x.png in Resources */,
+				12EAC0302547D42B00382C8A /* logo-banner@2x.png in Resources */,
+				12EAC0322547D42B00382C8A /* cancel.png in Resources */,
+				12EAC02F2547D42B00382C8A /* logo-button@2x.png in Resources */,
+				12EAC02C2547D42B00382C8A /* cancel@3x.png in Resources */,
+				12EAC0312547D42B00382C8A /* logo-banner.png in Resources */,
+				12EAC03F2547D44300382C8A /* ComodoRsaDomainValidationCA.der in Resources */,
+				12EAC0342547D42B00382C8A /* logo-button@3x.png in Resources */,
+				12EAC02E2547D42B00382C8A /* logo-button.png in Resources */,
+				12EAC03E2547D44300382C8A /* AMPBubbleView.xib in Resources */,
+				12EAC0402547D44300382C8A /* AMPInfoViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,6 +841,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12EAC04E2547D44F00382C8A /* ComodoRsaDomainValidationCA.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
