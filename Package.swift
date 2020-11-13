@@ -16,33 +16,32 @@ let package = Package(
     targets: [
           .target(
             name: "EventExplorer",
-            path: "Sources/Amplitude/EventExplorer",
+            path: "Sources/EventExplorer",
             resources: [
-                .process("../Resources/AMPBubbleView.xib"),
-                .process("../Resources/AMPInfoViewController.xib"),
-                .process("../Resources/Images/cancel.png"),
-                .process("../Resources/Images/cancel@2x.png"),
-                .process("../Resources/Images/cancel@3x.png"),
-                .process("../Resources/Images/logo-banner.png"),
-                .process("../Resources/Images/logo-banner@2x.png"),
-                .process("../Resources/Images/logo-banner@3x.png"),
-                .process("../Resources/Images/logo-button.png"),
-                .process("../Resources/Images/logo-button@2x.png"),
-                .process("../Resources/Images/logo-button@3x.png")
+                .process("Resources/AMPBubbleView.xib"),
+                .process("Resources/AMPInfoViewController.xib"),
+                .process("Resources/Images/cancel.png"),
+                .process("Resources/Images/cancel@2x.png"),
+                .process("Resources/Images/cancel@3x.png"),
+                .process("Resources/Images/logo-banner.png"),
+                .process("Resources/Images/logo-banner@2x.png"),
+                .process("Resources/Images/logo-banner@3x.png"),
+                .process("Resources/Images/logo-button.png"),
+                .process("Resources/Images/logo-button@2x.png"),
+                .process("Resources/Images/logo-button@3x.png")
             ],
             publicHeadersPath: "."),
           .target(
             name: "AmplitudeCore",
             path: "Sources/Amplitude",
-            exclude: ["EventExplorer"],
             resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
             publicHeadersPath: "."),
           .target(
               name: "Amplitude",
               dependencies: [
+                .target(name: "AmplitudeCore")
                 .target(name: "EventExplorer", condition: .when(platforms: [.iOS])),
                 // .target(name: "AmplitudeEventExplorer"),
-                .target(name: "AmplitudeCore")
               ]
           )
     ]
