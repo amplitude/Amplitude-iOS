@@ -15,48 +15,32 @@ let package = Package(
     ],
     targets: [
           .target(
-            name: "AmplitudeEventExplorer",
-            path: "Sources/Amplitude",
-            sources: [
-              "AMPBubbleView.m",
-              "AMPEventExplorer.m",
-              "AMPInfoViewController.m",
-              "AMPBubbleView.h",
-              "AMPEventExplorer.h",
-              "AMPInfoViewController.h"
-            ],
+            name: "EventExplorer",
+            path: "Sources/Amplitude/EventExplorer",
             resources: [
-                .process("Resources/AMPBubbleView.xib"),
-                .process("Resources/AMPInfoViewController.xib"),
-                .process("Resources/cancel.png"),
-                .process("Resources/cancel@2x.png"),
-                .process("Resources/cancel@3x.png"),
-                .process("Resources/ComodoRsaDomainValidationCA.der"),
-                .process("Resources/logo-banner.png"),
-                .process("Resources/logo-banner@2x.png"),
-                .process("Resources/logo-banner@3x.png"),
-                .process("Resources/logo-button.png"),
-                .process("Resources/logo-button@2x.png"),
-                .process("Resources/logo-button@3x.png")
+                .process("../Resources/AMPBubbleView.xib"),
+                .process("../Resources/AMPInfoViewController.xib"),
+                .process("../Resources/Images/cancel.png"),
+                .process("../Resources/Images/cancel@2x.png"),
+                .process("../Resources/Images/cancel@3x.png"),
+                .process("../Resources/Images/logo-banner.png"),
+                .process("../Resources/Images/logo-banner@2x.png"),
+                .process("../Resources/Images/logo-banner@3x.png"),
+                .process("../Resources/Images/logo-button.png"),
+                .process("../Resources/Images/logo-button@2x.png"),
+                .process("../Resources/Images/logo-button@3x.png")
             ],
             publicHeadersPath: "."),
           .target(
             name: "AmplitudeCore",
             path: "Sources/Amplitude",
-            exclude: [
-              "AMPBubbleView.m",
-              "AMPEventExplorer.m",
-              "AMPInfoViewController.m",
-              "AMPBubbleView.h",
-              "AMPEventExplorer.h",
-              "AMPInfoViewController.h"
-            ],
-            sources: ["."],
+            exclude: ["EventExplorer"],
+            resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
             publicHeadersPath: "."),
           .target(
               name: "Amplitude",
               dependencies: [
-                .target(name: "AmplitudeEventExplorer", condition: .when(platforms: [.iOS])),
+                .target(name: "EventExplorer", condition: .when(platforms: [.iOS])),
                 // .target(name: "AmplitudeEventExplorer"),
                 .target(name: "AmplitudeCore")
               ]
