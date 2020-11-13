@@ -32,17 +32,12 @@ let package = Package(
             ],
             publicHeadersPath: "."),
           .target(
-            name: "AmplitudeCore",
+            name: "Amplitude",
+             dependencies: [
+                .target(name: "EventExplorer", condition: .when(platforms: [.iOS])),
+            ],
             path: "Sources/Amplitude",
             resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
             publicHeadersPath: "."),
-          .target(
-              name: "Amplitude",
-              dependencies: [
-                .target(name: "AmplitudeCore")
-                .target(name: "EventExplorer", condition: .when(platforms: [.iOS])),
-                // .target(name: "AmplitudeEventExplorer"),
-              ]
-          )
     ]
 )
