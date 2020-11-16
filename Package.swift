@@ -30,10 +30,10 @@ let package = Package(
                 .process("Resources/Images/logo-button@2x.png"),
                 .process("Resources/Images/logo-button@3x.png")
             ],
-            publicHeadersPath: ".",
-            cSettings: [
-                .headerSearchPath("../Amplitude")
-            ]
+            publicHeadersPath: "."
+//            cSettings: [
+//                .headerSearchPath("../Amplitude")
+//            ]
           ),
           .target(
             name: "Amplitude",
@@ -45,3 +45,4 @@ let package = Package(
             publicHeadersPath: "."),
     ]
 )
+
