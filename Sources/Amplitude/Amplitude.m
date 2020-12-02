@@ -73,10 +73,6 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
-#import "AMPEventExplorer.h"
-#endif
-
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
@@ -96,9 +92,6 @@
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
-#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
-@property (nonatomic, strong) AMPEventExplorer *eventExplorer;
-#endif
 @end
 
 NSString *const kAMPSessionStartEvent = @"session_start";
@@ -482,21 +475,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #endif
         
         _initialized = YES;
-        
-        #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
-        // Release build
-        #if !RELEASE
-        if (self.showEventExplorer) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-
-                if (self.eventExplorer == nil) {
-                    self.eventExplorer = [[AMPEventExplorer alloc] initWithInstanceName:self.instanceName];
-                }
-                [self.eventExplorer showBubbleView];
-            });
-        }
-        #endif
-        #endif
     }
 }
 
