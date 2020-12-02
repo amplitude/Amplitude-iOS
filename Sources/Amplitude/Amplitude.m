@@ -154,6 +154,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 + (Amplitude *)instanceWithName:(NSString *)instanceName {
+    NSString *defaultStoragePath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    return [self instanceWithName:instanceName storageDirectoryPath:defaultStoragePath];
+}
+
++ (Amplitude *)instanceWithName:(NSString *)instanceName storageDirectoryPath:(NSString *)directoryPath {
     static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -184,6 +189,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (instancetype)initWithInstanceName:(NSString *)instanceName {
+    NSString *defaultStoragePath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    return [self initWithInstanceName:instanceName storageDirectoryPath:defaultStoragePath];
+}
+
+- (instancetype)initWithInstanceName:(NSString *)instanceName storageDirectoryPath:(NSString *)eventsDataDirectory {
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }
@@ -236,7 +246,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             self->_uploadTaskID = UIBackgroundTaskInvalid;
         #endif
             
-            NSString *eventsDataDirectory = [AMPUtils platformDataDirectory];
+            NSParameterAssert(eventsDataDirectory);
             NSString *propertyListPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
             if (![self.instanceName isEqualToString:kAMPDefaultInstance]) {
                 propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, self.instanceName]; // namespace pList with instance name

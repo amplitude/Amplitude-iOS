@@ -83,6 +83,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 }
 
 + (AMPDatabaseHelper *)getDatabaseHelper:(NSString *)instanceName {
+    return [self getDatabaseHelper:instanceName databaseDirectoryPath:nil];
+}
+
++ (AMPDatabaseHelper *)getDatabaseHelper:(NSString *)instanceName databaseDirectoryPath:(NSString *)directoryPath {
     static NSMutableDictionary *_instances = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -110,6 +114,10 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 }
 
 - (instancetype)initWithInstanceName:(NSString *)instanceName {
+    return [self initWithInstanceName:instanceName databaseDirectoryPath:nil];
+}
+
+- (instancetype)initWithInstanceName:(NSString *)instanceName databaseDirectoryPath:(NSString *)directoryPath {
     if ([AMPUtils isEmptyString:instanceName]) {
         instanceName = kAMPDefaultInstance;
     }

@@ -220,7 +220,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  
  @see [Tracking Events to Multiple Amplitude Apps](https://github.com/amplitude/amplitude-ios#tracking-events-to-multiple-amplitude-apps)
  */
-+ (Amplitude *)instanceWithName:(NSString*) instanceName storageDirectoryPath:(NSString *)directory;
++ (Amplitude *)instanceWithName:(nullable NSString *)instanceName storageDirectoryPath:(NSString *)directory;
 
 /**-----------------------------------------------------------------------------
  * @name Initialize the Amplitude SDK with your Amplitude API Key
