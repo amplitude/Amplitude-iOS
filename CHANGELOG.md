@@ -1,3 +1,11 @@
+## [7.2.1](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.0...v7.2.1) (2020-12-02)
+
+
+### Bug Fixes
+
+* Make resources files to be visible inside xcode project ([#313](https://github.com/amplitude/Amplitude-iOS/issues/313)) ([64aa1ad](https://github.com/amplitude/Amplitude-iOS/commit/64aa1ad48d9682a562e9a3d85f4b8b1797a41303))
+* SPM macOS/tvOS disable event explorer ([#315](https://github.com/amplitude/Amplitude-iOS/issues/315)) ([e3e763c](https://github.com/amplitude/Amplitude-iOS/commit/e3e763c08d6879d6c002c8031f3d5baffd8abb26))
+
 # [7.2.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.1.1...v7.2.0) (2020-10-26)
 
 
