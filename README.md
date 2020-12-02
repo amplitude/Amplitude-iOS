@@ -1,56 +1,53 @@
-Amplitude iOS SDK
-====================
+<p align="center">
+  <a href="https://amplitude.com" target="_blank" align="center">
+    <img src="https://static.amplitude.com/lightning/46c85bfd91905de8047f1ee65c7c93d6fa9ee6ea/static/media/amplitude-logo-with-text.4fb9e463.svg" width="280">
+  </a>
+  <br />
+</p>
 
-An iOS SDK for tracking events and revenue to [Amplitude](https://www.amplitude.com).
-
-# Setup #
-Please see our [installation guide](https://amplitude.zendesk.com/hc/en-us/articles/115002278527-iOS-SDK-Installation) for instructions on installing and using our iOS SDK.
-
-# Latest Version #
-[4.3.1 - Released on August 14, 2018](https://github.com/amplitude/Amplitude-iOS/releases/latest)
-[![Circle CI](https://circleci.com/gh/amplitude/Amplitude-iOS.svg?style=shield&circle-token=e1b2a7d2cd6dd64ac3643bc8cb2117c0ed5cbb75)](https://circleci.com/gh/amplitude/Amplitude-iOS/tree/master)
-[![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude-iOS.svg?style=flat)](http://cocoadocs.org/docsets/Amplitude-iOS/)
+[![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude)](https://cocoapods.org/pods/Amplitude)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat)](#contributors-)
 
-# iOS SDK Reference #
-See our [iOS SDK Reference](https://amplitude.zendesk.com/hc/en-us/articles/115003970027-iOS-SDK-Reference) for a list and description of all available SDK methods.
+# Official Amplitude iOS SDK
+iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.amplitude.com).
 
-# Demo Applications #
+## Installation and Quick Start
+* For using the SDK, please visit our :100:[Developer Center](https://developers.amplitude.com/docs/ios).
+* For developing the SDK, please visit our [CONTRIBUTING.md](https://github.com/amplitude/Amplitude-iOS/blob/master/CONTRIBUTING.md).
+
+## Demo Applications
 * A [demo application](https://github.com/amplitude/iOS-Demo) showing the integration of our SDK using Cocoapods.
 * A [demo application](https://github.com/amplitude/iOS-Demo-Carthage) showing the integration of our SDK using Carthage.
 * A [demo application](https://github.com/amplitude/Segment-iOS-Demo) showing the integration of our SDK via [Segment's](https://segment.com/) iOS SDK.
 * A [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing an integration in an iOS extension.
 * A [demo application](https://github.com/amplitude/GTM-iOS-Demo) demonstrating a potential integration with Google Tag Manager.
 
-# Changelog #
+## Contributors
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/haoliu-amp"><img src="https://avatars2.githubusercontent.com/u/57638692?v=4" width="100px;" alt=""/><br /><sub><b>Hao Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=haoliu-amp" title="Documentation">📖</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=haoliu-amp" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.danieljih.com"><img src="https://avatars0.githubusercontent.com/u/4776584?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Jih</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=djih" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=djih" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/curtisliu"><img src="https://avatars2.githubusercontent.com/u/3248421?v=4" width="100px;" alt=""/><br /><sub><b>Curtis Liu</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=curtisliu" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=curtisliu" title="Documentation">📖</a> <a href="#ideas-curtisliu" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://www.spenserskates.com"><img src="https://avatars3.githubusercontent.com/u/605873?v=4" width="100px;" alt=""/><br /><sub><b>Spenser Skates</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Code">💻</a> <a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sskates" title="Documentation">📖</a> <a href="#ideas-sskates" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://emptybox.org"><img src="https://avatars3.githubusercontent.com/u/238374?v=4" width="100px;" alt=""/><br /><sub><b>Krishna Rajendran</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=blazzy" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/sputh"><img src="https://avatars0.githubusercontent.com/u/7856822?v=4" width="100px;" alt=""/><br /><sub><b>samantha puth</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=sputh" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mayur1407"><img src="https://avatars2.githubusercontent.com/u/3079325?v=4" width="100px;" alt=""/><br /><sub><b>Mayur</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=mayur1407" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://www.robphillips.me"><img src="https://avatars1.githubusercontent.com/u/30269720?v=4" width="100px;" alt=""/><br /><sub><b>Rob Phillips</b></sub></a><br /><a href="https://github.com/amplitude/Amplitude-iOS/commits?author=rob-keepsafe" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## Changelog
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md) to view the iOS SDK Changelog.
 
-# Questions? #
-If you have questions about using or installing our iOS SDK, you can send an email to [Amplitude Support](mailto:platform@amplitude.com).
-
-# License #
-```text
-Amplitude
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Amplitude
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
+## Need Help?
+If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).
