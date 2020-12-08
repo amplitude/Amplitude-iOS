@@ -29,6 +29,7 @@
 @interface AMPURLSession : ISPPinnedNSURLSessionDelegate <NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate>
 
 + (AMPURLSession *)sharedSession;
+- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration;
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void (^)(NSData *data, NSURLResponse *response, NSError *error))completionHandler;
 
 @end
