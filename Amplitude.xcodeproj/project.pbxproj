@@ -373,7 +373,6 @@
 			isa = PBXGroup;
 			children = (
 				29E7B61D255E476C00AB9A5B /* Resources */,
-				29E7B614255E467400AB9A5B /* SSLPinning */,
 				1279F8E525244D78003DCE07 /* AMPConfigManager.h */,
 				1279F8C525244D78003DCE07 /* AMPConfigManager.m */,
 				1279F8C625244D78003DCE07 /* AMPConstants.h */,
@@ -398,6 +397,12 @@
 				1279F8D125244D78003DCE07 /* AMPURLSession.m */,
 				1279F8E725244D78003DCE07 /* AMPUtils.h */,
 				1279F8C425244D78003DCE07 /* AMPUtils.m */,
+				1279FA6D2525949D003DCE07 /* ISPCertificatePinning.h */,
+				1279FA682525949D003DCE07 /* ISPCertificatePinning.m */,
+				1279FA6A2525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */,
+				1279FA692525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */,
+				1279FA6C2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */,
+				1279FA6B2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */,
 			);
 			path = Amplitude;
 			sourceTree = "<group>";
@@ -460,19 +465,6 @@
 				1279FA81252594C1003DCE07 /* AMPInfoViewController.m */,
 			);
 			path = EventExplorer;
-			sourceTree = "<group>";
-		};
-		29E7B614255E467400AB9A5B /* SSLPinning */ = {
-			isa = PBXGroup;
-			children = (
-				1279FA6D2525949D003DCE07 /* ISPCertificatePinning.h */,
-				1279FA682525949D003DCE07 /* ISPCertificatePinning.m */,
-				1279FA6A2525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h */,
-				1279FA692525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m */,
-				1279FA6C2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */,
-				1279FA6B2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */,
-			);
-			path = SSLPinning;
 			sourceTree = "<group>";
 		};
 		29E7B61D255E476C00AB9A5B /* Resources */ = {
