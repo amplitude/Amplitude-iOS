@@ -1,3 +1,10 @@
+## [7.2.2](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.1...v7.2.2) (2020-12-23)
+
+
+### Bug Fixes
+
+* SPM SSL Pinning file discovery bug ([#319](https://github.com/amplitude/Amplitude-iOS/issues/319)) ([9878134](https://github.com/amplitude/Amplitude-iOS/commit/987813420d47b66ccc19d4ff18d69e6b7e483346))
+
 ## [7.2.1](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.0...v7.2.1) (2020-12-02)
 
 
