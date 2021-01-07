@@ -4,16 +4,16 @@
 <plist version="1.0">
 <dict>
     <key>--project-name</key>
-    <string>Amplitude-iOS</string>
-    <key>--project-company</key>
     <string>Amplitude</string>
+    <key>--project-company</key>
+    <string>Amplitude Inc.</string>
     <key>--company-id</key>
     <string>com.amplitude</string>
     <key>--templates</key>
     <string>appledoc-templates</string>
 
     <key>--output</key>
-    <string>documentation</string>
+    <string>doc</string>
 
     <key>--create-docset</key>
     <false/>
@@ -26,14 +26,17 @@
         <string>Pods</string>
         <string>documentation</string>
         <string>build</string>
-	<string>AmplitudeTests</string>
-	<string>AmplitudeFramework</string>
-	<string>appledoc-templates</string>
+	      <string>AmplitudeTests</string>
+	      <string>AmplitudeFramework</string>
+	      <string>appledoc-templates</string>
         <string>*.framework</string>
-	<string>AMPDatabaseHelper.m</string>
-	<string>AMPURLConnection.m</string>
-	<string>SSLCertificatePinning</string>
+	      <string>AMPDatabaseHelper.m</string>
+	      <string>AMPURLConnection.m</string>
+	      <string>SSLCertificatePinning</string>
     </array>
+
+    <key>--exit-threshold</key>
+    <integer>2<integer>
 
 </dict>
 </plist>
