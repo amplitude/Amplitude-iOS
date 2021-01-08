@@ -36,7 +36,7 @@
     </array>
 
     <key>--exit-threshold</key>
-    <integer>2<integer>
+    <integer>2</integer>
 
 </dict>
 </plist>
