@@ -99,11 +99,13 @@ jobs:
         ref: 'gh-pages'
         path: 'Amplitude-iOS-gh-pages'
 
-    - name: Install appledoc
+    - name: Install appledoc binary
       run: |
         git clone git://github.com/tomaz/appledoc.git
         cd appledoc/
         sudo sh install-appledoc.sh
+        cd ../
+        rm -rf appledoc/
 
     - name: Semantic Release --dry-run
       if: ${{ github.event.inputs.dryRun == 'true'}}
