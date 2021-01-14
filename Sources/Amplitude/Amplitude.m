@@ -824,9 +824,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)refreshDynamicConfig {
     if (self.useDynamicConfig) {
-        __weak typeof(self) weakSelf = self;
+        __block __weak Amplitude *weakSelf = self;
         [[AMPConfigManager sharedInstance] refresh:^{
-            __strong typeof(self) strongSelf = weakSelf;
+            __block __strong Amplitude *strongSelf = weakSelf;
             if (strongSelf == nil) {
                 return;
             }
