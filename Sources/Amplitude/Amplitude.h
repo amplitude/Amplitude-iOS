@@ -607,6 +607,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)disableCoppaControl;
 
+/**
+ Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers
+ */
 - (void)setServerUrl:(NSString *)serverUrl;
 
 - (void)setBearerToken:(NSString *)token;
