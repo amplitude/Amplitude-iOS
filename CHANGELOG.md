@@ -1,3 +1,10 @@
+# [7.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.2...v7.3.0) (2021-02-22)
+
+
+### Features
+
+* Set content-type header for HTTP requests ([#328](https://github.com/amplitude/Amplitude-iOS/issues/328)) ([21f138c](https://github.com/amplitude/Amplitude-iOS/commit/21f138c3886e781004f6604ba6b1e1f07dfdb9a4))
+
 ## [7.2.2](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.1...v7.2.2) (2020-12-23)
 
 
