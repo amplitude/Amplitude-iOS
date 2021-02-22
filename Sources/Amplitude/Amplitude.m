@@ -201,6 +201,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _serverUrl = kAMPEventLogUrl;
         self.libraryName = kAMPLibrary;
         self.libraryVersion = kAMPVersion;
+        self.contentTypeHeader = kAMPContentTypeHeader;
         _inputTrackingOptions = [AMPTrackingOptions options];
         _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
