@@ -29,6 +29,7 @@ NSString *const kAMPUnknownLibrary = @"unknown-library";
 NSString *const kAMPUnknownVersion = @"unknown-version";
 NSString *const kAMPEventLogDomain = @"api2.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api2.amplitude.com/";
+NSString *const kAMPContentTypeHeader = @"application/x-www-form-urlencoded";
 NSString *const kAMPDyanmicConfigUrl = @"https://regionconfig.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";
 const int kAMPApiVersion = 3;
