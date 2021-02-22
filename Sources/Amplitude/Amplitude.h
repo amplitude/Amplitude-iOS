@@ -176,6 +176,11 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 @property (nonatomic, strong, nullable) AMPLocationInfoBlock locationInfoBlock;
 
+/**
+ Content-Type header for event sending requests. Only relevant for sending events to a different URL (e.g. proxy server)
+ */
+@property (nonatomic, copy, readonly) NSString *contentTypeHeader;
+
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 /**
  Show Amplitude Event Explorer when you're running a debug build.
@@ -607,7 +612,15 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)disableCoppaControl;
 
+/**
+ Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers
+ */
 - (void)setServerUrl:(NSString *)serverUrl;
+
+/**
+ Sets Content-Type header for event sending requests
+*/
+- (void)setContentTypeHeader:(NSString *)contentType;
 
 - (void)setBearerToken:(NSString *)token;
 
@@ -668,6 +681,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  Call to check if the SDK is ready to start a new session at timestamp. Returns YES if a new session was started, otherwise NO and current session is extended. Only use if you know what you are doing. Recommended to use current time in UTC milliseconds for timestamp.
  */
 - (BOOL)startOrContinueSession:(long long)timestamp;
+
+
+- (NSString *)getContentTypeHeader;
 
 @end
 

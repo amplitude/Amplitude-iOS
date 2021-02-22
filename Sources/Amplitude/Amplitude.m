@@ -89,6 +89,7 @@
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
+@property (nonatomic, copy, readwrite) NSString *contentTypeHeader;
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 @property (nonatomic, strong) AMPEventExplorer *eventExplorer;
 #endif
@@ -200,6 +201,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _serverUrl = kAMPEventLogUrl;
         self.libraryName = kAMPLibrary;
         self.libraryVersion = kAMPVersion;
+        self.contentTypeHeader = kAMPContentTypeHeader;
         _inputTrackingOptions = [AMPTrackingOptions options];
         _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
@@ -929,7 +931,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
 
     [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:self.contentTypeHeader forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[postData length]] forHTTPHeaderField:@"Content-Length"];
 
     if (_token != nil) {
@@ -1377,6 +1379,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     self->_serverUrl = serverUrl;
 }
+
+- (void)setContentTypeHeader:(NSString *)contentTypeHeader {
+   self->_contentTypeHeader = contentTypeHeader;
+}
+
+- (NSString *)getContentTypeHeader {
+    return self.contentTypeHeader;
+  }
 
 - (void)setBearerToken:(NSString *)token {
     if (!(token == nil || [self isArgument:token validType:[NSString class] methodName:@"setBearerToken:"])) {
