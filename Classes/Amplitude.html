@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" href="../css/style.css">
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
-	<meta name="generator" content="appledoc 2.2.1 (build 1333)">
+	<meta name="generator" content="appledoc 2.2.1 (build 1334)">
 </head>
 <body class="appledoc">
 	<header>
@@ -59,6 +59,8 @@
 		<option value="//api/name/adSupportBlock">adSupportBlock</option>
 		
 		<option value="//api/name/apiKey">apiKey</option>
+		
+		<option value="//api/name/contentTypeHeader">contentTypeHeader</option>
 		
 		<option value="//api/name/deviceId">deviceId</option>
 		
@@ -158,6 +160,8 @@
 		
 		<option value="//api/name/runSynchronouslyOnMainQueue:">- runSynchronouslyOnMainQueue:</option>
 		
+		<option value="//api/name/setContentTypeHeader:">- setContentTypeHeader:</option>
+		
 		<option value="//api/name/setDeviceId:">- setDeviceId:</option>
 		
 		<option value="//api/name/setGroup:groupName:">- setGroup:groupName:</option>
@@ -165,6 +169,8 @@
 		<option value="//api/name/setOffline:">- setOffline:</option>
 		
 		<option value="//api/name/setOptOut:">- setOptOut:</option>
+		
+		<option value="//api/name/setServerUrl:">- setServerUrl:</option>
 		
 		<option value="//api/name/setSessionId:">- setSessionId:</option>
 		
@@ -1033,6 +1039,52 @@ return @{
 @&ldquo;lng&rdquo; : @122.4
 };
 };</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/contentTypeHeader" title="contentTypeHeader"></a>
+	<h3 class="method-title"><code><a href="#//api/name/contentTypeHeader">&nbsp;&nbsp;contentTypeHeader</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Content-Type header for event sending requests. Only relevant for sending events to a different URL (e.g. proxy server)</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, copy, readonly) NSString *contentTypeHeader</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Content-Type header for event sending requests. Only relevant for sending events to a different URL (e.g. proxy server)</p>
 			</div>
 			
 
@@ -3196,6 +3248,98 @@ This can be used by any customer that does not want to collect IDFA, IDFV, city,
 			
 		</div>
 	</div>
+</div><div class="section-method">
+	<a name="//api/name/setServerUrl:" title="setServerUrl:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setServerUrl:">&ndash;&nbsp;setServerUrl:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setServerUrl:(NSString *)<em>serverUrl</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/setContentTypeHeader:" title="setContentTypeHeader:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/setContentTypeHeader:">&ndash;&nbsp;setContentTypeHeader:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Sets Content-Type header for event sending requests</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)setContentTypeHeader:(NSString *)<em>contentType</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Sets Content-Type header for event sending requests</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
 </div>
 						</div>
 						
@@ -3892,10 +4036,10 @@ location in NSLibraryDirectory.</p>
 				<footer>
 					<div class="footer-copyright">
 						
-						<p class="copyright">Copyright &copy; 2021 Amplitude Inc. All rights reserved. Updated: 2021-01-07</p>
+						<p class="copyright">Copyright &copy; 2021 Amplitude Inc. All rights reserved. Updated: 2021-02-22</p>
 						
 						
-						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1333)</a>.</p>
+						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
 						
 					</div>
 				</footer>
