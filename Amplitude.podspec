@@ -12,8 +12,8 @@ Pod::Spec.new do |s|
   s.library                = 'sqlite3.0'
   
   s.ios.deployment_target  = '10.0'
-  s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}', 'Sources/EventExplorer/**/*.{h,m}'
-  s.ios.resources          = 'Sources/Amplitude/**/*.{der,xib,png}', 'Sources/EventExplorer/**/*.{der,xib,png}'
+  s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}'
+  s.ios.resources          = 'Sources/Amplitude/**/*.{der}'
 
   s.tvos.deployment_target = '9.0'
   s.tvos.source_files      = 'Sources/Amplitude/**/*.{h,m}'
