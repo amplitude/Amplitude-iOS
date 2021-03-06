@@ -100,12 +100,6 @@
 		1279FA7D2525949D003DCE07 /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279FA6D2525949D003DCE07 /* ISPCertificatePinning.h */; };
 		1279FA7E2525949D003DCE07 /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279FA6D2525949D003DCE07 /* ISPCertificatePinning.h */; };
 		1279FA7F2525949D003DCE07 /* ISPCertificatePinning.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279FA6D2525949D003DCE07 /* ISPCertificatePinning.h */; };
-		1279FA86252594C1003DCE07 /* AMPEventExplorer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279FA80252594C1003DCE07 /* AMPEventExplorer.h */; };
-		1279FA87252594C1003DCE07 /* AMPInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279FA81252594C1003DCE07 /* AMPInfoViewController.m */; };
-		1279FA88252594C1003DCE07 /* AMPEventExplorer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279FA82252594C1003DCE07 /* AMPEventExplorer.m */; };
-		1279FA89252594C1003DCE07 /* AMPBubbleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279FA83252594C1003DCE07 /* AMPBubbleView.h */; };
-		1279FA8A252594C1003DCE07 /* AMPBubbleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279FA84252594C1003DCE07 /* AMPBubbleView.m */; };
-		1279FA8B252594C1003DCE07 /* AMPInfoViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1279FA85252594C1003DCE07 /* AMPInfoViewController.h */; };
 		12C972B824105B2C00E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972AF24105B2C00E9CDDB /* Amplitude.framework */; };
 		12C972D424105C3600E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972CB24105C3600E9CDDB /* Amplitude.framework */; };
 		12C972F024105C6500E9CDDB /* Amplitude.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12C972E724105C6500E9CDDB /* Amplitude.framework */; };
@@ -142,18 +136,7 @@
 		12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */; };
 		12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
-		29E7B62D255E47B400AB9A5B /* AMPInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B62A255E47B400AB9A5B /* AMPInfoViewController.xib */; };
-		29E7B62E255E47B400AB9A5B /* AMPBubbleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B62B255E47B400AB9A5B /* AMPBubbleView.xib */; };
 		29E7B62F255E47B400AB9A5B /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B62C255E47B400AB9A5B /* ComodoRsaDomainValidationCA.der */; };
-		29E7B666255E487100AB9A5B /* cancel@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B65D255E487100AB9A5B /* cancel@3x.png */; };
-		29E7B667255E487100AB9A5B /* logo-button@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B65E255E487100AB9A5B /* logo-button@3x.png */; };
-		29E7B668255E487100AB9A5B /* cancel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B65F255E487100AB9A5B /* cancel@2x.png */; };
-		29E7B669255E487100AB9A5B /* logo-banner@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B660255E487100AB9A5B /* logo-banner@3x.png */; };
-		29E7B66A255E487100AB9A5B /* logo-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B661255E487100AB9A5B /* logo-button.png */; };
-		29E7B66B255E487100AB9A5B /* logo-banner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B662255E487100AB9A5B /* logo-banner@2x.png */; };
-		29E7B66C255E487100AB9A5B /* logo-banner.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B663255E487100AB9A5B /* logo-banner.png */; };
-		29E7B66D255E487100AB9A5B /* logo-button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B664255E487100AB9A5B /* logo-button@2x.png */; };
-		29E7B66E255E487100AB9A5B /* cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B665255E487100AB9A5B /* cancel.png */; };
 		2FF530703C32718DA15D4013 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8C962279011799CE1B72F5 /* libPods-shared-Amplitude_macOSTests.a */; };
 		5864D44A49419C011B0B2E05 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */; };
 		60CA723497169C7F79BE0BF9 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA18D859F9EB6DDF9522DF6E /* libPods-shared-Amplitude_tvOSTests.a */; };
@@ -225,12 +208,6 @@
 		1279FA6B2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISPPinnedNSURLSessionDelegate.m; sourceTree = "<group>"; };
 		1279FA6C2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPPinnedNSURLSessionDelegate.h; sourceTree = "<group>"; };
 		1279FA6D2525949D003DCE07 /* ISPCertificatePinning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISPCertificatePinning.h; sourceTree = "<group>"; };
-		1279FA80252594C1003DCE07 /* AMPEventExplorer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPEventExplorer.h; sourceTree = "<group>"; };
-		1279FA81252594C1003DCE07 /* AMPInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPInfoViewController.m; sourceTree = "<group>"; };
-		1279FA82252594C1003DCE07 /* AMPEventExplorer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPEventExplorer.m; sourceTree = "<group>"; };
-		1279FA83252594C1003DCE07 /* AMPBubbleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPBubbleView.h; sourceTree = "<group>"; };
-		1279FA84252594C1003DCE07 /* AMPBubbleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPBubbleView.m; sourceTree = "<group>"; };
-		1279FA85252594C1003DCE07 /* AMPInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPInfoViewController.h; sourceTree = "<group>"; };
 		12C972AF24105B2C00E9CDDB /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		12C972B724105B2C00E9CDDB /* Amplitude_tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Amplitude_tvOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		12C972CB24105C3600E9CDDB /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -260,18 +237,7 @@
 		196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EA2FCA6A86070E086933860 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		1F8C962279011799CE1B72F5 /* libPods-shared-Amplitude_macOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_macOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		29E7B62A255E47B400AB9A5B /* AMPInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AMPInfoViewController.xib; sourceTree = "<group>"; };
-		29E7B62B255E47B400AB9A5B /* AMPBubbleView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AMPBubbleView.xib; sourceTree = "<group>"; };
 		29E7B62C255E47B400AB9A5B /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
-		29E7B65D255E487100AB9A5B /* cancel@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel@3x.png"; sourceTree = "<group>"; };
-		29E7B65E255E487100AB9A5B /* logo-button@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-button@3x.png"; sourceTree = "<group>"; };
-		29E7B65F255E487100AB9A5B /* cancel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cancel@2x.png"; sourceTree = "<group>"; };
-		29E7B660255E487100AB9A5B /* logo-banner@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-banner@3x.png"; sourceTree = "<group>"; };
-		29E7B661255E487100AB9A5B /* logo-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-button.png"; sourceTree = "<group>"; };
-		29E7B662255E487100AB9A5B /* logo-banner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-banner@2x.png"; sourceTree = "<group>"; };
-		29E7B663255E487100AB9A5B /* logo-banner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-banner.png"; sourceTree = "<group>"; };
-		29E7B664255E487100AB9A5B /* logo-button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo-button@2x.png"; sourceTree = "<group>"; };
-		29E7B665255E487100AB9A5B /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel.png; sourceTree = "<group>"; };
 		493212CA3C7E8FDA1FDC74E8 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		5F70334CA7CB86ECCCB1472A /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		6174D0A3357C218AF5BDE0FC /* libPods-shared-Amplitude_macOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_macOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -363,7 +329,6 @@
 		1279F8BE25244D78003DCE07 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				29E7B613255E464800AB9A5B /* EventExplorer */,
 				1279F8BF25244D78003DCE07 /* Amplitude */,
 			);
 			path = Sources;
@@ -453,50 +418,10 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		29E7B613255E464800AB9A5B /* EventExplorer */ = {
-			isa = PBXGroup;
-			children = (
-				29E7B675255E4A3400AB9A5B /* Resources */,
-				1279FA83252594C1003DCE07 /* AMPBubbleView.h */,
-				1279FA84252594C1003DCE07 /* AMPBubbleView.m */,
-				1279FA80252594C1003DCE07 /* AMPEventExplorer.h */,
-				1279FA82252594C1003DCE07 /* AMPEventExplorer.m */,
-				1279FA85252594C1003DCE07 /* AMPInfoViewController.h */,
-				1279FA81252594C1003DCE07 /* AMPInfoViewController.m */,
-			);
-			path = EventExplorer;
-			sourceTree = "<group>";
-		};
 		29E7B61D255E476C00AB9A5B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				29E7B62C255E47B400AB9A5B /* ComodoRsaDomainValidationCA.der */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		29E7B63E255E47FB00AB9A5B /* Images */ = {
-			isa = PBXGroup;
-			children = (
-				29E7B665255E487100AB9A5B /* cancel.png */,
-				29E7B65F255E487100AB9A5B /* cancel@2x.png */,
-				29E7B65D255E487100AB9A5B /* cancel@3x.png */,
-				29E7B663255E487100AB9A5B /* logo-banner.png */,
-				29E7B662255E487100AB9A5B /* logo-banner@2x.png */,
-				29E7B660255E487100AB9A5B /* logo-banner@3x.png */,
-				29E7B661255E487100AB9A5B /* logo-button.png */,
-				29E7B664255E487100AB9A5B /* logo-button@2x.png */,
-				29E7B65E255E487100AB9A5B /* logo-button@3x.png */,
-			);
-			path = Images;
-			sourceTree = "<group>";
-		};
-		29E7B675255E4A3400AB9A5B /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				29E7B62B255E47B400AB9A5B /* AMPBubbleView.xib */,
-				29E7B62A255E47B400AB9A5B /* AMPInfoViewController.xib */,
-				29E7B63E255E47FB00AB9A5B /* Images */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -575,7 +500,6 @@
 				1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */,
 				1279F8F425244E8D003DCE07 /* Amplitude+SSLPinning.h in Headers */,
 				1279FA7A2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
-				1279FA89252594C1003DCE07 /* AMPBubbleView.h in Headers */,
 				1279F8FA25244E8D003DCE07 /* Amplitude.h in Headers */,
 				1279F8F725244E8D003DCE07 /* AMPConstants.h in Headers */,
 				1279F8FB25244E8D003DCE07 /* AMPTrackingOptions.h in Headers */,
@@ -589,8 +513,6 @@
 				1279F90025244E8D003DCE07 /* AMPURLConnection.h in Headers */,
 				1279F8F925244E8D003DCE07 /* AMPConfigManager.h in Headers */,
 				1279F8F825244E8D003DCE07 /* AMPUtils.h in Headers */,
-				1279FA8B252594C1003DCE07 /* AMPInfoViewController.h in Headers */,
-				1279FA86252594C1003DCE07 /* AMPEventExplorer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -811,18 +733,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29E7B667255E487100AB9A5B /* logo-button@3x.png in Resources */,
-				29E7B66B255E487100AB9A5B /* logo-banner@2x.png in Resources */,
-				29E7B66C255E487100AB9A5B /* logo-banner.png in Resources */,
-				29E7B66E255E487100AB9A5B /* cancel.png in Resources */,
-				29E7B66D255E487100AB9A5B /* logo-button@2x.png in Resources */,
-				29E7B62E255E47B400AB9A5B /* AMPBubbleView.xib in Resources */,
-				29E7B666255E487100AB9A5B /* cancel@3x.png in Resources */,
 				29E7B62F255E47B400AB9A5B /* ComodoRsaDomainValidationCA.der in Resources */,
-				29E7B66A255E487100AB9A5B /* logo-button.png in Resources */,
-				29E7B668255E487100AB9A5B /* cancel@2x.png in Resources */,
-				29E7B62D255E47B400AB9A5B /* AMPInfoViewController.xib in Resources */,
-				29E7B669255E487100AB9A5B /* logo-banner@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -969,13 +880,10 @@
 				1279F8FD25244E8D003DCE07 /* AMPIdentify.m in Sources */,
 				1279F90125244E8D003DCE07 /* AMPURLSession.m in Sources */,
 				1279F8FF25244E8D003DCE07 /* AMPTrackingOptions.m in Sources */,
-				1279FA88252594C1003DCE07 /* AMPEventExplorer.m in Sources */,
 				1279F90625244E8D003DCE07 /* AMPConstants.m in Sources */,
 				1279FA712525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.m in Sources */,
 				1279FA772525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
-				1279FA8A252594C1003DCE07 /* AMPBubbleView.m in Sources */,
 				1279FA6E2525949D003DCE07 /* ISPCertificatePinning.m in Sources */,
-				1279FA87252594C1003DCE07 /* AMPInfoViewController.m in Sources */,
 				1279F90325244E8D003DCE07 /* AMPURLConnection.m in Sources */,
 				1279F90725244E8D003DCE07 /* AMPDeviceInfo.m in Sources */,
 				1279F90425244E8D003DCE07 /* Amplitude.m in Sources */,
