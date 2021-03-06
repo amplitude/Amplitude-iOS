@@ -108,7 +108,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 @property (nonatomic, assign) int eventUploadMaxBatchSize;
 
 /**
- The maximum number of events that can be stored lcoally. The default is 1000 events.
+ The maximum number of events that can be stored locally. The default is 1000 events.
  */
 @property (nonatomic, assign) int eventMaxCount;
 
