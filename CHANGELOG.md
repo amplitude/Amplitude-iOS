@@ -1,3 +1,10 @@
+# [8.0.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.3.0...v8.0.0) (2021-03-06)
+
+
+### Bug Fixes
+
+* Removes event explorer to fix problems with swift package manager import ([#329](https://github.com/amplitude/Amplitude-iOS/issues/329)) ([11022b8](https://github.com/amplitude/Amplitude-iOS/commit/11022b89f344d85bef5530e37c2e844ede1950f3))
+
 # [7.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.2...v7.3.0) (2021-02-22)
 
 
