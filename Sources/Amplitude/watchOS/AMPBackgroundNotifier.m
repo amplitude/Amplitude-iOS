@@ -1,6 +1,6 @@
 //
-//  AMPUtils.h
-//  Copyright (c) 2015 Amplitude Inc. (https://amplitude.com/)
+//  AMPBackgroundNotifier.m
+//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -21,27 +21,19 @@
 //  THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
-#if !TARGET_OS_OSX
-#import <UIKit/UIKit.h>
-#endif
+#import "AMPBackgroundNotifier.h"
 
-@interface AMPUtils : NSObject
+NSNotificationName const AMPAppWillEnterForegroundNotification = @"com.amplitude.appWillEnterForegroundNotification";
+NSNotificationName const AMPAppDidEnterBackgroundNotification = @"com.amplitude.appDidEnterBackgroundNotification";
 
-+ (NSString *)generateUUID;
-+ (id)makeJSONSerializable:(id)obj;
-+ (BOOL)isEmptyString:(NSString *)str;
-+ (NSDictionary *)validateGroups:(NSDictionary *)obj;
-+ (NSString *)platformDataDirectory;
+@implementation AMPBackgroundNotifier
 
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
-+ (UIApplication *)getSharedApplication;
-#endif
++ (void)applicationWillEnterForeground {
+    [[NSNotificationCenter defaultCenter] postNotificationName:AMPAppWillEnterForegroundNotification object:self];
+}
 
-#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
-+ (NSInteger)barBottomOffset;
-+ (CGFloat)statusBarHeight;
-+ (UIWindow *)getKeyWindow;
-#endif
++ (void)applicationDidEnterBackground {
+    [[NSNotificationCenter defaultCenter] postNotificationName:AMPAppDidEnterBackgroundNotification object:self];
+}
 
 @end

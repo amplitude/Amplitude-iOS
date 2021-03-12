@@ -51,6 +51,11 @@ const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
     const int kAMPEventMaxCount = 1000;
     NSString *const kAMPPlatform = @"macOS";
     NSString *const kAMPOSName = @"macos";
+#elif TARGET_OS_WATCH // watchOS, simulator, etc.
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"watchOS";
+    NSString *const kAMPOSName = @"watchos";
 #else // iOS, simulator, etc.
     const int kAMPEventUploadThreshold = 30;
     const int kAMPEventMaxCount = 1000;

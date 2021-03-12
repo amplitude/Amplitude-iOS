@@ -28,7 +28,9 @@
 #import <sys/sysctl.h>
 #import <sys/types.h>
 
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
+#elif !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -72,7 +74,9 @@
 
 - (NSString *)osVersion {
     if (!_osVersion) {
-        #if !TARGET_OS_OSX
+        #if TARGET_OS_WATCH
+        _osVersion = [[WKInterfaceDevice currentDevice] systemVersion];
+        #elif !TARGET_OS_OSX
         _osVersion = [[UIDevice currentDevice] systemVersion];
         #else
         NSOperatingSystemVersion systemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
@@ -139,7 +143,7 @@
 
 - (NSString *)vendorID {
     if (!_vendorID) {
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
 #endif
             NSString *identifierForVendor = [AMPDeviceInfo getVendorID:5];
@@ -148,14 +152,22 @@
                 _vendorID = identifierForVendor;
             }
         }
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     }
 #endif
     return _vendorID;
 }
 
 + (NSString *)getVendorID:(int)maxAttempts {
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+    NSString *identifier;
+    if (@available(watchOS 6.2, *)) {
+        identifier = [[[WKInterfaceDevice currentDevice] identifierForVendor] UUIDString];
+    } else {
+        // Identifier for vendor is not available on this version.
+        identifier = [[NSUUID UUID] UUIDString];
+    }
+#elif !TARGET_OS_OSX
     NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 #else
     NSString *identifier = [self getMacAddress];
