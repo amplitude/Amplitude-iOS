@@ -48,6 +48,7 @@
 
 #import "Amplitude.h"
 #import "AmplitudePrivate.h"
+#import "AMPBackgroundNotifier.h"
 #import "AMPConstants.h"
 #import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
@@ -68,7 +69,7 @@
 #import <sys/types.h>
 
 #if TARGET_OS_WATCH
-#import "AMPBackgroundNotifier.h"
+#import <WatchKit/WatchKit.h>
 #elif !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 #else
@@ -1035,7 +1036,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
 #endif

@@ -174,6 +174,12 @@
 		759E93C425FBF4EF00BF7C3D /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = 29E7B62C255E47B400AB9A5B /* ComodoRsaDomainValidationCA.der */; };
 		759E93DC25FBF6F700BF7C3D /* AMPBackgroundNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		759E93DD25FBF6F700BF7C3D /* AMPBackgroundNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */; };
+		759E940925FBFE7700BF7C3D /* AMPBackgroundNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */; };
+		759E941125FBFE7800BF7C3D /* AMPBackgroundNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */; };
+		759E941925FBFE7900BF7C3D /* AMPBackgroundNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */; };
+		759E942125FBFE9200BF7C3D /* AMPBackgroundNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		759E942925FBFE9600BF7C3D /* AMPBackgroundNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		759E943125FBFEA200BF7C3D /* AMPBackgroundNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC5A04E08687AE7DB6143250 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6174D0A3357C218AF5BDE0FC /* libPods-shared-Amplitude_macOSTests.a */; };
 		BCCA55954683B11E1CE3B240 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A550B018598B807C4829A0E1 /* libPods-shared-Amplitude_iOSTests.a */; };
 		E5DD442EDBCC0068EF99482F /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F267A7F22BB6C50A4B3AEAF5 /* libPods-shared-Amplitude_tvOSTests.a */; };
@@ -373,6 +379,7 @@
 		1279F8BE25244D78003DCE07 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				759E93D925FBF6C600BF7C3D /* watchOS */,
 				1279F8BF25244D78003DCE07 /* Amplitude */,
 			);
 			path = Sources;
@@ -381,8 +388,9 @@
 		1279F8BF25244D78003DCE07 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
-				759E93D925FBF6C600BF7C3D /* watchOS */,
 				29E7B61D255E476C00AB9A5B /* Resources */,
+				759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */,
+				759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */,
 				1279F8E525244D78003DCE07 /* AMPConfigManager.h */,
 				1279F8C525244D78003DCE07 /* AMPConfigManager.m */,
 				1279F8C625244D78003DCE07 /* AMPConstants.h */,
@@ -484,8 +492,6 @@
 		759E93D925FBF6C600BF7C3D /* watchOS */ = {
 			isa = PBXGroup;
 			children = (
-				759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */,
-				759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */,
 			);
 			path = watchOS;
 			sourceTree = "<group>";
@@ -527,6 +533,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				759E942925FBFE9600BF7C3D /* AMPBackgroundNotifier.h in Headers */,
 				1279FA7E2525949D003DCE07 /* ISPCertificatePinning.h in Headers */,
 				1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */,
 				1279F91225244E8E003DCE07 /* Amplitude+SSLPinning.h in Headers */,
@@ -551,6 +558,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				759E942125FBFE9200BF7C3D /* AMPBackgroundNotifier.h in Headers */,
 				1279FA7D2525949D003DCE07 /* ISPCertificatePinning.h in Headers */,
 				1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */,
 				1279F8F425244E8D003DCE07 /* Amplitude+SSLPinning.h in Headers */,
@@ -584,6 +592,7 @@
 				1279F93725244E8F003DCE07 /* AMPTrackingOptions.h in Headers */,
 				1279FA762525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
 				1279F93225244E8F003DCE07 /* AmplitudePrivate.h in Headers */,
+				759E943125FBFEA200BF7C3D /* AMPBackgroundNotifier.h in Headers */,
 				1279F94125244E8F003DCE07 /* AMPRevenue.h in Headers */,
 				1279F93125244E8F003DCE07 /* AMPURLSession.h in Headers */,
 				1279F92E25244E8F003DCE07 /* AMPDeviceInfo.h in Headers */,
@@ -945,6 +954,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				759E941125FBFE7800BF7C3D /* AMPBackgroundNotifier.m in Sources */,
 				1279FA6F2525949D003DCE07 /* ISPCertificatePinning.m in Sources */,
 				1279F91A25244E8E003DCE07 /* AMPUtils.m in Sources */,
 				1279F92125244E8E003DCE07 /* AMPURLConnection.m in Sources */,
@@ -984,6 +994,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				759E941925FBFE7900BF7C3D /* AMPBackgroundNotifier.m in Sources */,
 				1279F8FE25244E8D003DCE07 /* AMPRevenue.m in Sources */,
 				1279F90825244E8D003DCE07 /* AMPDatabaseHelper.m in Sources */,
 				1279F8FC25244E8D003DCE07 /* AMPUtils.m in Sources */,
@@ -1024,6 +1035,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				759E940925FBFE7700BF7C3D /* AMPBackgroundNotifier.m in Sources */,
 				1279FA702525949D003DCE07 /* ISPCertificatePinning.m in Sources */,
 				1279F93825244E8F003DCE07 /* AMPUtils.m in Sources */,
 				1279F93F25244E8F003DCE07 /* AMPURLConnection.m in Sources */,

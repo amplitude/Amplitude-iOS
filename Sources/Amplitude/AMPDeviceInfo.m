@@ -340,6 +340,30 @@
     // iPad Mini 5
     if ([platform isEqualToString:@"iPad11,1"])      return @"iPad Mini 5";
     if ([platform isEqualToString:@"iPad11,2"])      return @"iPad Mini 5";
+
+    // == Apple Watch ==
+    if ([platform isEqualToString:@"Watch1,1"])     return @"Apple Watch 38mm";
+    if ([platform isEqualToString:@"Watch1,2"])     return @"Apple Watch 42mm";
+    if ([platform isEqualToString:@"Watch2,3"])     return @"Apple Watch Series 2 38mm";
+    if ([platform isEqualToString:@"Watch2,4"])     return @"Apple Watch Series 2 42mm";
+    if ([platform isEqualToString:@"Watch2,6"])     return @"Apple Watch Series 1 38mm";
+    if ([platform isEqualToString:@"Watch2,7"])     return @"Apple Watch Series 1 42mm";
+    if ([platform isEqualToString:@"Watch3,1"])     return @"Apple Watch Series 3 38mm Cellular";
+    if ([platform isEqualToString:@"Watch3,2"])     return @"Apple Watch Series 3 42mm Cellular";
+    if ([platform isEqualToString:@"Watch3,3"])     return @"Apple Watch Series 3 38mm";
+    if ([platform isEqualToString:@"Watch3,4"])     return @"Apple Watch Series 3 42mm";
+    if ([platform isEqualToString:@"Watch4,1"])     return @"Apple Watch Series 4 40mm";
+    if ([platform isEqualToString:@"Watch4,2"])     return @"Apple Watch Series 4 44mm";
+    if ([platform isEqualToString:@"Watch4,3"])     return @"Apple Watch Series 4 40mm Cellular";
+    if ([platform isEqualToString:@"Watch4,4"])     return @"Apple Watch Series 4 44mm Cellular";
+    if ([platform isEqualToString:@"Watch5,1"])     return @"Apple Watch Series 5 40mm";
+    if ([platform isEqualToString:@"Watch5,2"])     return @"Apple Watch Series 5 44mm";
+    if ([platform isEqualToString:@"Watch5,3"])     return @"Apple Watch Series 5 40mm Cellular";
+    if ([platform isEqualToString:@"Watch5,4"])     return @"Apple Watch Series 5 44mm Cellular";
+    if ([platform isEqualToString:@"Watch6,1"])     return @"Apple Watch Series 6 40mm";
+    if ([platform isEqualToString:@"Watch6,2"])     return @"Apple Watch Series 6 44mm";
+    if ([platform isEqualToString:@"Watch6,3"])     return @"Apple Watch Series 6 40mm Cellular";
+    if ([platform isEqualToString:@"Watch6,4"])     return @"Apple Watch Series 6 44mm Cellular";
     
     // == Others ==
     if ([platform isEqualToString:@"i386"])         return @"Simulator";
