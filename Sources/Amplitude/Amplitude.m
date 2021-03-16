@@ -48,6 +48,7 @@
 
 #import "Amplitude.h"
 #import "AmplitudePrivate.h"
+#import "AMPBackgroundNotifier.h"
 #import "AMPConstants.h"
 #import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
@@ -67,7 +68,9 @@
 #import <sys/sysctl.h>
 #import <sys/types.h>
 
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
+#elif !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -113,7 +116,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     BOOL _updateScheduled;
     BOOL _updatingCurrently;
     
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIBackgroundTaskIdentifier _uploadTaskID;
 #endif
 
@@ -220,7 +223,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         
         [_initializerQueue addOperationWithBlock:^{
 
-        #if !TARGET_OS_OSX
+        #if !TARGET_OS_OSX && !TARGET_OS_WATCH
             self->_uploadTaskID = UIBackgroundTaskInvalid;
         #endif
             
@@ -340,7 +343,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)addObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+    [center addObserver:self
+               selector:@selector(enterForeground)
+                   name:AMPAppWillEnterForegroundNotification
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(enterBackground)
+                   name:AMPAppDidEnterBackgroundNotification
+                 object:nil];
+#elif !TARGET_OS_OSX
     [center addObserver:self
                selector:@selector(enterForeground)
                    name:UIApplicationWillEnterForegroundNotification
@@ -363,7 +375,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)removeObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+    [center removeObserver:self name:AMPAppWillEnterForegroundNotification object:nil];
+    [center removeObserver:self name:AMPAppDidEnterBackgroundNotification object:nil];
+#elif !TARGET_OS_OSX
     [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
     [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 #else
@@ -429,7 +444,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // notification is already triggered, so we need to manually check and set it now.
         // UIApplication methods are only allowed on the main thread so need to dispatch this synchronously to the main thread.
         void (^checkInForeground)(void) = ^{
-        #if !TARGET_OS_OSX
+        #if !TARGET_OS_OSX && !TARGET_OS_WATCH
             UIApplication *app = [AMPUtils getSharedApplication];
             if (app != nil) {
                 UIApplicationState state = app.applicationState;
@@ -442,7 +457,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                         NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
                         [self startOrContinueSessionNSNumber:now];
                         self->_inForeground = YES;
-        #if !TARGET_OS_OSX
+        #if !TARGET_OS_OSX && !TARGET_OS_WATCH
                     }];
 
                 }
@@ -993,7 +1008,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         if (uploadSuccessful && [self.dbHelper getEventCount] > self.eventUploadThreshold) {
             int limit = self->_backoffUpload ? self->_backoffUploadBatchSize : 0;
             [self uploadEventsWithLimit:limit];
-    #if !TARGET_OS_OSX
+    #if !TARGET_OS_OSX && !TARGET_OS_WATCH
         } else if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
             if (uploadSuccessful) {
                 self->_backoffUpload = NO;
@@ -1012,7 +1027,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #pragma mark - application lifecycle methods
 
 - (void)enterForeground {
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIApplication *app = [AMPUtils getSharedApplication];
     if (app == nil) {
         return;
@@ -1021,7 +1036,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
 #endif
@@ -1036,7 +1051,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)enterBackground {
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIApplication *app = [AMPUtils getSharedApplication];
     if (app == nil) {
         return;
@@ -1045,7 +1060,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
     _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
@@ -1062,7 +1077,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)endBackgroundTaskIfNeeded {
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         UIApplication *app = [AMPUtils getSharedApplication];
         if (app == nil) {
@@ -1674,7 +1689,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (id)unarchive:(NSData *)data error:(NSError **)error {
-    if (@available(iOS 12, tvOS 11.0, macOS 10.13, *)) {
+    if (@available(iOS 12, tvOS 11.0, macOS 10.13, watchOS 4.0, *)) {
         return [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class] fromData:data error:error];
     } else {
 #pragma clang diagnostic push
@@ -1690,7 +1705,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (BOOL)archive:(id)obj toFile:(NSString *)path {
-    if (@available(tvOS 11.0, iOS 12, macOS 10.13, *)) {
+    if (@available(tvOS 11.0, iOS 12, macOS 10.13, watchOS 4.0, *)) {
         NSError *archiveError = nil;
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:obj requiringSecureCoding:NO error:&archiveError];
         if (archiveError != nil) {
