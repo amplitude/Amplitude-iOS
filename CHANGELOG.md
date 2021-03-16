@@ -1,3 +1,10 @@
+# [8.1.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.0.0...v8.1.0) (2021-03-16)
+
+
+### Features
+
+* Add support for watchOS ([#330](https://github.com/amplitude/Amplitude-iOS/issues/330)) ([9db310a](https://github.com/amplitude/Amplitude-iOS/commit/9db310a91e264ab84a3bcc871818da9d031300bf))
+
 # [8.0.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.3.0...v8.0.0) (2021-03-06)
 
 
