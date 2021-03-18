@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
   s.source                 = { :git => "https://github.com/amplitude/Amplitude-iOS.git", :tag => "v#{s.version}" }
   s.requires_arc           = true
   s.library                = 'sqlite3.0'
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   
   s.ios.deployment_target  = '10.0'
   s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}'
