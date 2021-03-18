@@ -1,3 +1,10 @@
+# [8.2.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.1.0...v8.2.0) (2021-03-18)
+
+
+### Features
+
+* **podspec:** Add defines modules to podspec for React Native support ([#331](https://github.com/amplitude/Amplitude-iOS/issues/331)) ([e7d1257](https://github.com/amplitude/Amplitude-iOS/commit/e7d1257ea025f08d82e76f6809a9fa671e9672af))
+
 # [8.1.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.0.0...v8.1.0) (2021-03-16)
 
 
