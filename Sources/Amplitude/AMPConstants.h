@@ -55,6 +55,9 @@ extern NSString *const AMP_OP_PREPEND;
 extern NSString *const AMP_OP_SET;
 extern NSString *const AMP_OP_SET_ONCE;
 extern NSString *const AMP_OP_UNSET;
+extern NSString *const AMP_OP_PREINSERT;
+extern NSString *const AMP_OP_POSTINSERT;
+extern NSString *const AMP_OP_REMOVE;
 
 // Revenue
 extern NSString *const AMP_REVENUE_PRODUCT_ID;
