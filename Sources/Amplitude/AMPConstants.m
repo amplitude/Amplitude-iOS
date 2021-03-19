@@ -74,6 +74,9 @@ NSString *const AMP_OP_PREPEND = @"$prepend";
 NSString *const AMP_OP_SET = @"$set";
 NSString *const AMP_OP_SET_ONCE = @"$setOnce";
 NSString *const AMP_OP_UNSET = @"$unset";
+NSString *const AMP_OP_PREINSERT = @"$preInsert";
+NSString *const AMP_OP_POSTINSERT = @"$postInsert";
+NSString *const AMP_OP_REMOVE = @"$remove";
 
 NSString *const AMP_REVENUE_PRODUCT_ID = @"$productId";
 NSString *const AMP_REVENUE_QUANTITY = @"$quantity";
