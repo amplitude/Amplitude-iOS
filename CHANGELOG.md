@@ -1,3 +1,10 @@
+## [8.2.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.0...v8.2.1) (2021-04-01)
+
+
+### Bug Fixes
+
+* Cocoapods resources directory path fix ([#336](https://github.com/amplitude/Amplitude-iOS/issues/336)) ([8680587](https://github.com/amplitude/Amplitude-iOS/commit/8680587c9fd3e207c974d55c2f907d026e1f6ccd))
+
 # [8.2.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.1.0...v8.2.0) (2021-03-18)
 
 
