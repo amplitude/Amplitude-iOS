@@ -16,8 +16,8 @@ let package = Package(
     targets: [
         .target(
             name: "Amplitude",
-            path: "Sources/Amplitude",
+            path: "Sources",
             resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
-            publicHeadersPath: "."),
+            publicHeadersPath: "Amplitude"),
     ]
 )
