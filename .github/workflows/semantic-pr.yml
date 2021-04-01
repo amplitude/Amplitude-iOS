@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, edited]
 
 jobs:
-  pr-title-check: 
+  pr-title-check:
     name: Check PR for semantic title
     runs-on: ubuntu-18.04
     steps:

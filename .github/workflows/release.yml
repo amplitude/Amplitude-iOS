@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       dryRun:
-        description: 'Do a dry run to preview instead of a real release'
+        description: "Do a dry run to preview instead of a real release"
         required: true
-        default: 'true'
+        default: "true"
 
 jobs:
   authorize:
@@ -30,117 +30,117 @@ jobs:
         ruby-version: ["2.7.x"]
         node-version: ["12.x"]
     steps:
-    - name: Checkout Amplitude-iOS
-      uses: actions/checkout@v2
-    
-    - name: Set Xcode 12
-      run: |
-        sudo xcode-select -switch /Applications/Xcode_12.app
+      - name: Checkout Amplitude-iOS
+        uses: actions/checkout@v2
 
-    - name: Setup Ruby
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
+      - name: Set Xcode 12
+        run: |
+          sudo xcode-select -switch /Applications/Xcode_12.app
 
-    - name: Cache Bundle Gems and Cocoapods
-      id: cache-gems-pods
-      uses: actions/cache@v2
-      with:
-        path: |
-          Pods
-          vendor/bundle
-        key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
-    
-    - name: Install Cocoapods
-      if: steps.cache-gems-pods.outputs.cache-hit != 'true'
-      run: |
-        gem install bundler
-        bundle config path vendor/bundle
-        bundle install
-        pod install
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
 
-    - name: iOS Tests
-      run: |    
-        xcodebuild test \
-          -workspace Amplitude.xcworkspace \
-          -scheme Amplitude_iOSTests \
-          -sdk iphonesimulator \
-          -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
-    
-    # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
-    #   run: |
-    #     xcodebuild \
-    #       -workspace Amplitude.xcworkspace \
-    #       -scheme Amplitude_macOS \
-    #       -sdk macosx \
-    #       -destination 'platform=macosx' \
-    #       test
-    
-    - name: tvOS Tests
-      run: |
-        xcodebuild \
-          -workspace Amplitude.xcworkspace \
-          -scheme Amplitude_tvOS \
-          -sdk appletvsimulator \
-          -destination 'platform=tvOS Simulator,name=Apple TV' \
-          test
-    
-    - name: Validate Podfile
-      run: pod lib lint
+      - name: Cache Bundle Gems and Cocoapods
+        id: cache-gems-pods
+        uses: actions/cache@v2
+        with:
+          path: |
+            Pods
+            vendor/bundle
+          key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Install Cocoapods
+        if: steps.cache-gems-pods.outputs.cache-hit != 'true'
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install
+          pod install
 
-    - name: Checkout Amplitude-iOS gh-pages for building docs
-      uses: actions/checkout@v2
-      with:
-        ref: 'gh-pages'
-        path: 'Amplitude-iOS-gh-pages'
+      - name: iOS Tests
+        run: |
+          xcodebuild test \
+            -workspace Amplitude.xcworkspace \
+            -scheme Amplitude_iOSTests \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
 
-    - name: Install appledoc binary
-      run: |
-        git clone git://github.com/tomaz/appledoc.git
-        cd appledoc/
-        sudo sh install-appledoc.sh
-        cd ../
-        rm -rf appledoc/
+      # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
+      #   run: |
+      #     xcodebuild \
+      #       -workspace Amplitude.xcworkspace \
+      #       -scheme Amplitude_macOS \
+      #       -sdk macosx \
+      #       -destination 'platform=macosx' \
+      #       test
 
-    - name: Semantic Release --dry-run
-      if: ${{ github.event.inputs.dryRun == 'true'}}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        GIT_AUTHOR_NAME: amplitude-sdk-bot
-        GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
-        GIT_COMMITTER_NAME: amplitude-sdk-bot
-        GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
-      run: |
-        npx \
-        -p lodash \
-        -p semantic-release@17 \
-        -p @semantic-release/changelog@5 \
-        -p @semantic-release/git@9 \
-        -p @google/semantic-release-replace-plugin@1 \
-        -p @semantic-release/exec@5 \
-        semantic-release --dry-run
+      - name: tvOS Tests
+        run: |
+          xcodebuild \
+            -workspace Amplitude.xcworkspace \
+            -scheme Amplitude_tvOS \
+            -sdk appletvsimulator \
+            -destination 'platform=tvOS Simulator,name=Apple TV' \
+            test
 
-    - name: Semantic Release
-      if: ${{ github.event.inputs.dryRun == 'false'}}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        GIT_AUTHOR_NAME: amplitude-sdk-bot
-        GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
-        GIT_COMMITTER_NAME: amplitude-sdk-bot
-        GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
-      run: |
-        npx \
-        -p lodash \
-        -p semantic-release@17 \
-        -p @semantic-release/changelog@5 \
-        -p @semantic-release/git@9 \
-        -p @google/semantic-release-replace-plugin@1 \
-        -p @semantic-release/exec@5 \
-        semantic-release
+      - name: Validate Podfile
+        run: pod lib lint
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Checkout Amplitude-iOS gh-pages for building docs
+        uses: actions/checkout@v2
+        with:
+          ref: "gh-pages"
+          path: "Amplitude-iOS-gh-pages"
+
+      - name: Install appledoc binary
+        run: |
+          git clone git://github.com/tomaz/appledoc.git
+          cd appledoc/
+          sudo sh install-appledoc.sh
+          cd ../
+          rm -rf appledoc/
+
+      - name: Semantic Release --dry-run
+        if: ${{ github.event.inputs.dryRun == 'true'}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          GIT_AUTHOR_NAME: amplitude-sdk-bot
+          GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
+          GIT_COMMITTER_NAME: amplitude-sdk-bot
+          GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
+        run: |
+          npx \
+          -p lodash \
+          -p semantic-release@17 \
+          -p @semantic-release/changelog@5 \
+          -p @semantic-release/git@9 \
+          -p @google/semantic-release-replace-plugin@1 \
+          -p @semantic-release/exec@5 \
+          semantic-release --dry-run
+
+      - name: Semantic Release
+        if: ${{ github.event.inputs.dryRun == 'false'}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          GIT_AUTHOR_NAME: amplitude-sdk-bot
+          GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
+          GIT_COMMITTER_NAME: amplitude-sdk-bot
+          GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
+        run: |
+          npx \
+          -p lodash \
+          -p semantic-release@17 \
+          -p @semantic-release/changelog@5 \
+          -p @semantic-release/git@9 \
+          -p @google/semantic-release-replace-plugin@1 \
+          -p @semantic-release/exec@5 \
+          semantic-release
