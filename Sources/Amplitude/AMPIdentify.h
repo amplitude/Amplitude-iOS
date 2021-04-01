@@ -154,7 +154,7 @@
 
 
 /**
-  Preinsert the value of a given user property. If the value already exists, it will do no operation.
+  Pre-insert the value of a given user property. If the value already exists, it will do no operation.
 
  @param property The user property key
 
@@ -168,7 +168,7 @@
 
 
 /**
- Postinsert the value of a given user property. If the value already exists, it will do no operation.
+ Post-insert the value of a given user property. If the value already exists, it will do no operation.
 
  @param property The user property key
 
