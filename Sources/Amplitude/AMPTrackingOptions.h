@@ -23,6 +23,13 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ Used with [Amplitude setTrackingOptions:] to disable individual fields.
+
+    AMPTrackingOptions *options = [[[[AMPTrackingOptions options] disableCity] disableIPAddress] disablePlatform];
+    [[Amplitude instance] setTrackingOptions:options];
+
+*/
 @interface AMPTrackingOptions : NSObject
 
 @property (nonatomic, strong, readonly) NSMutableSet *disabledFields;
