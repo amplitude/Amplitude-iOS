@@ -591,6 +591,14 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)useAdvertisingIdForDeviceId;
 
+/**
+  By default the iOS SDK will track several user properties such as carrier, city, country, ip_address, language, platform, etc. You can use the provided AMPTrackingOptions interface to customize and disable individual fields.
+
+  Note: Each operation on the AMPTrackingOptions object returns the same instance which allows you to chain multiple operations together.
+
+      AMPTrackingOptions *options = [[[[AMPTrackingOptions options] disableCity] disableIPAddress] disablePlatform];
+      [[Amplitude instance] setTrackingOptions:options];
+ */
 - (void)setTrackingOptions:(AMPTrackingOptions *)options;
 
 /**
