@@ -1,3 +1,15 @@
+# [8.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.1...v8.3.0) (2021-04-30)
+
+
+### Bug Fixes
+
+* fix umbrella header warning ([#346](https://github.com/amplitude/Amplitude-iOS/issues/346)) ([f5d10f7](https://github.com/amplitude/Amplitude-iOS/commit/f5d10f751402e91492c74558dc5da49c90c7c427))
+
+
+### Features
+
+* Add preInsert, postInsert and remove functions to Identify and Group Identify ([#338](https://github.com/amplitude/Amplitude-iOS/issues/338)) ([4cc28bf](https://github.com/amplitude/Amplitude-iOS/commit/4cc28bf3950d5aa91f0a3a494bd1318da8119d6c))
+
 ## [8.2.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.0...v8.2.1) (2021-04-01)
 
 
