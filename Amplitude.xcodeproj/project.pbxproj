@@ -391,6 +391,7 @@
 		1279F8BF25244D78003DCE07 /* Amplitude */ = {
 			isa = PBXGroup;
 			children = (
+				19DD8B8C263B4B9B00CC7188 /* Public */,
 				759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */,
 				759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */,
 				1279F8E525244D78003DCE07 /* AMPConfigManager.h */,
@@ -401,15 +402,11 @@
 				1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */,
 				1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */,
 				1279F8D525244D78003DCE07 /* AMPDeviceInfo.m */,
-				1279F8C125244D78003DCE07 /* AMPIdentify.h */,
 				1279F8D625244D78003DCE07 /* AMPIdentify.m */,
-				1279F8D325244D78003DCE07 /* Amplitude.h */,
 				1279F8EA25244D78003DCE07 /* Amplitude.m */,
 				1279F8D925244D78003DCE07 /* Amplitude+SSLPinning.h */,
 				1279F8D825244D78003DCE07 /* AmplitudePrivate.h */,
-				1279F8DA25244D78003DCE07 /* AMPRevenue.h */,
 				1279F8C725244D78003DCE07 /* AMPRevenue.m */,
-				1279F8E925244D78003DCE07 /* AMPTrackingOptions.h */,
 				1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */,
 				1279F8C025244D78003DCE07 /* AMPURLConnection.h */,
 				1279F8D725244D78003DCE07 /* AMPURLConnection.m */,
@@ -471,6 +468,17 @@
 				6174D0A3357C218AF5BDE0FC /* libPods-shared-Amplitude_macOSTests.a */,
 			);
 			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		19DD8B8C263B4B9B00CC7188 /* Public */ = {
+			isa = PBXGroup;
+			children = (
+				1279F8D325244D78003DCE07 /* Amplitude.h */,
+				1279F8C125244D78003DCE07 /* AMPIdentify.h */,
+				1279F8DA25244D78003DCE07 /* AMPRevenue.h */,
+				1279F8E925244D78003DCE07 /* AMPTrackingOptions.h */,
+			);
+			path = Public;
 			sourceTree = "<group>";
 		};
 		4FEE653130E7AE135280BC48 /* Frameworks */ = {
