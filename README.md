@@ -14,7 +14,7 @@ iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.am
 
 ## Installation and Quick Start
 * For using the SDK, please visit our :100:[Developer Center](https://developers.amplitude.com/docs/ios).
-* For developing the SDK, please visit our [CONTRIBUTING.md](https://github.com/amplitude/Amplitude-iOS/blob/master/CONTRIBUTING.md).
+* For developing the SDK, please visit our [CONTRIBUTING.md](https://github.com/amplitude/Amplitude-iOS/blob/main/CONTRIBUTING.md).
 
 ## Demo Applications
 * A [demo application](https://github.com/amplitude/iOS-Demo) showing the integration of our SDK using Cocoapods.
@@ -47,7 +47,7 @@ iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.am
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Changelog
-Click [here](https://github.com/amplitude/Amplitude-iOS/blob/master/CHANGELOG.md) to view the iOS SDK Changelog.
+Click [here](https://github.com/amplitude/Amplitude-iOS/blob/main/CHANGELOG.md) to view the iOS SDK Changelog.
 
 ## Need Help?
 If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).

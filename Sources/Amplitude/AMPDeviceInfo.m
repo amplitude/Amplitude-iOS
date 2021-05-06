@@ -28,7 +28,9 @@
 #import <sys/sysctl.h>
 #import <sys/types.h>
 
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
+#elif !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -72,7 +74,9 @@
 
 - (NSString *)osVersion {
     if (!_osVersion) {
-        #if !TARGET_OS_OSX
+        #if TARGET_OS_WATCH
+        _osVersion = [[WKInterfaceDevice currentDevice] systemVersion];
+        #elif !TARGET_OS_OSX
         _osVersion = [[UIDevice currentDevice] systemVersion];
         #else
         NSOperatingSystemVersion systemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
@@ -139,7 +143,7 @@
 
 - (NSString *)vendorID {
     if (!_vendorID) {
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
 #endif
             NSString *identifierForVendor = [AMPDeviceInfo getVendorID:5];
@@ -148,14 +152,22 @@
                 _vendorID = identifierForVendor;
             }
         }
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     }
 #endif
     return _vendorID;
 }
 
 + (NSString *)getVendorID:(int)maxAttempts {
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+    NSString *identifier;
+    if (@available(watchOS 6.2, *)) {
+        identifier = [[[WKInterfaceDevice currentDevice] identifierForVendor] UUIDString];
+    } else {
+        // Identifier for vendor is not available on this version.
+        identifier = [[NSUUID UUID] UUIDString];
+    }
+#elif !TARGET_OS_OSX
     NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 #else
     NSString *identifier = [self getMacAddress];
@@ -328,6 +340,30 @@
     // iPad Mini 5
     if ([platform isEqualToString:@"iPad11,1"])      return @"iPad Mini 5";
     if ([platform isEqualToString:@"iPad11,2"])      return @"iPad Mini 5";
+
+    // == Apple Watch ==
+    if ([platform isEqualToString:@"Watch1,1"])     return @"Apple Watch 38mm";
+    if ([platform isEqualToString:@"Watch1,2"])     return @"Apple Watch 42mm";
+    if ([platform isEqualToString:@"Watch2,3"])     return @"Apple Watch Series 2 38mm";
+    if ([platform isEqualToString:@"Watch2,4"])     return @"Apple Watch Series 2 42mm";
+    if ([platform isEqualToString:@"Watch2,6"])     return @"Apple Watch Series 1 38mm";
+    if ([platform isEqualToString:@"Watch2,7"])     return @"Apple Watch Series 1 42mm";
+    if ([platform isEqualToString:@"Watch3,1"])     return @"Apple Watch Series 3 38mm Cellular";
+    if ([platform isEqualToString:@"Watch3,2"])     return @"Apple Watch Series 3 42mm Cellular";
+    if ([platform isEqualToString:@"Watch3,3"])     return @"Apple Watch Series 3 38mm";
+    if ([platform isEqualToString:@"Watch3,4"])     return @"Apple Watch Series 3 42mm";
+    if ([platform isEqualToString:@"Watch4,1"])     return @"Apple Watch Series 4 40mm";
+    if ([platform isEqualToString:@"Watch4,2"])     return @"Apple Watch Series 4 44mm";
+    if ([platform isEqualToString:@"Watch4,3"])     return @"Apple Watch Series 4 40mm Cellular";
+    if ([platform isEqualToString:@"Watch4,4"])     return @"Apple Watch Series 4 44mm Cellular";
+    if ([platform isEqualToString:@"Watch5,1"])     return @"Apple Watch Series 5 40mm";
+    if ([platform isEqualToString:@"Watch5,2"])     return @"Apple Watch Series 5 44mm";
+    if ([platform isEqualToString:@"Watch5,3"])     return @"Apple Watch Series 5 40mm Cellular";
+    if ([platform isEqualToString:@"Watch5,4"])     return @"Apple Watch Series 5 44mm Cellular";
+    if ([platform isEqualToString:@"Watch6,1"])     return @"Apple Watch Series 6 40mm";
+    if ([platform isEqualToString:@"Watch6,2"])     return @"Apple Watch Series 6 44mm";
+    if ([platform isEqualToString:@"Watch6,3"])     return @"Apple Watch Series 6 40mm Cellular";
+    if ([platform isEqualToString:@"Watch6,4"])     return @"Apple Watch Series 6 44mm Cellular";
     
     // == Others ==
     if ([platform isEqualToString:@"i386"])         return @"Simulator";

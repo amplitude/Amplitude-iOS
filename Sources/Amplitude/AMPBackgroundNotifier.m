@@ -1,7 +1,5 @@
 //
-//  AMPEventExplorer.h
-//  Amplitude
-//
+//  AMPBackgroundNotifier.m
 //  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,15 +21,23 @@
 //  THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
+#import "AMPBackgroundNotifier.h"
 
-NS_ASSUME_NONNULL_BEGIN
+#if TARGET_OS_WATCH
 
-@interface AMPEventExplorer : NSObject
+NSNotificationName const AMPAppWillEnterForegroundNotification = @"com.amplitude.appWillEnterForegroundNotification";
+NSNotificationName const AMPAppDidEnterBackgroundNotification = @"com.amplitude.appDidEnterBackgroundNotification";
 
-- (instancetype)initWithInstanceName:(NSString *)instanceName;
-- (void)showBubbleView;
+@implementation AMPBackgroundNotifier
+
++ (void)applicationWillEnterForeground {
+    [[NSNotificationCenter defaultCenter] postNotificationName:AMPAppWillEnterForegroundNotification object:self];
+}
+
++ (void)applicationDidEnterBackground {
+    [[NSNotificationCenter defaultCenter] postNotificationName:AMPAppDidEnterBackgroundNotification object:self];
+}
 
 @end
 
-NS_ASSUME_NONNULL_END
+#endif

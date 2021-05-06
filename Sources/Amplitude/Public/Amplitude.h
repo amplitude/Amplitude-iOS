@@ -108,7 +108,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 @property (nonatomic, assign) int eventUploadMaxBatchSize;
 
 /**
- The maximum number of events that can be stored lcoally. The default is 1000 events.
+ The maximum number of events that can be stored locally. The default is 1000 events.
  */
 @property (nonatomic, assign) int eventMaxCount;
 
@@ -176,13 +176,10 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 @property (nonatomic, strong, nullable) AMPLocationInfoBlock locationInfoBlock;
 
-#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 /**
- Show Amplitude Event Explorer when you're running a debug build.
+ Content-Type header for event sending requests. Only relevant for sending events to a different URL (e.g. proxy server)
  */
-@property (nonatomic, assign, readwrite) BOOL showEventExplorer;
-
-#endif
+@property (nonatomic, copy, readonly) NSString *contentTypeHeader;
 
 #pragma mark - Methods
 
@@ -603,6 +600,14 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)useAdvertisingIdForDeviceId;
 
+/**
+  By default the iOS SDK will track several user properties such as carrier, city, country, ip_address, language, platform, etc. You can use the provided AMPTrackingOptions interface to customize and disable individual fields.
+
+  Note: Each operation on the AMPTrackingOptions object returns the same instance which allows you to chain multiple operations together.
+
+      AMPTrackingOptions *options = [[[[AMPTrackingOptions options] disableCity] disableIPAddress] disablePlatform];
+      [[Amplitude instance] setTrackingOptions:options];
+ */
 - (void)setTrackingOptions:(AMPTrackingOptions *)options;
 
 /**
@@ -616,7 +621,15 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)disableCoppaControl;
 
+/**
+ Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers
+ */
 - (void)setServerUrl:(NSString *)serverUrl;
+
+/**
+ Sets Content-Type header for event sending requests
+*/
+- (void)setContentTypeHeader:(NSString *)contentType;
 
 - (void)setBearerToken:(NSString *)token;
 
@@ -677,6 +690,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  Call to check if the SDK is ready to start a new session at timestamp. Returns YES if a new session was started, otherwise NO and current session is extended. Only use if you know what you are doing. Recommended to use current time in UTC milliseconds for timestamp.
  */
 - (BOOL)startOrContinueSession:(long long)timestamp;
+
+
+- (NSString *)getContentTypeHeader;
 
 @end
 

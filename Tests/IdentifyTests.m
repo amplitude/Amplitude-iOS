@@ -218,6 +218,108 @@
     XCTAssertEqualObjects(identify.userPropertyOperations, expected);
 }
 
+- (void)testPreInsertProperty {
+    NSString *property1 = @"string value";
+    NSString *value1 = @"test value";
+
+    NSString *property2 = @"double value";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+
+    NSString *property3 = @"boolean value";
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    NSString *property4 = @"array value";
+    NSMutableArray *value4 = [NSMutableArray array];
+    [value4 addObject:@"test"];
+    [value4 addObject:[NSNumber numberWithInt:15]];
+
+    AMPIdentify *identify = [[AMPIdentify identify] preInsert:property1 value:value1];
+    [[[identify preInsert:property2 value:value2] preInsert:property3 value:value3] preInsert:property4 value:value4];
+
+    // identify should ignore this since duplicate key
+    [identify setOnce:property1 value:value3];
+
+    // generate expected operations
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property1];
+    [operations setObject:value2 forKey:property2];
+    [operations setObject:value3 forKey:property3];
+    [operations setObject:value4 forKey:property4];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_PREINSERT];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testPostInsertProperty {
+    NSString *property1 = @"string value";
+    NSString *value1 = @"test value";
+
+    NSString *property2 = @"double value";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+
+    NSString *property3 = @"boolean value";
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    NSString *property4 = @"array value";
+    NSMutableArray *value4 = [NSMutableArray array];
+    [value4 addObject:@"test"];
+    [value4 addObject:[NSNumber numberWithInt:15]];
+
+    AMPIdentify *identify = [[AMPIdentify identify] postInsert:property1 value:value1];
+    [[[identify postInsert:property2 value:value2] postInsert:property3 value:value3] postInsert:property4 value:value4];
+
+    // identify should ignore this since duplicate key
+    [identify setOnce:property1 value:value3];
+
+    // generate expected operations
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property1];
+    [operations setObject:value2 forKey:property2];
+    [operations setObject:value3 forKey:property3];
+    [operations setObject:value4 forKey:property4];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_POSTINSERT];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
+- (void)testRemoveInsertProperty {
+    NSString *property1 = @"string value";
+    NSString *value1 = @"test value";
+
+    NSString *property2 = @"double value";
+    NSNumber *value2 = [NSNumber numberWithDouble:0.123];
+
+    NSString *property3 = @"boolean value";
+    NSNumber *value3 = [NSNumber numberWithBool:YES];
+
+    NSString *property4 = @"array value";
+    NSMutableArray *value4 = [NSMutableArray array];
+    [value4 addObject:@"test"];
+    [value4 addObject:[NSNumber numberWithInt:15]];
+
+    AMPIdentify *identify = [[AMPIdentify identify] remove:property1 value:value1];
+    [[[identify remove:property2 value:value2] remove:property3 value:value3] remove:property4 value:value4];
+
+    // identify should ignore this since duplicate key
+    [identify setOnce:property1 value:value3];
+
+    // generate expected operations
+    NSMutableDictionary *operations = [NSMutableDictionary dictionary];
+    [operations setObject:value1 forKey:property1];
+    [operations setObject:value2 forKey:property2];
+    [operations setObject:value3 forKey:property3];
+    [operations setObject:value4 forKey:property4];
+
+    NSMutableDictionary *expected = [NSMutableDictionary dictionary];
+    [expected setObject:operations forKey:AMP_OP_REMOVE];
+
+    XCTAssertEqualObjects(identify.userPropertyOperations, expected);
+}
+
 - (void)testMultipleOperations {
     NSString *property1 = @"string value";
     NSString *value1 = @"test value";
@@ -235,8 +337,17 @@
     [value5 addObject:@"test"];
     [value5 addObject:[NSNumber numberWithFloat:14.23456]];
 
+    NSString *property6 = @"string value2";
+    NSString *value6 = @"test value2"; 
+
+    NSString *property7 = @"double value2";
+    NSNumber *value7 = [NSNumber numberWithDouble:0.123];
+
+    NSString *property8 = @"boolean value2";
+    NSNumber *value8 = [NSNumber numberWithBool:FALSE];
+
     AMPIdentify *identify = [[AMPIdentify identify] setOnce:property1 value:value1];
-    [[[[identify add:property2 value:value2] set:property3 value:value3] unset:property4] append:property5 value:value5];
+    [[[[[[[identify add:property2 value:value2] set:property3 value:value3] unset:property4] append:property5 value:value5] preInsert:property6 value:value6] postInsert:property7 value:value7] remove:property8 value:value8];
 
     // identify should ignore this since duplicate key
     [identify set:property4 value:value3];
@@ -247,8 +358,11 @@
     NSDictionary *set = [NSDictionary dictionaryWithObject:value3 forKey:property3];
     NSDictionary *unset = [NSDictionary dictionaryWithObject:@"-" forKey:property4];
     NSDictionary *append = [NSDictionary dictionaryWithObject:value5 forKey:property5];
+    NSDictionary *preInsert = [NSDictionary dictionaryWithObject:value6 forKey:property6];
+    NSDictionary *postInsert = [NSDictionary dictionaryWithObject:value7 forKey:property7];
+    NSDictionary *remove = [NSDictionary dictionaryWithObject:value8 forKey:property8];
 
-    NSDictionary *expected = [NSDictionary dictionaryWithObjectsAndKeys:setOnce, AMP_OP_SET_ONCE, add, AMP_OP_ADD, set, AMP_OP_SET, unset, AMP_OP_UNSET, append, AMP_OP_APPEND, nil];
+    NSDictionary *expected = [NSDictionary dictionaryWithObjectsAndKeys:setOnce, AMP_OP_SET_ONCE, add, AMP_OP_ADD, set, AMP_OP_SET, unset, AMP_OP_UNSET, append, AMP_OP_APPEND, preInsert, AMP_OP_PREINSERT, postInsert, AMP_OP_POSTINSERT, remove, AMP_OP_REMOVE, nil];
 
     XCTAssertEqualObjects(identify.userPropertyOperations, expected);
 }

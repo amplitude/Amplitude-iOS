@@ -1,3 +1,57 @@
+# [8.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.1...v8.3.0) (2021-04-30)
+
+
+### Bug Fixes
+
+* fix umbrella header warning ([#346](https://github.com/amplitude/Amplitude-iOS/issues/346)) ([f5d10f7](https://github.com/amplitude/Amplitude-iOS/commit/f5d10f751402e91492c74558dc5da49c90c7c427))
+
+
+### Features
+
+* Add preInsert, postInsert and remove functions to Identify and Group Identify ([#338](https://github.com/amplitude/Amplitude-iOS/issues/338)) ([4cc28bf](https://github.com/amplitude/Amplitude-iOS/commit/4cc28bf3950d5aa91f0a3a494bd1318da8119d6c))
+
+## [8.2.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.0...v8.2.1) (2021-04-01)
+
+
+### Bug Fixes
+
+* Cocoapods resources directory path fix ([#336](https://github.com/amplitude/Amplitude-iOS/issues/336)) ([8680587](https://github.com/amplitude/Amplitude-iOS/commit/8680587c9fd3e207c974d55c2f907d026e1f6ccd))
+
+# [8.2.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.1.0...v8.2.0) (2021-03-18)
+
+
+### Features
+
+* **podspec:** Add defines modules to podspec for React Native support ([#331](https://github.com/amplitude/Amplitude-iOS/issues/331)) ([e7d1257](https://github.com/amplitude/Amplitude-iOS/commit/e7d1257ea025f08d82e76f6809a9fa671e9672af))
+
+# [8.1.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.0.0...v8.1.0) (2021-03-16)
+
+
+### Features
+
+* Add support for watchOS ([#330](https://github.com/amplitude/Amplitude-iOS/issues/330)) ([9db310a](https://github.com/amplitude/Amplitude-iOS/commit/9db310a91e264ab84a3bcc871818da9d031300bf))
+
+# [8.0.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.3.0...v8.0.0) (2021-03-06)
+
+
+### Bug Fixes
+
+* Removes event explorer to fix problems with swift package manager import ([#329](https://github.com/amplitude/Amplitude-iOS/issues/329)) ([11022b8](https://github.com/amplitude/Amplitude-iOS/commit/11022b89f344d85bef5530e37c2e844ede1950f3))
+
+# [7.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.2...v7.3.0) (2021-02-22)
+
+
+### Features
+
+* Set content-type header for HTTP requests ([#328](https://github.com/amplitude/Amplitude-iOS/issues/328)) ([21f138c](https://github.com/amplitude/Amplitude-iOS/commit/21f138c3886e781004f6604ba6b1e1f07dfdb9a4))
+
+## [7.2.2](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.1...v7.2.2) (2020-12-23)
+
+
+### Bug Fixes
+
+* SPM SSL Pinning file discovery bug ([#319](https://github.com/amplitude/Amplitude-iOS/issues/319)) ([9878134](https://github.com/amplitude/Amplitude-iOS/commit/987813420d47b66ccc19d4ff18d69e6b7e483346))
+
 ## [7.2.1](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.0...v7.2.1) (2020-12-02)
 
 

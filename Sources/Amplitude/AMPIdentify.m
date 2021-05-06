@@ -101,6 +101,21 @@
     return self;
 }
 
+- (AMPIdentify *)preInsert:(NSString *)property value:(NSObject *)value {
+    [self addToUserProperties:AMP_OP_PREINSERT property:property value:value];
+    return self;
+}
+
+- (AMPIdentify *)postInsert:(NSString *)property value:(NSObject *)value {
+    [self addToUserProperties:AMP_OP_POSTINSERT property:property value:value];
+    return self;
+}
+
+- (AMPIdentify *)remove:(NSString *)property value:(NSObject *)value {
+    [self addToUserProperties:AMP_OP_REMOVE property:property value:value];
+    return self;
+}
+
 - (void)addToUserProperties:(NSString *)operation property:(NSString *)property value:(NSObject *)value {
     if (value == nil) {
         AMPLITUDE_LOG(@"Attempting to perform operation '%@' with nil value for property '%@', ignoring", operation, property);

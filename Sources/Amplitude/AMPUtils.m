@@ -154,7 +154,7 @@
 #endif
 }
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 + (UIApplication *)getSharedApplication {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {

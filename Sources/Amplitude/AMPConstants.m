@@ -24,11 +24,12 @@
 #import "AMPConstants.h"
 
 NSString *const kAMPLibrary = @"amplitude-ios";
-NSString *const kAMPVersion = @"7.2.1"; // Version is managed automatically by semantic-release, please don't change it manually
+NSString *const kAMPVersion = @"8.3.0"; // Version is managed automatically by semantic-release, please don't change it manually
 NSString *const kAMPUnknownLibrary = @"unknown-library";
 NSString *const kAMPUnknownVersion = @"unknown-version";
 NSString *const kAMPEventLogDomain = @"api2.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api2.amplitude.com/";
+NSString *const kAMPContentTypeHeader = @"application/x-www-form-urlencoded";
 NSString *const kAMPDyanmicConfigUrl = @"https://regionconfig.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";
 const int kAMPApiVersion = 3;
@@ -50,6 +51,11 @@ const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
     const int kAMPEventMaxCount = 1000;
     NSString *const kAMPPlatform = @"macOS";
     NSString *const kAMPOSName = @"macos";
+#elif TARGET_OS_WATCH // watchOS, simulator, etc.
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"watchOS";
+    NSString *const kAMPOSName = @"watchos";
 #else // iOS, simulator, etc.
     const int kAMPEventUploadThreshold = 30;
     const int kAMPEventMaxCount = 1000;
@@ -73,6 +79,9 @@ NSString *const AMP_OP_PREPEND = @"$prepend";
 NSString *const AMP_OP_SET = @"$set";
 NSString *const AMP_OP_SET_ONCE = @"$setOnce";
 NSString *const AMP_OP_UNSET = @"$unset";
+NSString *const AMP_OP_PREINSERT = @"$preInsert";
+NSString *const AMP_OP_POSTINSERT = @"$postInsert";
+NSString *const AMP_OP_REMOVE = @"$remove";
 
 NSString *const AMP_REVENUE_PRODUCT_ID = @"$productId";
 NSString *const AMP_REVENUE_QUANTITY = @"$quantity";
