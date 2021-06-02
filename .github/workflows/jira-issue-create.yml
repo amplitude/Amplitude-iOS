@@ -28,7 +28,7 @@ jobs:
           description: |
             ${{ github.event.issue.html_url }}
           fields: '{
-            "customfield_10006": 1039,
+            "customfield_10006": 1127,
             "customfield_11481": {"value": "Data Connections 🚇"},
             "customfield_11200": {"value": "SDK"},
             "labels": ["ios"]
