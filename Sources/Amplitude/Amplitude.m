@@ -58,6 +58,7 @@
 #import "AMPUtils.h"
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
+#import "AMPStorage.h"
 #import "AMPTrackingOptions.h"
 #import <math.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -81,9 +82,12 @@
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) NSOperationQueue *initializerQueue;
 @property (nonatomic, strong) AMPDatabaseHelper *dbHelper;
+@property (nonatomic, strong) NSMutableArray *eventsBuffer;
+@property (nonatomic, strong) NSMutableArray *identifyBuffer;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 @property (nonatomic, assign) long long sessionId;
+@property (nonatomic, assign) long long eventSequenceNumber;
 @property (nonatomic, assign) BOOL backoffUpload;
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
@@ -195,6 +199,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _backoffUpload = NO;
         _offline = NO;
         _serverUrl = kAMPEventLogUrl;
+        _eventSequenceNumber = 0;
+        _eventsBuffer = [[NSMutableArray alloc] init];
+        _identifyBuffer = [[NSMutableArray alloc] init];
         self.libraryName = kAMPLibrary;
         self.libraryVersion = kAMPVersion;
         self.contentTypeHeader = kAMPContentTypeHeader;
@@ -278,6 +285,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             long long previousSessionId = [self previousSessionId];
             if (previousSessionId >= 0) {
                 self->_sessionId = previousSessionId;
+            }
+            
+            //Dante's changes:
+            NSNumber *sequenceNumberFromDB = [self.dbHelper getLongValue:SEQUENCE_NUMBER];
+            if (sequenceNumberFromDB != nil) {
+                self->_eventSequenceNumber = [sequenceNumberFromDB longLongValue];
             }
 
             [self->_backgroundQueue setSuspended:NO];
@@ -588,16 +601,17 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
         if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
-            (void) [self.dbHelper addIdentify:jsonString];
+            [self->_identifyBuffer addObject:event];
         } else {
-            (void) [self.dbHelper addEvent:jsonString];
+            [self->_eventsBuffer addObject:event];
+            [AMPStorage storeEventDefaultURL:jsonString];
         }
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
 
         [self truncateEventQueues];
 
-        int eventCount = [self.dbHelper getTotalEventCount]; // refetch since events may have been deleted
+        int eventCount = [self->_eventsBuffer count] + [self->_identifyBuffer count]; // refetch since events may have been deleted
         if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
             [self uploadEvents];
         } else {
@@ -606,11 +620,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }];
 }
 
+- (void)theTest {
+    AMPLITUDE_LOG(@"The test Dante");
+    [AMPStorage storeEventDefaultURL:@"{'events':[], 'api_key':'3351e9ade456953adddb8712d8a3d7fb'}"];
+}
+
 - (void)truncateEventQueues {
     int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
-    int eventCount = [self.dbHelper getEventCount];
+    int eventCount = [self->_eventsBuffer count];
     if (eventCount > self.eventMaxCount) {
-        [self.dbHelper removeEvents:([self.dbHelper getNthEventId:numEventsToRemove])];
+        //TODO: [self.dbHelper removeEvents:([self.dbHelper getNthEventId:numEventsToRemove])];
     }
     int identifyCount = [self.dbHelper getIdentifyCount];
     if (identifyCount > self.eventMaxCount) {
@@ -779,17 +798,27 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self endBackgroundTaskIfNeeded];
             return;
         }
+        
+        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        NSString *path = [bundleIdentifier stringByAppendingString:@"/amplitude_event_storage"];
+        path = [path stringByAppendingPathExtension:@"txt"];
+        NSURL *url = [NSURL fileURLWithPath:path];
+        [AMPStorage finish:url];
 
-        long eventCount = [self.dbHelper getTotalEventCount];
+        long eventCount = [self->_eventsBuffer count];
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
         if (numEvents == 0) {
             self->_updatingCurrently = NO;
             [self endBackgroundTaskIfNeeded];
             return;
         }
-        NSMutableArray *events = [self.dbHelper getEvents:-1 limit:numEvents];
-        NSMutableArray *identifys = [self.dbHelper getIdentifys:-1 limit:numEvents];
-        NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:numEvents];
+        
+        long identifyCount = [self->_identifyBuffer count];
+        long numIdentify = limit > 0 ? fminl(identifyCount, limit) : identifyCount;
+        
+        NSMutableArray *events = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, numEvents)] mutableCopy];
+        NSMutableArray *identifys = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, numIdentify)] mutableCopy];
+        NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents+numIdentify)];
 
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
         long long maxEventId = [[merged objectForKey:MAX_EVENT_ID] longLongValue];
@@ -831,16 +860,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (long long)getNextSequenceNumber {
-    NSNumber *sequenceNumberFromDB = [self.dbHelper getLongValue:SEQUENCE_NUMBER];
-    long long sequenceNumber = 0;
-    if (sequenceNumberFromDB != nil) {
-        sequenceNumber = [sequenceNumberFromDB longLongValue];
-    }
-
-    sequenceNumber++;
-    [self.dbHelper insertOrReplaceKeyLongValue:SEQUENCE_NUMBER value:[NSNumber numberWithLongLong:sequenceNumber]];
-
-    return sequenceNumber;
+    self->_eventSequenceNumber++;
+    return self->_eventSequenceNumber;
 }
 
 - (NSDictionary *)mergeEventsAndIdentifys:(NSMutableArray *)events identifys:(NSMutableArray *)identifys numEvents:(long)numEvents {
@@ -1074,6 +1095,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
     }];
+    
+    [self saveAllDataToDbOnEnd];
 }
 
 - (void)endBackgroundTaskIfNeeded {
@@ -1088,6 +1111,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_uploadTaskID = UIBackgroundTaskInvalid;
     }
 #endif
+}
+
+- (void)saveAllDataToDbOnEnd {
+    [self.dbHelper insertOrReplaceKeyLongValue:SEQUENCE_NUMBER value:[NSNumber numberWithLongLong:self->_eventSequenceNumber]];
+    /**
+    for (id obj in self->_eventsBuffer) {
+        NSMutableDictionary *dict = (NSMutableDictionary *) obj;
+        NSString *jsonString = [[NSString alloc] initWithData:dict encoding:NSUTF8StringEncoding];
+        if ([AMPUtils isEmptyString:jsonString]) {
+            AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization resulted in a null string, skipping this event");
+            continue;
+        }
+        [AMPStorage storeEventDefaultURL:jsonString];
+    }
+    */
 }
 
 #pragma mark - Sessions
