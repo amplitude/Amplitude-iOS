@@ -37,16 +37,12 @@
 
 + (void)storeEvent:(NSString *) event {
     NSString *path = [AMPStorage getDefaultEventsFile];
-    NSLog(@"Storing event here");
-    NSLog(@"%@", path);
     NSURL *url = [NSURL fileURLWithPath:path];
     [AMPStorage storeEventAtUrl:url event:event];
 }
 
 + (void)storeIdentify:(NSString *) event {
     NSString *path = [AMPStorage getDefaultIdentifyFile];
-    NSLog(@"Storing identify here");
-    NSLog(@"%@", path);
     NSURL *url = [NSURL fileURLWithPath:path];
     [AMPStorage storeEventAtUrl:url event:event];
 }
