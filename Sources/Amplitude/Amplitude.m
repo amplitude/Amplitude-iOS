@@ -602,9 +602,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
         if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
             [self->_identifyBuffer addObject:event];
+            [AMPStorage storeIdentify:jsonString];
         } else {
             [self->_eventsBuffer addObject:event];
-            [AMPStorage storeEventDefaultURL:jsonString];
+            [AMPStorage storeEvent:jsonString];
         }
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
@@ -622,18 +623,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)theTest {
     AMPLITUDE_LOG(@"The test Dante");
-    [AMPStorage storeEventDefaultURL:@"{'events':[], 'api_key':'3351e9ade456953adddb8712d8a3d7fb'}"];
+    [AMPStorage storeEvent:@"{'events':[], 'api_key':'3351e9ade456953adddb8712d8a3d7fb'}"];
 }
 
 - (void)truncateEventQueues {
     int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
     int eventCount = [self->_eventsBuffer count];
     if (eventCount > self.eventMaxCount) {
-        //TODO: [self.dbHelper removeEvents:([self.dbHelper getNthEventId:numEventsToRemove])];
+        self->_eventsBuffer = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, eventCount - numEventsToRemove)] mutableCopy];
     }
     int identifyCount = [self.dbHelper getIdentifyCount];
     if (identifyCount > self.eventMaxCount) {
-        [self.dbHelper removeIdentifys:([self.dbHelper getNthIdentifyId:numEventsToRemove])];
+        self->_identifyBuffer = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, identifyCount - numEventsToRemove)] mutableCopy];
     }
 }
 
@@ -798,12 +799,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self endBackgroundTaskIfNeeded];
             return;
         }
-        
-        NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-        NSString *path = [bundleIdentifier stringByAppendingString:@"/amplitude_event_storage"];
-        path = [path stringByAppendingPathExtension:@"txt"];
-        NSURL *url = [NSURL fileURLWithPath:path];
-        [AMPStorage finish:url];
 
         long eventCount = [self->_eventsBuffer count];
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
@@ -973,10 +968,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                     // success, remove existing events from dictionary
                     uploadSuccessful = YES;
                     if (maxEventId >= 0) {
-                        (void) [self.dbHelper removeEvents:maxEventId];
+                        [AMPStorage remove:[AMPStorage getDefaultEventsFile]];
                     }
                     if (maxIdentifyId >= 0) {
-                        (void) [self.dbHelper removeIdentifys:maxIdentifyId];
+                        [AMPStorage remove:[AMPStorage getDefaultIdentifyFile]];
                     }
                 } else if ([result isEqualToString:@"invalid_api_key"]) {
                     AMPLITUDE_ERROR(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
@@ -1067,6 +1062,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self refreshDynamicConfig];
         [self startOrContinueSessionNSNumber:now];
         self->_inForeground = YES;
+        self->_eventsBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile]];
+        self->_identifyBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile]];
         [self uploadEvents];
     }];
 }
@@ -1094,9 +1091,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_inForeground = NO;
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
+        [AMPStorage finish:[AMPStorage getDefaultEventsFile]];
+        [AMPStorage finish:[AMPStorage getDefaultIdentifyFile]];
+        self->_eventsBuffer = [[NSMutableArray alloc] init];
+        self->_identifyBuffer = [[NSMutableArray alloc] init];
     }];
-    
-    [self saveAllDataToDbOnEnd];
 }
 
 - (void)endBackgroundTaskIfNeeded {
@@ -1111,21 +1110,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_uploadTaskID = UIBackgroundTaskInvalid;
     }
 #endif
-}
-
-- (void)saveAllDataToDbOnEnd {
-    [self.dbHelper insertOrReplaceKeyLongValue:SEQUENCE_NUMBER value:[NSNumber numberWithLongLong:self->_eventSequenceNumber]];
-    /**
-    for (id obj in self->_eventsBuffer) {
-        NSMutableDictionary *dict = (NSMutableDictionary *) obj;
-        NSString *jsonString = [[NSString alloc] initWithData:dict encoding:NSUTF8StringEncoding];
-        if ([AMPUtils isEmptyString:jsonString]) {
-            AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization resulted in a null string, skipping this event");
-            continue;
-        }
-        [AMPStorage storeEventDefaultURL:jsonString];
-    }
-    */
 }
 
 #pragma mark - Sessions

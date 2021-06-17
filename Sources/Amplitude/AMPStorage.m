@@ -1,6 +1,6 @@
 //
 //  File.m
-//  
+//
 //
 //  Created by Dante Tam on 6/10/21.
 //
@@ -16,25 +16,50 @@
     
 }
 
-+ (void)storeEventDefaultURL:(NSString *) event {
++ (NSString *)getAppStorageAmpDir {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths firstObject];
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    bundleIdentifier = [bundleIdentifier stringByAppendingString:@"/amplitude_event_storage"];
-    NSString *path = [bundleIdentifier stringByAppendingPathExtension:@"txt"];
+    return [NSString stringWithFormat:@"%@/%@/%@", path, @"/", bundleIdentifier];
+}
+
++ (NSString *)getDefaultEventsFile {
+    NSString *baseDir = [AMPStorage getAppStorageAmpDir];
+    NSString *path = [baseDir stringByAppendingString:@"/amplitude_event_storage.txt"];
+    return path;
+}
+
++ (NSString *)getDefaultIdentifyFile {
+    NSString *baseDir = [AMPStorage getAppStorageAmpDir];
+    NSString *path = [baseDir stringByAppendingString:@"/amplitude_identify_storage.txt"];
+    return path;
+}
+
++ (void)storeEvent:(NSString *) event {
+    NSString *path = [AMPStorage getDefaultEventsFile];
     NSLog(@"Storing event here");
     NSLog(@"%@", path);
     NSURL *url = [NSURL fileURLWithPath:path];
-    [AMPStorage storeEvent:url event:event];
+    [AMPStorage storeEventAtUrl:url event:event];
 }
 
-+ (void)storeEvent:(NSURL *)url event:(NSString *)event {
++ (void)storeIdentify:(NSString *) event {
+    NSString *path = [AMPStorage getDefaultIdentifyFile];
+    NSLog(@"Storing identify here");
+    NSLog(@"%@", path);
+    NSURL *url = [NSURL fileURLWithPath:path];
+    [AMPStorage storeEventAtUrl:url event:event];
+}
+
++ (void)storeEventAtUrl:(NSURL *)url event:(NSString *)event {
     NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *path = [AMPStorage getDefaultEventsFile];
+    
     bool newFile = false;
-    if (![fm fileExistsAtPath:[url path]]) {
-        [AMPStorage start:url];
+    if (![fm fileExistsAtPath:path]) {
+        [AMPStorage start:path];
         newFile = true;
     }
-    
-    NSLog(@"Storing event here");
     
     NSData *jsonData = [event dataUsingEncoding:NSUTF8StringEncoding];
     NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:url error:nil];
@@ -43,44 +68,44 @@
         [handle writeData:[@"," dataUsingEncoding:NSUTF8StringEncoding]];
     }
     [handle writeData:jsonData];
-    [handle closeFile];
+    //[handle closeFile];
 }
 
-+ (void)start:(NSURL *)url {
-    NSString *path = [url path];
++ (void)start:(NSString *)path {
     NSString *contents = @"{ \"batch\": [";
-    [contents writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    NSLog(@"Started url here");
+    [[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:NULL error:NULL];
+    [[NSFileManager defaultManager] createFileAtPath:path contents:NULL attributes:NULL];
+    [contents writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err];
 }
 
-+ (void)finish:(NSURL *)url {
-    NSLog(@"Finishing url here");
-    NSLog(@"%@", [url path]);
-    NSURL *tempFile = url; //[url URLByAppendingPathExtension:@"txt"];
-    [[NSFileManager defaultManager] copyItemAtURL:url toURL:tempFile error:nil];
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    NSLocale *enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-    [dateFormatter setLocale:enUSPOSIXLocale];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
-    [dateFormatter setCalendar:[NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian]];
-    NSDate *now = [NSDate date];
-    NSString *sentAt = [dateFormatter stringFromDate:now];
-    
-    NSString *fileEnding = @"],\"sentAt\":\"\(sentAt)\"}";
-    NSData *endData = [fileEnding dataUsingEncoding:NSUTF8StringEncoding];
-    
-    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:tempFile error:nil];
-    [handle seekToEndOfFile];
-    [handle writeData:endData];
-    [handle closeFile];
-}
-
-+ (void)remove:(NSURL *)url {
++ (void)finish:(NSString *)path {
     NSFileManager *fm = [NSFileManager defaultManager];
-    [fm removeItemAtURL:url error:nil];
-    NSURL *actualFile = [url URLByDeletingPathExtension];
-    [fm removeItemAtURL:actualFile error:nil];
+    
+    if ([fm fileExistsAtPath:path]) {
+        NSString *fileEnding = @"]}";
+        NSData *endData = [fileEnding dataUsingEncoding:NSUTF8StringEncoding];
+        
+        NSFileHandle *handle = [NSFileHandle fileHandleForWritingAtPath:path];
+        [handle seekToEndOfFile];
+        [handle writeData:endData];
+        [handle closeFile];
+    }
+}
+
++ (void)remove:(NSString *)path {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    [fm removeItemAtPath:path error:NULL];
+}
+
++ (NSMutableArray *)getEventsFromDisk:(NSString *)path {
+    NSDictionary *json = [AMPStorage JSONFromFile:path];
+    NSArray *eventsArr = [json objectForKey:@"batch"];
+    return [eventsArr mutableCopy];
+}
+
++ (NSDictionary *)JSONFromFile:(NSString *)path {
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    return [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:NULL];
 }
 
 @end
