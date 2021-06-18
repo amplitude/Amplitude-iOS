@@ -253,8 +253,6 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 - (void)logEvent:(NSString *)eventType;
 
-- (void)theTest;
-
 /**
  Tracks an event. Events are saved locally.
 

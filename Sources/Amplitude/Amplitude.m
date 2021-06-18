@@ -287,7 +287,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self->_sessionId = previousSessionId;
             }
             
-            //Dante's changes:
             NSNumber *sequenceNumberFromDB = [self.dbHelper getLongValue:SEQUENCE_NUMBER];
             if (sequenceNumberFromDB != nil) {
                 self->_eventSequenceNumber = [sequenceNumberFromDB longLongValue];
@@ -619,11 +618,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
         }
     }];
-}
-
-- (void)theTest {
-    AMPLITUDE_LOG(@"The test Dante");
-    [AMPStorage storeEvent:@"{'events':[], 'api_key':'3351e9ade456953adddb8712d8a3d7fb'}"];
 }
 
 - (void)truncateEventQueues {

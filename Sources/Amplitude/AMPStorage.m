@@ -6,15 +6,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import <Amplitude.h>
 #import "AMPStorage.h"
 
-@interface AMPStorage ()
-@end
-
-@implementation AMPStorage {
-    
-}
+@implementation AMPStorage
 
 + (NSString *)getAppStorageAmpDir {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
@@ -41,15 +36,15 @@
     [AMPStorage storeEventAtUrl:url event:event];
 }
 
-+ (void)storeIdentify:(NSString *) event {
++ (void)storeIdentify:(NSString *) identify {
     NSString *path = [AMPStorage getDefaultIdentifyFile];
     NSURL *url = [NSURL fileURLWithPath:path];
-    [AMPStorage storeEventAtUrl:url event:event];
+    [AMPStorage storeEventAtUrl:url event:identify];
 }
 
 + (void)storeEventAtUrl:(NSURL *)url event:(NSString *)event {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *path = [AMPStorage getDefaultEventsFile];
+    NSString *path = [url path];
     
     bool newFile = false;
     if (![fm fileExistsAtPath:path]) {
@@ -64,14 +59,14 @@
         [handle writeData:[@"," dataUsingEncoding:NSUTF8StringEncoding]];
     }
     [handle writeData:jsonData];
-    //[handle closeFile];
+    [handle closeFile];
 }
 
 + (void)start:(NSString *)path {
     NSString *contents = @"{ \"batch\": [";
     [[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:NULL error:NULL];
     [[NSFileManager defaultManager] createFileAtPath:path contents:NULL attributes:NULL];
-    [contents writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&err];
+    [contents writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 }
 
 + (void)finish:(NSString *)path {
