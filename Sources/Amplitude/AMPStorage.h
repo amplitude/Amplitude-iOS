@@ -9,10 +9,10 @@
 
 @interface AMPStorage : NSObject
 
-+ (NSString *)getDefaultEventsFile;
-+ (NSString *)getDefaultIdentifyFile;
-+ (void)storeEvent:(NSString *)event;
-+ (void)storeIdentify:(NSString *)identify;
++ (NSString *)getDefaultEventsFile:(NSString *)instanceName;
++ (NSString *)getDefaultIdentifyFile:(NSString *)instanceName;
++ (void)storeEvent:(NSString *)event instanceName:(NSString *)instanceName;
++ (void)storeIdentify:(NSString *)identify instanceName:(NSString *)instanceName;;
 + (void)storeEventAtUrl:(NSURL *)url event:(NSString *)event;
 + (void)start:(NSString *)path;
 + (void)finish:(NSString *)path;

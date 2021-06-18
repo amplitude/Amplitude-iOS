@@ -739,7 +739,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type event resulted in an NULL string");
                 continue;
             }
-            [AMPStorage storeEvent:jsonString];
+            [AMPStorage storeEvent:jsonString instanceName:self.instanceName];
         }
         for (NSDictionary *event in identifys) {
             // convert event dictionary to JSON String
@@ -754,7 +754,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 AMPLITUDE_ERROR(@"ERROR: JSONSerializing identify resulted in an NULL string");
                 continue;
             }
-            [AMPStorage storeIdentify:jsonString];
+            [AMPStorage storeIdentify:jsonString instanceName:self.instanceName];
         }
         
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
@@ -910,10 +910,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                     // success, remove existing events from dictionary
                     uploadSuccessful = YES;
                     if (maxEventId >= 0) {
-                        [AMPStorage remove:[AMPStorage getDefaultEventsFile]];
+                        [AMPStorage remove:[AMPStorage getDefaultEventsFile:self.instanceName]];
+                        self->_eventsBuffer = [[NSMutableArray alloc] init];
                     }
                     if (maxIdentifyId >= 0) {
-                        [AMPStorage remove:[AMPStorage getDefaultIdentifyFile]];
+                        [AMPStorage remove:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
+                        self->_identifyBuffer = [[NSMutableArray alloc] init];
                     }
                 } else if ([result isEqualToString:@"invalid_api_key"]) {
                     AMPLITUDE_ERROR(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
@@ -928,9 +930,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 // If blocked by one massive event, drop it
                 if (numEvents == 1) {
                     if (maxEventId >= 0) {
+                        [AMPStorage remove:[AMPStorage getDefaultEventsFile:self.instanceName]];
                         self->_eventsBuffer = [[NSMutableArray alloc] init];
                     }
                     if (maxIdentifyId >= 0) {
+                        [AMPStorage remove:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
                         self->_identifyBuffer = [[NSMutableArray alloc] init];
                     }
                 }
@@ -1004,8 +1008,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self refreshDynamicConfig];
         [self startOrContinueSessionNSNumber:now];
         self->_inForeground = YES;
-        self->_eventsBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile]];
-        self->_identifyBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile]];
+        self->_eventsBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile:self.instanceName]];
+        self->_identifyBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
         [self uploadEvents];
     }];
 }
@@ -1033,8 +1037,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_inForeground = NO;
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
-        [AMPStorage finish:[AMPStorage getDefaultEventsFile]];
-        [AMPStorage finish:[AMPStorage getDefaultIdentifyFile]];
+        [AMPStorage finish:[AMPStorage getDefaultEventsFile:self.instanceName]];
+        [AMPStorage finish:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
         self->_eventsBuffer = [[NSMutableArray alloc] init];
         self->_identifyBuffer = [[NSMutableArray alloc] init];
     }];

@@ -11,33 +11,33 @@
 
 @implementation AMPStorage
 
-+ (NSString *)getAppStorageAmpDir {
++ (NSString *)getAppStorageAmpDir:(NSString *)instanceName {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *path = [paths firstObject];
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    return [NSString stringWithFormat:@"%@/%@/%@", path, @"/", bundleIdentifier];
+    return [NSString stringWithFormat:@"%@/%@/%@", path, bundleIdentifier, instanceName];
 }
 
-+ (NSString *)getDefaultEventsFile {
-    NSString *baseDir = [AMPStorage getAppStorageAmpDir];
++ (NSString *)getDefaultEventsFile:(NSString *)instanceName {
+    NSString *baseDir = [AMPStorage getAppStorageAmpDir:instanceName];
     NSString *path = [baseDir stringByAppendingString:@"/amplitude_event_storage.txt"];
     return path;
 }
 
-+ (NSString *)getDefaultIdentifyFile {
-    NSString *baseDir = [AMPStorage getAppStorageAmpDir];
++ (NSString *)getDefaultIdentifyFile:(NSString *)instanceName {
+    NSString *baseDir = [AMPStorage getAppStorageAmpDir:instanceName];
     NSString *path = [baseDir stringByAppendingString:@"/amplitude_identify_storage.txt"];
     return path;
 }
 
-+ (void)storeEvent:(NSString *)event {
-    NSString *path = [AMPStorage getDefaultEventsFile];
++ (void)storeEvent:(NSString *)event instanceName:(NSString *)instanceName {
+    NSString *path = [AMPStorage getDefaultEventsFile:instanceName];
     NSURL *url = [NSURL fileURLWithPath:path];
     [AMPStorage storeEventAtUrl:url event:event];
 }
 
-+ (void)storeIdentify:(NSString *)identify {
-    NSString *path = [AMPStorage getDefaultIdentifyFile];
++ (void)storeIdentify:(NSString *)identify instanceName:(NSString *)instanceName {
+    NSString *path = [AMPStorage getDefaultIdentifyFile:instanceName];
     NSURL *url = [NSURL fileURLWithPath:path];
     [AMPStorage storeEventAtUrl:url event:identify];
 }
