@@ -88,6 +88,8 @@
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 @property (nonatomic, assign) long long sessionId;
 @property (nonatomic, assign) long long eventSequenceNumber;
+@property (nonatomic, assign) long long previousSessionId;
+@property (nonatomic, assign) long long previousSessionTime;
 @property (nonatomic, assign) BOOL backoffUpload;
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
@@ -114,7 +116,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 
 @implementation Amplitude {
-    NSString *_eventsDataPath;
     NSMutableDictionary *_propertyList;
 
     BOOL _updateScheduled;
@@ -240,8 +241,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 propertyListPath = [NSString stringWithFormat:@"%@_%@", propertyListPath, self.instanceName]; // namespace pList with instance name
             }
             self->_propertyListPath = propertyListPath;
-            self->_eventsDataPath = [eventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
-            [self upgradePrefs];
 
             // Load propertyList object
             self->_propertyList = [self deserializePList:self->_propertyListPath];
@@ -271,25 +270,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 }
             }
 
-            // only on default instance, migrate all of old _eventsData object to database store if database just created
-            if ([self.instanceName isEqualToString:kAMPDefaultInstance] && oldDBVersion < kAMPDBFirstVersion) {
-                if ([self migrateEventsDataToDB]) {
-                    // delete events data so don't need to migrate next time
-                    if ([[NSFileManager defaultManager] fileExistsAtPath:self->_eventsDataPath]) {
-                        [[NSFileManager defaultManager] removeItemAtPath:self->_eventsDataPath error:NULL];
-                    }
-                }
-            }
-
             // try to restore previous session
             long long previousSessionId = [self previousSessionId];
             if (previousSessionId >= 0) {
                 self->_sessionId = previousSessionId;
-            }
-            
-            NSNumber *sequenceNumberFromDB = [self.dbHelper getLongValue:SEQUENCE_NUMBER];
-            if (sequenceNumberFromDB != nil) {
-                self->_eventSequenceNumber = [sequenceNumberFromDB longLongValue];
             }
 
             [self->_backgroundQueue setSuspended:NO];
@@ -298,59 +282,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self addObservers];
     }
     return self;
-}
-
-// maintain backwards compatibility on default instance
-- (BOOL)migrateEventsDataToDB {
-    NSDictionary *eventsData = [self unarchive:_eventsDataPath];
-    if (eventsData == nil) {
-        return NO;
-    }
-
-    AMPDatabaseHelper *defaultDbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    BOOL success = YES;
-
-    // migrate events
-    NSArray *events = [eventsData objectForKey:EVENTS];
-    for (id event in events) {
-        NSError *error = nil;
-        NSData *jsonData = nil;
-        jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
-        if (error != nil) {
-            AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization error: %@", error);
-            continue;
-        }
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        if ([AMPUtils isEmptyString:jsonString]) {
-            AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization resulted in a null string, skipping this event");
-            continue;
-        }
-        success &= [defaultDbHelper addEvent:jsonString];
-    }
-
-    // migrate remaining properties
-    NSString *userId = [eventsData objectForKey:USER_ID];
-    if (userId != nil) {
-        success &= [defaultDbHelper insertOrReplaceKeyValue:USER_ID value:userId];
-    }
-    NSNumber *optOut = [eventsData objectForKey:OPT_OUT];
-    if (optOut != nil) {
-        success &= [defaultDbHelper insertOrReplaceKeyLongValue:OPT_OUT value:optOut];
-    }
-    NSString *deviceId = [eventsData objectForKey:DEVICE_ID];
-    if (deviceId != nil) {
-        success &= [defaultDbHelper insertOrReplaceKeyValue:DEVICE_ID value:deviceId];
-    }
-    NSNumber *previousSessionId = [eventsData objectForKey:PREVIOUS_SESSION_ID];
-    if (previousSessionId != nil) {
-        success &= [defaultDbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:previousSessionId];
-    }
-    NSNumber *previousSessionTime = [eventsData objectForKey:PREVIOUS_SESSION_TIME];
-    if (previousSessionTime != nil) {
-        success &= [defaultDbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:previousSessionTime];
-    }
-
-    return success;
 }
 
 - (void)addObservers {
@@ -586,25 +517,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [event setValue:timestamp forKey:@"timestamp"];
 
         [self annotateEvent:event];
-
-        // convert event dictionary to JSON String
-        NSError *error = nil;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
-        if (error != nil) {
-            AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type %@: %@", eventType, error);
-            return;
-        }
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        if ([AMPUtils isEmptyString:jsonString]) {
-            AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type %@ resulted in an NULL string", eventType);
-            return;
-        }
+        
         if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
             [self->_identifyBuffer addObject:event];
-            [AMPStorage storeIdentify:jsonString];
         } else {
             [self->_eventsBuffer addObject:event];
-            [AMPStorage storeEvent:jsonString];
         }
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
@@ -626,7 +543,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (eventCount > self.eventMaxCount) {
         self->_eventsBuffer = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, eventCount - numEventsToRemove)] mutableCopy];
     }
-    int identifyCount = [self.dbHelper getIdentifyCount];
+    int identifyCount = [self->_identifyBuffer count];
     if (identifyCount > self.eventMaxCount) {
         self->_identifyBuffer = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, identifyCount - numEventsToRemove)] mutableCopy];
     }
@@ -809,10 +726,41 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSMutableArray *identifys = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, numIdentify)] mutableCopy];
         NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents+numIdentify)];
 
+        for (NSDictionary *event in events) {
+            // convert event dictionary to JSON String
+            NSError *error = nil;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
+            if (error != nil) {
+                AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type: %@", error);
+                continue;
+            }
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            if ([AMPUtils isEmptyString:jsonString]) {
+                AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type event resulted in an NULL string");
+                continue;
+            }
+            [AMPStorage storeEvent:jsonString];
+        }
+        for (NSDictionary *event in identifys) {
+            // convert event dictionary to JSON String
+            NSError *error = nil;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
+            if (error != nil) {
+                AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event: %@", error);
+                continue;
+            }
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            if ([AMPUtils isEmptyString:jsonString]) {
+                AMPLITUDE_ERROR(@"ERROR: JSONSerializing identify resulted in an NULL string");
+                continue;
+            }
+            [AMPStorage storeIdentify:jsonString];
+        }
+        
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
         long long maxEventId = [[merged objectForKey:MAX_EVENT_ID] longLongValue];
         long long maxIdentifyId = [[merged objectForKey:MAX_IDENTIFY_ID] longLongValue];
-
+        
         NSError *error = nil;
         NSData *eventsDataLocal = nil;
         eventsDataLocal = [NSJSONSerialization dataWithJSONObject:uploadEvents options:0 error:&error];
@@ -980,10 +928,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 // If blocked by one massive event, drop it
                 if (numEvents == 1) {
                     if (maxEventId >= 0) {
-                        (void) [self.dbHelper removeEvent:maxEventId];
+                        self->_eventsBuffer = [[NSMutableArray alloc] init];
                     }
                     if (maxIdentifyId >= 0) {
-                        (void) [self.dbHelper removeIdentifys:maxIdentifyId];
+                        self->_identifyBuffer = [[NSMutableArray alloc] init];
                     }
                 }
 
@@ -1015,7 +963,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         self->_updatingCurrently = NO;
 
-        if (uploadSuccessful && [self.dbHelper getEventCount] > self.eventUploadThreshold) {
+        if (uploadSuccessful && [self->_eventsBuffer count] > self.eventUploadThreshold) {
             int limit = self->_backoffUpload ? self->_backoffUploadBatchSize : 0;
             [self uploadEventsWithLimit:limit];
     #if !TARGET_OS_OSX && !TARGET_OS_WATCH
@@ -1208,25 +1156,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self setLastEventTime:timestamp];
 }
 
-- (void)setPreviousSessionId:(long long)previousSessionId {
-    NSNumber *value = [NSNumber numberWithLongLong:previousSessionId];
-    (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:value];
-}
-
-- (long long)previousSessionId {
-    NSNumber *previousSessionId = [self.dbHelper getLongValue:PREVIOUS_SESSION_ID];
-    if (previousSessionId == nil) {
-        return -1;
-    }
-    return [previousSessionId longLongValue];
-}
-
 - (void)setLastEventTime:(NSNumber *)timestamp {
-    (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
+    self->_previousSessionTime = [timestamp longLongValue];
 }
 
 - (NSNumber *)lastEventTime {
-    return [self.dbHelper getLongValue:PREVIOUS_SESSION_TIME];
+    return @(self->_previousSessionTime);
 }
 
 - (void)identify:(AMPIdentify *)identify {
@@ -1581,26 +1516,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)printEventsCount {
     AMPLITUDE_LOG(@"Events count:%ld", (long) [self.dbHelper getEventCount]);
-}
-
-#pragma mark - Compatibility
-
-/**
- * Move all preference data from the legacy name to the new, static name if needed.
- *
- * Data used to be in the NSCachesDirectory, which would sometimes be cleared unexpectedly,
- * resulting in data loss. We move the data from NSCachesDirectory to the current
- * location in NSLibraryDirectory.
- *
- */
-- (BOOL)upgradePrefs {
-    // Copy any old data files to new file paths
-    NSString *oldEventsDataDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *oldPropertyListPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.plist"];
-    NSString *oldEventsDataPath = [oldEventsDataDirectory stringByAppendingPathComponent:@"com.amplitude.archiveDict"];
-    BOOL success = [self moveFileIfNotExists:oldPropertyListPath to:_propertyListPath];
-    success &= [self moveFileIfNotExists:oldEventsDataPath to:_eventsDataPath];
-    return success;
 }
 
 #pragma mark - Filesystem

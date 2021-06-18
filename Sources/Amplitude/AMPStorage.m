@@ -30,13 +30,13 @@
     return path;
 }
 
-+ (void)storeEvent:(NSString *) event {
++ (void)storeEvent:(NSString *)event {
     NSString *path = [AMPStorage getDefaultEventsFile];
     NSURL *url = [NSURL fileURLWithPath:path];
     [AMPStorage storeEventAtUrl:url event:event];
 }
 
-+ (void)storeIdentify:(NSString *) identify {
++ (void)storeIdentify:(NSString *)identify {
     NSString *path = [AMPStorage getDefaultIdentifyFile];
     NSURL *url = [NSURL fileURLWithPath:path];
     [AMPStorage storeEventAtUrl:url event:identify];
@@ -59,6 +59,7 @@
         [handle writeData:[@"," dataUsingEncoding:NSUTF8StringEncoding]];
     }
     [handle writeData:jsonData];
+    
     [handle closeFile];
 }
 
