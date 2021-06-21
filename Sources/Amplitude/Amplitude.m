@@ -528,7 +528,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         [self truncateEventQueues];
 
-        NSUInteger eventCount = [self->_eventsBuffer count] + [self->_identifyBuffer count]; // refetch since events may have been deleted
+        int eventCount = [self->_eventsBuffer count] + [self->_identifyBuffer count]; // refetch since events may have been deleted
         if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
             [self uploadEvents];
         } else {
@@ -539,11 +539,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)truncateEventQueues {
     int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
-    NSUInteger eventCount = [self->_eventsBuffer count];
+    int eventCount = [self->_eventsBuffer count];
     if (eventCount > self.eventMaxCount) {
         self->_eventsBuffer = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, eventCount - numEventsToRemove)] mutableCopy];
     }
-    NSUInteger identifyCount = [self->_identifyBuffer count];
+    int identifyCount = [self->_identifyBuffer count];
     if (identifyCount > self.eventMaxCount) {
         self->_identifyBuffer = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, identifyCount - numEventsToRemove)] mutableCopy];
     }
@@ -711,16 +711,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
 
-        long eventCount = [self->_eventsBuffer count];
-        long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
+        int eventCount = [self->_eventsBuffer count];
+        int numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
         if (numEvents == 0) {
             self->_updatingCurrently = NO;
             [self endBackgroundTaskIfNeeded];
             return;
         }
         
-        long identifyCount = [self->_identifyBuffer count];
-        long numIdentify = limit > 0 ? fminl(identifyCount, limit) : identifyCount;
+        int identifyCount = [self->_identifyBuffer count];
+        int numIdentify = limit > 0 ? fminl(identifyCount, limit) : identifyCount;
         
         NSMutableArray *events = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, numEvents)] mutableCopy];
         NSMutableArray *identifys = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, numIdentify)] mutableCopy];
