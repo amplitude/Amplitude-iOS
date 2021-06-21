@@ -528,7 +528,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         [self truncateEventQueues];
 
-        int eventCount = [self->_eventsBuffer count] + [self->_identifyBuffer count]; // refetch since events may have been deleted
+        NSUInteger eventCount = [self->_eventsBuffer count] + [self->_identifyBuffer count]; // refetch since events may have been deleted
         if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
             [self uploadEvents];
         } else {
@@ -539,11 +539,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)truncateEventQueues {
     int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
-    int eventCount = [self->_eventsBuffer count];
+    NSUInteger eventCount = [self->_eventsBuffer count];
     if (eventCount > self.eventMaxCount) {
         self->_eventsBuffer = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, eventCount - numEventsToRemove)] mutableCopy];
     }
-    int identifyCount = [self->_identifyBuffer count];
+    NSUInteger identifyCount = [self->_identifyBuffer count];
     if (identifyCount > self.eventMaxCount) {
         self->_identifyBuffer = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, identifyCount - numEventsToRemove)] mutableCopy];
     }
