@@ -25,6 +25,7 @@
 
 + (NSString *)getDefaultEventsFile:(NSString *)instanceName;
 + (NSString *)getDefaultIdentifyFile:(NSString *)instanceName;
++ (NSString *)getAppStorageAmpDir:(NSString *)instanceName;
 + (void)storeEvent:(NSString *)event instanceName:(NSString *)instanceName;
 + (void)storeIdentify:(NSString *)identify instanceName:(NSString *)instanceName;;
 + (void)storeEventAtUrl:(NSURL *)url event:(NSString *)event;
