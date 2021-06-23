@@ -1212,7 +1212,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)setLastEventTime:(NSNumber *)timestamp {
-   [self->_defaultDataStorage setObject:timestamp forKey:PREVIOUS_SESSION_TIME]; //or [timestamp longLongValue]
+   [self->_defaultDataStorage setObject:[timestamp longLongValue] forKey:PREVIOUS_SESSION_TIME];
 }
 
 - (NSNumber *)lastEventTime {
