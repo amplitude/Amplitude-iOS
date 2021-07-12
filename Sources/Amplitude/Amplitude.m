@@ -85,6 +85,7 @@
 @property (nonatomic, strong) NSMutableArray *eventsBuffer;
 @property (nonatomic, strong) NSMutableArray *identifyBuffer;
 @property (nonatomic, strong) NSUserDefaults *defaultDataStorage;
+@property (nonatomic, strong) NSString *bundleIdentifier;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 @property (nonatomic, assign) long long sessionId;
@@ -210,6 +211,7 @@ static NSString *const OLD_SEQUENCE_NUMBER = @"sequence_number";
         _eventsBuffer = [[NSMutableArray alloc] init];
         _identifyBuffer = [[NSMutableArray alloc] init];
         _defaultDataStorage = [NSUserDefaults standardUserDefaults];
+        _bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         self.libraryName = kAMPLibrary;
         self.libraryVersion = kAMPVersion;
         self.contentTypeHeader = kAMPContentTypeHeader;
@@ -279,17 +281,18 @@ static NSString *const OLD_SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (NSString *)getDataStorageKey:(NSString *)key {
-    NSString *dataStorageKey = [NSString stringWithFormat:@"%s_%@_%@", "amplitude", self.instanceName, key];
+    NSString *dataStorageKey = [NSString stringWithFormat:@"%s_%@_%@_%@", "amplitude", _bundleIdentifier ,self.instanceName, key];
     return dataStorageKey;
 }
 
 - (void)migrateToFileStorage {
     NSString *fileStoragePath =  [AMPStorage getAppStorageAmpDir:self.instanceName];
-    BOOL hasFileStorage = [[NSFileManager defaultManager] fileExistsAtPath:fileStoragePath isDirectory: true];
-    if (hasFileStorage) return;
+    BOOL isDir;
+    [[NSFileManager defaultManager] fileExistsAtPath:fileStoragePath isDirectory:&isDir];
+    if (isDir) return;
 
-     NSString *databaseDirectory = [AMPUtils platformDataDirectory];
-     NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
+    NSString *databaseDirectory = [AMPUtils platformDataDirectory];
+    NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
     if (![self->_instanceName isEqualToString:kAMPDefaultInstance]) {
         databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, self.instanceName];
     }
@@ -299,23 +302,48 @@ static NSString *const OLD_SEQUENCE_NUMBER = @"sequence_number";
     int eventCount = [self.dbHelper getEventCount];
     if (eventCount > 0) {
         NSMutableArray *events = [self.dbHelper getEvents: -1 limit: -1];
-        NSDictionary *eventsDict = [self mergeEventsAndIdentifys:events identifys:nil numEvents:eventCount];
-        long long maxEventId = [[eventsDict objectForKey:MAX_EVENT_ID] longLongValue];
-        for(NSString *event in events) {
-            [AMPStorage storeEvent:event instanceName:self.instanceName];
+        self->_eventsBuffer = [events mutableCopy];
+        for(NSMutableDictionary *event in events) {
+            NSError *error = nil;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
+            if (error != nil) {
+                AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type: %@", error);
+                continue;
+            }
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            [AMPStorage storeEvent:jsonString instanceName:self.instanceName];
         }
+       NSDictionary *eventsDict = [self mergeEventsAndIdentifys:events identifys:nil numEvents:eventCount];
+       long long maxEventId = [[eventsDict objectForKey:MAX_EVENT_ID] longLongValue];
        [self.dbHelper removeEvents:maxEventId];
     }
 
     int identifyCount = [self.dbHelper getIdentifyCount];
     if (identifyCount > 0) {
         NSMutableArray *identifys = [self.dbHelper getIdentifys: -1 limit: -1];
+        self->_identifyBuffer = [identifys mutableCopy];
+        for (NSDictionary *event in identifys) {
+            // convert event dictionary to JSON String
+            NSError *error = nil;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
+            if (error != nil) {
+                AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event: %@", error);
+                continue;
+            }
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            if ([AMPUtils isEmptyString:jsonString]) {
+                AMPLITUDE_ERROR(@"ERROR: JSONSerializing identify resulted in an NULL string");
+                continue;
+            }
+            [AMPStorage storeIdentify:jsonString instanceName:self.instanceName];
+        }
         NSDictionary *identifysDict = [self mergeEventsAndIdentifys:nil identifys:identifys numEvents:identifyCount];
         long long maxIdentifyId = [[identifysDict objectForKey:MAX_IDENTIFY_ID] longLongValue];
-        for(NSString *identify in identifys) {
-            [AMPStorage storeIdentify:identify instanceName:self.instanceName];
-        }
         [self.dbHelper removeIdentifys:maxIdentifyId];
+    }
+
+    if (eventCount > 0 || identifyCount > 0) {
+        [self uploadEvents];
     }
 
     // migrate for store database table
@@ -941,7 +969,7 @@ static NSString *const OLD_SEQUENCE_NUMBER = @"sequence_number";
         AMPLITUDE_LOG(@"Attaching bearer %@", _token);
         [request setValue:auth forHTTPHeaderField:@"Authorization"];
     }
-    
+
     [request setHTTPBody:postData];
     AMPLITUDE_LOG(@"Events: %@", events);
 
@@ -1027,7 +1055,7 @@ static NSString *const OLD_SEQUENCE_NUMBER = @"sequence_number";
                 self->_backoffUpload = NO;
                 self->_backoffUploadBatchSize = self.eventUploadMaxBatchSize;
             }
-            
+
             // Upload finished, allow background task to be ended
             [self endBackgroundTaskIfNeeded];
         }
@@ -1061,7 +1089,9 @@ static NSString *const OLD_SEQUENCE_NUMBER = @"sequence_number";
         self->_inForeground = YES;
         self->_eventsBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile:self.instanceName]];
         self->_identifyBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
-        [self uploadEvents];
+        if ([self->_eventsBuffer count] > 0 || [self->_identifyBuffer count] > 0) {
+            [self uploadEvents];
+        }
     }];
 }
 
@@ -1357,7 +1387,7 @@ static NSString *const OLD_SEQUENCE_NUMBER = @"sequence_number";
 
         self->_userId = userId;
         [self->_defaultDataStorage setObject:userId forKey:[self getDataStorageKey:USER_ID]];
-        
+
         if (startNewSession) {
             NSNumber *timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
             [self setSessionId:[timestamp longLongValue]];
