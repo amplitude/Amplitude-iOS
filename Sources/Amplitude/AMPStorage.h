@@ -1,5 +1,5 @@
 //
-//  Amplitude.h
+//  AMPStorage.h
 //  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +23,7 @@
 
 @interface AMPStorage : NSObject
 
++ (BOOL)hasFileStorage:(NSString *)instanceName;
 + (NSString *)getDefaultEventsFile:(NSString *)instanceName;
 + (NSString *)getDefaultIdentifyFile:(NSString *)instanceName;
 + (NSString *)getAppStorageAmpDir:(NSString *)instanceName;

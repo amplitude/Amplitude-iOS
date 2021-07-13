@@ -1,5 +1,5 @@
 //
-//  Amplitude.m
+//  AMPStorage.m
 //  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +26,13 @@
 #import "AMPStorage.h"
 
 @implementation AMPStorage
+
++ (BOOL)hasFileStorage:(NSString *) instanceName {
+    NSString *fileStoragePath =  [AMPStorage getAppStorageAmpDir:instanceName];
+    BOOL isDir;
+    [[NSFileManager defaultManager] fileExistsAtPath:fileStoragePath isDirectory:&isDir];
+    return isDir;
+}
 
 + (NSString *)getAppStorageAmpDir:(NSString *)instanceName {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
