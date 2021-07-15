@@ -281,49 +281,30 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if ([AMPStorage hasFileStorage:self.instanceName] || [AMPDatabaseHelper hasDatabase:self.instanceName])
         return;
 
-    int eventCount = [self.dbHelper getEventCount];
+    long eventCount = [self.dbHelper getEventCount];
+    long identifyCount = [self.dbHelper getIdentifyCount];
+    NSMutableArray *events = [[NSMutableArray alloc] init];
+    NSMutableArray *identifys = [[NSMutableArray alloc] init];
     if (eventCount > 0) {
-        NSMutableArray *events = [self.dbHelper getEvents:-1 limit:-1];
-        self->_eventsBuffer = [events mutableCopy];
-        for(NSMutableDictionary *event in events) {
-            NSError *error = nil;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
-            if (error != nil) {
-                AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type: %@", error);
-                continue;
-            }
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            [AMPStorage storeEvent:jsonString instanceName:self.instanceName];
-        }
-       long long  maxEventId = [[[events lastObject] objectForKey:@"event_id"] longLongValue];
-       [self.dbHelper removeEvents:maxEventId];
+       events = [self.dbHelper getEvents:-1 limit:-1];
+       self->_eventsBuffer = [events mutableCopy];
     }
-
-    int identifyCount = [self.dbHelper getIdentifyCount];
     if (identifyCount > 0) {
-        NSMutableArray *identifys = [self.dbHelper getIdentifys:-1 limit:-1];
-        self->_identifyBuffer = [identifys mutableCopy];
-        for (NSDictionary *event in identifys) {
-            // convert event dictionary to JSON String
-            NSError *error = nil;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
-            if (error != nil) {
-                AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event: %@", error);
-                continue;
-            }
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            if ([AMPUtils isEmptyString:jsonString]) {
-                AMPLITUDE_ERROR(@"ERROR: JSONSerializing identify resulted in an NULL string");
-                continue;
-            }
-            [AMPStorage storeIdentify:jsonString instanceName:self.instanceName];
-        }
-        long long maxIdentifyId = [[[identifys lastObject] objectForKey:@"event_id"] longLongValue];
-        [self.dbHelper removeIdentifys:maxIdentifyId];
+       identifys = [self.dbHelper getIdentifys:-1 limit:-1];
+       self->_identifyBuffer = [identifys mutableCopy];
     }
 
     if (eventCount > 0 || identifyCount > 0) {
         [self uploadEvents];
+    }
+
+    if (eventCount > 0) {
+        long long maxEventId = [[[events lastObject] objectForKey:@"event_id"] longLongValue];
+        [self.dbHelper removeEvents:maxEventId];
+    }
+    if (identifyCount > 0) {
+        long long maxIdentifyId = [[[identifys lastObject] objectForKey:@"event_id"] longLongValue];
+        [self.dbHelper removeIdentifys:maxIdentifyId];
     }
 
     // migrate for store database table
@@ -1071,6 +1052,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_identifyBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
         if ([self->_eventsBuffer count] > 0 || [self->_identifyBuffer count] > 0) {
             [self uploadEvents];
+            
         }
     }];
 }
