@@ -1,5 +1,5 @@
 //
-//  Amplitude.m
+//  AMPStorage.m
 //  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +26,13 @@
 #import "AMPStorage.h"
 
 @implementation AMPStorage
+
++ (BOOL)hasFileStorage:(NSString *) instanceName {
+    NSString *fileStoragePath =  [AMPStorage getAppStorageAmpDir:instanceName];
+    BOOL isDir;
+    [[NSFileManager defaultManager] fileExistsAtPath:fileStoragePath isDirectory:&isDir];
+    return isDir;
+}
 
 + (NSString *)getAppStorageAmpDir:(NSString *)instanceName {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
@@ -88,11 +95,11 @@
 
 + (void)finish:(NSString *)path {
     NSFileManager *fm = [NSFileManager defaultManager];
-    
+
     if ([fm fileExistsAtPath:path]) {
         NSString *fileEnding = @"]}";
         NSData *endData = [fileEnding dataUsingEncoding:NSUTF8StringEncoding];
-        
+
         NSFileHandle *handle = [NSFileHandle fileHandleForWritingAtPath:path];
         [handle seekToEndOfFile];
         [handle writeData:endData];
@@ -112,7 +119,14 @@
 }
 
 + (NSDictionary *)JSONFromFile:(NSString *)path {
-    NSData *data = [NSData dataWithContentsOfFile:path];
+    NSData *data;
+    if ([NSData dataWithContentsOfFile:path] != nil) {
+       data = [NSData dataWithContentsOfFile:path];
+    } else {
+        NSString *emptyData = @"{ \"batch\": []}";
+        data = [emptyData dataUsingEncoding:NSUTF8StringEncoding];
+    }
+
     NSError *err = NULL;
     NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
     if (err != NULL) {
