@@ -685,6 +685,8 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 
 - (NSString *)getContentTypeHeader;
 
++ (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
+
 @end
 
 #pragma mark - constants

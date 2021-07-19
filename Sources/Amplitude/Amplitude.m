@@ -273,7 +273,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName {
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    NSString *dataStorageKey = [NSString stringWithFormat:@"%s_%@_%@_%@", "amplitude", bundleIdentifier, instanceName, key];
+    static NSMutableDictionary *_instances = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instances = [[NSMutableDictionary alloc] init];
+    });
+    instanceName = [instanceName lowercaseString];
+
+    NSString *dataStorageKey = nil;
+    @synchronized(_instances) {
+        dataStorageKey = [_instances objectForKey:instanceName];
+        if (dataStorageKey == nil) {
+            dataStorageKey = [NSString stringWithFormat:@"%s_%@_%@_%@", "amplitude", bundleIdentifier, instanceName, key];
+            [_instances setObject:dataStorageKey forKey:instanceName];
+        }
+    }
+
     return dataStorageKey;
 }
 
