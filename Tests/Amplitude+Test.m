@@ -9,6 +9,8 @@
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "AMPDatabaseHelper.h"
+#import "AMPStorage.h"
+#import "AMPConstants.h"
 
 @implementation Amplitude (Test)
 
@@ -24,6 +26,7 @@
 
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
+   // [AMPStorage remove:[AMPStorage getAppStorageAmpDir:self.instanceName]];
 }
 
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue {
@@ -31,27 +34,33 @@
 }
 
 - (NSDictionary *)getEvent:(NSInteger) fromEnd {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    NSString * path = [AMPStorage getDefaultEventsFile:kAMPDefaultInstance];
+    NSArray *events = [AMPStorage getEventsFromDisk:path];
     return [events objectAtIndex:[events count] - fromEnd - 1];
 }
 
 - (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper: instanceName] getEvents:-1 limit:-1];
+    NSString * path = [AMPStorage getDefaultEventsFile:instanceName];
+    NSArray *events = [AMPStorage getEventsFromDisk:path];
     return [events lastObject];
 }
 
 - (NSDictionary *)getLastEvent {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+    NSString * path = [AMPStorage getDefaultEventsFile:kAMPDefaultInstance];
+    NSArray *events = [AMPStorage getEventsFromDisk:path];
     return [events lastObject];
 }
 
 - (NSDictionary *)getLastIdentify {
-    NSArray *identifys = [[AMPDatabaseHelper getDatabaseHelper] getIdentifys:-1 limit:-1];
+    NSString * path = [AMPStorage getDefaultIdentifyFile:kAMPDefaultInstance];
+    NSArray *identifys = [AMPStorage getEventsFromDisk:path];
     return [identifys lastObject];
 }
 
 - (NSUInteger)queuedEventCount {
-    return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
+    NSString * path = [AMPStorage getDefaultEventsFile:kAMPDefaultInstance];
+    NSArray *events = [AMPStorage getEventsFromDisk:path];
+    return [events count];
 }
 
 - (void)flushUploads:(void (^)(void))handler {

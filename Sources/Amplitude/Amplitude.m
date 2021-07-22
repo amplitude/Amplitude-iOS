@@ -273,7 +273,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName {
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-    NSString *dataStorageKey = [NSString stringWithFormat:@"%s_%@_%@_%@", "amplitude", bundleIdentifier, instanceName, key];
+    static NSMutableDictionary *_instances = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instances = [[NSMutableDictionary alloc] init];
+    });
+    instanceName = [instanceName lowercaseString];
+
+    NSString *dataStorageKey = nil;
+    @synchronized(_instances) {
+        dataStorageKey = [_instances objectForKey:instanceName];
+        if (dataStorageKey == nil) {
+            dataStorageKey = [NSString stringWithFormat:@"%s_%@_%@_%@", "amplitude", bundleIdentifier, instanceName, key];
+            [_instances setObject:dataStorageKey forKey:instanceName];
+        }
+    }
+
     return dataStorageKey;
 }
 
@@ -737,11 +752,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     
     [self runOnBackgroundQueue:^{
         // Don't communicate with the server if the user has opted out.
-        if ([self optOut] || self->_offline) {
+        /*if ([self optOut] || self->_offline) {
+            NSLog(@"optOut value %@", [self optOut] ? @"YES" : @"NO");;
             self->_updatingCurrently = NO;
             [self endBackgroundTaskIfNeeded];
             return;
-        }
+        }*/
 
         long eventCount = [self->_eventsBuffer count];
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
@@ -753,11 +769,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         
         long identifyCount = [self->_identifyBuffer count];
         long numIdentify = limit > 0 ? fminl(identifyCount, limit) : identifyCount;
-        
         NSMutableArray *events = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, numEvents)] mutableCopy];
         NSMutableArray *identifys = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, numIdentify)] mutableCopy];
-        NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents+numIdentify)];
-
         for (NSDictionary *event in events) {
             // convert event dictionary to JSON String
             NSError *error = nil;
@@ -788,7 +801,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             [AMPStorage storeIdentify:jsonString instanceName:self.instanceName];
         }
-        
+        NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents+numIdentify)];
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
         long long maxEventId = [[merged objectForKey:MAX_EVENT_ID] longLongValue];
         long long maxIdentifyId = [[merged objectForKey:MAX_IDENTIFY_ID] longLongValue];
