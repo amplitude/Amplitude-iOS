@@ -65,7 +65,6 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     XCTAssertNotEqual([dir rangeOfString:expectedDir].location, NSNotFound);
 
     dir = [AMPStorage getDefaultIdentifyFile:@""];
-    NSLog(@"%@", dir);
     expectedDir = @"/Application Support/com.apple.dt.xctest.tool/$default_instance/amplitude_identify_storage.txt";
     XCTAssertNotEqual([dir rangeOfString:expectedDir].location, NSNotFound);
     

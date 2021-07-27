@@ -22,16 +22,6 @@
                ReferencedContainer = "container:Amplitude.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "12C972EE24105C6500E9CDDB"
-               BuildableName = "Amplitude_macOSTests.xctest"
-               BlueprintName = "Amplitude_macOSTests"
-               ReferencedContainer = "container:Amplitude.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
