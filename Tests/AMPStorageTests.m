@@ -51,12 +51,11 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     XCTAssertNotEqual([dir rangeOfString:expectedDir].location, NSNotFound);
 
     dir = [AMPStorage getDefaultEventsFile:@""];
-    NSLog(@"%@", dir);
-    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/DEFAULT_INSTANCE/amplitude_event_storage.txt";
+    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/$default_instance/amplitude_event_storage.txt";
     XCTAssertNotEqual([dir rangeOfString:expectedDir].location, NSNotFound);
     
     dir = [AMPStorage getDefaultEventsFile:NULL];
-    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/DEFAULT_INSTANCE/amplitude_event_storage.txt";
+    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/$default_instance/amplitude_event_storage.txt";
     XCTAssertNotEqual([dir rangeOfString:expectedDir].location, NSNotFound);
 }
 
@@ -67,11 +66,11 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
 
     dir = [AMPStorage getDefaultIdentifyFile:@""];
     NSLog(@"%@", dir);
-    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/DEFAULT_INSTANCE/amplitude_identify_storage.txt";
+    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/$default_instance/amplitude_identify_storage.txt";
     XCTAssertNotEqual([dir rangeOfString:expectedDir].location, NSNotFound);
     
     dir = [AMPStorage getDefaultIdentifyFile:NULL];
-    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/DEFAULT_INSTANCE/amplitude_identify_storage.txt";
+    expectedDir = @"/Application Support/com.apple.dt.xctest.tool/$default_instance/amplitude_identify_storage.txt";
     XCTAssertNotEqual([dir rangeOfString:expectedDir].location, NSNotFound);
 }
 

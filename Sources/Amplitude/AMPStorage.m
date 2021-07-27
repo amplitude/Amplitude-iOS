@@ -24,6 +24,7 @@
 #import <Foundation/Foundation.h>
 #import <Amplitude.h>
 #import "AMPStorage.h"
+#import "AMPConstants.h"
 
 @implementation AMPStorage
 
@@ -39,7 +40,7 @@
     NSString *path = [paths firstObject];
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     if (instanceName == NULL || [instanceName length] == 0) {
-        instanceName = @"DEFAULT_INSTANCE";
+        instanceName = kAMPDefaultInstance;
     }
     return [NSString stringWithFormat:@"%@/%@/%@", path, bundleIdentifier, instanceName];
 }
