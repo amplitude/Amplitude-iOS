@@ -29,7 +29,7 @@
 @implementation AMPStorage
 
 + (BOOL)hasFileStorage:(NSString *)instanceName {
-    NSString *fileStoragePath =  [AMPStorage getAppStorageAmpDir:instanceName];
+    NSString *fileStoragePath = [AMPStorage getAppStorageAmpDir:instanceName];
     BOOL isDir;
     [[NSFileManager defaultManager] fileExistsAtPath:fileStoragePath isDirectory:&isDir];
     return isDir;

@@ -3,7 +3,7 @@
 //
 //
 //  Created by Dante Tam on 7/22/21.
-//  Copyright © 2018 Amplitude. All rights reserved.
+//  Copyright © 2021 Amplitude. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
@@ -29,6 +29,11 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     for (NSString *filename in fileArray)  {
         [fileMgr removeItemAtPath:[dir stringByAppendingPathComponent:filename] error:NULL];
     }
+}
+
+- (void)testHasFileStorage {
+    BOOL hasFileStorage = [AMPStorage hasFileStorage:@"INSTANCE_NAME"];
+    XCTAssertTrue(hasFileStorage);
 }
 
 - (void)testGetAppStorageAmpDir {
@@ -117,6 +122,8 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     XCTAssertNotEqual([content rangeOfString:@"{ \"batch\":"].location, NSNotFound);
     
     NSMutableArray *finishedFileDict = [AMPStorage getEventsFromDisk:customPath];
+    XCTAssertNotNil(finishedFileDict);
+    XCTAssertEqual([finishedFileDict count], 2);
     NSDictionary *secondEvent = finishedFileDict[1];
     XCTAssertEqualObjects([secondEvent objectForKey:@"event_type"], @"testEvent");
     
@@ -128,6 +135,8 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     [AMPStorage storeEventAtUrl:url event:exampleEvent];
     XCTAssertTrue([fileManager fileExistsAtPath:customPath]);
     finishedFileDict = [AMPStorage getEventsFromDisk:customPath];
+    XCTAssertNotNil(finishedFileDict);
+    XCTAssertEqual([finishedFileDict count], 2);
     secondEvent = finishedFileDict[1];
     XCTAssertEqualObjects([secondEvent objectForKey:@"event_type"], @"testEvent");
 }
