@@ -120,7 +120,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSMutableDictionary *_propertyList;
 
     BOOL _updateScheduled;
-    //BOOL _updatingCurrently;
     
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIBackgroundTaskIdentifier _uploadTaskID;
@@ -273,7 +272,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName {
-    instanceName = [instanceName lowercaseString];
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
     NSString *dataStorageKey = [NSString stringWithFormat:@"%s_%@_%@_%@", "amplitude", bundleIdentifier, instanceName, key];
     return dataStorageKey;
@@ -887,9 +885,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return results;
 }
 
-
 - (NSMutableArray *)removeEventFromBuffer:(NSArray *)buffer currentEventString:(NSString *)currentEventString {
-    
     NSMutableArray *updatedBuffer = [buffer mutableCopy];
     NSUInteger index = 0;
     for (NSDictionary *event in buffer) {
@@ -989,12 +985,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                     if (maxEventId >= 0) {
                         [AMPStorage remove:[AMPStorage getDefaultEventsFile:self.instanceName]];
                         self->_eventsBuffer = [self removeEventFromBuffer:self->_eventsBuffer currentEventString:events];
-                        //self->_eventsBuffer = [[NSMutableArray alloc] init];
                     }
                     if (maxIdentifyId >= 0) {
                         [AMPStorage remove:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
                         self->_identifyBuffer = [self removeEventFromBuffer:self->_identifyBuffer currentEventString:events];
-                        //self->_eventsBuffer = [[NSMutableArray alloc] init];
                     }
                 }
 

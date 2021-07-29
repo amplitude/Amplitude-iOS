@@ -103,11 +103,11 @@
 }
 
 - (void)testSeparateInstancesLogEventsSeparate {
-    NSString *newInstance1 = @"newApp1";
+    NSString *newInstance1 = @"newapp1";
     NSString *newApiKey1 = @"1234567890";
     [self.amplitude cleanUp:newInstance1];
     
-    NSString *newInstance2 = @"newApp2";
+    NSString *newInstance2 = @"newapp2";
     NSString *newApiKey2 = @"0987654321";
     [self.amplitude cleanUp:newInstance2];
     
@@ -349,7 +349,7 @@
     
 }
 
-- (void)testGroupIdentify {
+- (void)testGroupIdentify { //??
     [self.amplitude cleanUp];
     
     NSString *groupType = @"test group type";

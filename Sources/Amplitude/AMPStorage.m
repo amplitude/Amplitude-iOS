@@ -129,6 +129,7 @@
     NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
     if (err != NULL) {
         [AMPStorage finish:path];
+        data = [NSData dataWithContentsOfFile:path];
         jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
     }
     return jsonAsDict;

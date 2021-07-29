@@ -115,6 +115,7 @@
 - (void)cleanUp:(NSString *)instanceName {
     [AMPStorage remove:[AMPStorage getDefaultEventsFile:instanceName]];
     [AMPStorage remove:[AMPStorage getDefaultIdentifyFile:instanceName]];
+    
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:instanceName]];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:instanceName]];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[Amplitude getDataStorageKey:@"user_id" instanceName:instanceName]];
