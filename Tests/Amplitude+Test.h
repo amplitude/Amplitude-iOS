@@ -23,9 +23,16 @@
 - (void)flushQueue;
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue;
 - (void)flushUploads:(void (^)(void))handler;
+- (NSMutableArray *)getAllEvents;
+- (NSMutableArray *)getAllEventsWithInstanceName:(NSString *)instanceName;
+- (NSUInteger)getEventCount;
 - (NSDictionary *)getLastEvent;
-- (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName;
+- (NSDictionary *)getLastEventWithInstanceName:(NSString *)instanceName;
+- (NSMutableArray *)getAllIdentify;
+- (NSMutableArray *)getAllIdentifyWithInstanceName:(NSString *)instanceName;
+- (NSUInteger)getIdentifyCount;
 - (NSDictionary *)getLastIdentify;
+- (NSDictionary *)getLastIdentifyWithInstanceName:(NSString *)instanceName;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
 - (void)enterForeground;
@@ -33,5 +40,7 @@
 - (NSDate*)currentTime;
 - (id)unarchive:(NSString*)path;
 - (BOOL)archive:(id)obj toFile:(NSString*)path;
+- (void)cleanUp;
+- (void)cleanUp:(NSString *)instanceName;
 
 @end

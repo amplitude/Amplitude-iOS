@@ -119,21 +119,16 @@
 }
 
 + (NSDictionary *)JSONFromFile:(NSString *)path {
-    NSData *data;
-    if ([NSData dataWithContentsOfFile:path] != nil) {
-       data = [NSData dataWithContentsOfFile:path];
-    } else {
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (data == nil) {
         NSString *emptyData = @"{ \"batch\": []}";
         data = [emptyData dataUsingEncoding:NSUTF8StringEncoding];
     }
-
 
     NSError *err = NULL;
     NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
     if (err != NULL) {
         [AMPStorage finish:path];
-        data = [NSData dataWithContentsOfFile:path];
-        NSString* newStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
     }
     return jsonAsDict;
