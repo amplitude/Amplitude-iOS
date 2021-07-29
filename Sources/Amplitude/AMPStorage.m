@@ -24,11 +24,12 @@
 #import <Foundation/Foundation.h>
 #import <Amplitude.h>
 #import "AMPStorage.h"
+#import "AMPConstants.h"
 
 @implementation AMPStorage
 
-+ (BOOL)hasFileStorage:(NSString *) instanceName {
-    NSString *fileStoragePath =  [AMPStorage getAppStorageAmpDir:instanceName];
++ (BOOL)hasFileStorage:(NSString *)instanceName {
+    NSString *fileStoragePath = [AMPStorage getAppStorageAmpDir:instanceName];
     BOOL isDir;
     [[NSFileManager defaultManager] fileExistsAtPath:fileStoragePath isDirectory:&isDir];
     return isDir;
@@ -38,6 +39,9 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *path = [paths firstObject];
     NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    if (instanceName == NULL || [instanceName length] == 0) {
+        instanceName = kAMPDefaultInstance;
+    }
     return [NSString stringWithFormat:@"%@/%@/%@", path, bundleIdentifier, instanceName];
 }
 
@@ -119,18 +123,17 @@
 }
 
 + (NSDictionary *)JSONFromFile:(NSString *)path {
-    NSData *data;
-    if ([NSData dataWithContentsOfFile:path] != nil) {
-       data = [NSData dataWithContentsOfFile:path];
-    } else {
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (data == nil) {
         NSString *emptyData = @"{ \"batch\": []}";
         data = [emptyData dataUsingEncoding:NSUTF8StringEncoding];
     }
 
-    NSError *err = NULL;
+    NSError *err = nil;
     NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
-    if (err != NULL) {
+    if (err != nil || jsonAsDict == nil) {
         [AMPStorage finish:path];
+        data = [NSData dataWithContentsOfFile:path];
         jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
     }
     return jsonAsDict;
