@@ -19,13 +19,14 @@
 
 @interface Amplitude (Tests)
 
+@property (nonatomic, assign) BOOL updatingCurrently;
+@property (nonatomic, strong) NSMutableArray *eventsBuffer;
+@property (nonatomic, strong) NSMutableArray *identifyBuffer;
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id)truncate:(id) obj;
 - (long long)getNextSequenceNumber;
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
-@property (nonatomic, assign) BOOL updatingCurrently;
-@property (nonatomic, strong) NSMutableArray *eventsBuffer;
-@property (nonatomic, strong) NSMutableArray *identifyBuffer;
+
 @end
 
 @interface AmplitudeTests : BaseTestCase
@@ -259,7 +260,6 @@
     XCTAssertFalse([[event2 allKeys] containsObject:@"user_id"]);
 }
 
-//413 will loss event since before we just delete the event from the 1 one.
 - (void)testRequestTooLargeBackoffLogic {
     [self.amplitude setEventUploadThreshold:2];
     
@@ -317,7 +317,7 @@
 
 - (void)testIdentify {
     [self.amplitude setEventUploadThreshold:2];
-    
+
     AMPIdentify *identify = [[AMPIdentify identify] set:@"key1" value:@"value1"];
     [self.amplitude identify:identify];
     [self.amplitude flushQueue];
@@ -325,10 +325,10 @@
     XCTAssertEqual([self.amplitude getEventCount], 0);
     XCTAssertEqual([self.amplitude getIdentifyCount], 0);
     XCTAssertEqual([self.amplitude.identifyBuffer count], 1);
-    
+
     NSDictionary *operations = [NSDictionary dictionaryWithObject:@"value1" forKey:@"key1"];
     NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$set"];
-    NSDictionary *event =  self.amplitude.identifyBuffer[0];
+    NSDictionary *event = self.amplitude.identifyBuffer[0];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
     XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
     XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
@@ -349,7 +349,7 @@
     
 }
 
-- (void)testGroupIdentify { //??
+- (void)testGroupIdentify {
     [self.amplitude cleanUp];
     
     NSString *groupType = @"test group type";
@@ -390,7 +390,7 @@
 
 - (void)testLogRevenueV2 {
     [self.amplitude setEventUploadThreshold:1];
-    
+
     // ignore invalid revenue objects
     [self.amplitude logRevenueV2:nil];
     [self.amplitude flushQueue];
@@ -514,7 +514,7 @@
     XCTAssertEqualObjects([mergedEvents[1] objectForKey:@"event_type"], @"$identify");
     XCTAssertEqual(1, [[mergedEvents[1] objectForKey:@"sequence_number"] intValue]);
  }
-    
+
 -(void)testTruncateLongStrings {
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
     XCTAssertEqual([longString length], kAMPMaxStringLength*2);
@@ -555,10 +555,9 @@
     XCTAssertEqualObjects([object objectForKey:AMP_REVENUE_RECEIPT], longString);
 }
 
-
 -(void)testTruncateEventAndIdentify {
     [self.amplitude setEventUploadThreshold:2];
-    
+
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
     NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
 
@@ -603,7 +602,6 @@
     XCTAssertEqual([self.amplitude  getEventCount], 2);
     XCTAssertEqual([self.amplitude  getIdentifyCount], 1);
 }
-
 
 -(void)testSetOfflineTruncate {
     int eventMaxCount = 3;
@@ -729,7 +727,7 @@
     XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
     XCTAssertEqualObjects([event objectForKey:@"groups"], groups);
 }
- 
+
 -(void)testLogEventWithGroups {
     [self.amplitude setEventUploadThreshold:1];
     
@@ -757,7 +755,6 @@
     XCTAssertEqualObjects([event objectForKey:@"groups"], expectedGroups);
 }
 
-
 -(void)testUnarchiveEventsDict {
     NSString *archiveName = @"test_archive";
     NSDictionary *event = [NSDictionary dictionaryWithObject:@"test event" forKey:@"event_type"];
@@ -777,7 +774,7 @@
 
 -(void)testBlockTooManyProperties {
     [self.amplitude setEventUploadThreshold:2];
-    
+
     NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
     NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
     AMPIdentify *identify = [AMPIdentify identify];
@@ -917,7 +914,6 @@
 }
 
 -(void)testDisableIdfvAsDeviceId {
-    
     AMPTrackingOptions *options = [[AMPTrackingOptions options] disableIDFV];
     AMPDeviceInfo *deviceInfo = [[AMPDeviceInfo alloc] init];
     
@@ -931,7 +927,7 @@
     XCTAssertFalse([[client getDeviceId] isEqual:deviceInfo.vendorID]);
     XCTAssertEqual([[client getDeviceId] characterAtIndex:36], 'R');
 }
- 
+
 -(void)testSetTrackingConfig {
     [self.amplitude setEventUploadThreshold:1];
     
@@ -1013,7 +1009,6 @@
     
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
-    
 }
 
 - (void)testCustomizedLibraryWithNilVersion {

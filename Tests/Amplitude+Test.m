@@ -13,7 +13,11 @@
 #import "AMPConstants.h"
 
 @interface Amplitude (Tests)
+
+@property (nonatomic, strong) NSMutableArray *eventsBuffer;
+@property (nonatomic, strong) NSMutableArray *identifyBuffer;
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
+
 @end
 
 @implementation Amplitude (Test)
@@ -30,7 +34,6 @@
 
 - (void)flushQueue {
     [self flushQueueWithQueue:[self backgroundQueue]];
-   // [AMPStorage remove:[AMPStorage getAppStorageAmpDir:self.instanceName]];
 }
 
 - (void)flushQueueWithQueue:(NSOperationQueue*) queue {
@@ -109,7 +112,6 @@
 
 - (void)cleanUp {
     [self cleanUp:kAMPDefaultInstance];
-
 }
 
 - (void)cleanUp:(NSString *)instanceName {
