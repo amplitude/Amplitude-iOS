@@ -1,4 +1,4 @@
-//
+///
 //  Amplitude.m
 //  Copyright (c) 2013 Amplitude Inc. (https://amplitude.com/)
 //
@@ -887,20 +887,20 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSMutableArray *)removeEventFromBuffer:(NSArray *)buffer currentEventString:(NSString *)currentEventString {
     NSMutableArray *updatedBuffer = [buffer mutableCopy];
-    NSUInteger index = 0;
+    NSUInteger *index = 0;
     for (NSDictionary *event in buffer) {
-        NSMutableArray *currentEventDitconary = [[NSMutableArray alloc] init];
-        [currentEventDitconary addObject:event];
         NSError *error = nil;
         NSData *eventsDataLocal = nil;
-        eventsDataLocal = [NSJSONSerialization dataWithJSONObject:currentEventDitconary options:0 error:&error];
+        eventsDataLocal = [NSJSONSerialization dataWithJSONObject:event options:0 error:&error];
         if (error != nil) {
             AMPLITUDE_ERROR(@"ERROR: NSJSONSerialization error: %@", error);
             return [buffer mutableCopy];
         }
 
         NSString *eventString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
-        if ([eventString isEqualToString:currentEventString]) {
+        //remove the [ and ] in the currentEventString for comparing with event dictionary
+        NSString *currentEventDictionaryString =  [currentEventString substringWithRange:NSMakeRange(1,  currentEventString.length - 2)];
+        if ([eventString isEqualToString:currentEventDictionaryString]) {
             [updatedBuffer removeObject:event];
             break;
         }

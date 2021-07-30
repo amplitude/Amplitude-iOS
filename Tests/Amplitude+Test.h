@@ -40,7 +40,6 @@
 - (NSDate*)currentTime;
 - (id)unarchive:(NSString*)path;
 - (BOOL)archive:(id)obj toFile:(NSString*)path;
-- (void)cleanUp;
-- (void)cleanUp:(NSString *)instanceName;
++ (void)cleanUp;
 
 @end

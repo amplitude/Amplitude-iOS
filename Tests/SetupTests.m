@@ -37,12 +37,12 @@
 
 - (void)setUp {
     [super setUp];
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
 }
 
 - (void)tearDown {
     [super tearDown];
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
 }
 
 - (void)testApiKeySet {

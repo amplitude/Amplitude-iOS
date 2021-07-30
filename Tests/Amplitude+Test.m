@@ -46,7 +46,7 @@
 
 - (NSMutableArray *)getAllEventsWithInstanceName:(NSString *)instanceName {
     NSString * path = [AMPStorage getDefaultEventsFile:instanceName];
-    NSArray *events = [AMPStorage getEventsFromDisk:path];
+    NSMutableArray *events = [AMPStorage getEventsFromDisk:path];
     return events;
 }
 
@@ -55,8 +55,8 @@
 }
 
 - (NSDictionary *)getEvent:(NSInteger)fromEnd {
-    NSString * path = [AMPStorage getDefaultEventsFile:kAMPDefaultInstance];
-    NSArray *events = [AMPStorage getEventsFromDisk:path];
+    NSString *path = [AMPStorage getDefaultEventsFile:kAMPDefaultInstance];
+    NSMutableArray *events = [AMPStorage getEventsFromDisk:path];
     return [events objectAtIndex:[events count] - fromEnd - 1];
 }
 
@@ -65,8 +65,8 @@
 }
 
 - (NSDictionary *)getLastEventWithInstanceName:(NSString *)instanceName {
-    NSString * path = [AMPStorage getDefaultEventsFile:instanceName];
-    NSArray *events = [AMPStorage getEventsFromDisk:path];
+    NSString *path = [AMPStorage getDefaultEventsFile:instanceName];
+    NSMutableArray *events = [AMPStorage getEventsFromDisk:path];
     return [events lastObject];
 }
 
@@ -76,7 +76,7 @@
 
 - (NSMutableArray *)getAllIdentifyWithInstanceName:(NSString *)instanceName {
     NSString * path = [AMPStorage getDefaultIdentifyFile:instanceName];
-    NSArray *identify = [AMPStorage getEventsFromDisk:path];
+    NSMutableArray *identify = [AMPStorage getEventsFromDisk:path];
     return identify;
 }
 
@@ -90,7 +90,7 @@
 
 - (NSDictionary *)getLastIdentifyWithInstanceName:(NSString *)instanceName {
     NSString * path = [AMPStorage getDefaultIdentifyFile:kAMPDefaultInstance];
-    NSArray *identifys = [AMPStorage getEventsFromDisk:path];
+    NSMutableArray *identifys = [AMPStorage getEventsFromDisk:path];
     return [identifys lastObject];
 }
 
@@ -110,19 +110,25 @@
     });
 }
 
-- (void)cleanUp {
-    [self cleanUp:kAMPDefaultInstance];
++ (void)removeUserDefaults {
+    NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary * dict = [userDefaults dictionaryRepresentation];
+    for (id key in dict) {
+        [userDefaults removeObjectForKey:key];
+    }
+    [userDefaults synchronize];
 }
 
-- (void)cleanUp:(NSString *)instanceName {
-    [AMPStorage remove:[AMPStorage getDefaultEventsFile:instanceName]];
-    [AMPStorage remove:[AMPStorage getDefaultIdentifyFile:instanceName]];
-    
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:instanceName]];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:instanceName]];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[Amplitude getDataStorageKey:@"user_id" instanceName:instanceName]];
-}
++ (void)cleanUp {
+    NSString* dir = [AMPStorage getAppStorageAmpDir:@""];
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSArray *fileArray = [fileMgr contentsOfDirectoryAtPath:dir error:nil];
+    for (NSString *filename in fileArray)  {
+        [fileMgr removeItemAtPath:[dir stringByAppendingPathComponent:filename] error:NULL];
+    }
 
+    [self removeUserDefaults];
+}
 
 @end
 

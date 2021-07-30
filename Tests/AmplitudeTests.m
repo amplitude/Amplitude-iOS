@@ -26,7 +26,7 @@
 - (id)truncate:(id) obj;
 - (long long)getNextSequenceNumber;
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
-
++ (void)cleanUp;
 @end
 
 @interface AmplitudeTests : BaseTestCase
@@ -43,12 +43,12 @@
     _sharedSessionMock = [OCMockObject partialMockForObject:[NSURLSession sharedSession]];
     _connectionCallCount = 0;
     [self.amplitude initializeApiKey:apiKey];
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
 }
 
 - (void)tearDown {
     [_sharedSessionMock stopMocking];
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
 }
 
 - (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
@@ -106,11 +106,9 @@
 - (void)testSeparateInstancesLogEventsSeparate {
     NSString *newInstance1 = @"newapp1";
     NSString *newApiKey1 = @"1234567890";
-    [self.amplitude cleanUp:newInstance1];
     
     NSString *newInstance2 = @"newapp2";
     NSString *newApiKey2 = @"0987654321";
-    [self.amplitude cleanUp:newInstance2];
     
     [AMPStorage storeEvent:@"{\"event_type\":\"oldEvent\"}" instanceName:kAMPDefaultInstance];
     [AMPStorage storeIdentify:@"{\"event_type\":\"$identify\"}" instanceName:kAMPDefaultInstance];
@@ -182,7 +180,6 @@
 
 - (void)testInitializeLoadUserIdFromEventData {
     NSString *instanceName = @"testInitialize";
-    [self.amplitude cleanUp:instanceName];
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client flushQueue];
     XCTAssertEqual([client userId], nil);
@@ -209,7 +206,6 @@
 
 - (void)testInitializeWithUserId {
     NSString *instanceName = @"testInitializeWithUserId";
-    [self.amplitude cleanUp:instanceName];
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client flushQueue];
     XCTAssertEqual([client userId], nil);
@@ -232,7 +228,7 @@
 
 - (void)testClearUserId {
     [self.amplitude setEventUploadThreshold:1];
-    
+
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nil);
     
@@ -246,7 +242,7 @@
     NSDictionary *event1 = [self.amplitude getLastEvent];
     XCTAssert([[event1 objectForKey:@"user_id"] isEqualToString:testUserId]);
     
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
 
     NSString *nilUserId = nil;
     [self.amplitude setUserId:nilUserId];
@@ -303,7 +299,7 @@
 
 - (void)testUUIDInEvent {
     [self.amplitude setEventUploadThreshold:2];
-    
+
     [self.amplitude logEvent:@"event1"];
     [self.amplitude logEvent:@"event2"];
     [self.amplitude flushQueue];
@@ -346,12 +342,9 @@
     XCTAssertEqual([self.amplitude getEventCount], 0);
     XCTAssertEqual([self.amplitude getIdentifyCount], 0);
     XCTAssertEqual([self.amplitude.identifyBuffer count], 2);
-    
 }
 
 - (void)testGroupIdentify {
-    [self.amplitude cleanUp];
-    
     NSString *groupType = @"test group type";
     NSString *groupName = @"test group name";
 
@@ -500,7 +493,7 @@
     // reinsert test event without sequence_number
     NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:[self.amplitude getLastEvent]];
     [event removeObjectForKey:@"sequence_number"];
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:event options:0 error:NULL];
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     [AMPStorage storeEvent:jsonString instanceName:kAMPDefaultInstance];
@@ -669,7 +662,7 @@
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude getEventCount], eventMaxCount);
 
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
     self.amplitude.eventsBuffer = [[NSMutableArray alloc] init];
     [self.amplitude setEventUploadThreshold:1];
     self.amplitude.updatingCurrently = NO;
@@ -816,7 +809,7 @@
     NSDictionary *event = [self.amplitude getLastEvent];
     XCTAssertEqual(1000, [[event objectForKey:@"timestamp"] longLongValue]);
 
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
     self.amplitude.updatingCurrently = NO;
     
     [self.amplitude logEvent:@"test2" withEventProperties:nil withGroups:nil withLongLongTimestamp:2000 outOfSession:NO];
@@ -971,7 +964,7 @@
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
     
-    [self.amplitude cleanUp];
+    [Amplitude cleanUp];
     self.amplitude.updatingCurrently = NO;
     [self.amplitude setEventUploadThreshold:1];
     [self.amplitude enableCoppaControl];
@@ -991,8 +984,6 @@
 }
 
 - (void)testCustomizedLibrary {
-    [self.amplitude cleanUp:@"custom_lib"];
-    
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
@@ -1012,8 +1003,6 @@
 }
 
 - (void)testCustomizedLibraryWithNilVersion {
-    [self.amplitude cleanUp:@"custom_lib"];
-    
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
@@ -1036,11 +1025,10 @@
 }
 
 - (void)testCustomizedLibraryWithNilLibrary {
-    [self.amplitude cleanUp:@"custom_lib2"];
-    
-    Amplitude *client = [Amplitude instanceWithName:@"custom_lib2"];
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
+    client.updatingCurrently = NO;
     
     client.libraryName = nil;
     client.libraryVersion = @"1.0.0";
@@ -1048,7 +1036,7 @@
     [client logEvent:@"test"];
     [client flushQueue];
 
-    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib2"];
+    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib"];
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : @"1.0.0"
     };
@@ -1058,11 +1046,10 @@
 }
 
 - (void)testCustomizedLibraryWithNilLibraryAndVersion {
-    [self.amplitude cleanUp:@"custom_lib3"];
-    
-    Amplitude *client = [Amplitude instanceWithName:@"custom_lib3"];
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
+    client.updatingCurrently = NO;
     
     client.libraryName = nil;
     client.libraryVersion = nil;
@@ -1070,7 +1057,7 @@
     [client logEvent:@"test"];
     [client flushQueue];
 
-    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib3"];
+    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib"];
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : kAMPUnknownVersion
     };
