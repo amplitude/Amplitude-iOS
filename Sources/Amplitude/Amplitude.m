@@ -1,4 +1,4 @@
-///
+//
 //  Amplitude.m
 //  Copyright (c) 2013 Amplitude Inc. (https://amplitude.com/)
 //

@@ -120,7 +120,10 @@
 }
 
 + (void)cleanUpFileStorage {
-    NSString* dir = [AMPStorage getAppStorageAmpDir:@""];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths firstObject];
+    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    NSString* dir = [NSString stringWithFormat:@"%@/%@", path, bundleIdentifier];;
     NSFileManager *fileMgr = [NSFileManager defaultManager];
     NSArray *fileArray = [fileMgr contentsOfDirectoryAtPath:dir error:nil];
     for (NSString *filename in fileArray)  {
