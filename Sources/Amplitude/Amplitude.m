@@ -97,6 +97,9 @@
 @property (nonatomic, copy, readwrite) NSString *deviceId;
 @property (nonatomic, copy, readwrite) NSString *contentTypeHeader;
 @property (nonatomic, assign) BOOL updatingCurrently;
+@property (nonatomic, assign) long long maxEventSequenceNumber;
+@property (nonatomic, assign) long long maxIdentifySequenceNumber;
+
 @end
 
 NSString *const kAMPSessionStartEvent = @"session_start";
@@ -203,6 +206,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _eventsBuffer = [[NSMutableArray alloc] init];
         _identifyBuffer = [[NSMutableArray alloc] init];
         _defaultDataStorage = [NSUserDefaults standardUserDefaults];
+        _maxEventSequenceNumber = 0;
+        _maxIdentifySequenceNumber = 0;
         self.libraryName = kAMPLibrary;
         self.libraryVersion = kAMPVersion;
         self.contentTypeHeader = kAMPContentTypeHeader;
@@ -501,6 +506,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession {
+    NSLog(@"!!!%@", timestamp);
     if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
         return;
@@ -756,6 +762,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSMutableArray *events = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(0, numEvents)] mutableCopy];
         NSMutableArray *identifys = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, numIdentify)] mutableCopy];
         for (NSDictionary *event in events) {
+            long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
+            if (currentSequenceNumber <= self->_maxEventSequenceNumber) {
+                continue;
+            }
             // convert event dictionary to JSON String
             NSError *error = nil;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
@@ -770,7 +780,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             [AMPStorage storeEvent:jsonString instanceName:self.instanceName];
         }
+        self->_maxEventSequenceNumber = [[[events lastObject] objectForKey:@"sequence_number"] longLongValue];
         for (NSDictionary *event in identifys) {
+            long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
+            if (currentSequenceNumber <= self->_maxIdentifySequenceNumber) {
+                continue;
+            }
             // convert event dictionary to JSON String
             NSError *error = nil;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
@@ -785,6 +800,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             [AMPStorage storeIdentify:jsonString instanceName:self.instanceName];
         }
+        self->_maxIdentifySequenceNumber = [[[identifys lastObject] objectForKey:@"sequence_number"] longLongValue];
         NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents+numIdentify)];
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
         
@@ -824,10 +840,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (long long)getNextSequenceNumber {
-    NSNumber *sequenceNumberFromDB = [self->_defaultDataStorage objectForKey:[Amplitude getDataStorageKey:SEQUENCE_NUMBER instanceName:self.instanceName]];
+    NSNumber *sequenceNumberFromStorage = [self->_defaultDataStorage objectForKey:[Amplitude getDataStorageKey:SEQUENCE_NUMBER instanceName:self.instanceName]];
     long long sequenceNumber = 0;
-    if (sequenceNumberFromDB != nil) {
-        sequenceNumber = [sequenceNumberFromDB longLongValue];
+    if (sequenceNumberFromStorage != nil) {
+        sequenceNumber = [sequenceNumberFromStorage longLongValue];
     }
 
     sequenceNumber++;
@@ -1222,7 +1238,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (long long)previousSessionId {
-    NSNumber *previousSessionId = [self->_defaultDataStorage objectForKey:PREVIOUS_SESSION_ID];
+    NSNumber *previousSessionId = [self->_defaultDataStorage objectForKey:[Amplitude getDataStorageKey:PREVIOUS_SESSION_ID instanceName:self.instanceName]];
     if (previousSessionId == nil) {
         return -1;
     }

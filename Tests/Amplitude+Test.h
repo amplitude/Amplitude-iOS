@@ -41,5 +41,6 @@
 - (id)unarchive:(NSString*)path;
 - (BOOL)archive:(id)obj toFile:(NSString*)path;
 + (void)cleanUp;
++ (void)cleanUpFileStorage;
 
 @end

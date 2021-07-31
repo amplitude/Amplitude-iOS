@@ -22,11 +22,15 @@
 @property (nonatomic, assign) BOOL updatingCurrently;
 @property (nonatomic, strong) NSMutableArray *eventsBuffer;
 @property (nonatomic, strong) NSMutableArray *identifyBuffer;
+@property (nonatomic, assign) long long maxEventSequenceNumber;
+
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id)truncate:(id) obj;
 - (long long)getNextSequenceNumber;
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
 + (void)cleanUp;
++ (void)cleanUpFileStorage;
+
 @end
 
 @interface AmplitudeTests : BaseTestCase
@@ -179,7 +183,7 @@
 }
 
 - (void)testInitializeLoadUserIdFromEventData {
-    NSString *instanceName = @"testInitialize";
+    NSString *instanceName = @"testinitialize";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client flushQueue];
     XCTAssertEqual([client userId], nil);
@@ -662,7 +666,7 @@
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude getEventCount], eventMaxCount);
 
-    [Amplitude cleanUp];
+    [Amplitude cleanUpFileStorage];
     self.amplitude.eventsBuffer = [[NSMutableArray alloc] init];
     [self.amplitude setEventUploadThreshold:1];
     self.amplitude.updatingCurrently = NO;
@@ -806,15 +810,15 @@
 
     [self.amplitude logEvent:@"test" withEventProperties:nil withGroups:nil withTimestamp:timestamp outOfSession:NO];
     [self.amplitude flushQueue];
-    NSDictionary *event = [self.amplitude getLastEvent];
+    NSMutableArray *eventsBuffer = self.amplitude.eventsBuffer;
+    XCTAssertEqual([eventsBuffer count], 1);
+    NSDictionary *event = eventsBuffer[0];
     XCTAssertEqual(1000, [[event objectForKey:@"timestamp"] longLongValue]);
 
-    [Amplitude cleanUp];
-    self.amplitude.updatingCurrently = NO;
-    
     [self.amplitude logEvent:@"test2" withEventProperties:nil withGroups:nil withLongLongTimestamp:2000 outOfSession:NO];
     [self.amplitude flushQueue];
-    event = [self.amplitude getLastEvent];
+    XCTAssertEqual([eventsBuffer count], 2);
+    event = self.amplitude.eventsBuffer[1];
     XCTAssertEqual(2000, [[event objectForKey:@"timestamp"] longLongValue]);
 }
 
@@ -959,19 +963,19 @@
     
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
-    event = [self.amplitude getLastEvent];
+    event = self.amplitude.eventsBuffer[0];
 
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
     
-    [Amplitude cleanUp];
+    [Amplitude cleanUpFileStorage];
     self.amplitude.updatingCurrently = NO;
     [self.amplitude setEventUploadThreshold:1];
     [self.amplitude enableCoppaControl];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     
-    event = [self.amplitude getLastEvent];
+    event = [self.amplitude.eventsBuffer lastObject];
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNil([apiProperties objectForKey:@"ios_idfv"]);
     
@@ -1004,6 +1008,8 @@
 
 - (void)testCustomizedLibraryWithNilVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
+    client.eventsBuffer = [[NSMutableArray alloc] init];
+    client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
     client.updatingCurrently = NO;
@@ -1026,6 +1032,8 @@
 
 - (void)testCustomizedLibraryWithNilLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
+    client.eventsBuffer = [[NSMutableArray alloc] init];
+    client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
     client.updatingCurrently = NO;
@@ -1047,6 +1055,8 @@
 
 - (void)testCustomizedLibraryWithNilLibraryAndVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
+    client.eventsBuffer = [[NSMutableArray alloc] init];
+    client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
     client.updatingCurrently = NO;
