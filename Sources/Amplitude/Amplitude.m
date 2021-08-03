@@ -506,7 +506,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession {
-    NSLog(@"!!!%@", timestamp);
     if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
         return;
@@ -531,7 +530,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     userProperties = [userProperties copy];
     groups = [groups copy];
     groupProperties = [groupProperties copy];
-    
+
     [self runOnBackgroundQueue:^{
         // Respect the opt-out setting by not sending or storing any events.
         if ([self optOut]) {
@@ -584,7 +583,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
     long identifyCount = [self->_identifyBuffer count];
     if (identifyCount > self.eventMaxCount) {
-        self->_identifyBuffer = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(numEventsToRemove, identifyCount-numEventsToRemove)] mutableCopy];
+        self->_identifyBuffer = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(numEventsToRemove, identifyCount - numEventsToRemove)] mutableCopy];
     }
 }
 

@@ -167,7 +167,7 @@
     XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance1] count], 1);
     XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance2] count], 0);
     XCTAssertEqual([[self.amplitude getAllIdentify] count], 2);
-    
+
     [[Amplitude instanceWithName:newInstance2] setDeviceId:@"brandNewDeviceId"];
     [[Amplitude instanceWithName:newInstance2] flushQueue];
     XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:newInstance1]], @"fakeDeviceId");
@@ -187,11 +187,11 @@
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client flushQueue];
     XCTAssertEqual([client userId], nil);
-    
+
     NSString *testUserId = @"testUserId";
     NSString *ampNSObjectKey = [Amplitude getDataStorageKey:@"user_id" instanceName:instanceName];
     [[NSUserDefaults standardUserDefaults] setObject:testUserId forKey:ampNSObjectKey];
-    
+
     [client initializeApiKey:apiKey];
     [client flushQueue];
     XCTAssertTrue([[client userId] isEqualToString:testUserId]);
@@ -235,7 +235,7 @@
 
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nil);
-    
+
     NSString *testUserId = @"testUserId";
     [self.amplitude setUserId:testUserId];
     [self.amplitude flushQueue];
@@ -252,7 +252,7 @@
     [self.amplitude setUserId:nilUserId];
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude userId], nilUserId);
-    
+
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     NSDictionary *event2 = [self.amplitude getLastEvent];
@@ -262,14 +262,14 @@
 
 - (void)testRequestTooLargeBackoffLogic {
     [self.amplitude setEventUploadThreshold:2];
-    
+
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:413 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:serverResponse];
-    // 413 error force backoff with 2 events --> new upload limit will be 1
 
+    // 413 error force backoff with 2 events --> new upload limit will be 1
+    [self setupAsyncResponse:serverResponse];
     [self.amplitude logEvent:@"test"];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
@@ -288,9 +288,9 @@
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:413 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
-    [self setupAsyncResponse:serverResponse];
-    // 413 error force backoff with 1 events --> should drop the event
 
+    // 413 error force backoff with 1 events --> should drop the event
+    [self setupAsyncResponse:serverResponse];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
 
@@ -307,7 +307,7 @@
     [self.amplitude logEvent:@"event1"];
     [self.amplitude logEvent:@"event2"];
     [self.amplitude flushQueue];
-    
+
     XCTAssertEqual([self.amplitude queuedEventCount], 2);
     NSArray *events = [self.amplitude getAllEvents];
     XCTAssertNotNil([events[0] objectForKey:@"uuid"]);
@@ -510,7 +510,7 @@
     XCTAssertNil([mergedEvents[0] objectForKey:@"sequence_number"]);
     XCTAssertEqualObjects([mergedEvents[1] objectForKey:@"event_type"], @"$identify");
     XCTAssertEqual(1, [[mergedEvents[1] objectForKey:@"sequence_number"] intValue]);
- }
+}
 
 -(void)testTruncateLongStrings {
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
@@ -670,7 +670,7 @@
     self.amplitude.eventsBuffer = [[NSMutableArray alloc] init];
     [self.amplitude setEventUploadThreshold:1];
     self.amplitude.updatingCurrently = NO;
-    
+
     [self.amplitude logEvent:@"test2"];
     [self.amplitude flushQueue];
     XCTAssertEqual([self.amplitude getEventCount], eventMaxCount);
@@ -681,7 +681,7 @@
 
 -(void)testInvalidJSONEventProperties {
     [self.amplitude setEventUploadThreshold:1];
-    
+
     NSURL *url = [NSURL URLWithString:@"https://amplitude.com/"];
     NSDictionary *properties = [NSDictionary dictionaryWithObjectsAndKeys:url, url, url, @"url", nil];
     [self.amplitude logEvent:@"test" withEventProperties:properties];
@@ -727,7 +727,7 @@
 
 -(void)testLogEventWithGroups {
     [self.amplitude setEventUploadThreshold:1];
-    
+
     NSMutableDictionary *groups = [NSMutableDictionary dictionary];
 
     [groups setObject:[NSNumber numberWithInt: 10] forKey:[NSNumber numberWithFloat: 1.23]]; // validateGroups should coerce non-string values into strings
@@ -739,7 +739,6 @@
     [self.amplitude logEvent:@"test" withEventProperties:nil withGroups:groups outOfSession:NO];
     [self.amplitude flushQueue];
 
-    
     XCTAssertEqual([self.amplitude getEventCount], 1);
     XCTAssertEqual([self.amplitude getIdentifyCount], 0);
 
@@ -839,17 +838,17 @@
 
 -(void)testTrackIdfa {
     [self.amplitude setEventUploadThreshold:1];
-    
+
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     self.amplitude.adSupportBlock = ^NSString * _Nonnull{
         return value;
     };
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
-    
+
     self.amplitude.adSupportBlock = nil;
-    
+
     NSDictionary *apiProps = [self.amplitude getLastEvent][@"api_properties"];
     XCTAssertTrue([[apiProps objectForKey:@"ios_idfa"] isEqualToString:value]);
 }
@@ -857,10 +856,10 @@
 #if TARGET_OS_IOS
 -(void)testIdfaAsDeviceId {
     AMPTrackingOptions *opts = [AMPTrackingOptions options]; // has shouldTrackIDFA set.
-    [AMPStorage remove:[AMPStorage getDefaultEventsFile:@"idfv"]];
-    
+    [AMPStorage remove:[AMPStorage getDefaultEventsFile:@"idfa"]];
+
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"idfa"];
     client.adSupportBlock = ^NSString * _Nonnull{
         return value;
@@ -877,10 +876,10 @@
 
 -(void)testDisableIdfaAsDeviceId {
     AMPTrackingOptions *options = [[AMPTrackingOptions options] disableIDFA];
-    [AMPStorage remove:[AMPStorage getDefaultEventsFile:@"disable_idfv"]];
-    
+    [AMPStorage remove:[AMPStorage getDefaultEventsFile:@"disable_idfa"]];
+
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"disable_idfa"];
     client.adSupportBlock = ^NSString * _Nonnull{
         return value;
@@ -1013,10 +1012,10 @@
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
     client.updatingCurrently = NO;
-    
+
     client.libraryName = @"amplitude-unity";
     client.libraryVersion = nil;
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1024,10 +1023,9 @@
     NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
                                           @"version" : kAMPUnknownVersion
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
-  
 }
 
 - (void)testCustomizedLibraryWithNilLibrary {
@@ -1037,10 +1035,10 @@
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
     client.updatingCurrently = NO;
-    
+
     client.libraryName = nil;
     client.libraryVersion = @"1.0.0";
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1048,7 +1046,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : @"1.0.0"
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1060,10 +1058,10 @@
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
     client.updatingCurrently = NO;
-    
+
     client.libraryName = nil;
     client.libraryVersion = nil;
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1071,7 +1069,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : kAMPUnknownVersion
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
