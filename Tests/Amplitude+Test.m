@@ -46,7 +46,7 @@
 
 - (NSMutableArray *)getAllEventsWithInstanceName:(NSString *)instanceName {
     NSString * path = [AMPStorage getDefaultEventsFile:instanceName];
-    NSArray *events = [AMPStorage getEventsFromDisk:path];
+    NSMutableArray *events = [AMPStorage getEventsFromDisk:path];
     return events;
 }
 
@@ -76,7 +76,7 @@
 
 - (NSMutableArray *)getAllIdentifyWithInstanceName:(NSString *)instanceName {
     NSString *path = [AMPStorage getDefaultIdentifyFile:instanceName];
-    NSArray *identify = [AMPStorage getEventsFromDisk:path];
+    NSMutableArray *identify = [AMPStorage getEventsFromDisk:path];
     return identify;
 }
 
@@ -116,7 +116,6 @@
     for (id key in dict) {
         [userDefaults removeObjectForKey:key];
     }
-    [userDefaults synchronize];
 }
 
 + (void)cleanUpFileStorage {

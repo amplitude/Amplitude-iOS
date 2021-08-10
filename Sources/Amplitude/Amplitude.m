@@ -316,7 +316,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self->_defaultDataStorage setObject:[self.dbHelper getValue:USER_ID] forKey:[Amplitude getDataStorageKey:USER_ID instanceName:self.instanceName]];
     [self->_defaultDataStorage setObject:[self.dbHelper getValue:DEVICE_ID] forKey:[Amplitude getDataStorageKey:DEVICE_ID instanceName:self.instanceName]];
     // migrate for long_store database table
-    [self->_defaultDataStorage setBool:[self.dbHelper getLongValue:OPT_OUT] forKey:[Amplitude getDataStorageKey:OPT_OUT instanceName:self.instanceName]];
+    [self->_defaultDataStorage setBool:[[self.dbHelper getLongValue:OPT_OUT] boolValue] forKey:[Amplitude getDataStorageKey:OPT_OUT instanceName:self.instanceName]];
     [self->_defaultDataStorage setObject:[self.dbHelper getLongValue:PREVIOUS_SESSION_ID] forKey:[Amplitude getDataStorageKey:PREVIOUS_SESSION_ID instanceName:self.instanceName]];
     [self->_defaultDataStorage setObject:[self.dbHelper getLongValue:PREVIOUS_SESSION_TIME] forKey:[Amplitude getDataStorageKey:PREVIOUS_SESSION_TIME instanceName:self.instanceName]];
     [self->_defaultDataStorage setObject:[self.dbHelper getLongValue:SEQUENCE_NUMBER] forKey:[Amplitude getDataStorageKey:SEQUENCE_NUMBER instanceName:self.instanceName]];
@@ -800,7 +800,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [AMPStorage storeIdentify:jsonString instanceName:self.instanceName];
         }
         self->_maxIdentifySequenceNumber = [[[identifys lastObject] objectForKey:@"sequence_number"] longLongValue];
-        NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents+numIdentify)];
+        NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents + numIdentify)];
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
         
         NSError *error = nil;
@@ -903,6 +903,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 - (NSMutableArray *)removeEventFromBuffer:(NSArray *)buffer currentEventString:(NSString *)currentEventString {
     NSMutableArray *updatedBuffer = [buffer mutableCopy];
     NSUInteger *index = 0;
+    NSString *currentEventDictionaryString =  [currentEventString substringWithRange:NSMakeRange(1,  currentEventString.length - 2)];
     for (NSDictionary *event in buffer) {
         NSError *error = nil;
         NSData *eventsDataLocal = nil;
@@ -914,14 +915,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         NSString *eventString = [[NSString alloc] initWithData:eventsDataLocal encoding:NSUTF8StringEncoding];
         //remove the [ and ] in the currentEventString for comparing with event dictionary
-        NSString *currentEventDictionaryString =  [currentEventString substringWithRange:NSMakeRange(1,  currentEventString.length - 2)];
         if ([eventString isEqualToString:currentEventDictionaryString]) {
             [updatedBuffer removeObject:event];
             break;
         }
         index++;
     }
-    return [updatedBuffer mutableCopy];
+    return updatedBuffer;
 }
 
 - (void)makeEventUploadPostRequest:(NSString *)url events:(NSString *)events numEvents:(long)numEvents maxEventId:(long long)maxEventId maxIdentifyId:(long long)maxIdentifyId {
