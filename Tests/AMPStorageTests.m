@@ -7,7 +7,15 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "Amplitude.h"
 #import "AMPStorage.h"
+#import "Amplitude+Test.h"
+
+@interface Amplitude (Tests)
+
++ (void)cleanUp;
+
+@end
 
 @interface AMPStorageTests : XCTestCase
     
@@ -23,17 +31,15 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
 
 - (void)tearDown {
     [super tearDown];
-    NSString* dir = [AMPStorage getAppStorageAmpDir:@""];
-    NSFileManager *fileMgr = [NSFileManager defaultManager];
-    NSArray *fileArray = [fileMgr contentsOfDirectoryAtPath:dir error:nil];
-    for (NSString *filename in fileArray)  {
-        [fileMgr removeItemAtPath:[dir stringByAppendingPathComponent:filename] error:NULL];
-    }
+    [Amplitude cleanUp];
 }
 
 - (void)testHasFileStorage {
     BOOL hasFileStorage = [AMPStorage hasFileStorage:@"INSTANCE_NAME"];
-    XCTAssertTrue(hasFileStorage);
+    XCTAssertFalse(hasFileStorage);
+    [AMPStorage storeEvent:exampleEvent instanceName:@"INSTANCE_NAME"];
+    BOOL hasFileStorageAfterStoreEvent = [AMPStorage hasFileStorage:@"INSTANCE_NAME"];
+    XCTAssertTrue(hasFileStorageAfterStoreEvent);
 }
 
 - (void)testGetAppStorageAmpDir {
