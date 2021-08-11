@@ -19,7 +19,6 @@
 
 @interface Amplitude (Tests)
 
-@property (nonatomic, assign) BOOL updatingCurrently;
 @property (nonatomic, strong) NSMutableArray *eventsBuffer;
 @property (nonatomic, strong) NSMutableArray *identifyBuffer;
 @property (nonatomic, assign) long long maxEventSequenceNumber;

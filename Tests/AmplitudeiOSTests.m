@@ -18,7 +18,6 @@
 // expose private methods for unit testing
 @interface Amplitude (Tests)
 
-@property (nonatomic, assign) BOOL updatingCurrently;
 @property (nonatomic, strong) NSMutableArray *eventsBuffer;
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;

@@ -579,7 +579,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     int numEventsToRemove = MIN(MAX(1, self.eventMaxCount/10), kAMPEventRemoveBatchSize);
     long eventCount = [self->_eventsBuffer count];
     if (eventCount > self.eventMaxCount) {
-        self->_eventsBuffer = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(numEventsToRemove, eventCount-numEventsToRemove)] mutableCopy];
+        self->_eventsBuffer = [[self->_eventsBuffer subarrayWithRange:NSMakeRange(numEventsToRemove, eventCount - numEventsToRemove)] mutableCopy];
     }
     long identifyCount = [self->_identifyBuffer count];
     if (identifyCount > self.eventMaxCount) {
