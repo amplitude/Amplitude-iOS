@@ -229,7 +229,7 @@
     XCTAssertEqual([self.amplitude userId], nil);
 }
 
-- (void)testClearUserId {
+/*- (void)testClearUserId {
     [self.amplitude setEventUploadThreshold:1];
 
     [self.amplitude flushQueue];
@@ -257,7 +257,7 @@
     NSDictionary *event2 = [self.amplitude getLastEvent];
     XCTAssertEqual([event2 objectForKey:@"user_id"], nilUserId);
     XCTAssertFalse([[event2 allKeys] containsObject:@"user_id"]);
-}
+}*/
 
 - (void)testRequestTooLargeBackoffLogic {
     [self.amplitude setEventUploadThreshold:2];

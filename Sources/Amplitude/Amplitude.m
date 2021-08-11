@@ -623,8 +623,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     };
     [event setValue:library forKey:@"library"];
     [event setValue:[AMPUtils generateUUID] forKey:@"uuid"];
-    [event setValue:[NSNumber numberWithLongLong:[self getNextSequenceNumber]] forKey:@"sequence_number"];
-
+    long long currentSequenceNumber = [self getNextSequenceNumber];
+    [event setValue:[NSNumber numberWithLongLong:currentSequenceNumber] forKey:@"sequence_number"];
+    // for events after using file storage and there is no event_id property for the event payload, use sequence_number value as event_id
+    if ([event objectForKey:@"event_id"] == nil) {
+        [event setValue:[NSNumber numberWithLongLong:currentSequenceNumber] forKey:@"event_id"];
+    }
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
     if ([_appliedTrackingOptions shouldTrackIDFA]) {
@@ -821,7 +825,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
 
-        [self makeEventUploadPostRequest:self->_serverUrl events:eventsString numEvents:numEvents maxEventId:numEvents maxIdentifyId:numIdentify];
+        [self makeEventUploadPostRequest:self->_serverUrl events:eventsString numEvents:numEvents numIdentify:numIdentify];
     }];
 }
 
@@ -922,7 +926,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return updatedBuffer;
 }
 
-- (void)makeEventUploadPostRequest:(NSString *)url events:(NSString *)events numEvents:(long)numEvents maxEventId:(long long)maxEventId maxIdentifyId:(long long)maxIdentifyId {
+- (void)makeEventUploadPostRequest:(NSString *)url events:(NSString *)events numEvents:(long)numEvents numIdentify:(long)numIdentify {
     NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
     [request setTimeoutInterval:60.0];
 
@@ -975,11 +979,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 if ([result isEqualToString:@"success"]) {
                     // success, remove existing events from dictionary
                     uploadSuccessful = YES;
-                    if (maxEventId >= 0) {
+                    if (numEvents >= 0) {
                         [AMPStorage remove:[AMPStorage getDefaultEventsFile:self.instanceName]];
                         self->_eventsBuffer = [[NSMutableArray alloc] init];
                     }
-                    if (maxIdentifyId >= 0) {
+                    if (numIdentify >= 0) {
                         [AMPStorage remove:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
                         self->_identifyBuffer = [[NSMutableArray alloc] init];
                     }
@@ -995,11 +999,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else if ([httpResponse statusCode] == 413) {
                 // If blocked by one massive event, drop it
                 if (numEvents == 1) {
-                    if (maxEventId >= 0) {
+                    if (numEvents >= 0) {
                         [AMPStorage remove:[AMPStorage getDefaultEventsFile:self.instanceName]];
                         self->_eventsBuffer = [self removeEventFromBuffer:self->_eventsBuffer currentEventString:events];
                     }
-                    if (maxIdentifyId >= 0) {
+                    if (numIdentify >= 0) {
                         [AMPStorage remove:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
                         self->_identifyBuffer = [self removeEventFromBuffer:self->_identifyBuffer currentEventString:events];
                     }
