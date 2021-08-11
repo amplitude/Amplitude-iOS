@@ -96,7 +96,6 @@
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
 @property (nonatomic, copy, readwrite) NSString *contentTypeHeader;
-@property (nonatomic, assign) BOOL updatingCurrently;
 @property (nonatomic, assign) long long maxEventSequenceNumber;
 @property (nonatomic, assign) long long maxIdentifySequenceNumber;
 
@@ -123,6 +122,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSMutableDictionary *_propertyList;
 
     BOOL _updateScheduled;
+    BOOL _updatingCurrently;
     
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIBackgroundTaskIdentifier _uploadTaskID;

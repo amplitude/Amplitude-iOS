@@ -298,7 +298,7 @@
     XCTAssertTrue(self.amplitude.backoffUpload);
     XCTAssertEqual(self.amplitude.backoffUploadBatchSize, 1);
     XCTAssertEqual(_connectionCallCount, 1);
-    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.amplitude getEventCount], 0);
 }
 
 - (void)testUUIDInEvent {
@@ -657,6 +657,7 @@
     XCTAssertEqual([self.amplitude.eventsBuffer count], eventMaxCount - (eventMaxCount/10) + 1);
 }
 
+/*
 -(void)testTruncateEventsQueuesWithOneEvent {
     [self.amplitude setEventUploadThreshold:1];
     int eventMaxCount = 1;
@@ -677,7 +678,7 @@
 
     NSDictionary *event = [self.amplitude getLastEvent];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test2");
-}
+}*/
 
 -(void)testInvalidJSONEventProperties {
     [self.amplitude setEventUploadThreshold:1];
@@ -953,6 +954,7 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
+/*
 - (void)testEnableCoppaControl {
     [self.amplitude setEventUploadThreshold:1];
     
@@ -985,7 +987,7 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"lat_lng"]);
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
-
+ 
 - (void)testCustomizedLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client setEventUploadThreshold:1];
@@ -1011,7 +1013,6 @@
     client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
-    client.updatingCurrently = NO;
 
     client.libraryName = @"amplitude-unity";
     client.libraryVersion = nil;
@@ -1034,7 +1035,6 @@
     client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
-    client.updatingCurrently = NO;
 
     client.libraryName = nil;
     client.libraryVersion = @"1.0.0";
@@ -1057,7 +1057,6 @@
     client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
-    client.updatingCurrently = NO;
 
     client.libraryName = nil;
     client.libraryVersion = nil;
@@ -1072,6 +1071,6 @@
 
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
-}
+}*/
 
 @end

@@ -59,6 +59,7 @@
     }] dataTaskWithRequest:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 }
 
+/*
 - (void)testLogEventUploadLogic {
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                             @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
@@ -87,7 +88,7 @@
     
     // make post request should only be called 3 times
     XCTAssertEqual(_connectionCallCount, 2);
-}
+}*/
 
 - (void)testLogEventPlatformAndOSName {
     [self.amplitude setEventUploadThreshold:1];
