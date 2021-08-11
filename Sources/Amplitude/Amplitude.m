@@ -902,7 +902,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (NSMutableArray *)removeEventFromBuffer:(NSArray *)buffer currentEventString:(NSString *)currentEventString {
     NSMutableArray *updatedBuffer = [buffer mutableCopy];
-    NSUInteger *index = 0;
     NSString *currentEventDictionaryString =  [currentEventString substringWithRange:NSMakeRange(1,  currentEventString.length - 2)];
     for (NSDictionary *event in buffer) {
         NSError *error = nil;
@@ -919,7 +918,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [updatedBuffer removeObject:event];
             break;
         }
-        index++;
     }
     return updatedBuffer;
 }
