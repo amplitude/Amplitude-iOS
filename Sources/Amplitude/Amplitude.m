@@ -390,6 +390,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil in initializeApiKey:");
         return;
     }
+    
+    NSLog(@"Printing here");
 
     if (![self isArgument:apiKey validType:[NSString class] methodName:@"initializeApiKey:"]) {
         return;
@@ -403,7 +405,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         return;
     }
 
+    NSLog(@"Printing here 2");
+    
     if (!_initialized) {
+        
+        NSLog(@"Printing here 3");
+        
         self.apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
@@ -424,14 +431,17 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             UIApplication *app = [AMPUtils getSharedApplication];
             if (app != nil) {
                 UIApplicationState state = app.applicationState;
+                NSLog(@"Printing here 2");
                 if (state != UIApplicationStateBackground) {
+                    NSLog(@"Printing here 3");
                     [self runOnBackgroundQueue:^{
         #endif
                         // The earliest time to fetch dynamic config
                         [self refreshDynamicConfig];
                         
                         NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-                        [self startOrContinueSessionNSNumber:now];
+                        BOOL result = [self startOrContinueSessionNSNumber:now];
+                        NSLog(@"Finished logic, my sessions is: %@", result ? @"YES" : @"NO");
                         self->_inForeground = YES;
         #if !TARGET_OS_OSX && !TARGET_OS_WATCH
                     }];
@@ -1111,6 +1121,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  * Returns YES if a new session was created.
  */
 - (BOOL)startOrContinueSessionNSNumber:(NSNumber *)timestamp {
+    NSLog(@"Attempting to create session");
     if (!_inForeground) {
         if ([self inSession]) {
             if ([self isWithinMinTimeBetweenSessions:timestamp]) {
