@@ -656,7 +656,6 @@
     XCTAssertEqual([self.amplitude.eventsBuffer count], eventMaxCount - (eventMaxCount/10) + 1);
 }
 
-/*
 -(void)testTruncateEventsQueuesWithOneEvent {
     [self.amplitude setEventUploadThreshold:1];
     int eventMaxCount = 1;
@@ -664,20 +663,15 @@
 
     [self.amplitude logEvent:@"test1"];
     [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude getEventCount], eventMaxCount);
-
-    [Amplitude cleanUpFileStorage];
-    self.amplitude.eventsBuffer = [[NSMutableArray alloc] init];
-    [self.amplitude setEventUploadThreshold:1];
-    self.amplitude.updatingCurrently = NO;
+    XCTAssertEqual([self.amplitude.eventsBuffer count], eventMaxCount);
 
     [self.amplitude logEvent:@"test2"];
     [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude getEventCount], eventMaxCount);
+    XCTAssertEqual([self.amplitude.eventsBuffer count], eventMaxCount);
 
-    NSDictionary *event = [self.amplitude getLastEvent];
+    NSDictionary *event = [self.amplitude.eventsBuffer lastObject];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], @"test2");
-}*/
+}
 
 -(void)testInvalidJSONEventProperties {
     [self.amplitude setEventUploadThreshold:1];
@@ -953,7 +947,6 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
 
-/*
 - (void)testEnableCoppaControl {
     [self.amplitude setEventUploadThreshold:1];
     
@@ -963,14 +956,11 @@
     
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
-    event = self.amplitude.eventsBuffer[0];
+    event = [self.amplitude.eventsBuffer lastObject];
 
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
     
-    [Amplitude cleanUpFileStorage];
-    self.amplitude.updatingCurrently = NO;
-    [self.amplitude setEventUploadThreshold:1];
     [self.amplitude enableCoppaControl];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
@@ -986,7 +976,7 @@
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"lat_lng"]);
     XCTAssertEqualObjects([NSNumber numberWithBool:NO], [trackingOptions objectForKey:@"ip_address"]);
 }
- 
+
 - (void)testCustomizedLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client setEventUploadThreshold:1];
@@ -1007,8 +997,7 @@
 }
 
 - (void)testCustomizedLibraryWithNilVersion {
-    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
-    client.eventsBuffer = [[NSMutableArray alloc] init];
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib1"];
     client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
@@ -1019,7 +1008,7 @@
     [client logEvent:@"test"];
     [client flushQueue];
 
-    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib"];
+    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib1"];
     NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
                                           @"version" : kAMPUnknownVersion
     };
@@ -1029,8 +1018,7 @@
 }
 
 - (void)testCustomizedLibraryWithNilLibrary {
-    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
-    client.eventsBuffer = [[NSMutableArray alloc] init];
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib2"];
     client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
@@ -1041,7 +1029,7 @@
     [client logEvent:@"test"];
     [client flushQueue];
 
-    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib"];
+    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib2"];
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : @"1.0.0"
     };
@@ -1051,8 +1039,7 @@
 }
 
 - (void)testCustomizedLibraryWithNilLibraryAndVersion {
-    Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
-    client.eventsBuffer = [[NSMutableArray alloc] init];
+    Amplitude *client = [Amplitude instanceWithName:@"custom_lib3"];
     client.maxEventSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
@@ -1063,13 +1050,13 @@
     [client logEvent:@"test"];
     [client flushQueue];
 
-    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib"];
+    NSDictionary *event = [client getLastEventWithInstanceName:@"custom_lib3"];
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : kAMPUnknownVersion
     };
 
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
-}*/
+}
 
 @end
