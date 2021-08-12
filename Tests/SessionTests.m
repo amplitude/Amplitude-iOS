@@ -27,6 +27,10 @@
 
 @end
 
+@interface Amplitude (Testing)
++ (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
+@end
+
 @implementation SessionTests { }
 
 - (void)setUp {
@@ -68,7 +72,7 @@
 }
 
 - (void)testSessionHandling {
-
+    /*
     // start new session on initializeApiKey
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
@@ -146,6 +150,7 @@
     long testSessionId = 1337;
     [mockAmplitude setSessionId:testSessionId];
     XCTAssertEqual([mockAmplitude sessionId], testSessionId);
+    */
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
@@ -252,18 +257,22 @@
 }
 
 - (void)testSkipSessionCheckWhenLoggingSessionEvents {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
+    //long long timestamp = (long long)[date timeIntervalSince1970] * 1000;
+    //[self.amplitude setSessionId:timestamp];
     NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970] * 1000];
-    [dbHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
-
+    
+    NSString *PREVIOUS_SESSION_ID = [Amplitude valueForKey:@"PREVIOUS_SESSION_ID"];
+    
+    [[self.amplitude valueForKey:@"defaultDataStorage"] setObject:timestamp
+                                                           forKey:[Amplitude getDataStorageKey:PREVIOUS_SESSION_ID instanceName:self.amplitude.instanceName]];
+    
     self.amplitude.trackingSessionEvents = YES;
     [self.amplitude initializeApiKey:apiKey userId:nil];
 
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], 2);
-    NSArray *events = [dbHelper getEvents:-1 limit:2];
+    NSMutableArray *events = [self.amplitude valueForKey:@"eventsBuffer"];
+    XCTAssertEqual([events count], 2);
     XCTAssertEqualObjects(events[0][@"event_type"], kAMPSessionEndEvent);
     XCTAssertEqualObjects(events[1][@"event_type"], kAMPSessionStartEvent);
 }
