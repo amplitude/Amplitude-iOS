@@ -98,20 +98,6 @@
     [contents writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 }
 
-+ (void)finish:(NSString *)path {
-    NSFileManager *fm = [NSFileManager defaultManager];
-
-    if ([fm fileExistsAtPath:path]) {
-        NSString *fileEnding = @"]}";
-        NSData *endData = [fileEnding dataUsingEncoding:NSUTF8StringEncoding];
-
-        NSFileHandle *handle = [NSFileHandle fileHandleForWritingAtPath:path];
-        [handle seekToEndOfFile];
-        [handle writeData:endData];
-        [handle closeFile];
-    }
-}
-
 + (void)remove:(NSString *)path {
     NSFileManager *fm = [NSFileManager defaultManager];
     [fm removeItemAtPath:path error:NULL];
@@ -124,19 +110,22 @@
 }
 
 + (NSDictionary *)JSONFromFile:(NSString *)path {
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    if (data == nil) {
-        NSString *emptyData = @"{ \"batch\": []}";
-        data = [emptyData dataUsingEncoding:NSUTF8StringEncoding];
+    NSMutableString *content = [NSMutableString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    if (content == nil) {
+        content = [[NSMutableString alloc] init];
+        [content appendString:@"{ \"batch\": ["];
     }
 
-    NSError *err = nil;
-    NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
-    if (err != nil || jsonAsDict == nil) {
-        [AMPStorage finish:path];
-        data = [NSData dataWithContentsOfFile:path];
-        jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+    [content appendString:@"]}"];
+    NSData *completeData = [content dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:completeData options:kNilOptions error:nil];
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:path]) {
+        NSFileHandle *handle = [NSFileHandle fileHandleForWritingAtPath:path];
+        [handle closeFile];
     }
+
     return jsonAsDict;
 }
 
