@@ -37,7 +37,6 @@
 
 - (void)setUp {
     [super setUp];
-    [Amplitude cleanUp];
 }
 
 - (void)tearDown {

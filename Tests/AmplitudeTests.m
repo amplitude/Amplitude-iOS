@@ -573,10 +573,11 @@
 }
 
 -(void)testAutoIncrementSequenceNumber {
+    Amplitude *client = [Amplitude instanceWithName:@"sequence_test"];
     int limit = 10;
     for (int i = 0; i < limit; i++) {
-        XCTAssertEqual([self.amplitude getNextSequenceNumber], i+1);
-        XCTAssertEqual([[[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:kAMPDefaultInstance]] intValue], i+1);
+        XCTAssertEqual([client getNextSequenceNumber], i+1);
+        XCTAssertEqual([[[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:client.instanceName]] intValue], i+1);
     }
 }
 

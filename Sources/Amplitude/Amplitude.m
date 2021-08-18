@@ -851,7 +851,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     sequenceNumber++;
     [self->_defaultDataStorage setObject:[NSNumber numberWithLongLong:sequenceNumber] forKey:[Amplitude getDataStorageKey:SEQUENCE_NUMBER instanceName:self.instanceName]];
-
     return sequenceNumber;
 }
 
@@ -1077,29 +1076,32 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self refreshDynamicConfig];
         [self startOrContinueSessionNSNumber:now];
         self->_inForeground = YES;
-        NSMutableArray *mergedEvent = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile:self.instanceName]];
-        for (NSDictionary *event in self->_eventsBuffer) {
-            long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
-            if (currentSequenceNumber <= self->_maxEventSequenceNumber) {
-                continue;
-            }
-            [mergedEvent addObject:event];
-        }
-        self->_eventsBuffer = mergedEvent;
-        
-        NSMutableArray *mergedIdentify = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
-        for (NSDictionary *event in self->_identifyBuffer) {
-            long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
-            if (currentSequenceNumber <= self->_maxEventSequenceNumber) {
-                continue;
-            }
-            [mergedIdentify addObject:event];
-        }
-        self->_identifyBuffer = mergedIdentify;
         if ([self->_eventsBuffer count] > 0 || [self->_identifyBuffer count] > 0) {
             [self uploadEvents];
         }
     }];
+}
+
+- (void)mergeBufferAndFileStorage {
+    NSMutableArray *mergedEvent = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile:self.instanceName]];
+    for (NSDictionary *event in self->_eventsBuffer) {
+        long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
+        if (currentSequenceNumber <= self->_maxEventSequenceNumber) {
+            continue;
+        }
+        [mergedEvent addObject:event];
+    }
+    self->_eventsBuffer = mergedEvent;
+
+    NSMutableArray *mergedIdentify = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
+    for (NSDictionary *event in self->_identifyBuffer) {
+        long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
+        if (currentSequenceNumber <= self->_maxEventSequenceNumber) {
+            continue;
+        }
+        [mergedIdentify addObject:event];
+    }
+    self->_identifyBuffer = mergedIdentify;
 }
 
 - (void)enterBackground {

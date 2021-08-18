@@ -92,7 +92,6 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     
     NSString *content = [NSString stringWithContentsOfFile:eventsFilePath encoding:NSUTF8StringEncoding error:nil];
     XCTAssertNotEqual([content rangeOfString:exampleEvent].location, NSNotFound);
-    XCTAssertNotEqual([content rangeOfString:@"{ \"batch\":"].location, NSNotFound);
 }
 
 - (void)testStoreIdentify {
@@ -103,7 +102,6 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     
     NSString *content = [NSString stringWithContentsOfFile:identifyFilePath encoding:NSUTF8StringEncoding error:nil];
     XCTAssertNotEqual([content rangeOfString:exampleEvent].location, NSNotFound);
-    XCTAssertNotEqual([content rangeOfString:@"{ \"batch\":"].location, NSNotFound);
 }
 
 /* This method also tests
@@ -123,7 +121,6 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
 
     NSString *content = [NSString stringWithContentsOfFile:customPath encoding:NSUTF8StringEncoding error:nil];
     XCTAssertNotEqual([content rangeOfString:exampleEvent].location, NSNotFound);
-    XCTAssertNotEqual([content rangeOfString:@"{ \"batch\":"].location, NSNotFound);
 
     NSMutableArray *finishedFileDict = [AMPStorage getEventsFromDisk:customPath];
     XCTAssertNotNil(finishedFileDict);

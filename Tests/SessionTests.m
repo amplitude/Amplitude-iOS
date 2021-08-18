@@ -30,7 +30,6 @@
 @interface Amplitude (Testing)
 
 @property (nonatomic, assign) long long sessionId;
-+ (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
 + (void)cleanUp;
 
 @end
@@ -39,7 +38,11 @@
 
 - (void)setUp {
     [super setUp];
-    [Amplitude cleanUp];
+#if !TARGET_OS_OSX
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+#endif
 }
 
 - (void)tearDown {
@@ -65,11 +68,6 @@
 }
 
 - (void)testSessionAutoStartedInactive {
-#if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
-#endif
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [mockAmplitude initializeApiKey:apiKey];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
@@ -78,11 +76,6 @@
 }
 
 - (void)testSessionHandling {
-#if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
-#endif
     // start new session on initializeApiKey
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
@@ -177,11 +170,6 @@
 }
 
 - (void)testTrackSessionEvents {
-#if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
-#endif
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
@@ -237,11 +225,6 @@
  }
 
 - (void)testSessionEventsOn32BitDevices {
-#if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
-#endif
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:21474836470];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
@@ -279,11 +262,6 @@
     NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970] * 1000];
     self.amplitude.sessionId = [timestamp longLongValue];
 
-#if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
-#endif
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
 

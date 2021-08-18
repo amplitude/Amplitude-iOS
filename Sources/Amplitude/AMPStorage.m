@@ -92,7 +92,7 @@
 }
 
 + (void)start:(NSString *)path {
-    NSString *contents = @"{ \"batch\": [";
+    NSString *contents = @"[";
     [[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:NULL error:NULL];
     [[NSFileManager defaultManager] createFileAtPath:path contents:NULL attributes:NULL];
     [contents writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:NULL];
@@ -104,19 +104,18 @@
 }
 
 + (NSMutableArray *)getEventsFromDisk:(NSString *)path {
-    NSDictionary *json = [AMPStorage JSONFromFile:path];
-    NSArray *eventsArr = [json objectForKey:@"batch"];
+    NSArray *eventsArr = [AMPStorage JSONFromFile:path];
     return [eventsArr mutableCopy];
 }
 
-+ (NSDictionary *)JSONFromFile:(NSString *)path {
++ (NSArray*)JSONFromFile:(NSString *)path {
     NSMutableString *content = [NSMutableString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     if (content == nil) {
         content = [[NSMutableString alloc] init];
-        [content appendString:@"{ \"batch\": ["];
+        [content appendString:@"["];
     }
 
-    [content appendString:@"]}"];
+    [content appendString:@"]"];
     NSData *completeData = [content dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:completeData options:kNilOptions error:nil];
 
