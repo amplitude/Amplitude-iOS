@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
 typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
-typedef void (^AMPInitializeCompleteSupportBlock)(void);
+typedef void (^AMPInitCompletionBlock)(void);
 /**
  Amplitude iOS SDK.
 
@@ -186,11 +186,11 @@ typedef void (^AMPInitializeCompleteSupportBlock)(void);
  *
  * Example:
  *  __typeof(amp) __weak weakAmp = amp;
- *  amp.initializeSupportBlock = ^(void){
+ *  amp.initCompletionBlock = ^(void){
  *     NSLog(@"deviceId: %@, userId: %@", weakAmp.deviceId, weakAmp.userId);
  *  };
  */
-@property (nonatomic, strong, nullable) AMPInitializeCompleteSupportBlock initializeCompleteSupportBlock;
+@property (nonatomic, strong, nullable) AMPInitCompletionBlock initCompletionBlock;
 
 #pragma mark - Methods
 

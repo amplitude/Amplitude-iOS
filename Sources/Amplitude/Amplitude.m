@@ -438,8 +438,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else {
                 self.userId = [self.dbHelper getValue:USER_ID];
             }
-            if (self.initializeCompleteSupportBlock != nil) {
-                self.initializeCompleteSupportBlock();
+            if (self.initCompletionBlock != nil) {
+                self.initCompletionBlock();
             }
         }];
 
