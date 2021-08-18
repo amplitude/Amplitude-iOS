@@ -438,6 +438,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else {
                 self.userId = [self.dbHelper getValue:USER_ID];
             }
+            if (self.initializeCompleteSupportBlock != nil) {
+                self.initializeCompleteSupportBlock();
+            }
         }];
 
         // Normally _inForeground is set by the enterForeground callback, but initializeWithApiKey will be called after the app's enterForeground
