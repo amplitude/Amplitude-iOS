@@ -35,7 +35,6 @@
 
 - (void)setUp {
     [super setUp];
-    [Amplitude cleanUp];
     _sharedSessionMock = [OCMockObject partialMockForObject:[NSURLSession sharedSession]];
     _connectionCallCount = 0;
     [self.amplitude initializeApiKey:apiKey];

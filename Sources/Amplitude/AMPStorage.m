@@ -117,7 +117,7 @@
 
     [content appendString:@"]"];
     NSData *completeData = [content dataUsingEncoding:NSUTF8StringEncoding];
-    NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:completeData options:kNilOptions error:nil];
+    NSArray *jsonAsDict = [NSJSONSerialization JSONObjectWithData:completeData options:kNilOptions error:nil];
 
     NSFileManager *fm = [NSFileManager defaultManager];
     if ([fm fileExistsAtPath:path]) {
