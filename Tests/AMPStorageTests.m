@@ -92,7 +92,6 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     
     NSString *content = [NSString stringWithContentsOfFile:eventsFilePath encoding:NSUTF8StringEncoding error:nil];
     XCTAssertNotEqual([content rangeOfString:exampleEvent].location, NSNotFound);
-    XCTAssertNotEqual([content rangeOfString:@"{ \"batch\":"].location, NSNotFound);
 }
 
 - (void)testStoreIdentify {
@@ -103,7 +102,6 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     
     NSString *content = [NSString stringWithContentsOfFile:identifyFilePath encoding:NSUTF8StringEncoding error:nil];
     XCTAssertNotEqual([content rangeOfString:exampleEvent].location, NSNotFound);
-    XCTAssertNotEqual([content rangeOfString:@"{ \"batch\":"].location, NSNotFound);
 }
 
 /* This method also tests
@@ -117,26 +115,23 @@ NSString *exampleEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv
     NSURL *url = [NSURL fileURLWithPath:customPath];
     [AMPStorage storeEventAtUrl:url event:exampleEvent];
     [AMPStorage storeEventAtUrl:url event:exampleEvent];
-    
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
     XCTAssertTrue([fileManager fileExistsAtPath:customPath]);
-    
-    [AMPStorage finish:customPath];
-    
+
     NSString *content = [NSString stringWithContentsOfFile:customPath encoding:NSUTF8StringEncoding error:nil];
     XCTAssertNotEqual([content rangeOfString:exampleEvent].location, NSNotFound);
-    XCTAssertNotEqual([content rangeOfString:@"{ \"batch\":"].location, NSNotFound);
-    
+
     NSMutableArray *finishedFileDict = [AMPStorage getEventsFromDisk:customPath];
     XCTAssertNotNil(finishedFileDict);
     XCTAssertEqual([finishedFileDict count], 2);
     NSDictionary *secondEvent = finishedFileDict[1];
     XCTAssertEqualObjects([secondEvent objectForKey:@"event_type"], @"testEvent");
-    
+
     //Test a file that has not been finished
     [AMPStorage remove:customPath];
     XCTAssertFalse([fileManager fileExistsAtPath:customPath]);
-    
+
     [AMPStorage storeEventAtUrl:url event:exampleEvent];
     [AMPStorage storeEventAtUrl:url event:exampleEvent];
     XCTAssertTrue([fileManager fileExistsAtPath:customPath]);

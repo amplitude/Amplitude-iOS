@@ -31,7 +31,6 @@
 + (void)storeIdentify:(NSString *)identify instanceName:(NSString *)instanceName;;
 + (void)storeEventAtUrl:(NSURL *)url event:(NSString *)event;
 + (void)start:(NSString *)path;
-+ (void)finish:(NSString *)path;
 + (void)remove:(NSString *)path;
 + (NSMutableArray *)getEventsFromDisk:(NSString *)path;
 

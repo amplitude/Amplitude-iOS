@@ -21,7 +21,7 @@
 
 @property (nonatomic, strong) NSMutableArray *eventsBuffer;
 @property (nonatomic, strong) NSMutableArray *identifyBuffer;
-@property (nonatomic, assign) long long maxEventSequenceNumber;
+@property (nonatomic, assign) long long maxSequenceNumber;
 
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id)truncate:(id) obj;
@@ -573,10 +573,11 @@
 }
 
 -(void)testAutoIncrementSequenceNumber {
+    Amplitude *client = [Amplitude instanceWithName:@"sequence_test"];
     int limit = 10;
     for (int i = 0; i < limit; i++) {
-        XCTAssertEqual([self.amplitude getNextSequenceNumber], i+1);
-        XCTAssertEqual([[[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:kAMPDefaultInstance]] intValue], i+1);
+        XCTAssertEqual([client getNextSequenceNumber], i+1);
+        XCTAssertEqual([[[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:client.instanceName]] intValue], i+1);
     }
 }
 
@@ -998,7 +999,7 @@
 
 - (void)testCustomizedLibraryWithNilVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib1"];
-    client.maxEventSequenceNumber = 0;
+    client.maxSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
 
@@ -1019,7 +1020,7 @@
 
 - (void)testCustomizedLibraryWithNilLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib2"];
-    client.maxEventSequenceNumber = 0;
+    client.maxSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
 
@@ -1040,7 +1041,7 @@
 
 - (void)testCustomizedLibraryWithNilLibraryAndVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib3"];
-    client.maxEventSequenceNumber = 0;
+    client.maxSequenceNumber = 0;
     [client setEventUploadThreshold:1];
     [client initializeApiKey:@"blah"];
 

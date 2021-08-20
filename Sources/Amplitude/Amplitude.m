@@ -96,8 +96,7 @@
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
 @property (nonatomic, copy, readwrite) NSString *contentTypeHeader;
-@property (nonatomic, assign) long long maxEventSequenceNumber;
-@property (nonatomic, assign) long long maxIdentifySequenceNumber;
+@property (nonatomic, assign) long long maxSequenceNumber;
 
 @end
 
@@ -206,8 +205,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _eventsBuffer = [[NSMutableArray alloc] init];
         _identifyBuffer = [[NSMutableArray alloc] init];
         _defaultDataStorage = [NSUserDefaults standardUserDefaults];
-        _maxEventSequenceNumber = 0;
-        _maxIdentifySequenceNumber = 0;
+        _maxSequenceNumber = 0;
         self.libraryName = kAMPLibrary;
         self.libraryVersion = kAMPVersion;
         self.contentTypeHeader = kAMPContentTypeHeader;
@@ -434,7 +432,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         #endif
                         // The earliest time to fetch dynamic config
                         [self refreshDynamicConfig];
-                        
+
                         NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
                         [self startOrContinueSessionNSNumber:now];
                         self->_inForeground = YES;
@@ -766,7 +764,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         NSMutableArray *identifys = [[self->_identifyBuffer subarrayWithRange:NSMakeRange(0, numIdentify)] mutableCopy];
         for (NSDictionary *event in events) {
             long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
-            if (currentSequenceNumber <= self->_maxEventSequenceNumber) {
+            if (currentSequenceNumber <= self->_maxSequenceNumber) {
                 continue;
             }
             // convert event dictionary to JSON String
@@ -783,10 +781,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             [AMPStorage storeEvent:jsonString instanceName:self.instanceName];
         }
-        self->_maxEventSequenceNumber = [[[events lastObject] objectForKey:@"sequence_number"] longLongValue];
         for (NSDictionary *event in identifys) {
             long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
-            if (currentSequenceNumber <= self->_maxIdentifySequenceNumber) {
+            if (currentSequenceNumber <= self->_maxSequenceNumber) {
                 continue;
             }
             // convert event dictionary to JSON String
@@ -803,9 +800,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             }
             [AMPStorage storeIdentify:jsonString instanceName:self.instanceName];
         }
-        self->_maxIdentifySequenceNumber = [[[identifys lastObject] objectForKey:@"sequence_number"] longLongValue];
         NSDictionary *merged = [self mergeEventsAndIdentifys:events identifys:identifys numEvents:(numEvents + numIdentify)];
         NSMutableArray *uploadEvents = [merged objectForKey:EVENTS];
+        self->_maxSequenceNumber = [[[uploadEvents lastObject] objectForKey:@"sequence_number"] longLongValue];
         
         NSError *error = nil;
         NSData *eventsDataLocal = nil;
@@ -851,7 +848,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     sequenceNumber++;
     [self->_defaultDataStorage setObject:[NSNumber numberWithLongLong:sequenceNumber] forKey:[Amplitude getDataStorageKey:SEQUENCE_NUMBER instanceName:self.instanceName]];
-
     return sequenceNumber;
 }
 
@@ -1074,17 +1070,28 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #endif
     [self runOnBackgroundQueue:^{
         // Fetch the data ingestion endpoint based on current device's geo location.
-        
         [self refreshDynamicConfig];
         [self startOrContinueSessionNSNumber:now];
+        NSMutableArray *events = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile:self.instanceName]];
+        self->_eventsBuffer = [self mergeBufferWithFileStorage:events buffer:self->_eventsBuffer];
+        NSMutableArray *identify= [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
+        self->_identifyBuffer = [self mergeBufferWithFileStorage:identify buffer:self->_identifyBuffer];
         self->_inForeground = YES;
-        self->_eventsBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultEventsFile:self.instanceName]];
-        self->_identifyBuffer = [AMPStorage getEventsFromDisk:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
         if ([self->_eventsBuffer count] > 0 || [self->_identifyBuffer count] > 0) {
             [self uploadEvents];
-            
         }
     }];
+}
+
+- (NSMutableArray *)mergeBufferWithFileStorage:(NSMutableArray *)events buffer:(NSMutableArray *)buffer {
+    for (NSDictionary *event in buffer) {
+        long long currentSequenceNumber = [[event objectForKey:@"sequence_number"] longLongValue];
+        if (currentSequenceNumber <= self->_maxSequenceNumber) {
+            continue;
+        }
+        [events addObject:event];
+    }
+    return events;
 }
 
 - (void)enterBackground {
@@ -1110,10 +1117,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self->_inForeground = NO;
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
-        [AMPStorage finish:[AMPStorage getDefaultEventsFile:self.instanceName]];
-        [AMPStorage finish:[AMPStorage getDefaultIdentifyFile:self.instanceName]];
-        self->_eventsBuffer = [[NSMutableArray alloc] init];
-        self->_identifyBuffer = [[NSMutableArray alloc] init];
     }];
 }
 
@@ -1247,11 +1250,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)setLastEventTime:(NSNumber *)timestamp {
-   [self->_defaultDataStorage setObject:timestamp forKey:[Amplitude getDataStorageKey:PREVIOUS_SESSION_ID instanceName:self.instanceName]];
+   [self->_defaultDataStorage setObject:timestamp forKey:[Amplitude getDataStorageKey:PREVIOUS_SESSION_TIME instanceName:self.instanceName]];
 }
 
 - (NSNumber *)lastEventTime {
-    return [self->_defaultDataStorage objectForKey:PREVIOUS_SESSION_TIME];
+    return [self->_defaultDataStorage objectForKey:[Amplitude getDataStorageKey:PREVIOUS_SESSION_TIME instanceName:self.instanceName]];
 }
 
 - (void)identify:(AMPIdentify *)identify {

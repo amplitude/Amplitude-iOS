@@ -92,24 +92,10 @@
 }
 
 + (void)start:(NSString *)path {
-    NSString *contents = @"{ \"batch\": [";
+    NSString *contents = @"[";
     [[NSFileManager defaultManager] createDirectoryAtPath:[path stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:NULL error:NULL];
     [[NSFileManager defaultManager] createFileAtPath:path contents:NULL attributes:NULL];
     [contents writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-}
-
-+ (void)finish:(NSString *)path {
-    NSFileManager *fm = [NSFileManager defaultManager];
-
-    if ([fm fileExistsAtPath:path]) {
-        NSString *fileEnding = @"]}";
-        NSData *endData = [fileEnding dataUsingEncoding:NSUTF8StringEncoding];
-
-        NSFileHandle *handle = [NSFileHandle fileHandleForWritingAtPath:path];
-        [handle seekToEndOfFile];
-        [handle writeData:endData];
-        [handle closeFile];
-    }
 }
 
 + (void)remove:(NSString *)path {
@@ -118,25 +104,27 @@
 }
 
 + (NSMutableArray *)getEventsFromDisk:(NSString *)path {
-    NSDictionary *json = [AMPStorage JSONFromFile:path];
-    NSArray *eventsArr = [json objectForKey:@"batch"];
+    NSArray *eventsArr = [AMPStorage JSONFromFile:path];
     return [eventsArr mutableCopy];
 }
 
-+ (NSDictionary *)JSONFromFile:(NSString *)path {
-    NSData *data = [NSData dataWithContentsOfFile:path];
-    if (data == nil) {
-        NSString *emptyData = @"{ \"batch\": []}";
-        data = [emptyData dataUsingEncoding:NSUTF8StringEncoding];
++ (NSArray*)JSONFromFile:(NSString *)path {
+    NSMutableString *content = [NSMutableString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    if (content == nil) {
+        content = [[NSMutableString alloc] init];
+        [content appendString:@"["];
     }
 
-    NSError *err = nil;
-    NSDictionary *jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
-    if (err != nil || jsonAsDict == nil) {
-        [AMPStorage finish:path];
-        data = [NSData dataWithContentsOfFile:path];
-        jsonAsDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+    [content appendString:@"]"];
+    NSData *completeData = [content dataUsingEncoding:NSUTF8StringEncoding];
+    NSArray *jsonAsDict = [NSJSONSerialization JSONObjectWithData:completeData options:kNilOptions error:nil];
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:path]) {
+        NSFileHandle *handle = [NSFileHandle fileHandleForWritingAtPath:path];
+        [handle closeFile];
     }
+
     return jsonAsDict;
 }
 
