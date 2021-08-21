@@ -1,3 +1,10 @@
+## [8.3.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.0...v8.3.1) (2021-08-21)
+
+
+### Bug Fixes
+
+* rename to initCompletionBlock ([f43a86c](https://github.com/amplitude/Amplitude-iOS/commit/f43a86c576af02957cacae3aac96fabba9c71450))
+
 # [8.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.1...v8.3.0) (2021-04-30)
 
 
