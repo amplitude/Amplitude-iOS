@@ -417,6 +417,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else {
                 self.userId = [self->_defaultDataStorage objectForKey:[Amplitude getDataStorageKey:USER_ID instanceName:self.instanceName]];
             }
+            if (self.initCompletionBlock != nil) {
+                self.initCompletionBlock();
+            }
         }];
 
         // Normally _inForeground is set by the enterForeground callback, but initializeWithApiKey will be called after the app's enterForeground
