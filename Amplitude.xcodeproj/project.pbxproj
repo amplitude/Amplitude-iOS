@@ -145,6 +145,9 @@
 		195E9A21269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
 		195E9A22269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
 		195E9A23269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
+		19FAD87E26D58E0600908C93 /* AMPStorageMigrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 19FAD87D26D58E0600908C93 /* AMPStorageMigrationTests.m */; };
+		19FAD87F26D58E0600908C93 /* AMPStorageMigrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 19FAD87D26D58E0600908C93 /* AMPStorageMigrationTests.m */; };
+		19FAD88026D58E0600908C93 /* AMPStorageMigrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 19FAD87D26D58E0600908C93 /* AMPStorageMigrationTests.m */; };
 		2FF530703C32718DA15D4013 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8C962279011799CE1B72F5 /* libPods-shared-Amplitude_macOSTests.a */; };
 		5864D44A49419C011B0B2E05 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */; };
 		60CA723497169C7F79BE0BF9 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA18D859F9EB6DDF9522DF6E /* libPods-shared-Amplitude_tvOSTests.a */; };
@@ -290,6 +293,7 @@
 		195E9A1A269E2147004903FD /* AMPStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPStorage.h; sourceTree = "<group>"; };
 		195E9A1B269E2147004903FD /* AMPStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPStorage.m; sourceTree = "<group>"; };
 		196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		19FAD87D26D58E0600908C93 /* AMPStorageMigrationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPStorageMigrationTests.m; sourceTree = "<group>"; };
 		1EA2FCA6A86070E086933860 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		1F8C962279011799CE1B72F5 /* libPods-shared-Amplitude_macOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_macOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		493212CA3C7E8FDA1FDC74E8 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -472,6 +476,7 @@
 				12C9731624108DFF00E9CDDB /* InvalidCertificationAuthority.der */,
 				12C9731F24108DFF00E9CDDB /* Info.plist */,
 				0814983C26AF6FD90056F65D /* AMPStorageTests.m */,
+				19FAD87D26D58E0600908C93 /* AMPStorageMigrationTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -722,8 +727,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 12C972DF24105C3600E9CDDB /* Build configuration list for PBXNativeTarget "Amplitude_iOSTests" */;
 			buildPhases = (
-				14669DEC4F22037CB30914C9 /* [CP] Check Pods Manifest.lock */,
 				12C972CF24105C3600E9CDDB /* Sources */,
+				14669DEC4F22037CB30914C9 /* [CP] Check Pods Manifest.lock */,
 				12C972D024105C3600E9CDDB /* Frameworks */,
 				12C972D124105C3600E9CDDB /* Resources */,
 			);
@@ -1011,6 +1016,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				12C973B6241244C600E9CDDB /* SetupTests.m in Sources */,
+				19FAD87F26D58E0600908C93 /* AMPStorageMigrationTests.m in Sources */,
 				12C973C3241244F000E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A7241244A600E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973B1241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
@@ -1063,6 +1069,7 @@
 				12C973C1241244EF00E9CDDB /* BaseTestCase.m in Sources */,
 				12C973BC241244E300E9CDDB /* SessionTests.m in Sources */,
 				12C973AC241244B700E9CDDB /* AmplitudeTests.m in Sources */,
+				19FAD87E26D58E0600908C93 /* AMPStorageMigrationTests.m in Sources */,
 				12C973BF241244EF00E9CDDB /* TrackingOptionsTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1095,6 +1102,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				12C973B7241244C700E9CDDB /* SetupTests.m in Sources */,
+				19FAD88026D58E0600908C93 /* AMPStorageMigrationTests.m in Sources */,
 				12C973C6241244F100E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A8241244A700E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973B3241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,

@@ -281,7 +281,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)migrateToFileStorage {
-    if ([AMPStorage hasFileStorage:self.instanceName] || [AMPDatabaseHelper hasDatabase:self.instanceName])
+    if ([AMPStorage hasFileStorage:self.instanceName] || ![AMPDatabaseHelper hasDatabase:self.instanceName])
         return;
 
     long eventCount = [self.dbHelper getEventCount];
