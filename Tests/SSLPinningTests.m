@@ -9,7 +9,6 @@
 #if AMPLITUDE_SSL_PINNING
 
 #import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"

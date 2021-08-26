@@ -7,7 +7,6 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
 
 #if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
