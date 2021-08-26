@@ -106,89 +106,99 @@
 }
 
 - (void)testSeparateInstancesLogEventsSeparate {
+    NSString *oldInstance = @"oldinstance";
+    NSString *oldAPIKey = @"1234567802";
+
     NSString *newInstance1 = @"newapp1";
     NSString *newApiKey1 = @"1234567890";
     
     NSString *newInstance2 = @"newapp2";
     NSString *newApiKey2 = @"0987654321";
     
-    [AMPStorage storeEvent:@"{\"event_type\":\"oldEvent\"}" instanceName:kAMPDefaultInstance];
-    [AMPStorage storeIdentify:@"{\"event_type\":\"$identify\"}" instanceName:kAMPDefaultInstance];
-    [AMPStorage storeIdentify:@"{\"event_type\":\"$identify\"}" instanceName:kAMPDefaultInstance];
+    [AMPStorage storeEvent:@"{\"event_type\":\"oldEvent\"}" instanceName:oldInstance];
+    [AMPStorage storeIdentify:@"{\"event_type\":\"$identify\"}" instanceName:oldInstance];
+    [AMPStorage storeIdentify:@"{\"event_type\":\"$identify\"}" instanceName:oldInstance];
     
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithLongLong:1000] forKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:kAMPDefaultInstance]];
-    [[Amplitude instance] setDeviceId:@"oldDeviceId"];
-    [[Amplitude instance] flushQueue];
-    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], @"oldDeviceId");
-    XCTAssertEqualObjects([[Amplitude instance] getDeviceId], @"oldDeviceId");
-    XCTAssertEqual([[Amplitude instance] getNextSequenceNumber], 1001);
+
+    Amplitude *ampOldInstance = [Amplitude instanceWithName:oldInstance];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithLongLong:1000] forKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:oldInstance]];
+    
+    [ampOldInstance initializeApiKey:oldAPIKey];
+    [ampOldInstance flushQueue];
+    [ampOldInstance setDeviceId:@"oldDeviceId"];
+    [ampOldInstance flushQueue];
+    NSString *deviceKeyForOldInstance = [Amplitude getDataStorageKey:@"device_id" instanceName:oldInstance];
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:deviceKeyForOldInstance], @"oldDeviceId");
+    XCTAssertEqualObjects([ampOldInstance getDeviceId], @"oldDeviceId");
+    XCTAssertEqual([ampOldInstance getNextSequenceNumber], 1001);
 
     XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:newInstance1]]);
     XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:newInstance2]]);
-    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:kAMPDefaultInstance]], [NSNumber numberWithLongLong:1001]);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:oldInstance]], [NSNumber numberWithLongLong:1001]);
     XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:newInstance1]]);
     XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:newInstance2]]);
 
     // init first new app and verify separate database
-    [[Amplitude instanceWithName:newInstance1] initializeApiKey:newApiKey1];
-    [[Amplitude instanceWithName:newInstance1] flushQueue];
-    XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], @"oldDeviceId");
+    Amplitude *ampNewInstance1 = [Amplitude instanceWithName:newInstance1];
+    [ampNewInstance1 initializeApiKey:newApiKey1];
+    [ampNewInstance1 flushQueue];
+    XCTAssertNotEqualObjects([ampNewInstance1 getDeviceId], @"oldDeviceId");
     NSString *deviceKeyForNewInstance1 = [Amplitude getDataStorageKey:@"device_id" instanceName:newInstance1];
-    XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance1] getDeviceId], [[NSUserDefaults standardUserDefaults] objectForKey:deviceKeyForNewInstance1]);
-    XCTAssertEqual([[Amplitude instanceWithName:newInstance1] getNextSequenceNumber], 1);
-    XCTAssertEqual([[self.amplitude getAllEventsWithInstanceName:newInstance1] count], 0);
-    XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance1] count], 0);
+    XCTAssertEqualObjects([ampNewInstance1 getDeviceId], [[NSUserDefaults standardUserDefaults] objectForKey:deviceKeyForNewInstance1]);
+    XCTAssertEqual([ampNewInstance1 getNextSequenceNumber], 1);
+    XCTAssertEqual([[ampNewInstance1 getAllEventsWithInstanceName:newInstance1] count], 0);
+    XCTAssertEqual([[ampNewInstance1 getAllIdentifyWithInstanceName:newInstance1] count], 0);
 
     // init second new app and verify separate database
-    [[Amplitude instanceWithName:newInstance2] initializeApiKey:newApiKey2];
-    [[Amplitude instanceWithName:newInstance2] flushQueue];
-    XCTAssertNotEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], @"oldDeviceId");
+    Amplitude *ampNewInstance2 = [Amplitude instanceWithName:newInstance2];
+    [ampNewInstance2 initializeApiKey:newApiKey2];
+    [ampNewInstance2 flushQueue];
+    XCTAssertNotEqualObjects([ampNewInstance2 getDeviceId], @"oldDeviceId");
     NSString *deviceKeyForNewInstance2 = [Amplitude getDataStorageKey:@"device_id" instanceName:newInstance2];
-    XCTAssertEqualObjects([[Amplitude instanceWithName:newInstance2] getDeviceId], [[NSUserDefaults standardUserDefaults] objectForKey:deviceKeyForNewInstance2]);
-    XCTAssertEqual([[Amplitude instanceWithName:newInstance2] getNextSequenceNumber], 1);
-    XCTAssertEqual([[self.amplitude getAllEventsWithInstanceName:newInstance2] count], 0);
-    XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance2] count], 0);
+    XCTAssertEqualObjects([ampNewInstance2 getDeviceId], [[NSUserDefaults standardUserDefaults] objectForKey:deviceKeyForNewInstance2]);
+    XCTAssertEqual([ampNewInstance2 getNextSequenceNumber], 1);
+    XCTAssertEqual([[ampNewInstance2 getAllEventsWithInstanceName:newInstance2] count], 0);
+    XCTAssertEqual([[ampNewInstance2 getAllIdentifyWithInstanceName:newInstance2] count], 0);
 
     // verify old database still intact
-    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], @"oldDeviceId");
-    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:kAMPDefaultInstance]], [NSNumber numberWithLongLong:1001]);
-    XCTAssertEqual([[self.amplitude getAllEvents] count], 1);
-    XCTAssertEqual([[self.amplitude getAllIdentify] count], 2);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:oldInstance]], @"oldDeviceId");
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:oldInstance]], [NSNumber numberWithLongLong:1001]);
+    XCTAssertEqual([[ampOldInstance getAllEventsWithInstanceName:oldInstance] count], 1);
+    XCTAssertEqual([[ampOldInstance getAllIdentifyWithInstanceName:oldInstance] count], 2);
 
     // verify both apps can modify database independently and not affect old database
-    [[Amplitude instanceWithName:newInstance1] setDeviceId:@"fakeDeviceId"];
-    [[Amplitude instanceWithName:newInstance1] flushQueue];
+    [ampNewInstance1 setDeviceId:@"fakeDeviceId"];
+    [ampNewInstance1 flushQueue];
     XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:newInstance1]], @"fakeDeviceId");
     XCTAssertNotEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:newInstance2]], @"fakeDeviceId");
-    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], @"oldDeviceId");
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:oldInstance]], @"oldDeviceId");
     [AMPStorage storeIdentify:@"{\"event_type\":\"$identify\"}" instanceName:newInstance1];
-    XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance1] count], 1);
-    XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance2] count], 0);
-    XCTAssertEqual([[self.amplitude getAllIdentify] count], 2);
+    XCTAssertEqual([[ampNewInstance1 getAllIdentifyWithInstanceName:newInstance1] count], 1);
+    XCTAssertEqual([[ampNewInstance2 getAllIdentifyWithInstanceName:newInstance2] count], 0);
+    XCTAssertEqual([[ampOldInstance getAllIdentifyWithInstanceName:oldInstance] count], 2);
 
-    [[Amplitude instanceWithName:newInstance2] setDeviceId:@"brandNewDeviceId"];
-    [[Amplitude instanceWithName:newInstance2] flushQueue];
+    [ampNewInstance2 setDeviceId:@"brandNewDeviceId"];
+    [ampNewInstance2 flushQueue];
     XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:newInstance1]], @"fakeDeviceId");
     XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:newInstance2]], @"brandNewDeviceId");
-    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], @"oldDeviceId");
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:oldInstance]], @"oldDeviceId");
     
     [AMPStorage storeEvent:@"{\"event_type\":\"testEvent2\"}" instanceName:newInstance2];
     [AMPStorage storeEvent:@"{\"event_type\":\"testEvent2\"}" instanceName:newInstance2];
-    XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance1] count], 1);
-    XCTAssertEqual([[self.amplitude getAllIdentifyWithInstanceName:newInstance2] count], 0);
-    XCTAssertEqual([[self.amplitude getAllEventsWithInstanceName:newInstance2] count], 2);
-    XCTAssertEqual([[self.amplitude getAllEventsWithInstanceName:kAMPDefaultInstance] count], 1);
+    XCTAssertEqual([[ampNewInstance1 getAllIdentifyWithInstanceName:newInstance1] count], 1);
+    XCTAssertEqual([[ampNewInstance2 getAllIdentifyWithInstanceName:newInstance2] count], 0);
+    XCTAssertEqual([[ampNewInstance2 getAllEventsWithInstanceName:newInstance2] count], 2);
+    XCTAssertEqual([[ampOldInstance getAllEventsWithInstanceName:oldInstance] count], 1);
 }
 
 - (void)testInitializeLoadUserIdFromEventData {
     NSString *instanceName = @"testinitialize";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
-    [client flushQueue];
+    [client flushQueueWithQueue:client.initializerQueue];
     XCTAssertEqual([client userId], nil);
 
     NSString *testUserId = @"testUserId";
-    NSString *ampNSObjectKey = [Amplitude getDataStorageKey:@"user_id" instanceName:instanceName];
-    [[NSUserDefaults standardUserDefaults] setObject:testUserId forKey:ampNSObjectKey];
+    [[NSUserDefaults standardUserDefaults] setObject:testUserId forKey:[Amplitude getDataStorageKey:@"user_id" instanceName:client.instanceName]];
 
     [client initializeApiKey:apiKey];
     [client flushQueue];
