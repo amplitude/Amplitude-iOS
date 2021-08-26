@@ -11,7 +11,7 @@
 #import "AMPDatabaseHelper.h"
 #import "AMPStorage.h"
 #import "Amplitude+Test.h"
-#import "AMPConstants.h"
+#import "AMPStorage.h"
 
 @interface Amplitude (Tests)
 
@@ -19,6 +19,7 @@
 @property (nonatomic, strong) NSMutableArray *identifyBuffer;
 @property (nonatomic, assign) long long previousSessionId;
 + (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
++ (BOOL)hasDatabase:(NSString *)instanceName;
 + (void)cleanUp;
 
 @end
@@ -27,7 +28,7 @@
 
 @end
 
-@implementation AMPStorageMigrationTests {}
+@implementation AMPStorageMigrationTests
 
 NSString *testEvent = @"{\n    \"api_properties\" :     {\n        \"ios_idfv\" : \"2D623DDA-4AC8-4A1E-BB4B-8264CB2AB31A\"\n    },\n    \"carrier\" : \"Unknown\",\n    \"country\" : \"United States\",\n    \"device_id\" : \"8C027883-5AA1-43F8-8FB8-7837EBE519C4\",\n    \"event_type\" : \"testEvent\",\n \"user_id\" : \"userId\",\n    \"user_properties\" :     {\n    },\n    \"uuid\" : \"41EEDEBB-3A7E-4EDF-BEFC-689D7912BCF3\"\n,    \"sequence_number\" : \"1\"}";
 NSString *testIdentify = @"{\"event_type\" : \"$identify\",    \"sequence_number\" : \"1\"}";
@@ -42,7 +43,7 @@ NSString *testIdentify = @"{\"event_type\" : \"$identify\",    \"sequence_number
 }
 
 - (void)testMigration {
-    AMPDatabaseHelper *databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
+    AMPDatabaseHelper *databaseHelper = [AMPDatabaseHelper getDatabaseHelper:@"migration_test"];
     [databaseHelper resetDB:NO];
     NSString *userId = @"test@gmail.com";
     NSString *deviceId = @"8C027883-5AA1-43F8-8FB8-7837EBE519C4";
@@ -62,10 +63,12 @@ NSString *testIdentify = @"{\"event_type\" : \"$identify\",    \"sequence_number
     XCTAssertEqual([databaseHelper getEventCount], 1);
     XCTAssertEqual([databaseHelper getIdentifyCount], 1);
     
-    Amplitude *amplitude = [Amplitude alloc];
-    [amplitude init];
+    Amplitude *amplitude = [Amplitude instanceWithName:@"migration_test"];
     [amplitude initializeApiKey:@"000000"];
     [amplitude flushQueueWithQueue:amplitude.initializerQueue];
+    
+    XCTAssertEqual([AMPStorage hasFileStorage:@"migration_test"], NO);
+    XCTAssertEqual([AMPDatabaseHelper hasDatabase:@"migration_test"], YES);
     
     XCTAssertEqual([amplitude.eventsBuffer count], 1);
     XCTAssertEqual([amplitude.identifyBuffer count], 1);
@@ -80,8 +83,8 @@ NSString *testIdentify = @"{\"event_type\" : \"$identify\",    \"sequence_number
     XCTAssertEqual([[[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"sequence_number" instanceName:amplitude.instanceName]] longLongValue], sequenceNumber);
     
     [amplitude flushQueue];
-    XCTAssertEqual([amplitude getEventCount], 1);
-    XCTAssertEqual([amplitude getIdentifyCount], 1);
+    XCTAssertEqual([[amplitude getAllEventsWithInstanceName:amplitude.instanceName] count], 1);
+    XCTAssertEqual([[amplitude getAllIdentifyWithInstanceName:amplitude.instanceName] count], 1);
     
     [databaseHelper deleteDB];
     databaseHelper = nil;

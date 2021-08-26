@@ -52,13 +52,9 @@
 
 - (void)testSessionAutoStartedBackground {
     // mock application state
-#if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateBackground);
-#endif
     // mock amplitude object and verify enterForeground not called
-    id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
+    Amplitude *amplitude = [Amplitude instanceWithName:@"testSessionAutoStartedBackground"];
+    id mockAmplitude = [OCMockObject partialMockForObject:amplitude];
     [[mockAmplitude reject] enterForeground];
     [mockAmplitude initializeApiKey:apiKey];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
@@ -68,7 +64,8 @@
 }
 
 - (void)testSessionAutoStartedInactive {
-    id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
+    Amplitude *amplitude = [Amplitude instanceWithName:@"testSessionAutoStartedInactive"];
+    id mockAmplitude = [OCMockObject partialMockForObject:amplitude];
     [mockAmplitude initializeApiKey:apiKey];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
@@ -77,6 +74,7 @@
 
 - (void)testSessionHandling {
     // start new session on initializeApiKey
+    //Amplitude *amplitude = [Amplitude instanceWithName:@"testSessionHandling"];
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
@@ -155,8 +153,9 @@
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
-    [self.amplitude initializeApiKey:apiKey userId:nil];
-    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
+    Amplitude *amplitude = [Amplitude instanceWithName:@"testEnterBackgroundDoesNotTrackEvent"];
+    [amplitude initializeApiKey:apiKey userId:nil];
+    [amplitude flushQueueWithQueue:amplitude.initializerQueue];
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 #if !TARGET_OS_OSX
@@ -165,12 +164,13 @@
     [center postNotificationName:NSApplicationDidResignActiveNotification object:nil userInfo:nil];
 #endif
 
-    [self.amplitude flushQueue];
-    XCTAssertEqual([[self.amplitude valueForKey:@"eventsBuffer"] count], 0);
+    [amplitude flushQueue];
+    XCTAssertEqual([[amplitude valueForKey:@"eventsBuffer"] count], 0);
 }
 
 - (void)testTrackSessionEvents {
-    id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
+    Amplitude *amplitude = [Amplitude instanceWithName:@"testTrackSessionEvents"];
+    id mockAmplitude = [OCMockObject partialMockForObject:amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude setTrackingSessionEvents:YES];
@@ -187,13 +187,13 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude enterBackground]; // simulate app entering background
 
-    NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:1000 + (self.amplitude.minTimeBetweenSessionsMillis / 1000)];
+    NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:1000 + (amplitude.minTimeBetweenSessionsMillis / 1000)];
     [((Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)]) currentTime];
     [mockAmplitude enterForeground]; // simulate app entering foreground
     [mockAmplitude flushQueue];
     XCTAssertEqual([[mockAmplitude valueForKey:@"eventsBuffer"] count], 3);
 
-    long long expectedSessionId = 1000000 + self.amplitude.minTimeBetweenSessionsMillis;
+    long long expectedSessionId = 1000000 + amplitude.minTimeBetweenSessionsMillis;
     XCTAssertEqual([mockAmplitude sessionId], expectedSessionId);
 
     XCTAssertEqual([[mockAmplitude valueForKey:@"eventsBuffer"][1][@"session_id"] longLongValue], 1000000);
@@ -207,7 +207,7 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)] currentTime];
     [mockAmplitude enterBackground]; // simulate app entering background
 
-    NSDate *date3 = [NSDate dateWithTimeIntervalSince1970:1000 + 2 * self.amplitude.minTimeBetweenSessionsMillis];
+    NSDate *date3 = [NSDate dateWithTimeIntervalSince1970:1000 + 2 * amplitude.minTimeBetweenSessionsMillis];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date3)] currentTime];
     AMPIdentify *identify = [[AMPIdentify identify] set:@"key" value:@"value"];
     [mockAmplitude identify:identify outOfSession:NO];
@@ -216,7 +216,7 @@
     XCTAssertEqual([[mockAmplitude valueForKey:@"identifyBuffer"] count], 1);
 
     // test out of session identify with app in background
-    NSDate *date4 = [NSDate dateWithTimeIntervalSince1970:1000 + 3 * self.amplitude.minTimeBetweenSessionsMillis];
+    NSDate *date4 = [NSDate dateWithTimeIntervalSince1970:1000 + 3 * amplitude.minTimeBetweenSessionsMillis];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date4)] currentTime];
     [mockAmplitude identify:identify outOfSession:YES];
     [mockAmplitude flushQueue];
@@ -225,7 +225,8 @@
  }
 
 - (void)testSessionEventsOn32BitDevices {
-    id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
+    Amplitude *amplitude = [Amplitude instanceWithName:@"testSessionEventsOn32BitDevices"];
+    id mockAmplitude = [OCMockObject partialMockForObject:amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:21474836470];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude setTrackingSessionEvents:YES];
@@ -246,7 +247,7 @@
     NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:214748364700];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)] currentTime];
     [mockAmplitude enterForeground]; // simulate app entering foreground
-    [self.amplitude flushQueue];
+    [amplitude flushQueue];
     XCTAssertEqual([[mockAmplitude valueForKey:@"eventsBuffer"] count], 3);
 
     XCTAssertEqual([mockAmplitude sessionId], 214748364700000);
@@ -260,9 +261,10 @@
 - (void)testSkipSessionCheckWhenLoggingSessionEvents {
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970] * 1000];
-    self.amplitude.sessionId = [timestamp longLongValue];
+    Amplitude *amplitude = [Amplitude instanceWithName:@"testSkipSessionCheckWhenLoggingSessionEvents"];
+    amplitude.sessionId = [timestamp longLongValue];
 
-    id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
+    id mockAmplitude = [OCMockObject partialMockForObject:amplitude];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
 
     [mockAmplitude setTrackingSessionEvents:YES];
