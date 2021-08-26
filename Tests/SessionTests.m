@@ -61,6 +61,7 @@
     [mockAmplitude flushQueue];
     [mockAmplitude verify];
     XCTAssertEqual([[mockAmplitude valueForKey:@"eventsBuffer"] count], 0);
+    [mockAmplitude stopMocking];
 }
 
 - (void)testSessionAutoStartedInactive {
@@ -70,6 +71,7 @@
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
     XCTAssertEqual([[mockAmplitude valueForKey:@"eventsBuffer"] count], 0);
+    [mockAmplitude stopMocking];
 }
 
 - (void)testSessionHandling {
@@ -150,6 +152,7 @@
     long testSessionId = 1337;
     [mockAmplitude setSessionId:testSessionId];
     XCTAssertEqual([mockAmplitude sessionId], testSessionId);
+    [mockAmplitude stopMocking];
 }
 
 - (void)testEnterBackgroundDoesNotTrackEvent {
@@ -222,6 +225,7 @@
     [mockAmplitude flushQueue];
     XCTAssertEqual([[mockAmplitude valueForKey:@"eventsBuffer"] count], 5);
     XCTAssertEqual([[mockAmplitude valueForKey:@"identifyBuffer"] count], 2);
+    [mockAmplitude stopMocking];
  }
 
 - (void)testSessionEventsOn32BitDevices {
@@ -256,6 +260,7 @@
 
     XCTAssertEqual([[[mockAmplitude valueForKey:@"eventsBuffer"] lastObject][@"session_id"] longLongValue], 214748364700000);
     XCTAssertEqualObjects([[mockAmplitude valueForKey:@"eventsBuffer"] lastObject][@"event_type"], kAMPSessionStartEvent);
+    [mockAmplitude stopMocking];
 }
 
 - (void)testSkipSessionCheckWhenLoggingSessionEvents {
@@ -276,6 +281,7 @@
     XCTAssertEqual([events count], 2);
     XCTAssertEqualObjects(events[0][@"event_type"], kAMPSessionEndEvent);
     XCTAssertEqualObjects(events[1][@"event_type"], kAMPSessionStartEvent);
+    [mockAmplitude stopMocking];
 }
 
 @end
