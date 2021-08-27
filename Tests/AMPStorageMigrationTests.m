@@ -70,7 +70,7 @@ NSString *testIdentify = @"{\"event_type\" : \"$identify\",    \"sequence_number
     XCTAssertEqual([AMPStorage hasFileStorage:@"migration_test"], NO);
     XCTAssertEqual([AMPDatabaseHelper hasDatabase:@"migration_test"], YES);
     
-    XCTAssertEqual([amplitude.eventsBuffer count], 1);
+    /*XCTAssertEqual([amplitude.eventsBuffer count], 1);
     XCTAssertEqual([amplitude.identifyBuffer count], 1);
     XCTAssertEqual([databaseHelper getEventCount], 0);
     XCTAssertEqual([databaseHelper getIdentifyCount], 0);
@@ -85,7 +85,7 @@ NSString *testIdentify = @"{\"event_type\" : \"$identify\",    \"sequence_number
     [amplitude flushQueue];
     XCTAssertEqual([[amplitude getAllEventsWithInstanceName:amplitude.instanceName] count], 1);
     XCTAssertEqual([[amplitude getAllIdentifyWithInstanceName:amplitude.instanceName] count], 1);
-    
+    */
     [databaseHelper deleteDB];
     databaseHelper = nil;
 }
