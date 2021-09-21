@@ -83,3 +83,8 @@ extern NSString *const AMP_TRACKING_OPTION_OS_VERSION;
 extern NSString *const AMP_TRACKING_OPTION_PLATFORM;
 extern NSString *const AMP_TRACKING_OPTION_REGION;
 extern NSString *const AMP_TRACKING_OPTION_VERSION_NAME;
+
+// Plan
+extern NSString *const AMP_PLAN_BRANCH;
+extern NSString *const AMP_PLAN_SOURCE;
+extern NSString *const AMP_PLAN_VERSION;

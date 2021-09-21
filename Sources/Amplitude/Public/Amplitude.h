@@ -25,6 +25,7 @@
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
+#import "AMPPlan.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -634,6 +635,8 @@ typedef void (^AMPInitCompletionBlock)(void);
 - (void)setContentTypeHeader:(NSString *)contentType;
 
 - (void)setBearerToken:(NSString *)token;
+
+- (void)setPlan:(AMPPlan *)plan;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods

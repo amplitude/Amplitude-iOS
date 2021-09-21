@@ -105,3 +105,7 @@ NSString *const AMP_TRACKING_OPTION_OS_VERSION = @"os_version";
 NSString *const AMP_TRACKING_OPTION_PLATFORM = @"platform";
 NSString *const AMP_TRACKING_OPTION_REGION = @"region";
 NSString *const AMP_TRACKING_OPTION_VERSION_NAME = @"version_name";
+
+NSString *const AMP_PLAN_BRANCH = @"branch";
+NSString *const AMP_PLAN_SOURCE = @"source";
+NSString *const AMP_PLAN_VERSION = @"version";
