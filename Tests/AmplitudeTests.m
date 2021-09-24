@@ -1072,7 +1072,7 @@
     [client setPlan:plan];
     [client logEvent:@"test"];
     [client flushQueue];
-    NSDictionary *event = [client getLastEventFromInstanceName:@"observe_plan"];
+    NSDictionary *event = [client getLastEventWithInstanceName:@"observe_plan"];
     
     NSDictionary *planValue = event[@"plan"];
     XCTAssertEqualObjects(branch, planValue[@"branch"]);
