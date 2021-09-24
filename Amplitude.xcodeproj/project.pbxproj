@@ -158,6 +158,9 @@
 		195E9A21269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
 		195E9A22269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
 		195E9A23269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
+		2FF530703C32718DA15D4013 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8C962279011799CE1B72F5 /* libPods-shared-Amplitude_macOSTests.a */; };
+		5864D44A49419C011B0B2E05 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 196EC1D108A62A030F1B58B1 /* libPods-shared-Amplitude_iOSTests.a */; };
+		60CA723497169C7F79BE0BF9 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA18D859F9EB6DDF9522DF6E /* libPods-shared-Amplitude_tvOSTests.a */; };
 		759E939025FBF3DC00BF7C3D /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
 		759E939125FBF3DC00BF7C3D /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
 		759E939225FBF3DC00BF7C3D /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */; };

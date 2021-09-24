@@ -1064,6 +1064,7 @@
 - (void)testSetPlan {
     Amplitude *client = [Amplitude instanceWithName:@"observe_plan"];
     [client initializeApiKey:@"tracking_plan"];
+    [client setEventUploadThreshold:1];
     NSString *branch = @"main";
     NSString *source = @"mobile";
     NSString *version = @"1.0.0";
