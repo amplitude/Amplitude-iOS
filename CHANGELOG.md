@@ -1,3 +1,10 @@
+# [8.4.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.1...v8.4.0) (2021-09-24)
+
+
+### Features
+
+* add observe plan information support ([62e8bab](https://github.com/amplitude/Amplitude-iOS/commit/62e8bab0a2d53cabda9f251454d465d350271a56))
+
 ## [8.3.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.0...v8.3.1) (2021-08-21)
 
 
