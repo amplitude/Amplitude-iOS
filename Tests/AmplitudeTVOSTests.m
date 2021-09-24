@@ -21,6 +21,7 @@
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id) truncate:(id) obj;
 - (long long)getNextSequenceNumber;
++ (void)cleanUp;
 @end
 
 @interface AmplitudeTVOSTests : BaseTestCase
@@ -40,6 +41,7 @@
 }
 
 - (void)tearDown {
+    [Amplitude cleanUp];
     [_sharedSessionMock stopMocking];
 }
 
@@ -66,7 +68,7 @@
     [self.amplitude flushQueue];
 
     XCTAssertEqual(_connectionCallCount, 1);
-    XCTAssertEqual([self.databaseHelper getEventCount], 1);  // upload failed due to bad checksum
+    XCTAssertEqual([self.amplitude getEventCount], 1);  // upload failed due to bad checksum
 }
 
 - (void)testLogEventPlatformAndOSName {

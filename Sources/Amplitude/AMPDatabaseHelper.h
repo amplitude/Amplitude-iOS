@@ -27,6 +27,7 @@
 
 @property (nonatomic, strong, readonly) NSString *databasePath;
 
++ (BOOL)hasDatabase:(NSString *)instanceName;
 + (AMPDatabaseHelper *)getDatabaseHelper;
 + (AMPDatabaseHelper *)getDatabaseHelper:(NSString *)instanceName;
 - (BOOL)createTables;

@@ -17,9 +17,14 @@
 
 // expose private methods for unit testing
 @interface Amplitude (Tests)
+
+@property (nonatomic, strong) NSMutableArray *eventsBuffer;
++ (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id) truncate:(id) obj;
 - (long long)getNextSequenceNumber;
++ (void) cleanUp;
+
 @end
 
 @interface AmplitudeiOSTests : BaseTestCase
@@ -40,6 +45,7 @@
 
 - (void)tearDown {
     [_sharedSessionMock stopMocking];
+    [Amplitude cleanUp];
 }
 
 - (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
@@ -65,21 +71,25 @@
     [self.amplitude flushQueue];
 
     // no sent events, event count will be threshold + 1
-    XCTAssertEqual([self.amplitude queuedEventCount], kAMPEventUploadThreshold + 1);
+    XCTAssertEqual([self.amplitude.eventsBuffer count], kAMPEventUploadThreshold + 1);
 
     [serverResponse setValue:[@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding] forKey:@"data"];
     [self setupAsyncResponse:serverResponse];
+    
     for (int i = 0; i < kAMPEventUploadThreshold; i++) {
         [self.amplitude logEvent:@"test"];
     }
     [self.amplitude flushQueue];
-    XCTAssertEqual([self.amplitude queuedEventCount], 2 * kAMPEventUploadThreshold + 1);
-
+    XCTAssertEqual([self.amplitude queuedEventCount], 2 * kAMPEventUploadThreshold);
+    XCTAssertEqual([self.amplitude.eventsBuffer count], 2 * kAMPEventUploadThreshold + 1);
+    
     // make post request should only be called 3 times
     XCTAssertEqual(_connectionCallCount, 2);
 }
 
 - (void)testLogEventPlatformAndOSName {
+    [self.amplitude setEventUploadThreshold:1];
+    
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     NSDictionary *event = [self.amplitude getLastEvent];

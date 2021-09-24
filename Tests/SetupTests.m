@@ -21,6 +21,14 @@
 #import "AMPConstants.h"
 #import "AMPUtils.h"
 
+// expose private methods for unit testing
+@interface Amplitude (Tests)
+
+@property (nonatomic, strong) NSMutableArray *identifyBuffer;
++ (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
+
+@end
+
 @interface SetupTests : BaseTestCase
 
 @end
@@ -33,6 +41,7 @@
 
 - (void)tearDown {
     [super tearDown];
+    [Amplitude cleanUp];
 }
 
 - (void)testApiKeySet {
@@ -70,6 +79,7 @@
 }
 
 - (void)testOptOut {
+    [self.amplitude setEventUploadThreshold:1];
     [self.amplitude initializeApiKey:apiKey];
 
     [self.amplitude setOptOut:YES];
@@ -89,8 +99,6 @@
 
 - (void)testUserPropertiesSet {
     [self.amplitude initializeApiKey:apiKey];
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
-    XCTAssertEqual([dbHelper getEventCount], 0);
 
     NSDictionary *properties = @{
          @"shoeSize": @10,
@@ -100,13 +108,13 @@
 
     [self.amplitude setUserProperties:properties];
     [self.amplitude flushQueue];
-    XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+    XCTAssertEqual([self.amplitude getEventCount], 0);
+    XCTAssertEqual([self.amplitude getIdentifyCount], 0);
+    XCTAssertEqual([self.amplitude.identifyBuffer count], 1);
 
     NSDictionary *expected = [NSDictionary dictionaryWithObject:properties forKey:AMP_OP_SET];
 
-    NSDictionary *event = [self.amplitude getLastIdentify];
+    NSDictionary *event = self.amplitude.identifyBuffer[0];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
     XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
     XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty
@@ -114,7 +122,6 @@
 }
 
 - (void)testSetDeviceId {
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     NSString *initialDeviceId = [self.amplitude getDeviceId];
     XCTAssertNil(initialDeviceId);  // device id not initialized yet
 
@@ -129,35 +136,34 @@
 #else
     XCTAssertEqual(generatedDeviceId.length, 12);
 #endif
-    XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], generatedDeviceId);
 
     // test setting invalid device ids
     [self.amplitude setDeviceId:nil];
     [self.amplitude flushQueue];
-    XCTAssertEqualObjects([self.amplitude getDeviceId], generatedDeviceId);
-    XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], generatedDeviceId);
 
     id dict = [NSDictionary dictionary];
     [self.amplitude setDeviceId:dict];
     [self.amplitude flushQueue];
     XCTAssertEqualObjects([self.amplitude getDeviceId], generatedDeviceId);
-    XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], generatedDeviceId);
 
     [self.amplitude setDeviceId:@"e3f5536a141811db40efd6400f1d0a4e"];
     [self.amplitude flushQueue];
     XCTAssertEqualObjects([self.amplitude getDeviceId], generatedDeviceId);
-    XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], generatedDeviceId);
 
     [self.amplitude setDeviceId:@"04bab7ee75b9a58d39b8dc54e8851084"];
     [self.amplitude flushQueue];
     XCTAssertEqualObjects([self.amplitude getDeviceId], generatedDeviceId);
-    XCTAssertEqualObjects([dbHelper getValue:@"device_id"], generatedDeviceId);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], generatedDeviceId);
 
     NSString *validDeviceId = [AMPUtils generateUUID];
     [self.amplitude setDeviceId:validDeviceId];
     [self.amplitude flushQueue];
     XCTAssertEqualObjects([self.amplitude getDeviceId], validDeviceId);
-    XCTAssertEqualObjects([dbHelper getValue:@"device_id"], validDeviceId);
+    XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] objectForKey:[Amplitude getDataStorageKey:@"device_id" instanceName:kAMPDefaultInstance]], validDeviceId);
 }
 
 @end

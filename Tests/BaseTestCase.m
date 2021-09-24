@@ -23,8 +23,6 @@ NSString *const userId = @"userId";
 - (void)setUp {
     [super setUp];
     self.amplitude = [Amplitude alloc];
-    self.databaseHelper = [AMPDatabaseHelper getDatabaseHelper];
-    XCTAssertTrue([self.databaseHelper resetDB:NO]);
 
     [self.amplitude init];
     AMPTrackingOptions *opts = [AMPTrackingOptions options];

@@ -46,6 +46,7 @@
 
 static NSString *const QUEUE_NAME = @"com.amplitude.db.queue";
 static const void * const kDispatchQueueKey = &kDispatchQueueKey; // some unique key for dispatch queue
+static NSString *const BASE_DATABASE_NAME = @"com.amplitude.database";
 
 static NSString *const EVENT_TABLE_NAME = @"events";
 static NSString *const IDENTIFY_TABLE_NAME = @"identifys";
@@ -77,6 +78,15 @@ static NSString *const INSERT_OR_REPLACE_KEY_VALUE = @"INSERT OR REPLACE INTO %@
 static NSString *const DELETE_KEY = @"DELETE FROM %@ WHERE %@ = ?;";
 static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
++ (BOOL)hasDatabase:(NSString *)instanceName {
+    NSString *databaseDirectory = [AMPUtils platformDataDirectory];
+    NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:BASE_DATABASE_NAME];
+    if (![instanceName isEqualToString:kAMPDefaultInstance]) {
+        databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];
+    }
+    BOOL hasDatabase =  [[NSFileManager defaultManager] fileExistsAtPath:databasePath];
+    return hasDatabase;
+}
 
 + (AMPDatabaseHelper *)getDatabaseHelper {
     return [AMPDatabaseHelper getDatabaseHelper:nil];
@@ -117,7 +127,7 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
     if ((self = [super init])) {
         NSString *databaseDirectory = [AMPUtils platformDataDirectory];
-        NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:@"com.amplitude.database"];
+        NSString *databasePath = [databaseDirectory stringByAppendingPathComponent:BASE_DATABASE_NAME];
         if (![instanceName isEqualToString:kAMPDefaultInstance]) {
             databasePath = [NSString stringWithFormat:@"%@_%@", databasePath, instanceName];
         }

@@ -26,10 +26,10 @@ jobs:
           summary: |
             [SDK - iOS] ${{ github.event.issue.title }}
           description: |
-            ${{ github.event.issue.url}}
+            ${{ github.event.issue.html_url }}
           fields: '{
-            "customfield_10006": 1039,
-            "customfield_11481": {"value": "Data Management"},
+            "customfield_10006": 1127,
+            "customfield_11481": {"value": "Data Connections 🚇"},
             "customfield_11200": {"value": "SDK"},
             "labels": ["ios"]
           }' # sprint, pillar, pod, labels

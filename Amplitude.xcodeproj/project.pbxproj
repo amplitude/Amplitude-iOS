@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0814983D26AF6FD90056F65D /* AMPStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0814983C26AF6FD90056F65D /* AMPStorageTests.m */; };
 		1213D89B24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89C24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1213D89D24176E4700300E98 /* AmplitudeFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 1213D89824176E4700300E98 /* AmplitudeFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -149,6 +150,14 @@
 		3E2411F626F9A4E200793829 /* PlanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2411F026F9A4C600793829 /* PlanTests.m */; };
 		3E2411F726F9A4E400793829 /* PlanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2411F026F9A4C600793829 /* PlanTests.m */; };
 		4A9960EED620179960CF4513 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38CA8513C0B7F3E7F086F5EB /* libPods-shared-Amplitude_macOSTests.a */; };
+		195E9A1C269E2147004903FD /* AMPStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 195E9A1A269E2147004903FD /* AMPStorage.h */; };
+		195E9A1D269E2147004903FD /* AMPStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 195E9A1A269E2147004903FD /* AMPStorage.h */; };
+		195E9A1E269E2147004903FD /* AMPStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 195E9A1A269E2147004903FD /* AMPStorage.h */; };
+		195E9A1F269E2147004903FD /* AMPStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 195E9A1A269E2147004903FD /* AMPStorage.h */; };
+		195E9A20269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
+		195E9A21269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
+		195E9A22269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
+		195E9A23269E2147004903FD /* AMPStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 195E9A1B269E2147004903FD /* AMPStorage.m */; };
 		759E939025FBF3DC00BF7C3D /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
 		759E939125FBF3DC00BF7C3D /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
 		759E939225FBF3DC00BF7C3D /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */; };
@@ -222,6 +231,8 @@
 /* Begin PBXFileReference section */
 		093516581A2D48836C06D469 /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		0FB49B9295B68BFF99E1819D /* Pods-shared-Amplitude_macOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		0814983C26AF6FD90056F65D /* AMPStorageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPStorageTests.m; sourceTree = "<group>"; };
+		0B6192D1C908F4E6D376162D /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1213D80B2416F3EA00300E98 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		1213D89824176E4700300E98 /* AmplitudeFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		1213D89924176E4700300E98 /* Amplitude.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = Amplitude.modulemap; sourceTree = "<group>"; };
@@ -293,6 +304,9 @@
 		4B8740756F56A696F6D77342 /* Pods-shared-Amplitude_iOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4FD7B47E70B1D44AE90B896D /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		69C2CB9AE6CCFC3C4C3D7E7E /* Pods-shared-Amplitude_macOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		195E9A18269E1F6E004903FD /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/iOSSupport/System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		195E9A1A269E2147004903FD /* AMPStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPStorage.h; sourceTree = "<group>"; };
+		195E9A1B269E2147004903FD /* AMPStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPStorage.m; sourceTree = "<group>"; };
 		759E937A25FBF2BB00BF7C3D /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPBackgroundNotifier.h; sourceTree = "<group>"; };
 		759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPBackgroundNotifier.m; sourceTree = "<group>"; };
@@ -411,6 +425,8 @@
 				1279F8D625244D78003DCE07 /* AMPIdentify.m */,
 				1279F8EA25244D78003DCE07 /* Amplitude.m */,
 				1279F8D925244D78003DCE07 /* Amplitude+SSLPinning.h */,
+				195E9A1A269E2147004903FD /* AMPStorage.h */,
+				195E9A1B269E2147004903FD /* AMPStorage.m */,
 				1279F8D825244D78003DCE07 /* AmplitudePrivate.h */,
 				1279F8C725244D78003DCE07 /* AMPRevenue.m */,
 				1279F8D025244D78003DCE07 /* AMPTrackingOptions.m */,
@@ -463,6 +479,7 @@
 				12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */,
 				12C9731624108DFF00E9CDDB /* InvalidCertificationAuthority.der */,
 				12C9731F24108DFF00E9CDDB /* Info.plist */,
+				0814983C26AF6FD90056F65D /* AMPStorageTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -555,6 +572,7 @@
 				1279F91225244E8E003DCE07 /* Amplitude+SSLPinning.h in Headers */,
 				1279FA7B2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				1279F91825244E8E003DCE07 /* Amplitude.h in Headers */,
+				195E9A1D269E2147004903FD /* AMPStorage.h in Headers */,
 				1279F91525244E8E003DCE07 /* AMPConstants.h in Headers */,
 				1279F91925244E8E003DCE07 /* AMPTrackingOptions.h in Headers */,
 				1279FA752525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
@@ -581,6 +599,7 @@
 				1279F8F425244E8D003DCE07 /* Amplitude+SSLPinning.h in Headers */,
 				1279FA7A2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				1279F8FA25244E8D003DCE07 /* Amplitude.h in Headers */,
+				195E9A1C269E2147004903FD /* AMPStorage.h in Headers */,
 				1279F8F725244E8D003DCE07 /* AMPConstants.h in Headers */,
 				1279F8FB25244E8D003DCE07 /* AMPTrackingOptions.h in Headers */,
 				1279FA742525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
@@ -607,6 +626,7 @@
 				1279FA7C2525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				1279F93625244E8F003DCE07 /* Amplitude.h in Headers */,
 				1279F93325244E8F003DCE07 /* AMPConstants.h in Headers */,
+				195E9A1E269E2147004903FD /* AMPStorage.h in Headers */,
 				1279F93725244E8F003DCE07 /* AMPTrackingOptions.h in Headers */,
 				1279FA762525949D003DCE07 /* ISPPinnedNSURLConnectionDelegate.h in Headers */,
 				1279F93225244E8F003DCE07 /* AmplitudePrivate.h in Headers */,
@@ -633,6 +653,7 @@
 				759E93AE25FBF44500BF7C3D /* AMPTrackingOptions.h in Headers */,
 				759E93AD25FBF44500BF7C3D /* AMPRevenue.h in Headers */,
 				759E93A925FBF44500BF7C3D /* AMPIdentify.h in Headers */,
+				195E9A1F269E2147004903FD /* AMPStorage.h in Headers */,
 				759E93B225FBF44500BF7C3D /* ISPCertificatePinning.h in Headers */,
 				759E93B425FBF44500BF7C3D /* ISPPinnedNSURLSessionDelegate.h in Headers */,
 				759E93A625FBF44500BF7C3D /* AMPConstants.h in Headers */,
@@ -985,6 +1006,7 @@
 				1279F90F25244E8E003DCE07 /* AMPConfigManager.m in Sources */,
 				1279F92225244E8E003DCE07 /* Amplitude.m in Sources */,
 				1279F91B25244E8E003DCE07 /* AMPIdentify.m in Sources */,
+				195E9A21269E2147004903FD /* AMPStorage.m in Sources */,
 				1279F92525244E8E003DCE07 /* AMPDeviceInfo.m in Sources */,
 				1279F91D25244E8E003DCE07 /* AMPTrackingOptions.m in Sources */,
 				1279FA782525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
@@ -1018,6 +1040,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				759E941925FBFE7900BF7C3D /* AMPBackgroundNotifier.m in Sources */,
+				195E9A20269E2147004903FD /* AMPStorage.m in Sources */,
 				1279F8FE25244E8D003DCE07 /* AMPRevenue.m in Sources */,
 				1279F90825244E8D003DCE07 /* AMPDatabaseHelper.m in Sources */,
 				3E2411EC26F9A46500793829 /* AMPPlan.m in Sources */,
@@ -1047,6 +1070,7 @@
 				12C973A6241244A400E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973AF241244BE00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
 				12C973A9241244AE00E9CDDB /* Amplitude+Test.m in Sources */,
+				0814983D26AF6FD90056F65D /* AMPStorageTests.m in Sources */,
 				12C973B0241244BE00E9CDDB /* RevenueTests.m in Sources */,
 				12C973C1241244EF00E9CDDB /* BaseTestCase.m in Sources */,
 				3E2411F526F9A4E100793829 /* PlanTests.m in Sources */,
@@ -1070,6 +1094,7 @@
 				1279F92D25244E8F003DCE07 /* AMPConfigManager.m in Sources */,
 				1279F94025244E8F003DCE07 /* Amplitude.m in Sources */,
 				1279F93925244E8F003DCE07 /* AMPIdentify.m in Sources */,
+				195E9A22269E2147004903FD /* AMPStorage.m in Sources */,
 				1279F94325244E8F003DCE07 /* AMPDeviceInfo.m in Sources */,
 				1279F93B25244E8F003DCE07 /* AMPTrackingOptions.m in Sources */,
 				1279FA792525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
@@ -1111,6 +1136,7 @@
 				759E939625FBF3DC00BF7C3D /* AMPRevenue.m in Sources */,
 				759E939725FBF3DC00BF7C3D /* AMPTrackingOptions.m in Sources */,
 				759E939825FBF3DC00BF7C3D /* AMPURLConnection.m in Sources */,
+				195E9A23269E2147004903FD /* AMPStorage.m in Sources */,
 				759E939925FBF3DC00BF7C3D /* AMPURLSession.m in Sources */,
 				759E939A25FBF3DC00BF7C3D /* AMPUtils.m in Sources */,
 				759E939B25FBF3DC00BF7C3D /* ISPCertificatePinning.m in Sources */,
@@ -1280,6 +1306,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1316,6 +1346,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

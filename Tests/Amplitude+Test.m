@@ -9,6 +9,16 @@
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "AMPDatabaseHelper.h"
+#import "AMPStorage.h"
+#import "AMPConstants.h"
+
+@interface Amplitude (Tests)
+
+@property (nonatomic, strong) NSMutableArray *eventsBuffer;
+@property (nonatomic, strong) NSMutableArray *identifyBuffer;
++ (NSString *)getDataStorageKey:(NSString *)key instanceName:(NSString *)instanceName;
+
+@end
 
 @implementation Amplitude (Test)
 
@@ -30,28 +40,62 @@
     [queue waitUntilAllOperationsAreFinished];
 }
 
-- (NSDictionary *)getEvent:(NSInteger) fromEnd {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
+- (NSMutableArray *)getAllEvents {
+    return [self getAllEventsWithInstanceName:kAMPDefaultInstance];
+}
+
+- (NSMutableArray *)getAllEventsWithInstanceName:(NSString *)instanceName {
+    NSString * path = [AMPStorage getDefaultEventsFile:instanceName];
+    NSMutableArray *events = [AMPStorage getEventsFromDisk:path];
+    return events;
+}
+
+- (NSUInteger)getEventCount{
+    return [self.getAllEvents count];
+}
+
+- (NSDictionary *)getEvent:(NSInteger)fromEnd {
+    NSString * path = [AMPStorage getDefaultEventsFile:kAMPDefaultInstance];
+    NSArray *events = [AMPStorage getEventsFromDisk:path];
     return [events objectAtIndex:[events count] - fromEnd - 1];
 }
 
-- (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper: instanceName] getEvents:-1 limit:-1];
+- (NSDictionary *)getLastEvent {
+    return [self getLastEventWithInstanceName:kAMPDefaultInstance];
+}
+
+- (NSDictionary *)getLastEventWithInstanceName:(NSString *)instanceName {
+    NSString *path = [AMPStorage getDefaultEventsFile:instanceName];
+    NSArray *events = [AMPStorage getEventsFromDisk:path];
     return [events lastObject];
 }
 
-- (NSDictionary *)getLastEvent {
-    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
-    return [events lastObject];
+- (NSMutableArray *)getAllIdentify {
+    return [self getAllIdentifyWithInstanceName:kAMPDefaultInstance];
+}
+
+- (NSMutableArray *)getAllIdentifyWithInstanceName:(NSString *)instanceName {
+    NSString *path = [AMPStorage getDefaultIdentifyFile:instanceName];
+    NSMutableArray *identify = [AMPStorage getEventsFromDisk:path];
+    return identify;
+}
+
+- (NSUInteger)getIdentifyCount{
+    return [self.getAllIdentify count];
 }
 
 - (NSDictionary *)getLastIdentify {
-    NSArray *identifys = [[AMPDatabaseHelper getDatabaseHelper] getIdentifys:-1 limit:-1];
+    return [self getLastIdentifyWithInstanceName:kAMPDefaultInstance];
+}
+
+- (NSDictionary *)getLastIdentifyWithInstanceName:(NSString *)instanceName {
+    NSString * path = [AMPStorage getDefaultIdentifyFile:kAMPDefaultInstance];
+    NSArray *identifys = [AMPStorage getEventsFromDisk:path];
     return [identifys lastObject];
 }
 
 - (NSUInteger)queuedEventCount {
-    return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
+    return [self.getAllEvents count];
 }
 
 - (void)flushUploads:(void (^)(void))handler {
@@ -64,6 +108,31 @@
         [self flushQueue];
         handler();
     });
+}
+
++ (void)cleanUpUserDefaults {
+    NSUserDefaults * userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary * dict = [userDefaults dictionaryRepresentation];
+    for (id key in dict) {
+        [userDefaults removeObjectForKey:key];
+    }
+}
+
++ (void)cleanUpFileStorage {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths firstObject];
+    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    NSString* dir = [NSString stringWithFormat:@"%@/%@", path, bundleIdentifier];;
+    NSFileManager *fileMgr = [NSFileManager defaultManager];
+    NSArray *fileArray = [fileMgr contentsOfDirectoryAtPath:dir error:nil];
+    for (NSString *filename in fileArray)  {
+        [fileMgr removeItemAtPath:[dir stringByAppendingPathComponent:filename] error:NULL];
+    }
+}
+
++ (void)cleanUp {
+    [self cleanUpFileStorage];
+    [self cleanUpUserDefaults];
 }
 
 @end
