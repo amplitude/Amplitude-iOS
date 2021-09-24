@@ -15,6 +15,7 @@
 #import "AMPDeviceInfo.h"
 #import "AMPUtils.h"
 #import "AMPTrackingOptions.h"
+#import "AMPPlan.h"
 #import "AMPStorage.h"
 
 @interface Amplitude (Tests)
@@ -1058,6 +1059,26 @@
 
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
+}
+
+- (void)testSetPlan {
+    Amplitude *client = [Amplitude instanceWithName:@"observe_plan"];
+    [client initializeApiKey:@"tracking_plan"];
+    [client setEventUploadThreshold:1];
+    NSString *branch = @"main";
+    NSString *source = @"mobile";
+    NSString *version = @"1.0.0";
+    
+    AMPPlan *plan = [[[[AMPPlan plan] setBranch:branch] setSource:source] setVersion:version];
+    [client setPlan:plan];
+    [client logEvent:@"test"];
+    [client flushQueue];
+    NSDictionary *event = [client getLastEventWithInstanceName:@"observe_plan"];
+    
+    NSDictionary *planValue = event[@"plan"];
+    XCTAssertEqualObjects(branch, planValue[@"branch"]);
+    XCTAssertEqualObjects(source, planValue[@"source"]);
+    XCTAssertEqualObjects(version, planValue[@"version"]);
 }
 
 @end

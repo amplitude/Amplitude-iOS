@@ -60,6 +60,7 @@
 #import "AMPRevenue.h"
 #import "AMPStorage.h"
 #import "AMPTrackingOptions.h"
+#import "AMPPlan.h"
 #import <math.h>
 #import <CommonCrypto/CommonDigest.h>
 
@@ -140,6 +141,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSString *_serverUrl;
     NSString *_token;
+    AMPPlan *_plan;
 }
 
 #pragma clang diagnostic push
@@ -420,6 +422,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (self.initCompletionBlock != nil) {
                 self.initCompletionBlock();
             }
+            if (self.initCompletionBlock != nil) {
+                self.initCompletionBlock();
+            }
         }];
 
         // Normally _inForeground is set by the enterForeground callback, but initializeWithApiKey will be called after the app's enterForeground
@@ -624,12 +629,18 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     };
     [event setValue:library forKey:@"library"];
     [event setValue:[AMPUtils generateUUID] forKey:@"uuid"];
+
     long long currentSequenceNumber = [self getNextSequenceNumber];
     [event setValue:[NSNumber numberWithLongLong:currentSequenceNumber] forKey:@"sequence_number"];
     // for events after using file storage and there is no event_id property for the event payload, use sequence_number value as event_id
     if ([event objectForKey:@"event_id"] == nil) {
         [event setValue:[NSNumber numberWithLongLong:currentSequenceNumber] forKey:@"event_id"];
     }
+    
+    if (_plan) {
+        [event setValue:[_plan toNSDictionary] forKey:@"plan"];
+    }
+
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
     if ([_appliedTrackingOptions shouldTrackIDFA]) {
@@ -1463,6 +1474,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)useAdvertisingIdForDeviceId {
     _useAdvertisingIdForDeviceId = YES;
+}
+
+- (void)setPlan:(AMPPlan *)plan {
+    _plan = plan;
 }
 
 #pragma mark - Getters for device data
