@@ -1,6 +1,6 @@
 //
-//  AMPConfigManager.h
-//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
+//  AMPServerZone.h
+//  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +20,20 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //
-
 #import <Foundation/Foundation.h>
-#import "AMPServerZone.h"
+/**
+ * AMPServerZone is for Data Residency and handling server zone related properties.
+ * The server zones now are US and EU.
+ *
+ * For usage like sending data to Amplitude's EU servers, you need to configure the serverZone
+ * property after initializing the client with setServerZone method.
+ */
+typedef NS_ENUM(NSInteger, AMPServerZone);
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface AMPConfigManager : NSObject
-
-@property (nonatomic, strong, readonly) NSString *ingestionEndpoint;
-
-+ (instancetype)sharedInstance;
-- (void)refresh:(void(^)(void))completionHandler serverZone:(AMPServerZone)serverZone;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#ifndef AMPServerZone_h
+#define AMPServerZone_h
+typedef NS_ENUM(NSInteger, AMPServerZone) {
+    US,
+    EU
+};
+#endif

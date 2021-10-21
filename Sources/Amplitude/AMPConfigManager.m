@@ -23,6 +23,8 @@
 
 #import "AMPConfigManager.h"
 #import "AMPConstants.h"
+#import "AMPServerZone.h"
+#import "AMPServerZoneUtil.h"
 
 @interface AMPConfigManager ()
 
@@ -48,8 +50,8 @@
     return self;
 }
 
-- (void)refresh:(void(^)(void))completionHandler {
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:kAMPDyanmicConfigUrl]];
+- (void)refresh:(void(^)(void))completionHandler serverZone:(AMPServerZone)serverZone {
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[AMPServerZoneUtil getDynamicConfigApi:serverZone]]];
 
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request

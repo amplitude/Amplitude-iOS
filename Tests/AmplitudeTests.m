@@ -16,6 +16,7 @@
 #import "AMPUtils.h"
 #import "AMPTrackingOptions.h"
 #import "AMPPlan.h"
+#import "AMPServerZone.h"
 
 @interface Amplitude (Tests)
 
@@ -1104,6 +1105,22 @@
     XCTAssertEqualObjects(branch, planValue[@"branch"]);
     XCTAssertEqualObjects(source, planValue[@"source"]);
     XCTAssertEqualObjects(version, planValue[@"version"]);
+}
+
+- (void)testSetServerZone {
+    Amplitude *client = [Amplitude instanceWithName:@"eu_zone"];
+    XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
+    [client initializeApiKey:@"eu_api_ket"];
+    [client setServerZone:EU];
+    XCTAssertEqualObjects(kAMPEventLogEuUrl, [client valueForKey:@"serverUrl"]);
+}
+
+- (void)testSetServerZoneWithoutUpdateServerUrl {
+    Amplitude *client = [Amplitude instanceWithName:@"eu_zone"];
+    XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
+    [client initializeApiKey:@"eu_api_ket"];
+    [client setServerZone:EU updateServerUrl:NO];
+    XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
 }
 
 @end
