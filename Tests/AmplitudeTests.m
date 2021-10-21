@@ -1116,7 +1116,7 @@
 }
 
 - (void)testSetServerZoneWithoutUpdateServerUrl {
-    Amplitude *client = [Amplitude instanceWithName:@"eu_zone"];
+    Amplitude *client = [Amplitude instanceWithName:@"eu_zone_2"];
     XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
     [client initializeApiKey:@"eu_api_ket"];
     [client setServerZone:EU updateServerUrl:NO];
