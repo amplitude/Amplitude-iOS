@@ -1,5 +1,5 @@
 module.exports = {
-  "branches": ["main", "add-observe-support"],
+  "branches": ["main", "main-lts"],
   "plugins": [
     ["@semantic-release/commit-analyzer", {
       "preset": "angular",

@@ -1,6 +1,6 @@
 //
-//  AMPConfigManager.h
-//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
+//  AMPServerZoneUtil.h
+//  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,10 @@
 #import <Foundation/Foundation.h>
 #import "AMPServerZone.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@interface AMPServerZoneUtil : NSObject
 
-@interface AMPConfigManager : NSObject
++ (NSString *)getEventLogApi:(AMPServerZone)serverZone;
 
-@property (nonatomic, strong, readonly) NSString *ingestionEndpoint;
-
-+ (instancetype)sharedInstance;
-- (void)refresh:(void(^)(void))completionHandler serverZone:(AMPServerZone)serverZone;
++ (NSString *)getDynamicConfigApi:(AMPServerZone)serverZone;
 
 @end
-
-NS_ASSUME_NONNULL_END
