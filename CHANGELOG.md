@@ -1,3 +1,10 @@
+# [8.5.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.4.0...v8.5.0) (2021-10-22)
+
+
+### Features
+
+* add server zone for eu dynamic configuration support ([#369](https://github.com/amplitude/Amplitude-iOS/issues/369)) ([3c9a590](https://github.com/amplitude/Amplitude-iOS/commit/3c9a590a7fd4fa60445ba8d65915a41737877b94))
+
 # [8.4.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.1...v8.4.0) (2021-09-24)
 
 
