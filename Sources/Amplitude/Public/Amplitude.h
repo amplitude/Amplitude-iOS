@@ -27,6 +27,7 @@
 #import "AMPTrackingOptions.h"
 #import "AMPPlan.h"
 #import "AMPServerZone.h"
+#import "AMPMiddleware.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -277,6 +278,9 @@ typedef void (^AMPInitCompletionBlock)(void);
  @see [Tracking Events](https://github.com/amplitude/amplitude-ios#tracking-events)
  */
 - (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties;
+
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties extra: (nullable NSMutableDictionary *) extra;
 
 /**
  Tracks an event. Events are saved locally.
@@ -653,6 +657,11 @@ typedef void (^AMPInitCompletionBlock)(void);
  * If updateServerUrl is true, including server url as well. Recommend to keep updateServerUrl to be true for alignment.
  */
 - (void)setServerZone:(AMPServerZone)serverZone updateServerUrl:(BOOL)updateServerUrl;
+
+/**
+ * Adds a new middleware function to run on each logEvent() call prior to sending to Amplitude.
+ */
+- (void)addEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods
