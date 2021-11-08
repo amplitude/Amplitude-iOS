@@ -41,7 +41,7 @@
 - (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock)block {
     if (self = [super init]) {
         _block = block;
-    }ta
+    }
     return self;
 }
 
