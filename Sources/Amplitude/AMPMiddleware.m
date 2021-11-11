@@ -45,7 +45,7 @@
     return self;
 }
 
-- (void)proceed:(AMPMiddlewarePayload *)payload next:(AMPMiddlewareNext)next {
+- (void)run:(AMPMiddlewarePayload *)payload next:(AMPMiddlewareNext)next {
     self.block(payload, next);
 }
 

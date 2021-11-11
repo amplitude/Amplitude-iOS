@@ -56,7 +56,7 @@
         return;
     }
     
-    [middlewares[0] proceed:payload next:^(AMPMiddlewarePayload *_Nullable newPayload) {
+    [middlewares[0] run:payload next:^(AMPMiddlewarePayload *_Nullable newPayload) {
         NSArray *remainingMiddlewares = [middlewares subarrayWithRange:NSMakeRange(1, middlewares.count - 1)];
         [self runMiddlewares:remainingMiddlewares payload:newPayload callback:callback];
     }];

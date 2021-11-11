@@ -517,8 +517,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil];
 }
 
-- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties extra: (nullable NSMutableDictionary *) extra {
-    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:NO extra:extra];
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra {
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:NO withMiddlewareExtra:extra];
 }
 
 - (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties outOfSession:(BOOL)outOfSession {
@@ -542,10 +542,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession {
-    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:apiProperties withUserProperties:userProperties withGroups:groups withGroupProperties:groupProperties withTimestamp:timestamp outOfSession:outOfSession extra:nil];
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:apiProperties withUserProperties:userProperties withGroups:groups withGroupProperties:groupProperties withTimestamp:timestamp outOfSession:outOfSession withMiddlewareExtra:nil];
 }
 
-- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession extra: (nullable NSMutableDictionary *) extra {
+- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession withMiddlewareExtra: (nullable NSMutableDictionary *) extra {
     if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
         return;

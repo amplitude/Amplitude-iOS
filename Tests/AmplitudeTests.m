@@ -1127,16 +1127,22 @@
     NSString *eventType = @"middleware event";
     AMPBlockMiddleware *updateEventTypeMiddleware = [[AMPBlockMiddleware alloc] initWithBlock: ^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext _Nonnull next) {
         [payload.event setValue:eventType forKey:@"event_type"];
+        [payload.event setValue:payload.extra[@"description"] forKey:@"description"];
         next(payload);
     }];
     Amplitude *client = [Amplitude instanceWithName:@"middleware_support"];
     [client addEventMiddleware:updateEventTypeMiddleware];
     [client initializeApiKey:@"middleware_api_key"];
-    [client logEvent:@"test"];
+    NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+    [eventProperties setObject:@"green" forKey:@"color"];
+    NSMutableDictionary *middlewareExtra = [NSMutableDictionary dictionary];
+    [middlewareExtra setObject:@"some event description" forKey:@"description"];
+    [client logEvent:@"test" withEventProperties:eventProperties withMiddlewareExtra:middlewareExtra];
     [client flushQueue];
 
     NSDictionary *event = [client getLastEventFromInstanceName:@"middleware_support"];
     XCTAssertEqualObjects(eventType, event[@"event_type"]);
+    XCTAssertEqualObjects(middlewareExtra[@"description"], event[@"description"]);
 }
 
 - (void)testSwallowMiddleware {

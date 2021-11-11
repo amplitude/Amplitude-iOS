@@ -42,7 +42,7 @@ typedef void (^AMPMiddlewareNext)(AMPMiddlewarePayload *_Nullable newPayload);
 
 @protocol AMPMiddleware
 
-- (void)proceed:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next;
+- (void)run:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next;
 
 @end
 
