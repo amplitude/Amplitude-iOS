@@ -596,7 +596,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         [self annotateEvent:event];
         
-        AMPMiddlewarePayload * middlewarePayload = [[AMPMiddlewarePayload alloc] initWithEvent:event extra:extra];
+        AMPMiddlewarePayload * middlewarePayload = [[AMPMiddlewarePayload alloc] initWithEvent:event withExtra:extra];
         
         __block BOOL middlewareCompleted = NO;
         

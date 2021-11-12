@@ -46,7 +46,7 @@
     [event setValue:@"sample_device" forKey:@"device_model"];
     NSMutableDictionary *extra = [NSMutableDictionary dictionary];
     
-    AMPMiddlewarePayload * middlewarePayload = [[AMPMiddlewarePayload alloc] initWithEvent:event extra:extra];
+    AMPMiddlewarePayload * middlewarePayload = [[AMPMiddlewarePayload alloc] initWithEvent:event withExtra:extra];
     
     __block BOOL middlewareCompleted = NO;
     
@@ -75,7 +75,7 @@
     [event setValue:@"sample_device" forKey:@"device_model"];
     NSMutableDictionary *extra = [NSMutableDictionary dictionary];
     
-    AMPMiddlewarePayload * middlewarePayload = [[AMPMiddlewarePayload alloc] initWithEvent:event extra:extra];
+    AMPMiddlewarePayload * middlewarePayload = [[AMPMiddlewarePayload alloc] initWithEvent:event withExtra:extra];
     
     __block BOOL middlewareCompleted = NO;
     

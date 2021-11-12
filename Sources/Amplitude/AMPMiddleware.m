@@ -26,7 +26,7 @@
 
 @implementation AMPMiddlewarePayload
 
-- (instancetype _Nonnull)initWithEvent:(NSMutableDictionary *_Nonnull) event extra:(NSMutableDictionary *_Nullable) extra {
+- (instancetype _Nonnull)initWithEvent:(NSMutableDictionary *_Nonnull) event withExtra:(NSMutableDictionary *_Nullable) extra {
     if ((self = [super init])) {
         self.event = event;
         self.extra = extra;
