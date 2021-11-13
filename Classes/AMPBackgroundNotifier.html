@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>ISPPinnedNSURLSessionDelegate Class Reference</title>
+	<title>AMPBackgroundNotifier Class Reference</title>
 
 	<link rel="stylesheet" href="../css/style.css">
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1.4">
@@ -69,7 +69,7 @@
 		<div id="overview_contents" class="container">
 			<div id="content">
 				<main role="main">
-					<h1 class="title">ISPPinnedNSURLSessionDelegate Class Reference</h1>
+					<h1 class="title">AMPBackgroundNotifier Class Reference</h1>
 
 					
 					<div class="section section-specification"><table cellspacing="0"><tbody>
@@ -78,7 +78,7 @@
 	<td>NSObject</td>
 </tr><tr>
 	<th>Declared in</th>
-	<td>ISPPinnedNSURLSessionDelegate.h<br />ISPPinnedNSURLSessionDelegate.m</td>
+	<td>AMPBackgroundNotifier.h<br />AMPBackgroundNotifier.m</td>
 </tr>
 						</tbody></table></div>
 					
@@ -88,13 +88,10 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p>Convenience class to automatically perform certificate pinning for NSURLSession.</p>
-
-<p>ISPPinnedNSURLSessionDelegate is designed to be subclassed in order to
-implement an NSURLSession class. The
-URLSession:didReceiveChallenge:completionHandler: method it implements
-will automatically validate that at least one the certificates pinned to the domain the
-connection is accessing is part of the server&rsquo;s certificate chain.</p>
+						<p>watchOS adds support for background notifications in watchOS 7.0 with <code>WKExtension.applicationDidEnterBackgroundNotification</code>
+and related notifications. But since this SDK is backwards compatible with watchOS 3.0, these notifications are not available. Instead, the user
+should implement the appropriate background methods on their Extension Delegate and call the <code>AMPBackgroundNotifier</code> from those
+methods.</p>
 					</div>
 					
 					
