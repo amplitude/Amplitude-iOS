@@ -29,8 +29,8 @@ jobs:
             ${{ github.event.issue.html_url }}
           fields: '{
             "customfield_10006": 1127,
-            "customfield_11481": {"value": "Data Connections 🚇"},
-            "customfield_11200": {"value": "SDK"},
+            "customfield_11481": {"value": "Governance 🕵️"},
+            "customfield_11200": {"value": "Developer Experience"},
             "labels": ["ios"]
           }' # sprint, pillar, pod, labels
 
