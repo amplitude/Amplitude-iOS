@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E98C05221A48E7FE00800C63"
-               BuildableName = "libAmplitude.a"
-               BlueprintName = "Amplitude"
-               ReferencedContainer = "container:Amplitude.xcodeproj">
+               BlueprintIdentifier = "343AB4161CC99F4F00962943"
+               BuildableName = "Amplitude.framework"
+               BlueprintName = "MagnitudeFramework"
+               ReferencedContainer = "container:Magnitude.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -29,8 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -45,14 +43,12 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E98C05221A48E7FE00800C63"
-            BuildableName = "libAmplitude.a"
-            BlueprintName = "Amplitude"
-            ReferencedContainer = "container:Amplitude.xcodeproj">
+            BlueprintIdentifier = "343AB4161CC99F4F00962943"
+            BuildableName = "Amplitude.framework"
+            BlueprintName = "MagnitudeFramework"
+            ReferencedContainer = "container:Magnitude.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -63,10 +59,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E98C05221A48E7FE00800C63"
-            BuildableName = "libAmplitude.a"
-            BlueprintName = "Amplitude"
-            ReferencedContainer = "container:Amplitude.xcodeproj">
+            BlueprintIdentifier = "343AB4161CC99F4F00962943"
+            BuildableName = "Amplitude.framework"
+            BlueprintName = "MagnitudeFramework"
+            ReferencedContainer = "container:Magnitude.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

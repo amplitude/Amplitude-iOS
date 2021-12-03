@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Amplitude.xcodeproj">
+      location = "group:/Users/raquel.gallo/Documents/Innovation/Amplitude-iOS/Magnitude.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
