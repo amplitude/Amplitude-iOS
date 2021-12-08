@@ -1,3 +1,15 @@
+# [8.6.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.5.0...v8.6.0) (2021-12-08)
+
+
+### Bug Fixes
+
+* Add watchOS scheme for building with Carthage ([#351](https://github.com/amplitude/Amplitude-iOS/issues/351)) ([4b893a8](https://github.com/amplitude/Amplitude-iOS/commit/4b893a8423316dc1053bfd33db6c5997f5332c93))
+
+
+### Features
+
+* add middleware support ([#371](https://github.com/amplitude/Amplitude-iOS/issues/371)) ([02a0994](https://github.com/amplitude/Amplitude-iOS/commit/02a09945be92d9334140a69f8b4b7b7f25d1643d))
+
 # [8.5.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.4.0...v8.5.0) (2021-10-22)
 
 
