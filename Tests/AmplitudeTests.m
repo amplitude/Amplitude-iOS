@@ -1110,7 +1110,7 @@
 - (void)testSetServerZone {
     Amplitude *client = [Amplitude instanceWithName:@"eu_zone"];
     XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
-    [client initializeApiKey:@"eu_api_ket"];
+    [client initializeApiKey:@"eu_api_key"];
     [client setServerZone:EU];
     XCTAssertEqualObjects(kAMPEventLogEuUrl, [client valueForKey:@"serverUrl"]);
 }
@@ -1118,9 +1118,43 @@
 - (void)testSetServerZoneWithoutUpdateServerUrl {
     Amplitude *client = [Amplitude instanceWithName:@"eu_zone_2"];
     XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
-    [client initializeApiKey:@"eu_api_ket"];
+    [client initializeApiKey:@"eu_api_key"];
     [client setServerZone:EU updateServerUrl:NO];
     XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
+}
+
+- (void)testMiddlewareSupport {
+    NSString *eventType = @"middleware event";
+    AMPBlockMiddleware *updateEventTypeMiddleware = [[AMPBlockMiddleware alloc] initWithBlock: ^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext _Nonnull next) {
+        [payload.event setValue:eventType forKey:@"event_type"];
+        [payload.event setValue:payload.extra[@"description"] forKey:@"description"];
+        next(payload);
+    }];
+    Amplitude *client = [Amplitude instanceWithName:@"middleware_support"];
+    [client addEventMiddleware:updateEventTypeMiddleware];
+    [client initializeApiKey:@"middleware_api_key"];
+    NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+    [eventProperties setObject:@"green" forKey:@"color"];
+    NSMutableDictionary *middlewareExtra = [NSMutableDictionary dictionary];
+    [middlewareExtra setObject:@"some event description" forKey:@"description"];
+    [client logEvent:@"test" withEventProperties:eventProperties withMiddlewareExtra:middlewareExtra];
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:@"middleware_support"];
+    XCTAssertEqualObjects(eventType, event[@"event_type"]);
+    XCTAssertEqualObjects(middlewareExtra[@"description"], event[@"description"]);
+}
+
+- (void)testSwallowMiddleware {
+    AMPBlockMiddleware *swallowMiddleware = [[AMPBlockMiddleware alloc] initWithBlock: ^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext _Nonnull next) {
+    }];
+    Amplitude *client = [Amplitude instanceWithName:@"middleware_swallow"];
+    [client addEventMiddleware:swallowMiddleware];
+    [client initializeApiKey:@"middleware_api_key"];
+    [client logEvent:@"test"];
+    [client flushQueue];
+    
+    XCTAssertNil([client getLastEventFromInstanceName:@"middleware_swallow"]);
 }
 
 @end

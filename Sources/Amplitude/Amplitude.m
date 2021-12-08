@@ -62,6 +62,8 @@
 #import "AMPPlan.h"
 #import "AMPServerZone.h"
 #import "AMPServerZoneUtil.h"
+#import "AMPMiddleware.h"
+#import "AMPMiddlewareRunner.h"
 #import <math.h>
 #import <CommonCrypto/CommonDigest.h>
 
@@ -138,6 +140,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSString *_token;
     AMPPlan *_plan;
     AMPServerZone _serverZone;
+    AMPMiddlewareRunner *_middlewareRunner;
 }
 
 #pragma clang diagnostic push
@@ -210,6 +213,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _coppaControlEnabled = NO;
         self.instanceName = instanceName;
         _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+        _middlewareRunner = [AMPMiddlewareRunner middleRunner];
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
@@ -513,6 +517,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil];
 }
 
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra {
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:NO withMiddlewareExtra:extra];
+}
+
 - (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties outOfSession:(BOOL)outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil outOfSession:outOfSession];
 }
@@ -534,6 +542,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession {
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:apiProperties withUserProperties:userProperties withGroups:groups withGroupProperties:groupProperties withTimestamp:timestamp outOfSession:outOfSession withMiddlewareExtra:nil];
+}
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties withApiProperties:(NSDictionary *)apiProperties withUserProperties:(NSDictionary *)userProperties withGroups:(NSDictionary *)groups withGroupProperties:(NSDictionary *)groupProperties withTimestamp:(NSNumber *)timestamp outOfSession:(BOOL)outOfSession withMiddlewareExtra: (nullable NSMutableDictionary *) extra {
     if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling logEvent");
         return;
@@ -583,6 +595,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [event setValue:timestamp forKey:@"timestamp"];
 
         [self annotateEvent:event];
+        
+        AMPMiddlewarePayload * middlewarePayload = [[AMPMiddlewarePayload alloc] initWithEvent:event withExtra:extra];
+        
+        __block BOOL middlewareCompleted = NO;
+        
+        [self->_middlewareRunner run:middlewarePayload next:^(AMPMiddlewarePayload *_Nullable newPayload){
+            middlewareCompleted = YES;
+        }];
+        
+        if (!middlewareCompleted) {
+            AMPLITUDE_LOG(@"Middleware chain skipped logEvent action. Event %@ not logged.", eventType);
+            return;
+        }
 
         // convert event dictionary to JSON String
         NSError *error = nil;
@@ -1445,6 +1470,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (updateServerUrl) {
         [self setServerUrl:[AMPServerZoneUtil getEventLogApi:serverZone]];
     }
+}
+
+- (void)addEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware {
+    [_middlewareRunner add:middleware];
 }
 
 #pragma mark - Getters for device data
