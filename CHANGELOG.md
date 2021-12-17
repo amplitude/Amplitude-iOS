@@ -1,3 +1,10 @@
+# [8.7.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.6.0...v8.7.0) (2021-12-17)
+
+
+### Features
+
+* public the setEventUploadMaxBatchSize api ([#376](https://github.com/amplitude/Amplitude-iOS/issues/376)) ([86b8ea9](https://github.com/amplitude/Amplitude-iOS/commit/86b8ea9aad3e4e9835f116fd247726a1b6eb37dc))
+
 # [8.6.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.5.0...v8.6.0) (2021-12-08)
 
 
