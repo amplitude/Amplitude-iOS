@@ -591,6 +591,13 @@ typedef void (^AMPInitCompletionBlock)(void);
 - (void)setOptOut:(BOOL)enabled;
 
 /**
+ Sets event upload max batch size. This controls the maximum number of events sent with each upload request.
+
+ @param eventUploadMaxBatchSize                  Set the event upload max batch size
+ */
+- (void)setEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize;
+
+/**
  Disables sending logged events to Amplitude servers.
 
  If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server and the client will attempt to send events that have been queued while offline.
