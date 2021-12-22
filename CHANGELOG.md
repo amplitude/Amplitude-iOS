@@ -1,3 +1,10 @@
+## [8.7.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.0...v8.7.1) (2021-12-22)
+
+
+### Bug Fixes
+
+* fix method for swift ([#377](https://github.com/amplitude/Amplitude-iOS/issues/377)) ([293f665](https://github.com/amplitude/Amplitude-iOS/commit/293f665ffba077c9c90199c1ca856f775c0ca540))
+
 # [8.7.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.6.0...v8.7.0) (2021-12-17)
 
 
