@@ -595,7 +595,7 @@ typedef void (^AMPInitCompletionBlock)(void);
 
  @param eventUploadMaxBatchSize                  Set the event upload max batch size
  */
-- (void)setEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize;
+- (void)updateEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize;
 
 /**
  Disables sending logged events to Amplitude servers.

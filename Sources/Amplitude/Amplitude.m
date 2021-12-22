@@ -1427,7 +1427,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     self->_token = token;
 }
 
-- (void)setEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize {
+- (void)updateEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize {
     _eventUploadMaxBatchSize = eventUploadMaxBatchSize;
     _backoffUploadBatchSize = eventUploadMaxBatchSize;
 }
