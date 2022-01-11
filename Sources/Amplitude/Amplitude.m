@@ -641,7 +641,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Apply identify events to amplitude core to notify experiment SDK that user properties have changed.
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
             id<IdentityStoreEditor> editor = [[[AmplitudeCore getInstance:self.instanceName]identityStore]editIdentity];
-            [[editor updateUserProperties:[event valueForKey:@"user_properties"]]commit]
+            [[editor updateUserProperties:[event valueForKey:@"user_properties"]]commit];
         }
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);

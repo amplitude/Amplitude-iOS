@@ -28,6 +28,8 @@ Pod::Spec.new do |s|
   s.watchos.resources          = 'Sources/Resources/*.{der}'
   
   s.dependency 'AmplitudeCore', '1.0.0-alpha.1'
+  
+  s.swift_version = '4.1'
 
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end
