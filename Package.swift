@@ -13,6 +13,9 @@ let package = Package(
     products: [
         .library(name: "Amplitude", targets: ["Amplitude"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/amplitude/amplitude-ios-core.git", from: "1.0.0-alpha.1")
+    ],
     targets: [
         .target(
             name: "Amplitude",
@@ -21,3 +24,4 @@ let package = Package(
             publicHeadersPath: "Amplitude/Public"),
     ]
 )
+
