@@ -11,6 +11,8 @@ Pod::Spec.new do |s|
   s.requires_arc           = true
   s.library                = 'sqlite3.0'
 
+  s.swift_version = '4.1'
+  
   s.ios.deployment_target  = '10.0'
   s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}'
   s.ios.resources          = 'Sources/Resources/*.{der}'
@@ -28,8 +30,6 @@ Pod::Spec.new do |s|
   s.watchos.resources          = 'Sources/Resources/*.{der}'
   
   s.dependency 'AmplitudeCore', '1.0.0-alpha.1'
-  
-  s.swift_version = '4.1'
 
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end
