@@ -16,6 +16,10 @@ target 'Amplitude_macOS' do
   common_pods
 end
 
+target 'Amplitude_watchOS' do
+  common_pods
+end
+
 abstract_target 'shared' do
   
   pod 'OCMock', '~> 3.2.1'

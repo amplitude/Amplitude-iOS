@@ -228,6 +228,7 @@
 		80363D3E4B6D4C288945BCC4 /* libPods-Amplitude_tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5567EE79283267B413D5417A /* libPods-Amplitude_tvOS.a */; };
 		A0886E1D59790C5426795EA4 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB4324D0C96D1D6824129C73 /* libPods-shared-Amplitude_iOSTests.a */; };
 		A3FF989FF534296FE9B20FAF /* libPods-Amplitude_macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 373B7C51326C29BE072E28BC /* libPods-Amplitude_macOS.a */; };
+		C3BBC1A3F5A59B7A33EAC754 /* libPods-Amplitude_watchOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FAF8A812B4C3F0F0C2B4D71 /* libPods-Amplitude_watchOS.a */; };
 		DC927E962616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
 		DC927E972616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
 		DC927E982616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
@@ -326,6 +327,7 @@
 		12D0A22D241A134D0072CB4C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		12D0A22E241A13950072CB4C /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		19AD39BC6619FE98585BF86D /* Pods-Amplitude_macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Amplitude_macOS.debug.xcconfig"; path = "Target Support Files/Pods-Amplitude_macOS/Pods-Amplitude_macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		1FAF8A812B4C3F0F0C2B4D71 /* libPods-Amplitude_watchOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Amplitude_watchOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20C6C0EC278D1EEF00B39CBE /* libAmplitudeCore-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libAmplitudeCore-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20C6C0EE278D1F6400B39CBE /* libAmplitudeCore-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libAmplitudeCore-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B3C5032C074B9C2534AC24F /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -351,12 +353,14 @@
 		759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPBackgroundNotifier.h; sourceTree = "<group>"; };
 		759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPBackgroundNotifier.m; sourceTree = "<group>"; };
 		87BAC9636299E85218F86D73 /* Pods-Amplitude_macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Amplitude_macOS.release.xcconfig"; path = "Target Support Files/Pods-Amplitude_macOS/Pods-Amplitude_macOS.release.xcconfig"; sourceTree = "<group>"; };
+		9B5755111675E12EF644B4E7 /* Pods-Amplitude_watchOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Amplitude_watchOS.release.xcconfig"; path = "Target Support Files/Pods-Amplitude_watchOS/Pods-Amplitude_watchOS.release.xcconfig"; sourceTree = "<group>"; };
 		AB4324D0C96D1D6824129C73 /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5BDDAA991DD6D0AF76DAC52 /* Pods-Amplitude_tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Amplitude_tvOS.release.xcconfig"; path = "Target Support Files/Pods-Amplitude_tvOS/Pods-Amplitude_tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		B7B5D8FCB75A2A7F922BF0A0 /* libPods-shared-Amplitude_macOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_macOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9303BED77ECACD7C8B4144E /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		C81412DC9B1CFB755B7E7441 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
+		E49A065A17D112CE0883D9B8 /* Pods-Amplitude_watchOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Amplitude_watchOS.debug.xcconfig"; path = "Target Support Files/Pods-Amplitude_watchOS/Pods-Amplitude_watchOS.debug.xcconfig"; sourceTree = "<group>"; };
 		F15FE20F2B2BF4CF1B35E5E1 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		F89D51A2087E4BF298B9D377 /* libPods-Amplitude_iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Amplitude_iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD65F62E8302499EAD859F57 /* Pods-Amplitude_iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Amplitude_iOS.debug.xcconfig"; path = "Target Support Files/Pods-Amplitude_iOS/Pods-Amplitude_iOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -418,6 +422,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3BBC1A3F5A59B7A33EAC754 /* libPods-Amplitude_watchOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,6 +444,8 @@
 				F15FE20F2B2BF4CF1B35E5E1 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */,
 				2B3C5032C074B9C2534AC24F /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */,
 				B9303BED77ECACD7C8B4144E /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */,
+				E49A065A17D112CE0883D9B8 /* Pods-Amplitude_watchOS.debug.xcconfig */,
+				9B5755111675E12EF644B4E7 /* Pods-Amplitude_watchOS.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -454,6 +461,7 @@
 				AB4324D0C96D1D6824129C73 /* libPods-shared-Amplitude_iOSTests.a */,
 				B7B5D8FCB75A2A7F922BF0A0 /* libPods-shared-Amplitude_macOSTests.a */,
 				0E5697BCB12C255A4493485F /* libPods-shared-Amplitude_tvOSTests.a */,
+				1FAF8A812B4C3F0F0C2B4D71 /* libPods-Amplitude_watchOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -870,6 +878,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 759E938125FBF2BC00BF7C3D /* Build configuration list for PBXNativeTarget "Amplitude_watchOS" */;
 			buildPhases = (
+				F84FA09870F0F64B92676B59 /* [CP] Check Pods Manifest.lock */,
 				759E937525FBF2BB00BF7C3D /* Headers */,
 				759E937625FBF2BB00BF7C3D /* Sources */,
 				759E937725FBF2BB00BF7C3D /* Frameworks */,
@@ -1114,6 +1123,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-shared-Amplitude_macOSTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F84FA09870F0F64B92676B59 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Amplitude_watchOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1735,6 +1766,7 @@
 		};
 		759E937F25FBF2BC00BF7C3D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E49A065A17D112CE0883D9B8 /* Pods-Amplitude_watchOS.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1774,6 +1806,7 @@
 		};
 		759E938025FBF2BC00BF7C3D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9B5755111675E12EF644B4E7 /* Pods-Amplitude_watchOS.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
