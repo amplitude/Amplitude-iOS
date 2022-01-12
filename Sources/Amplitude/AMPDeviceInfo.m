@@ -190,13 +190,12 @@
 + (NSString *)getPlatformString {
 #if !TARGET_OS_OSX
     BOOL isiOSAppOnMac = false;
+    const char *sysctl_name = "hw.machine";
     if (@available(iOS 14.0, *)) {
         isiOSAppOnMac = [NSProcessInfo processInfo].isiOSAppOnMac;
     }
     if (isiOSAppOnMac){
-        const char *sysctl_name = "hw.model";
-    } else {
-        const char *sysctl_name = "hw.machine";
+        sysctl_name = "hw.model";
     }
 #else
     const char *sysctl_name = "hw.model";
