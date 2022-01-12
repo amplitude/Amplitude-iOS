@@ -1,20 +1,16 @@
 PODS:
-  - AmplitudeCore (1.0.0-alpha.1)
   - OCMock (3.2.2)
 
 DEPENDENCIES:
-  - AmplitudeCore (~> 1.0.0-alpha.1)
   - OCMock (~> 3.2.1)
 
 SPEC REPOS:
   trunk:
-    - AmplitudeCore
     - OCMock
 
 SPEC CHECKSUMS:
-  AmplitudeCore: 913200d97ecb8fbf8c7d1afca339c70a1c06cf2f
   OCMock: 18c9b7e67d4c2770e95bb77a9cc1ae0c91fe3835
 
-PODFILE CHECKSUM: ea28d42d9148ea179be9c7842106d6cf1d015639
+PODFILE CHECKSUM: f4462aedc7398f89b3216737d86da7f673eb4649
 
 COCOAPODS: 1.11.2

@@ -2,7 +2,8 @@
 /Pods
 /Build/
 /DerivedData/
-Carthage/Build
+Carthage/
+Cartfile.resolved
 
 doc/
 .swiftpm
