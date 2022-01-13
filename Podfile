@@ -1,5 +1,7 @@
 project 'Amplitude'
 
+use_frameworks!
+
 def common_pods
   pod 'AmplitudeCore', '~> 1.0.0-alpha.1'
 end
