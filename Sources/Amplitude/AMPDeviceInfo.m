@@ -188,17 +188,29 @@
 }
 
 + (NSString *)getPlatformString {
-#if !TARGET_OS_OSX
-    BOOL isiOSAppOnMac = false;
-    const char *sysctl_name = "hw.machine";
-    if (@available(iOS 14.0, *) || @available(tvOS 14.0, *) || @available(watchOS 7.0, *)) {
+    const char *sysctl_name = "hw.model";
+    BOOL isiOSAppOnMac = NO;
+#if TARGET_OS_IOS
+    if (@available(iOS 14.0, *)) {
         isiOSAppOnMac = [NSProcessInfo processInfo].isiOSAppOnMac;
     }
-    if (isiOSAppOnMac){
-        sysctl_name = "hw.model";
+    if (!isiOSAppOnMac){
+        sysctl_name = "hw.machine";
     }
-#else
-    const char *sysctl_name = "hw.model";
+#elif TARGET_OS_TV
+    if (@available(tvOS 14.0, *)) {
+        isiOSAppOnMac = [NSProcessInfo processInfo].isiOSAppOnMac;
+    }
+    if (!isiOSAppOnMac){
+        sysctl_name = "hw.machine";
+    }
+#elif TARGET_OS_WATCH
+    if (@available(watchOS 7.0, *)) {
+        isiOSAppOnMac = [NSProcessInfo processInfo].isiOSAppOnMac;
+    }
+    if (!isiOSAppOnMac){
+        sysctl_name = "hw.machine";
+    }
 #endif
     size_t size;
     sysctlbyname(sysctl_name, NULL, &size, NULL, 0);
