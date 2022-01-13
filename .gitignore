@@ -3,7 +3,6 @@
 /Build/
 /DerivedData/
 Carthage/
-Cartfile.resolved
 
 doc/
 .swiftpm
