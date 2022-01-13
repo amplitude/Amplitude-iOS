@@ -138,11 +138,8 @@
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
 		20D7ED6E278F82E8006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
 		20D7ED7E278F82EE006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
-		20D7ED7F278F82EE006DB118 /* AmplitudeCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		20D7ED87278F82F5006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
-		20D7ED88278F82F5006DB118 /* AmplitudeCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		20D7ED8F278F82F9006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
-		20D7ED90278F82F9006DB118 /* AmplitudeCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3E2411E726F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E2411E826F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E2411E926F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -262,42 +259,6 @@
 			remoteInfo = Amplitude_macOS;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		20D7ED80278F82EE006DB118 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				20D7ED7F278F82EE006DB118 /* AmplitudeCore.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		20D7ED89278F82F5006DB118 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				20D7ED88278F82F5006DB118 /* AmplitudeCore.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		20D7ED91278F82F9006DB118 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				20D7ED90278F82F9006DB118 /* AmplitudeCore.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		01E5E27777EE3748AD590817 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -785,7 +746,6 @@
 				12C972AB24105B2C00E9CDDB /* Sources */,
 				12C972AC24105B2C00E9CDDB /* Frameworks */,
 				12C972AD24105B2C00E9CDDB /* Resources */,
-				20D7ED80278F82EE006DB118 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -862,7 +822,6 @@
 				12C972E324105C6500E9CDDB /* Sources */,
 				12C972E424105C6500E9CDDB /* Frameworks */,
 				12C972E524105C6500E9CDDB /* Resources */,
-				20D7ED89278F82F5006DB118 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -900,7 +859,6 @@
 				759E937625FBF2BB00BF7C3D /* Sources */,
 				759E937725FBF2BB00BF7C3D /* Frameworks */,
 				759E937825FBF2BB00BF7C3D /* Resources */,
-				20D7ED91278F82F9006DB118 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
