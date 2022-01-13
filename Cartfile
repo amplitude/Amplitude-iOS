@@ -1,1 +1,1 @@
-github "amplitude/amplitude-ios-core" == 1.0.0-alpha.2
+github "amplitude/amplitude-ios-core" ~> 1.0.0
