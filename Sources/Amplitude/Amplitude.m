@@ -458,7 +458,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             // Set the user ID and device ID in the amplitude core instance. This is used to share user identity and user properties
             // between Analytics and Experiment SDKs.
             id<IdentityStoreEditor> identityStoreEditor = [[[AmplitudeCore getInstance:self.instanceName] identityStore] editIdentity];
-            [[[identityStoreEditor setUserId:self.userId]setDeviceId:self.deviceId]commit];
+            [[[identityStoreEditor setUserId:self.userId] setDeviceId:self.deviceId] commit];
             if (self.initCompletionBlock != nil) {
                 self.initCompletionBlock();
             }
@@ -640,8 +640,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         
         // Apply identify events to amplitude core to notify experiment SDK that user properties have changed.
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
-            id<IdentityStoreEditor> editor = [[[AmplitudeCore getInstance:self.instanceName]identityStore]editIdentity];
-            [[editor updateUserProperties:[event valueForKey:@"user_properties"]]commit];
+            id<IdentityStoreEditor> editor = [[[AmplitudeCore getInstance:self.instanceName] identityStore] editIdentity];
+            [[editor updateUserProperties:[event valueForKey:@"user_properties"]] commit];
         }
 
         AMPLITUDE_LOG(@"Logged %@ Event", event[@"event_type"]);
@@ -1397,7 +1397,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Set the user ID amplitude core instance. This is used to share user identity
         // between Analytics and Experiment SDKs.
         id<IdentityStoreEditor> identityStoreEditor = [[[AmplitudeCore getInstance:self.instanceName] identityStore] editIdentity];
-        [[identityStoreEditor setUserId:self.userId]commit];
+        [[identityStoreEditor setUserId:self.userId] commit];
 
         if (startNewSession) {
             NSNumber *timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
@@ -1469,7 +1469,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Set the device ID in the amplitude core instance. This is used to share user identity
         // between Analytics and Experiment SDKs.
         id<IdentityStoreEditor> identityStoreEditor = [[[AmplitudeCore getInstance:self.instanceName] identityStore] editIdentity];
-        [[identityStoreEditor setDeviceId:self.deviceId]commit];
+        [[identityStoreEditor setDeviceId:self.deviceId] commit];
     }];
 }
 
