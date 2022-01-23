@@ -1,3 +1,10 @@
+## [8.7.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.1...v8.7.2) (2022-01-23)
+
+
+### Bug Fixes
+
+* show correct device info for ios app runs on M1 mac ([#379](https://github.com/amplitude/Amplitude-iOS/issues/379)) ([7a75adb](https://github.com/amplitude/Amplitude-iOS/commit/7a75adbee74aad675a50a7b7006b2952c11a73f0))
+
 ## [8.7.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.0...v8.7.1) (2021-12-22)
 
 
