@@ -136,10 +136,10 @@
 		12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */; };
 		12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
-		20D7ED6E278F82E8006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
-		20D7ED7E278F82EE006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
-		20D7ED87278F82F5006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
-		20D7ED8F278F82F9006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; };
+		20D7ED6E278F82E8006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		20D7ED7E278F82EE006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		20D7ED87278F82F5006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		20D7ED8F278F82F9006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3E2411E726F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E2411E826F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E2411E926F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
