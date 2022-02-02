@@ -1,1 +1,1 @@
-github "amplitude/analytics-connector-ios" == 1.0.0-alpha.0
+github "amplitude/analytics-connector-ios" ~> 1.0.0
