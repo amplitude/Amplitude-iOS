@@ -136,10 +136,10 @@
 		12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */; };
 		12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
-		20D7ED6E278F82E8006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Required, ); }; };
-		20D7ED7E278F82EE006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Required, ); }; };
-		20D7ED87278F82F5006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Required, ); }; };
-		20D7ED8F278F82F9006DB118 /* AmplitudeCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */; settings = {ATTRIBUTES = (Required, ); }; };
+		207C960927AB0F65008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
+		207C961127AB0F6A008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
+		207C961927AB0F6E008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
+		207C962127AB0F72008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
 		3E2411E726F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E2411E826F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E2411E926F9A40100793829 /* AMPPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 3E2411E626F9A40100793829 /* AMPPlan.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -326,6 +326,7 @@
 		12D0A22B241A0A960072CB4C /* Amplitude.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Amplitude.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		12D0A22D241A134D0072CB4C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		12D0A22E241A13950072CB4C /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
+		207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AnalyticsConnector.xcframework; path = Carthage/Build/AnalyticsConnector.xcframework; sourceTree = "<group>"; };
 		20C6C0EC278D1EEF00B39CBE /* libAmplitudeCore-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libAmplitudeCore-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20C6C0EE278D1F6400B39CBE /* libAmplitudeCore-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libAmplitudeCore-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AmplitudeCore.xcframework; path = Carthage/Build/AmplitudeCore.xcframework; sourceTree = "<group>"; };
@@ -360,7 +361,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20D7ED7E278F82EE006DB118 /* AmplitudeCore.xcframework in Frameworks */,
+				207C961127AB0F6A008EE143 /* AnalyticsConnector.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,7 +378,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20D7ED6E278F82E8006DB118 /* AmplitudeCore.xcframework in Frameworks */,
+				207C960927AB0F65008EE143 /* AnalyticsConnector.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,7 +395,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20D7ED87278F82F5006DB118 /* AmplitudeCore.xcframework in Frameworks */,
+				207C961927AB0F6E008EE143 /* AnalyticsConnector.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,7 +412,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20D7ED8F278F82F9006DB118 /* AmplitudeCore.xcframework in Frameworks */,
+				207C962127AB0F72008EE143 /* AnalyticsConnector.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,6 +435,7 @@
 		0D939DD532132231667B2325 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */,
 				20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */,
 				20C6C0EE278D1F6400B39CBE /* libAmplitudeCore-iOS.a */,
 				20C6C0EC278D1EEF00B39CBE /* libAmplitudeCore-iOS.a */,
