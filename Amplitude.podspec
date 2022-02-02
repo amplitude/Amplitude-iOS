@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   s.watchos.source_files       = 'Sources/Amplitude/**/*.{h,m}'
   s.watchos.resources          = 'Sources/Resources/*.{der}'
   
-  s.dependency 'AmplitudeCore', '~> 1.0.0-alpha.0'
+  s.dependency 'AnalyticsConnector', '~> 1.0.0-alpha.0'
 
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end
