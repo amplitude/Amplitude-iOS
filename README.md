@@ -49,5 +49,20 @@ iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.am
 ## Changelog
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/main/CHANGELOG.md) to view the iOS SDK Changelog.
 
+## Developing
+
+**Prerequisites**
+ * Cocoapods
+ * Carthage
+
+1. Install Dependencies via Carthage
+```
+carthage update --use-xcframeworks
+```
+2. Install Test Dependencies via CocoaPods
+```
+pod install
+```
+
 ## Need Help?
 If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).
