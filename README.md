@@ -26,17 +26,17 @@ iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.am
 ## Developing
 
 Prerequisites
- * Cocoapods: `pod`
- * Carthage: `carthage`
+ * [Cocoapods](https://cocoapods.org/)
+ * [Carthage](https://github.com/Carthage/Carthage)
 
 1. Install Dependencies via Carthage
-```
-carthage update --use-xcframeworks
-```
+    ```
+    carthage update --use-xcframeworks
+    ```
 2. Install Test Dependencies via CocoaPods
-```
-pod install
-```
+    ```
+    pod install
+    ```
 
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
