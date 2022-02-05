@@ -2,7 +2,7 @@
 /Pods
 /Build/
 /DerivedData/
-Carthage/Build
+Carthage/
 
 doc/
 .swiftpm
