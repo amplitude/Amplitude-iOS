@@ -1,3 +1,15 @@
+# [8.8.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.2...v8.8.0) (2022-02-10)
+
+
+### Bug Fixes
+
+* update swift package to support connector package ([#383](https://github.com/amplitude/Amplitude-iOS/issues/383)) ([95501aa](https://github.com/amplitude/Amplitude-iOS/commit/95501aa6f1938cf40bb5f22abfa76dfea7b87843))
+
+
+### Features
+
+* Support seamless integration with amplitude experiment SDK ([#378](https://github.com/amplitude/Amplitude-iOS/issues/378)) ([26e7830](https://github.com/amplitude/Amplitude-iOS/commit/26e78304f6436d6c1aefd2065936a6c7e8576978))
+
 ## [8.7.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.1...v8.7.2) (2022-01-23)
 
 
