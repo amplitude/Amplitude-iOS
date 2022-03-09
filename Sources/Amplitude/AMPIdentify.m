@@ -130,8 +130,19 @@
 
     // Check if property was already used in a previous operation.
     if ([_userProperties containsObject:property]) {
-        AMPLITUDE_LOG(@"Already used property '%@' in previous operation, ignoring for operation '%@'", property, operation);
-        return;
+        // Overwrite previous $set value if present
+        BOOL shouldOverwriteProperty = NO;
+        if ([operation isEqualToString:AMP_OP_SET]) {
+            NSMutableDictionary *setOperations = [_userPropertyOperations objectForKey:AMP_OP_SET];
+            if (setOperations[property] != nil) {
+                shouldOverwriteProperty = YES;
+            }
+        }
+        
+        if (shouldOverwriteProperty == NO) {
+            AMPLITUDE_LOG(@"Already used property '%@' in previous operation, ignoring for operation '%@'", property, operation);
+            return;
+        }
     }
 
     NSMutableDictionary *operations = [_userPropertyOperations objectForKey:operation];
