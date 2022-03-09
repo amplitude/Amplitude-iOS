@@ -1,3 +1,69 @@
+# [8.8.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.2...v8.8.0) (2022-02-10)
+
+
+### Bug Fixes
+
+* update swift package to support connector package ([#383](https://github.com/amplitude/Amplitude-iOS/issues/383)) ([95501aa](https://github.com/amplitude/Amplitude-iOS/commit/95501aa6f1938cf40bb5f22abfa76dfea7b87843))
+
+
+### Features
+
+* Support seamless integration with amplitude experiment SDK ([#378](https://github.com/amplitude/Amplitude-iOS/issues/378)) ([26e7830](https://github.com/amplitude/Amplitude-iOS/commit/26e78304f6436d6c1aefd2065936a6c7e8576978))
+
+## [8.7.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.1...v8.7.2) (2022-01-23)
+
+
+### Bug Fixes
+
+* show correct device info for ios app runs on M1 mac ([#379](https://github.com/amplitude/Amplitude-iOS/issues/379)) ([7a75adb](https://github.com/amplitude/Amplitude-iOS/commit/7a75adbee74aad675a50a7b7006b2952c11a73f0))
+
+## [8.7.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.0...v8.7.1) (2021-12-22)
+
+
+### Bug Fixes
+
+* fix method for swift ([#377](https://github.com/amplitude/Amplitude-iOS/issues/377)) ([293f665](https://github.com/amplitude/Amplitude-iOS/commit/293f665ffba077c9c90199c1ca856f775c0ca540))
+
+# [8.7.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.6.0...v8.7.0) (2021-12-17)
+
+
+### Features
+
+* public the setEventUploadMaxBatchSize api ([#376](https://github.com/amplitude/Amplitude-iOS/issues/376)) ([86b8ea9](https://github.com/amplitude/Amplitude-iOS/commit/86b8ea9aad3e4e9835f116fd247726a1b6eb37dc))
+
+# [8.6.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.5.0...v8.6.0) (2021-12-08)
+
+
+### Bug Fixes
+
+* Add watchOS scheme for building with Carthage ([#351](https://github.com/amplitude/Amplitude-iOS/issues/351)) ([4b893a8](https://github.com/amplitude/Amplitude-iOS/commit/4b893a8423316dc1053bfd33db6c5997f5332c93))
+
+
+### Features
+
+* add middleware support ([#371](https://github.com/amplitude/Amplitude-iOS/issues/371)) ([02a0994](https://github.com/amplitude/Amplitude-iOS/commit/02a09945be92d9334140a69f8b4b7b7f25d1643d))
+
+# [8.5.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.4.0...v8.5.0) (2021-10-22)
+
+
+### Features
+
+* add server zone for eu dynamic configuration support ([#369](https://github.com/amplitude/Amplitude-iOS/issues/369)) ([3c9a590](https://github.com/amplitude/Amplitude-iOS/commit/3c9a590a7fd4fa60445ba8d65915a41737877b94))
+
+# [8.4.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.1...v8.4.0) (2021-09-24)
+
+
+### Features
+
+* add observe plan information support ([62e8bab](https://github.com/amplitude/Amplitude-iOS/commit/62e8bab0a2d53cabda9f251454d465d350271a56))
+
+## [8.3.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.0...v8.3.1) (2021-08-21)
+
+
+### Bug Fixes
+
+* rename to initCompletionBlock ([f43a86c](https://github.com/amplitude/Amplitude-iOS/commit/f43a86c576af02957cacae3aac96fabba9c71450))
+
 # [8.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.1...v8.3.0) (2021-04-30)
 
 

@@ -25,12 +25,15 @@
 #import "AMPIdentify.h"
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
+#import "AMPPlan.h"
+#import "AMPServerZone.h"
+#import "AMPMiddleware.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NSString *_Nonnull (^AMPAdSupportBlock)(void);
 typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
-
+typedef void (^AMPInitCompletionBlock)(void);
 /**
  Amplitude iOS SDK.
 
@@ -181,6 +184,17 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  */
 @property (nonatomic, copy, readonly) NSString *contentTypeHeader;
 
+/**
+ * Sets a block to be called after completely initialized.
+ *
+ * Example:
+ *  __typeof(amp) __weak weakAmp = amp;
+ *  amp.initCompletionBlock = ^(void){
+ *     NSLog(@"deviceId: %@, userId: %@", weakAmp.deviceId, weakAmp.userId);
+ *  };
+ */
+@property (nonatomic, strong, nullable) AMPInitCompletionBlock initCompletionBlock;
+
 #pragma mark - Methods
 
 /**-----------------------------------------------------------------------------
@@ -264,6 +278,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
  @see [Tracking Events](https://github.com/amplitude/amplitude-ios#tracking-events)
  */
 - (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties;
+
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra;
 
 /**
  Tracks an event. Events are saved locally.
@@ -574,6 +591,13 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 - (void)setOptOut:(BOOL)enabled;
 
 /**
+ Sets event upload max batch size. This controls the maximum number of events sent with each upload request.
+
+ @param eventUploadMaxBatchSize                  Set the event upload max batch size
+ */
+- (void)updateEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize;
+
+/**
  Disables sending logged events to Amplitude servers.
 
  If you want to stop logged events from being sent to Amplitude severs, use this method to set the client to offline. Once offline is enabled, logged events will not be sent to the server until offline is disabled. Calling this method again with offline set to NO will allow events to be sent to server and the client will attempt to send events that have been queued while offline.
@@ -623,6 +647,9 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 
 /**
  Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers
+ 
+ We now have a new method setServerZone. To send data to Amplitude's EU servers, recommend to use setServerZone
+ method like [client setServerZone:EU]
  */
 - (void)setServerUrl:(NSString *)serverUrl;
 
@@ -632,6 +659,25 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 - (void)setContentTypeHeader:(NSString *)contentType;
 
 - (void)setBearerToken:(NSString *)token;
+
+- (void)setPlan:(AMPPlan *)plan;
+
+/**
+ * Set Amplitude Server Zone, switch to zone related configuration, including dynamic configuration and server url.
+ * To send data to Amplitude's EU servers, you need to configure the serverZone to EU like [client setServerZone:EU]
+ */
+- (void)setServerZone:(AMPServerZone)serverZone;
+
+/**
+ * Set Amplitude Server Zone, switch to zone related configuration, including dynamic configuration and server url.
+ * If updateServerUrl is true, including server url as well. Recommend to keep updateServerUrl to be true for alignment.
+ */
+- (void)setServerZone:(AMPServerZone)serverZone updateServerUrl:(BOOL)updateServerUrl;
+
+/**
+ * Adds a new middleware function to run on each logEvent() call prior to sending to Amplitude.
+ */
+- (void)addEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods

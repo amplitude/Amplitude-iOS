@@ -31,8 +31,10 @@ extern NSString *const kAMPPlatform;
 extern NSString *const kAMPOSName;
 extern NSString *const kAMPEventLogDomain;
 extern NSString *const kAMPEventLogUrl;
+extern NSString *const kAMPEventLogEuUrl;
 extern NSString *const kAMPContentTypeHeader;
 extern NSString *const kAMPDyanmicConfigUrl;
+extern NSString *const kAMPDyanmicConfigEuUrl;
 extern NSString *const kAMPDefaultInstance;
 extern const int kAMPApiVersion;
 extern const int kAMPDBVersion;
@@ -83,3 +85,8 @@ extern NSString *const AMP_TRACKING_OPTION_OS_VERSION;
 extern NSString *const AMP_TRACKING_OPTION_PLATFORM;
 extern NSString *const AMP_TRACKING_OPTION_REGION;
 extern NSString *const AMP_TRACKING_OPTION_VERSION_NAME;
+
+// Plan
+extern NSString *const AMP_PLAN_BRANCH;
+extern NSString *const AMP_PLAN_SOURCE;
+extern NSString *const AMP_PLAN_VERSION;

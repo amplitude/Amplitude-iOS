@@ -1,6 +1,6 @@
 //
-//  AMPConfigManager.h
-//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
+//  AMPPlan.h
+//  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +20,24 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //
-
 #import <Foundation/Foundation.h>
-#import "AMPServerZone.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@interface AMPPlan : NSObject
 
-@interface AMPConfigManager : NSObject
+@property (nonatomic, strong, readonly) NSString *branch;
 
-@property (nonatomic, strong, readonly) NSString *ingestionEndpoint;
+@property (nonatomic, strong, readonly) NSString *source;
 
-+ (instancetype)sharedInstance;
-- (void)refresh:(void(^)(void))completionHandler serverZone:(AMPServerZone)serverZone;
+@property (nonatomic, strong, readonly) NSString *version;
+
++ (instancetype)plan;
+
+- (AMPPlan *)setBranch:(NSString *)branch;
+
+- (AMPPlan *)setSource:(NSString *)source;
+
+- (AMPPlan *)setVersion:(NSString *)version;
+
+- (NSDictionary *)toNSDictionary;
 
 @end
-
-NS_ASSUME_NONNULL_END

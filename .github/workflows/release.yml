@@ -37,6 +37,9 @@ jobs:
         run: |
           sudo xcode-select -switch /Applications/Xcode_12.app
 
+      - name: Carthage Bootstrap
+        run: carthage bootstrap --use-xcframeworks
+
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:

@@ -23,6 +23,21 @@ iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.am
 * A [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing an integration in an iOS extension.
 * A [demo application](https://github.com/amplitude/GTM-iOS-Demo) demonstrating a potential integration with Google Tag Manager.
 
+## Developing
+
+Prerequisites
+ * [Cocoapods](https://cocoapods.org/)
+ * [Carthage](https://github.com/Carthage/Carthage)
+
+1. Install Dependencies via Carthage
+    ```
+    carthage update --use-xcframeworks
+    ```
+2. Install Test Dependencies via CocoaPods
+    ```
+    pod install
+    ```
+
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->

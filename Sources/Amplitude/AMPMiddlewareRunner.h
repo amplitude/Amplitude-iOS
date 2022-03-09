@@ -1,6 +1,6 @@
 //
-//  AMPConfigManager.h
-//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
+//  AMPMiddlewareRunner.h
+//  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +20,17 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //
-
 #import <Foundation/Foundation.h>
-#import "AMPServerZone.h"
+#import "AMPMiddleware.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@interface AMPMiddlewareRunner : NSObject
 
-@interface AMPConfigManager : NSObject
+@property (nonatomic, nonnull, readonly) NSMutableArray<id<AMPMiddleware>> *middlewares;
 
-@property (nonatomic, strong, readonly) NSString *ingestionEndpoint;
++ (instancetype _Nonnull)middleRunner;
 
-+ (instancetype)sharedInstance;
-- (void)refresh:(void(^)(void))completionHandler serverZone:(AMPServerZone)serverZone;
+- (void) add:(id<AMPMiddleware> _Nonnull)middleware;
+
+- (void) run:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next;
 
 @end
-
-NS_ASSUME_NONNULL_END

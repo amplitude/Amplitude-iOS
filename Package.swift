@@ -13,11 +13,18 @@ let package = Package(
     products: [
         .library(name: "Amplitude", targets: ["Amplitude"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/amplitude/analytics-connector-ios.git", from: "1.0.0")
+    ],
     targets: [
         .target(
             name: "Amplitude",
+            dependencies: [
+                .product(name: "AnalyticsConnector", package: "analytics-connector-ios")
+            ],
             path: "Sources",
             resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
             publicHeadersPath: "Amplitude/Public"),
     ]
 )
+

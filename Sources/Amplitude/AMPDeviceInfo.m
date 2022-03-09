@@ -188,10 +188,17 @@
 }
 
 + (NSString *)getPlatformString {
-#if !TARGET_OS_OSX
-    const char *sysctl_name = "hw.machine";
-#else
     const char *sysctl_name = "hw.model";
+#if TARGET_OS_IOS
+    BOOL isiOSAppOnMac = NO;
+    if (@available(iOS 14.0, *)) {
+        isiOSAppOnMac = [NSProcessInfo processInfo].isiOSAppOnMac;
+    }
+    if (!isiOSAppOnMac){
+        sysctl_name = "hw.machine";
+    }
+#elif TARGET_OS_TV || TARGET_OS_WATCH
+    sysctl_name = "hw.machine";
 #endif
     size_t size;
     sysctlbyname(sysctl_name, NULL, &size, NULL, 0);

@@ -1,4 +1,4 @@
-amplitude_version = "8.3.0" # Version is managed automatically by semantic-release, please don't change it manually
+amplitude_version = "8.8.0" # Version is managed automatically by semantic-release, please don't change it manually
 
 Pod::Spec.new do |s|
   s.name                   = "Amplitude"
@@ -11,6 +11,8 @@ Pod::Spec.new do |s|
   s.requires_arc           = true
   s.library                = 'sqlite3.0'
 
+  s.swift_version = '4.1'
+  
   s.ios.deployment_target  = '10.0'
   s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}'
   s.ios.resources          = 'Sources/Resources/*.{der}'
@@ -26,6 +28,8 @@ Pod::Spec.new do |s|
   s.watchos.deployment_target  = '3.0'
   s.watchos.source_files       = 'Sources/Amplitude/**/*.{h,m}'
   s.watchos.resources          = 'Sources/Resources/*.{der}'
+  
+  s.dependency 'AnalyticsConnector', '~> 1.0.0'
 
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end

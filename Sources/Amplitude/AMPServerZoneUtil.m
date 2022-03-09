@@ -1,6 +1,6 @@
 //
-//  AMPConfigManager.h
-//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
+//  AMPServerZoneUtil.m
+//  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +23,41 @@
 
 #import <Foundation/Foundation.h>
 #import "AMPServerZone.h"
+#import "AMPServerZoneUtil.h"
+#import "AMPConstants.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation AMPServerZoneUtil
 
-@interface AMPConfigManager : NSObject
++ (NSString *)getEventLogApi:(AMPServerZone)serverZone {
+    NSString *eventLogUrl = kAMPEventLogUrl;
+    switch (serverZone) {
+        case EU:
+            eventLogUrl = kAMPEventLogEuUrl;
+            break;
+        case US:
+            eventLogUrl = kAMPEventLogUrl;
+            break;
+            
+        default:
+            break;
+    }
+    return eventLogUrl;
+}
 
-@property (nonatomic, strong, readonly) NSString *ingestionEndpoint;
-
-+ (instancetype)sharedInstance;
-- (void)refresh:(void(^)(void))completionHandler serverZone:(AMPServerZone)serverZone;
++ (NSString *)getDynamicConfigApi:(AMPServerZone)serverZone {
+    NSString *dynamicConfigUrl = kAMPDyanmicConfigUrl;
+    switch (serverZone) {
+        case EU:
+            dynamicConfigUrl = kAMPDyanmicConfigEuUrl;
+            break;
+        case US:
+            dynamicConfigUrl = kAMPDyanmicConfigUrl;
+            break;
+            
+        default:
+            break;
+    }
+    return dynamicConfigUrl;
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

@@ -1,6 +1,6 @@
 //
-//  AMPConfigManager.h
-//  Copyright (c) 2020 Amplitude Inc. (https://amplitude.com/)
+//  AMPMiddleware.h
+//  Copyright (c) 2021 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,39 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "AMPServerZone.h"
 
-NS_ASSUME_NONNULL_BEGIN
+/**
+ * AMPMiddlewarePayload
+ */
+@interface AMPMiddlewarePayload: NSObject
 
-@interface AMPConfigManager : NSObject
+@property NSMutableDictionary *_Nonnull event;
+@property NSMutableDictionary *_Nullable extra;
 
-@property (nonatomic, strong, readonly) NSString *ingestionEndpoint;
-
-+ (instancetype)sharedInstance;
-- (void)refresh:(void(^)(void))completionHandler serverZone:(AMPServerZone)serverZone;
+- (instancetype _Nonnull)initWithEvent:(NSMutableDictionary *_Nonnull) event withExtra:(NSMutableDictionary *_Nullable) extra;
 
 @end
 
-NS_ASSUME_NONNULL_END
+/**
+ * AMPMiddleware
+ */
+typedef void (^AMPMiddlewareNext)(AMPMiddlewarePayload *_Nullable newPayload);
+
+@protocol AMPMiddleware
+
+- (void)run:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next;
+
+@end
+
+/**
+ * AMPBlockMiddleware
+ */
+typedef void (^AMPMiddlewareBlock)(AMPMiddlewarePayload *_Nonnull payload, AMPMiddlewareNext _Nonnull next);
+
+@interface AMPBlockMiddleware : NSObject <AMPMiddleware>
+
+@property (nonnull, nonatomic, readonly) AMPMiddlewareBlock block;
+
+- (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock _Nonnull)block;
+
+@end
