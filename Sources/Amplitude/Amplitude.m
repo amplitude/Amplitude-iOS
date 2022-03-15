@@ -140,6 +140,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSString *_serverUrl;
     NSString *_token;
+    NSDictionary *_HTTPAdditionalHeaders;
     AMPPlan *_plan;
     AMPServerZone _serverZone;
     AMPMiddlewareRunner *_middlewareRunner;
@@ -988,6 +989,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [request setValue:auth forHTTPHeaderField:@"Authorization"];
     }
 
+    if (_HTTPAdditionalHeaders != nil){
+        [_HTTPAdditionalHeaders enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            [request setValue:obj forHTTPHeaderField:key];
+        }];
+    }
     [request setHTTPBody:postData];
     AMPLITUDE_LOG(@"Events: %@", events);
 
@@ -1447,6 +1453,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     self->_token = token;
+}
+
+- (void)setHTTPAdditionalHeaders: (NSDictionary *)HTTPAdditionalHeaders{
+    self->_HTTPAdditionalHeaders = HTTPAdditionalHeaders;
 }
 
 - (void)updateEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize {

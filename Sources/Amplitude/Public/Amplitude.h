@@ -651,6 +651,8 @@ typedef void (^AMPInitCompletionBlock)(void);
 
 - (void)setBearerToken:(NSString *)token;
 
+- (void)setHTTPAdditionalHeaders: (NSDictionary *)HTTPAdditionalHeaders;
+
 - (void)setPlan:(AMPPlan *)plan;
 
 /**
