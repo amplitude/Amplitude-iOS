@@ -1,3 +1,15 @@
+# [8.9.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.8.0...v8.9.0) (2022-03-30)
+
+
+### Bug Fixes
+
+* fix release action ([5eb7ee6](https://github.com/amplitude/Amplitude-iOS/commit/5eb7ee6c363c8c6c11cab965cdd0201e581d8843))
+
+
+### Features
+
+* Add support on Swift Package Manager for WatchOS ([#381](https://github.com/amplitude/Amplitude-iOS/issues/381)) ([74d3227](https://github.com/amplitude/Amplitude-iOS/commit/74d3227cf5b069bac45f6e26d1c7e357bc0bb936))
+
 # [8.8.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.2...v8.8.0) (2022-02-10)
 
 
