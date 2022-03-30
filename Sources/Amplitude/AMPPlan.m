@@ -72,6 +72,16 @@
     return self;
 }
 
+- (AMPPlan *)setVersionId:(NSString *)versionId {
+    if ([AMPUtils isEmptyString:versionId]) {
+        AMPLITUDE_LOG(@"Invalid empty versionId");
+        return self;
+    }
+
+    _versionId = versionId;
+    return self;
+}
+
 - (NSDictionary *)toNSDictionary {
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     if (_branch) {
@@ -82,6 +92,9 @@
     }
     if (_version) {
         [dict setValue:_version forKey:AMP_PLAN_VERSION];
+    }
+    if (_versionId) {
+        [dict setValue:_versionId forKey:AMP_PLAN_VERSION_ID];
     }
     return dict;
 }

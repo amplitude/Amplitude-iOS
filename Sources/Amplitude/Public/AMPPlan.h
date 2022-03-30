@@ -30,6 +30,8 @@
 
 @property (nonatomic, strong, readonly) NSString *version;
 
+@property (nonatomic, strong, readonly) NSString *versionId;
+
 + (instancetype)plan;
 
 - (AMPPlan *)setBranch:(NSString *)branch;
@@ -37,6 +39,8 @@
 - (AMPPlan *)setSource:(NSString *)source;
 
 - (AMPPlan *)setVersion:(NSString *)version;
+
+- (AMPPlan *)setVersionId:(NSString *)versionId;
 
 - (NSDictionary *)toNSDictionary;
 
