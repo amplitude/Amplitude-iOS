@@ -104,7 +104,7 @@ jobs:
 
       - name: Install appledoc binary
         run: |
-          git clone git://github.com/tomaz/appledoc.git
+          git clone https://github.com/tomaz/appledoc
           cd appledoc/
           sudo sh install-appledoc.sh
           cd ../
