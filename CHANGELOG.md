@@ -1,3 +1,10 @@
+# [8.10.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.9.0...v8.10.0) (2022-03-31)
+
+
+### Features
+
+* Add versionId to tracking plan data ([#392](https://github.com/amplitude/Amplitude-iOS/issues/392)) ([a09f022](https://github.com/amplitude/Amplitude-iOS/commit/a09f02230a76b85ce3e12400cf6613cd03a68ab0))
+
 # [8.9.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.8.0...v8.9.0) (2022-03-30)
 
 
