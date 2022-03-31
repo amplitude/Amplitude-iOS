@@ -70,17 +70,37 @@
     XCTAssertEqualObjects([dict objectForKey:@"version"], version);
 }
 
+- (void)testSetVersionId {
+    AMPPlan *plan = [AMPPlan plan];
+    XCTAssertNil(plan.versionId);
+
+    NSString *versionId = @"9ec23ba0-275f-468f-80d1-66b88bff9529";
+    [plan setVersionId:versionId];
+    XCTAssertEqualObjects(plan.versionId, versionId);
+
+    // test that ignore empty inputs
+    [plan setVersionId:nil];
+    XCTAssertEqualObjects(plan.versionId, versionId);
+    [plan setVersionId:@""];
+    XCTAssertEqualObjects(plan.versionId, versionId);
+
+    NSDictionary *dict = [plan toNSDictionary];
+    XCTAssertEqualObjects([dict objectForKey:@"versionId"], versionId);
+}
+
 - (void)testToNSDictionary {
     NSString *branch = @"main";
     NSString *source = @"mobile";
     NSString *version = @"1.0.0";
-    
-    AMPPlan *plan = [[[[AMPPlan plan] setBranch:branch] setSource:source] setVersion:version];
+    NSString *versionId = @"9ec23ba0-275f-468f-80d1-66b88bff9529";
+
+    AMPPlan *plan = [[[[[AMPPlan plan] setBranch:branch] setSource:source] setVersion:version] setVersionId:versionId];
 
     NSDictionary *dict = [plan toNSDictionary];
     XCTAssertEqualObjects([dict objectForKey:@"branch"], branch);
     XCTAssertEqualObjects([dict objectForKey:@"source"], source);
     XCTAssertEqualObjects([dict objectForKey:@"version"], version);
+    XCTAssertEqualObjects([dict objectForKey:@"versionId"], versionId);
 }
 
 @end

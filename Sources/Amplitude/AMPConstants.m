@@ -111,3 +111,4 @@ NSString *const AMP_TRACKING_OPTION_VERSION_NAME = @"version_name";
 NSString *const AMP_PLAN_BRANCH = @"branch";
 NSString *const AMP_PLAN_SOURCE = @"source";
 NSString *const AMP_PLAN_VERSION = @"version";
+NSString *const AMP_PLAN_VERSION_ID = @"versionId";
