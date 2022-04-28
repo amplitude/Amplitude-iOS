@@ -25,7 +25,9 @@ let package = Package(
             ],
             path: "Sources",
             resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
-            publicHeadersPath: "Amplitude/Public"),
+            publicHeadersPath: "Amplitude/Public",
+            linkerSettings: [.unsafeFlags(["-fprofile-instr-generate"])]
+        )
     ]
 )
 
