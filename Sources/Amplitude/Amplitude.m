@@ -215,7 +215,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _apiPropertiesTrackingOptions = [NSDictionary dictionary];
         _coppaControlEnabled = NO;
         self.instanceName = instanceName;
-        _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+        _dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName databaseDirectoryPath:eventsDataDirectory];
 
         self.eventUploadThreshold = kAMPEventUploadThreshold;
         self.eventMaxCount = kAMPEventMaxCount;
