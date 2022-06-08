@@ -862,16 +862,16 @@
 
 -(void)testTrackIdfa {
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     self.amplitude.adSupportBlock = ^NSString * _Nonnull{
         return value;
     };
-    
+
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
-    
+
     self.amplitude.adSupportBlock = nil;
-    
+
     NSDictionary *apiProps = [self.amplitude getLastEvent][@"api_properties"];
     XCTAssertTrue([[apiProps objectForKey:@"ios_idfa"] isEqualToString:value]);
 }
@@ -883,9 +883,9 @@
     if (dbHelper != nil) {
         [dbHelper deleteDB];
     }
-    
+
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"idfa"];
     client.adSupportBlock = ^NSString * _Nonnull{
         return value;
@@ -906,9 +906,9 @@
     if (dbHelper != nil) {
         [dbHelper deleteDB];
     }
-    
+
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"disable_idfa"];
     client.adSupportBlock = ^NSString * _Nonnull{
         return value;
@@ -930,9 +930,9 @@
     if (dbHelper != nil) {
         [dbHelper deleteDB];
     }
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"idfv"];
-    
+
     AMPDeviceInfo * deviceInfo = [[AMPDeviceInfo alloc] init];
 
     [client flushQueueWithQueue:client.initializerQueue];
@@ -987,23 +987,23 @@
 - (void)testEnableCoppaControl {
     NSDictionary *event = nil;
     NSDictionary *apiProperties = nil;
-    
+
     [self.amplitude disableCoppaControl];
-    
+
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
 
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
-    
+
     [self.amplitude enableCoppaControl];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNil([apiProperties objectForKey:@"ios_idfv"]);
-    
+
     // Minor guard covers 3 server configs. city, lat_lng, ip
     NSDictionary *trackingOptions = [apiProperties objectForKey:@"tracking_options"];
     XCTAssertEqual(3, trackingOptions.count);
@@ -1015,10 +1015,10 @@
 - (void)testCustomizedLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = @"amplitude-unity";
     client.libraryVersion = @"1.0.0";
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1026,7 +1026,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
                                           @"version" : @"1.0.0"
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1034,10 +1034,10 @@
 - (void)testCustomizedLibraryWithNilVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = @"amplitude-unity";
     client.libraryVersion = nil;
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1045,7 +1045,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
                                           @"version" : kAMPUnknownVersion
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1053,10 +1053,10 @@
 - (void)testCustomizedLibraryWithNilLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = nil;
     client.libraryVersion = @"1.0.0";
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1064,7 +1064,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : @"1.0.0"
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1072,10 +1072,10 @@
 - (void)testCustomizedLibraryWithNilLibraryAndVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = nil;
     client.libraryVersion = nil;
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1083,7 +1083,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : kAMPUnknownVersion
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1094,17 +1094,19 @@
     NSString *branch = @"main";
     NSString *source = @"mobile";
     NSString *version = @"1.0.0";
-    
-    AMPPlan *plan = [[[[AMPPlan plan] setBranch:branch] setSource:source] setVersion:version];
+    NSString *versionId = @"9ec23ba0-275f-468f-80d1-66b88bff9529";
+
+    AMPPlan *plan = [[[[[AMPPlan plan] setBranch:branch] setSource:source] setVersion:version] setVersionId:versionId];
     [client setPlan:plan];
     [client logEvent:@"test"];
     [client flushQueue];
     NSDictionary *event = [client getLastEventFromInstanceName:@"observe_plan"];
-    
+
     NSDictionary *planValue = event[@"plan"];
     XCTAssertEqualObjects(branch, planValue[@"branch"]);
     XCTAssertEqualObjects(source, planValue[@"source"]);
     XCTAssertEqualObjects(version, planValue[@"version"]);
+    XCTAssertEqualObjects(versionId, planValue[@"versionId"]);
 }
 
 - (void)testSetServerZone {
@@ -1153,7 +1155,7 @@
     [client initializeApiKey:@"middleware_api_key"];
     [client logEvent:@"test"];
     [client flushQueue];
-    
+
     XCTAssertNil([client getLastEventFromInstanceName:@"middleware_swallow"]);
 }
 

@@ -90,3 +90,4 @@ extern NSString *const AMP_TRACKING_OPTION_VERSION_NAME;
 extern NSString *const AMP_PLAN_BRANCH;
 extern NSString *const AMP_PLAN_SOURCE;
 extern NSString *const AMP_PLAN_VERSION;
+extern NSString *const AMP_PLAN_VERSION_ID;
