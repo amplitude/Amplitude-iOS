@@ -101,26 +101,45 @@
 }
 
 - (NSString *)carrier {
+    // unable to fetch carrier information
     if (!_carrier) {
-        Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
+        _carrier = @"Unknown";
+    }
+
+    Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
+    if (!CTTelephonyNetworkInfo) {
+        return _carrier;
+    }
+
+    networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+    id carrier = nil;
+    SEL carrierName = NSSelectorFromString(@"carrierName");
+
+    // subscriberCellularProvider is deprecated after iOS 12.0
+    if (@available(iOS 12, *)) {
+        SEL serviceSubscriberCellularProviders = NSSelectorFromString(@"serviceSubscriberCellularProviders");
+        id carrierMap = nil;
+        id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:serviceSubscriberCellularProviders];
+        if (imp1) {
+            carrierMap = imp1(networkInfo, serviceSubscriberCellularProviders);
+        }
+        SEL mobileNetworkCode = NSSelectorFromString(@"mobileNetworkCode");
+        for (NSString* key in carrierMap){
+            NSString *(*getMobileNetworkCode)(id, SEL) = (NSString *(*)(id, SEL))[carrierMap[key] methodForSelector:mobileNetworkCode];
+            if (getMobileNetworkCode && getMobileNetworkCode(carrierMap[key], mobileNetworkCode) != nil){
+                carrier = carrierMap[key];
+            }
+        }
+    } else {
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
-        SEL carrierName = NSSelectorFromString(@"carrierName");
-        if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
-            networkInfo = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
-            id carrier = nil;
-            id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
-            if (imp1) {
-                carrier = imp1(networkInfo, subscriberCellularProvider);
-            }
-            NSString *(*imp2)(id, SEL) = (NSString *(*)(id, SEL))[carrier methodForSelector:carrierName];
-            if (imp2) {
-                _carrier = imp2(carrier, carrierName);
-            }
+        id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
+        if (imp1) {
+            carrier = imp1(networkInfo, subscriberCellularProvider);
         }
-        // unable to fetch carrier information
-        if (!_carrier) {
-            _carrier = @"Unknown";
-        }
+    }
+    NSString *(*imp2)(id, SEL) = (NSString *(*)(id, SEL))[carrier methodForSelector:carrierName];
+    if (imp2) {
+        _carrier = imp2(carrier, carrierName);
     }
     return _carrier;
 }
