@@ -128,6 +128,8 @@
             NSString *(*getMobileNetworkCode)(id, SEL) = (NSString *(*)(id, SEL))[carrierMap[key] methodForSelector:mobileNetworkCode];
             if (getMobileNetworkCode && getMobileNetworkCode(carrierMap[key], mobileNetworkCode) != nil){
                 carrier = carrierMap[key];
+                // exit early as we found a carrier here
+                break;
             }
         }
     } else {
