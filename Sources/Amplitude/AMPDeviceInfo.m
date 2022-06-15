@@ -110,8 +110,9 @@
     if (!CTTelephonyNetworkInfo) {
         return _carrier;
     }
-
-    networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+    if (networkInfo == nil) {
+        networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+    }
     id carrier = nil;
     SEL carrierName = NSSelectorFromString(@"carrierName");
 
