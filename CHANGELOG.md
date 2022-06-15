@@ -1,3 +1,10 @@
+## [8.10.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.0...v8.10.1) (2022-06-15)
+
+
+### Bug Fixes
+
+* wrong carrier info with deprecated method ([#400](https://github.com/amplitude/Amplitude-iOS/issues/400)) ([2af05da](https://github.com/amplitude/Amplitude-iOS/commit/2af05da0651cf032aee394e471349ad9ce5587df))
+
 # [8.10.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.9.0...v8.10.0) (2022-03-31)
 
 
