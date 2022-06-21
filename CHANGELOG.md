@@ -1,3 +1,10 @@
+## [8.10.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.1...v8.10.2) (2022-06-21)
+
+
+### Reverts
+
+* Revert "Compile with code coverage enabled (#398)" (#402) ([bd00ae5](https://github.com/amplitude/Amplitude-iOS/commit/bd00ae527e154204eccbde595f9c7bdf4aec982a)), closes [#398](https://github.com/amplitude/Amplitude-iOS/issues/398) [#402](https://github.com/amplitude/Amplitude-iOS/issues/402)
+
 ## [8.10.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.0...v8.10.1) (2022-06-15)
 
 
