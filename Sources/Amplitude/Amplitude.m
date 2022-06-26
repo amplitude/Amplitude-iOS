@@ -87,6 +87,7 @@
 
 @property (nonatomic, strong) NSOperationQueue *backgroundQueue;
 @property (nonatomic, strong) NSOperationQueue *initializerQueue;
+@property (nonatomic, strong) id urlSession;
 @property (nonatomic, strong) AMPDatabaseHelper *dbHelper;
 @property (nonatomic, assign) BOOL initialized;
 @property (nonatomic, assign) BOOL sslPinningEnabled;
@@ -137,6 +138,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     
     BOOL _inForeground;
     BOOL _offline;
+    BOOL _sendOverInexpensiveNetworkOnly;
 
     NSString *_serverUrl;
     NSString *_token;
@@ -204,6 +206,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _useAdvertisingIdForDeviceId = NO;
         _backoffUpload = NO;
         _offline = NO;
+        _sendOverInexpensiveNetworkOnly = NO;
         _serverUrl = kAMPEventLogUrl;
         _serverZone = US;
         self.libraryName = kAMPLibrary;
@@ -991,13 +994,30 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [request setHTTPBody:postData];
     AMPLITUDE_LOG(@"Events: %@", events);
 
-    // If pinning is enabled, use the AMPURLSession that handles it.
+    // Configure the appropriate URL session
+    if (self.urlSession == nil) {
+        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+        if (self->_sendOverInexpensiveNetworkOnly) {
+            configuration.allowsCellularAccess = NO;
+            if (@available(iOS 13.0, *)) {
+                configuration.allowsExpensiveNetworkAccess = NO;
+                configuration.allowsConstrainedNetworkAccess = NO;
+            }
+        }
+        
+        if (self.sslPinningEnabled) {
+            // If pinning is enabled, use the AMPURLSession that handles it.
 #if AMPLITUDE_SSL_PINNING
-    id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
-#else
-    id session = [NSURLSession class];
+            self.urlSession = [[AMPURLSession alloc] initWithConfiguration:configuration];
 #endif
-    [[[session sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        } else {
+            self.urlSession = [NSURLSession sessionWithConfiguration:configuration delegate:nil delegateQueue:nil];
+        }
+    }
+    
+    id session = self.urlSession;
+    
+    [[session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         if (response != nil) {
@@ -1424,6 +1444,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [self uploadEvents];
     }
 }
+
+- (void)setSendOverInexpensiveNetworkOnly:(BOOL)sendOverInexpensiveNetworkOnly {
+    if (_sendOverInexpensiveNetworkOnly != sendOverInexpensiveNetworkOnly) {
+        _sendOverInexpensiveNetworkOnly = sendOverInexpensiveNetworkOnly;
+        self.urlSession = nil;
+    }
+}
+
 
 - (void)setServerUrl:(NSString *)serverUrl {
     if (!(serverUrl == nil || [self isArgument:serverUrl validType:[NSString class] methodName:@"setServerUrl:"])) {

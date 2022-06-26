@@ -58,9 +58,12 @@
 }
 
 - (instancetype)init {
+    return [self initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+}
+
+- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration {
     if ((self = [super init])) {
         [AMPURLSession pinSSLCertificate:@[@"ComodoRsaDomainValidationCA"]];
-        NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         _sharedSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     }
     return self;
