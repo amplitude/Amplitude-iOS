@@ -24,7 +24,9 @@ let package = Package(
                 .product(name: "AnalyticsConnector", package: "analytics-connector-ios")
             ],
             path: "Sources",
-            resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
+            resources: [
+                .process("Resources"),
+            ],
             publicHeadersPath: "Amplitude/Public"),
     ]
 )
