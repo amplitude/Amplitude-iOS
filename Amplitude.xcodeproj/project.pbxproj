@@ -134,7 +134,6 @@
 		12C973C6241244F100E9CDDB /* IdentifyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731D24108DFF00E9CDDB /* IdentifyTests.m */; };
 		12C973C7241244F100E9CDDB /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731E24108DFF00E9CDDB /* BaseTestCase.m */; };
 		12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */; };
-		12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
 		207C960927AB0F65008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
 		207C961127AB0F6A008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
@@ -192,6 +191,9 @@
 		58E4B1BD287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
 		58E4B1BE287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
 		58E4B1BF287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
+		58E4B1C0287F6FD6007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
+		58E4B1C1287F6FD7007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
+		58E4B1C2287F6FD7007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		6B5494D6E33DC145D9B649D8 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91DADF8ED86FAA2D6B9D2E6B /* libPods-shared-Amplitude_tvOSTests.a */; };
 		759E939025FBF3DC00BF7C3D /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
 		759E939125FBF3DC00BF7C3D /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
@@ -1112,6 +1114,7 @@
 				12C973C3241244F000E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A7241244A600E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973B1241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
+				58E4B1C1287F6FD7007AC408 /* SSLPinningTests.m in Sources */,
 				12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */,
 				12C973AA241244AE00E9CDDB /* Amplitude+Test.m in Sources */,
 				12C973B2241244BF00E9CDDB /* RevenueTests.m in Sources */,
@@ -1149,7 +1152,6 @@
 				1279F90725244E8D003DCE07 /* AMPDeviceInfo.m in Sources */,
 				1279F90425244E8D003DCE07 /* Amplitude.m in Sources */,
 				3EF608EF2726256800133703 /* AMPMiddlewareRunner.m in Sources */,
-				12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1161,6 +1163,7 @@
 				12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */,
 				12C973C0241244EF00E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A6241244A400E9CDDB /* DeviceInfoTests.m in Sources */,
+				58E4B1C0287F6FD6007AC408 /* SSLPinningTests.m in Sources */,
 				12C973AF241244BE00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
 				12C973A9241244AE00E9CDDB /* Amplitude+Test.m in Sources */,
 				12C973B0241244BE00E9CDDB /* RevenueTests.m in Sources */,
@@ -1210,6 +1213,7 @@
 				12C973C6241244F100E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A8241244A700E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973B3241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
+				58E4B1C2287F6FD7007AC408 /* SSLPinningTests.m in Sources */,
 				12C973AB241244AF00E9CDDB /* Amplitude+Test.m in Sources */,
 				12C973B4241244BF00E9CDDB /* RevenueTests.m in Sources */,
 				3EF608E327211F8A00133703 /* ConfigManagerTests.m in Sources */,
