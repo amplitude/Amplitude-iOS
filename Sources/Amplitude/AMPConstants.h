@@ -30,6 +30,7 @@ extern NSString *const kAMPUnknownVersion;
 extern NSString *const kAMPPlatform;
 extern NSString *const kAMPOSName;
 extern NSString *const kAMPEventLogDomain;
+extern NSString *const kAMPEventLogEuDomain;
 extern NSString *const kAMPEventLogUrl;
 extern NSString *const kAMPEventLogEuUrl;
 extern NSString *const kAMPContentTypeHeader;

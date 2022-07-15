@@ -134,7 +134,6 @@
 		12C973C6241244F100E9CDDB /* IdentifyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731D24108DFF00E9CDDB /* IdentifyTests.m */; };
 		12C973C7241244F100E9CDDB /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731E24108DFF00E9CDDB /* BaseTestCase.m */; };
 		12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */; };
-		12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
 		207C960927AB0F65008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
 		207C961127AB0F6A008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
@@ -188,6 +187,13 @@
 		3EF6090327267C9800133703 /* AMPMiddleware.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF6090127267C9800133703 /* AMPMiddleware.m */; };
 		3EF6090427267C9800133703 /* AMPMiddleware.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF6090127267C9800133703 /* AMPMiddleware.m */; };
 		3EF6090527267C9800133703 /* AMPMiddleware.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF6090127267C9800133703 /* AMPMiddleware.m */; };
+		58E4B1BC287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
+		58E4B1BD287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
+		58E4B1BE287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
+		58E4B1BF287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
+		58E4B1C0287F6FD6007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
+		58E4B1C1287F6FD7007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
+		58E4B1C2287F6FD7007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		6B5494D6E33DC145D9B649D8 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91DADF8ED86FAA2D6B9D2E6B /* libPods-shared-Amplitude_tvOSTests.a */; };
 		759E939025FBF3DC00BF7C3D /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
 		759E939125FBF3DC00BF7C3D /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
@@ -346,6 +352,7 @@
 		3EF6090127267C9800133703 /* AMPMiddleware.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPMiddleware.m; sourceTree = "<group>"; };
 		3F7002FB71B21CB2ABA065F1 /* Pods-shared-Amplitude_macOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4D8EA610D8DF8BD11DB40E7A /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AmazonRootCA1.cer; sourceTree = "<group>"; };
 		6C55E7B2C7CB09D0EDC07910 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		70CE71E7AEFA4FE3E4F565AD /* Pods-shared-Amplitude_iOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		759E937A25FBF2BB00BF7C3D /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -579,6 +586,7 @@
 		DC927E942616400800A708B0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */,
 				DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */,
 			);
 			path = Resources;
@@ -947,6 +955,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58E4B1BD287F62C3007AC408 /* AmazonRootCA1.cer in Resources */,
 				DC927E972616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -962,6 +971,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58E4B1BC287F62C3007AC408 /* AmazonRootCA1.cer in Resources */,
 				DC927E962616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -977,6 +987,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58E4B1BE287F62C3007AC408 /* AmazonRootCA1.cer in Resources */,
 				DC927E982616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -992,6 +1003,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58E4B1BF287F62C3007AC408 /* AmazonRootCA1.cer in Resources */,
 				DC927E992616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1102,6 +1114,7 @@
 				12C973C3241244F000E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A7241244A600E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973B1241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
+				58E4B1C1287F6FD7007AC408 /* SSLPinningTests.m in Sources */,
 				12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */,
 				12C973AA241244AE00E9CDDB /* Amplitude+Test.m in Sources */,
 				12C973B2241244BF00E9CDDB /* RevenueTests.m in Sources */,
@@ -1139,7 +1152,6 @@
 				1279F90725244E8D003DCE07 /* AMPDeviceInfo.m in Sources */,
 				1279F90425244E8D003DCE07 /* Amplitude.m in Sources */,
 				3EF608EF2726256800133703 /* AMPMiddlewareRunner.m in Sources */,
-				12C973CF24131EB100E9CDDB /* SSLPinningTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1163,7 @@
 				12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */,
 				12C973C0241244EF00E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A6241244A400E9CDDB /* DeviceInfoTests.m in Sources */,
+				58E4B1C0287F6FD6007AC408 /* SSLPinningTests.m in Sources */,
 				12C973AF241244BE00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
 				12C973A9241244AE00E9CDDB /* Amplitude+Test.m in Sources */,
 				12C973B0241244BE00E9CDDB /* RevenueTests.m in Sources */,
@@ -1200,6 +1213,7 @@
 				12C973C6241244F100E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A8241244A700E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973B3241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
+				58E4B1C2287F6FD7007AC408 /* SSLPinningTests.m in Sources */,
 				12C973AB241244AF00E9CDDB /* Amplitude+Test.m in Sources */,
 				12C973B4241244BF00E9CDDB /* RevenueTests.m in Sources */,
 				3EF608E327211F8A00133703 /* ConfigManagerTests.m in Sources */,

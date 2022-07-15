@@ -59,28 +59,44 @@
 
 - (instancetype)init {
     if ((self = [super init])) {
-        [AMPURLSession pinSSLCertificate:@[@"ComodoRsaDomainValidationCA"]];
+        // ComodoRsaDomainValidationCA is for US endpoint, AmazonRootCA1 is for EU endpoint
+        NSDictionary *domainCertFilenamesMap = @{
+            kAMPEventLogDomain: @[
+                @"ComodoRsaDomainValidationCA.der",
+                @"Amplitude_Amplitude.bundle/ComodoRsaDomainValidationCA.der"
+            ],
+            kAMPEventLogEuDomain: @[
+                @"AmazonRootCA1.cer",
+                @"Amplitude_Amplitude.bundle/AmazonRootCA1.cer"
+            ]
+        };
+        [AMPURLSession pinSSLCertificate:domainCertFilenamesMap];
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         _sharedSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     }
     return self;
 }
 
-+ (void)pinSSLCertificate:(NSArray *)certFilenames {
++ (void)pinSSLCertificate:(NSDictionary *)domainCertFilenamesMap {
     // We pin the anchor/CA certificates
-    NSMutableArray *certs = [NSMutableArray array];
-    for (NSString *certFilename in certFilenames) {
-        NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:@"der"];
-        NSData *certData = [[NSData alloc] initWithContentsOfFile:certPath];
-        if (certData == nil) {
-            AMPLITUDE_LOG(@"Failed to load a certificate");
-            return;
-        }
-        [certs addObject:certData];
-    }
-
     NSMutableDictionary *pins = [[NSMutableDictionary alloc] init];
-    [pins setObject:certs forKey:kAMPEventLogDomain];
+    for (id domain in domainCertFilenamesMap) {
+        NSMutableArray *certs = [NSMutableArray array];
+        NSArray *certFilenames = [domainCertFilenamesMap objectForKey:domain];
+        for (NSString *certFilename in certFilenames) {
+            NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:nil];
+            NSData *certData = [[NSData alloc] initWithContentsOfFile:certPath];
+            if (certData == nil) {
+                continue;
+            }
+            [certs addObject:certData];
+        }
+        if ([certs count] == 0) {
+            AMPLITUDE_LOG([NSString stringWithFormat:@"Failed to load certificate for domain: %@", domain]);
+        } else {
+            [pins setObject:certs forKey:domain];
+        }
+    }
 
     if (pins == nil) {
         AMPLITUDE_LOG(@"Failed to pin a certificate");
