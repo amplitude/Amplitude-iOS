@@ -87,12 +87,15 @@
             NSString *certPath =  [[NSBundle bundleForClass:[self class]] pathForResource:certFilename ofType:nil];
             NSData *certData = [[NSData alloc] initWithContentsOfFile:certPath];
             if (certData == nil) {
-                AMPLITUDE_LOG([NSString stringWithFormat:@"Failed to load certificate: %@", certFilename]);
                 continue;
             }
             [certs addObject:certData];
         }
-        [pins setObject:certs forKey:domain];
+        if ([certs count] == 0) {
+            AMPLITUDE_LOG([NSString stringWithFormat:@"Failed to load certificate for domain: %@", domain]);
+        } else {
+            [pins setObject:certs forKey:domain];
+        }
     }
 
     if (pins == nil) {
