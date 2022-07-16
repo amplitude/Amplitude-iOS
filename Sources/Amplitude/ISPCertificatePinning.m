@@ -99,9 +99,15 @@
         // Unfortunately the anchor/CA certificate cannot be accessed this way
         CFIndex certsNb = SecTrustGetCertificateCount(trust);
         for(int i=0;i<certsNb;i++) {
-
+            SecCertificateRef certificate = nil;
             // Extract the certificate
-            SecCertificateRef certificate = SecTrustGetCertificateAtIndex(trust, i);
+            if (@available(macOS 12.0, iOS 15.0, *)) {
+                CFArrayRef certs = SecTrustCopyCertificateChain(trust);
+                certificate = (SecCertificateRef)CFArrayGetValueAtIndex(certs, i);
+            } else {
+                certificate = SecTrustGetCertificateAtIndex(trust, i);
+            }
+            
             NSData *DERCertificate = (__bridge NSData *)SecCertificateCopyData(certificate);
 
             // Compare the two certificates
@@ -126,9 +132,18 @@
         }
         SecTrustSetAnchorCertificates(trust, NULL);
 
-        SecTrustResultType trustResult;
-        SecTrustEvaluate(trust, &trustResult);
-        if (trustResult == kSecTrustResultUnspecified) {
+        BOOL isTrusted = false;
+        if (@available(iOS 12.0, macos 10.14, *)) {
+            CFErrorRef error;
+            BOOL trusted = SecTrustEvaluateWithError(trust, &error);
+            isTrusted = trusted;
+        } else {
+            SecTrustResultType trustResult;
+            SecTrustEvaluate(trust, &trustResult);
+            isTrusted = trustResult == kSecTrustResultUnspecified;
+        }
+
+        if (isTrusted) {
             // The anchor certificate was pinned
             CFRelease(anchorCertificate);
             return YES;
