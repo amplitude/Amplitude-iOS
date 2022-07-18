@@ -26,8 +26,7 @@
         BOOL isTrusted = false;
         if (@available(iOS 12.0, macos 10.14, *)) {
             CFErrorRef error;
-            BOOL trusted = SecTrustEvaluateWithError(serverTrust, &error);
-            isTrusted = trusted;
+            isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
         } else {
             SecTrustResultType trustResult;
             SecTrustEvaluate(serverTrust, &trustResult);
