@@ -52,7 +52,6 @@
 #import "AMPConstants.h"
 #import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
-#import "AMPURLConnection.h"
 #import "AMPURLSession.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPUtils.h"

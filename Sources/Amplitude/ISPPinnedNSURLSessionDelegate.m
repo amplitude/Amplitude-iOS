@@ -20,25 +20,29 @@
 
         SecTrustRef serverTrust = [[challenge protectionSpace] serverTrust];
         NSString *domain = [[challenge protectionSpace] host];
-        SecTrustResultType trustResult;
 
         // Validate the certificate chain with the device's trust store anyway
         // This *might* give use revocation checking
-        SecTrustEvaluate(serverTrust, &trustResult);
-        if (trustResult == kSecTrustResultUnspecified) {
-
+        BOOL isTrusted = false;
+        if (@available(iOS 12.0, macos 10.14, *)) {
+            CFErrorRef error;
+            isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
+        } else {
+            SecTrustResultType trustResult;
+            SecTrustEvaluate(serverTrust, &trustResult);
+            isTrusted = trustResult == kSecTrustResultUnspecified;
+        }
+        if (isTrusted) {
             // Look for a pinned certificate in the server's certificate chain
             if ([ISPCertificatePinning verifyPinnedCertificateForTrust:serverTrust andDomain:domain]) {
 
                 // Found the certificate; continue connecting
                 completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-            }
-            else {
+            } else {
                 // The certificate wasn't found in the certificate chain; cancel the connection
                 completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
             }
-        }
-        else {
+        } else {
             // Certificate chain validation failed; cancel the connection
             completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
         }
