@@ -1,3 +1,15 @@
+# [8.11.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.2...v8.11.0) (2022-07-19)
+
+
+### Bug Fixes
+
+* deprecation fix ([#404](https://github.com/amplitude/Amplitude-iOS/issues/404)) ([2f1203c](https://github.com/amplitude/Amplitude-iOS/commit/2f1203c18f5e50d2a4699f93aadb9218e3c7df1c))
+
+
+### Features
+
+* add EU SSL pinning cert, extent it to support multiple domains ([#403](https://github.com/amplitude/Amplitude-iOS/issues/403)) ([aba104d](https://github.com/amplitude/Amplitude-iOS/commit/aba104d98f51b04481046cc4228cea1529139bd8))
+
 ## [8.10.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.1...v8.10.2) (2022-06-21)
 
 
