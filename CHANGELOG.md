@@ -1,3 +1,10 @@
+## [8.11.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.11.0...v8.11.1) (2022-07-31)
+
+
+### Bug Fixes
+
+* turn requiringSecureCoding on, adjust the available version ([#407](https://github.com/amplitude/Amplitude-iOS/issues/407)) ([53d7026](https://github.com/amplitude/Amplitude-iOS/commit/53d7026d75bbf87967576fb98d36d16f84a4def0))
+
 # [8.11.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.2...v8.11.0) (2022-07-19)
 
 
