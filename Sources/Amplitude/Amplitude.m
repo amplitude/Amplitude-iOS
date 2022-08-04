@@ -52,7 +52,6 @@
 #import "AMPConstants.h"
 #import "AMPConfigManager.h"
 #import "AMPDeviceInfo.h"
-#import "AMPURLConnection.h"
 #import "AMPURLSession.h"
 #import "AMPDatabaseHelper.h"
 #import "AMPUtils.h"
@@ -1782,7 +1781,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (id)unarchive:(NSData *)data error:(NSError **)error {
-    if (@available(iOS 12, tvOS 11.0, macOS 10.13, watchOS 4.0, *)) {
+    if (@available(iOS 11, tvOS 11.0, macOS 10.13, watchOS 4.0, *)) {
         return [NSKeyedUnarchiver unarchivedObjectOfClass:[NSDictionary class] fromData:data error:error];
     } else {
 #pragma clang diagnostic push
@@ -1798,9 +1797,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (BOOL)archive:(id)obj toFile:(NSString *)path {
-    if (@available(tvOS 11.0, iOS 12, macOS 10.13, watchOS 4.0, *)) {
+    if (@available(tvOS 11.0, iOS 11, macOS 10.13, watchOS 4.0, *)) {
         NSError *archiveError = nil;
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:obj requiringSecureCoding:NO error:&archiveError];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:obj requiringSecureCoding:YES error:&archiveError];
         if (archiveError != nil) {
             AMPLITUDE_ERROR(@"ERROR: Unable to archive object %@: %@", obj, archiveError);
             return NO;

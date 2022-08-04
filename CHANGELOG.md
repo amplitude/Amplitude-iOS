@@ -1,3 +1,36 @@
+## [8.11.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.11.0...v8.11.1) (2022-07-31)
+
+
+### Bug Fixes
+
+* turn requiringSecureCoding on, adjust the available version ([#407](https://github.com/amplitude/Amplitude-iOS/issues/407)) ([53d7026](https://github.com/amplitude/Amplitude-iOS/commit/53d7026d75bbf87967576fb98d36d16f84a4def0))
+
+# [8.11.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.2...v8.11.0) (2022-07-19)
+
+
+### Bug Fixes
+
+* deprecation fix ([#404](https://github.com/amplitude/Amplitude-iOS/issues/404)) ([2f1203c](https://github.com/amplitude/Amplitude-iOS/commit/2f1203c18f5e50d2a4699f93aadb9218e3c7df1c))
+
+
+### Features
+
+* add EU SSL pinning cert, extent it to support multiple domains ([#403](https://github.com/amplitude/Amplitude-iOS/issues/403)) ([aba104d](https://github.com/amplitude/Amplitude-iOS/commit/aba104d98f51b04481046cc4228cea1529139bd8))
+
+## [8.10.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.1...v8.10.2) (2022-06-21)
+
+
+### Reverts
+
+* Revert "Compile with code coverage enabled (#398)" (#402) ([bd00ae5](https://github.com/amplitude/Amplitude-iOS/commit/bd00ae527e154204eccbde595f9c7bdf4aec982a)), closes [#398](https://github.com/amplitude/Amplitude-iOS/issues/398) [#402](https://github.com/amplitude/Amplitude-iOS/issues/402)
+
+## [8.10.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.0...v8.10.1) (2022-06-15)
+
+
+### Bug Fixes
+
+* wrong carrier info with deprecated method ([#400](https://github.com/amplitude/Amplitude-iOS/issues/400)) ([2af05da](https://github.com/amplitude/Amplitude-iOS/commit/2af05da0651cf032aee394e471349ad9ce5587df))
+
 # [8.10.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.9.0...v8.10.0) (2022-03-31)
 
 

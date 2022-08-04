@@ -70,10 +70,12 @@
 }
 
 - (void)testModel {
-#if !TARGET_OS_OSX
-    XCTAssertEqualObjects(@"Simulator", _deviceInfo.model);
-#else
+#if TARGET_OS_OSX && TARGET_CPU_X86_64
     XCTAssertTrue([_deviceInfo.model containsString:@"Mac"]);
+#elif TARGET_CPU_ARM64
+    XCTAssertTrue([_deviceInfo.model containsString:@"arm64"]);
+#else
+    XCTAssertEqualObjects(@"Simulator", _deviceInfo.model);
 #endif
 }
 
@@ -99,6 +101,10 @@
     XCTAssertNotNil(b);
     XCTAssertNotEqual(a, b);
     XCTAssertNotEqual(a, b);
+}
+
+- (void)testCarrier {
+    XCTAssertEqualObjects(_deviceInfo.carrier, @"Unknown");
 }
 
 @end

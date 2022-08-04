@@ -24,10 +24,10 @@ let package = Package(
                 .product(name: "AnalyticsConnector", package: "analytics-connector-ios")
             ],
             path: "Sources",
-            resources: [.process("Resources/ComodoRsaDomainValidationCA.der")],
-            publicHeadersPath: "Amplitude/Public",
-            linkerSettings: [.unsafeFlags(["-fprofile-instr-generate"])]
-        )
+            resources: [
+                .process("Resources"),
+            ],
+            publicHeadersPath: "Amplitude/Public"),
     ]
 )
 
