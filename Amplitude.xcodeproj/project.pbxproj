@@ -97,7 +97,6 @@
 		12C973A9241244AE00E9CDDB /* Amplitude+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731224108DFF00E9CDDB /* Amplitude+Test.m */; };
 		12C973AA241244AE00E9CDDB /* Amplitude+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731224108DFF00E9CDDB /* Amplitude+Test.m */; };
 		12C973AB241244AF00E9CDDB /* Amplitude+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731224108DFF00E9CDDB /* Amplitude+Test.m */; };
-		12C973AC241244B700E9CDDB /* AmplitudeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731324108DFF00E9CDDB /* AmplitudeTests.m */; };
 		12C973AD241244B700E9CDDB /* AmplitudeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731324108DFF00E9CDDB /* AmplitudeTests.m */; };
 		12C973AE241244B800E9CDDB /* AmplitudeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731324108DFF00E9CDDB /* AmplitudeTests.m */; };
 		12C973AF241244BE00E9CDDB /* AMPDatabaseHelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731424108DFF00E9CDDB /* AMPDatabaseHelperTests.m */; };
@@ -123,6 +122,7 @@
 		12C973C7241244F100E9CDDB /* BaseTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731E24108DFF00E9CDDB /* BaseTestCase.m */; };
 		12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */; };
 		12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731A24108DFF00E9CDDB /* AmplitudeiOSTests.m */; };
+		19619D9628A247DF00A2CC53 /* AmplitudeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731324108DFF00E9CDDB /* AmplitudeTests.m */; };
 		207C960927AB0F65008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
 		207C961127AB0F6A008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
 		207C961927AB0F6E008EE143 /* AnalyticsConnector.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */; };
@@ -1126,6 +1126,7 @@
 				12C973B5241244C500E9CDDB /* SetupTests.m in Sources */,
 				12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */,
 				12C973C0241244EF00E9CDDB /* IdentifyTests.m in Sources */,
+				19619D9628A247DF00A2CC53 /* AmplitudeTests.m in Sources */,
 				12C973A6241244A400E9CDDB /* DeviceInfoTests.m in Sources */,
 				58E4B1C0287F6FD6007AC408 /* SSLPinningTests.m in Sources */,
 				12C973AF241244BE00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
@@ -1135,7 +1136,6 @@
 				3E2411F526F9A4E100793829 /* PlanTests.m in Sources */,
 				12C973BC241244E300E9CDDB /* SessionTests.m in Sources */,
 				3EF608FE272666E400133703 /* MiddlewareRunnerTests.m in Sources */,
-				12C973AC241244B700E9CDDB /* AmplitudeTests.m in Sources */,
 				3EF608E127211F8A00133703 /* ConfigManagerTests.m in Sources */,
 				12C973BF241244EF00E9CDDB /* TrackingOptionsTest.m in Sources */,
 				3EF608DD27211AC000133703 /* ServerZoneUtilTests.m in Sources */,

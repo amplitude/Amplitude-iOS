@@ -531,6 +531,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:nil withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:NO withMiddlewareExtra:extra];
 }
 
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withUserProperties:(NSDictionary *)userProperties {
+    [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:userProperties withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:NO withMiddlewareExtra:nil];
+}
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withUserProperties:(NSDictionary *)userProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra{
+   [self logEvent:eventType withEventProperties:eventProperties withApiProperties:nil withUserProperties:userProperties withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:NO withMiddlewareExtra:extra];
+}
+
 - (void)logEvent:(NSString *)eventType withEventProperties:(NSDictionary *)eventProperties outOfSession:(BOOL)outOfSession {
     [self logEvent:eventType withEventProperties:eventProperties withGroups:nil outOfSession:outOfSession];
 }

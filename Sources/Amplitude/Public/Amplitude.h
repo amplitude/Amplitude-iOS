@@ -279,8 +279,11 @@ typedef void (^AMPInitCompletionBlock)(void);
  */
 - (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties;
 
-
 - (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra;
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withUserProperties:(NSDictionary *)userProperties;
+
+- (void)logEvent:(NSString *)eventType withEventProperties:(nullable NSDictionary *)eventProperties withUserProperties:(NSDictionary *)userProperties withMiddlewareExtra: (nullable NSMutableDictionary *) extra;
 
 /**
  Tracks an event. Events are saved locally.
