@@ -1,3 +1,10 @@
+# [8.12.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.11.1...v8.12.0) (2022-08-10)
+
+
+### Features
+
+* expose more function signature for logEvent ([#409](https://github.com/amplitude/Amplitude-iOS/issues/409)) ([c6195f8](https://github.com/amplitude/Amplitude-iOS/commit/c6195f85a3a2aa6a786485c0f5a8fa545e26acb6))
+
 ## [8.11.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.11.0...v8.11.1) (2022-07-31)
 
 
