@@ -1159,4 +1159,27 @@
     XCTAssertNil([client getLastEventFromInstanceName:@"middleware_swallow"]);
 }
 
+-(void)testLogEventWithUserProperties {
+    NSString *instanceName = @"eventWithUserProperties";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+    
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper resetDB:NO];
+
+    NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
+    [userProperties setValue:@"-" forKey:@"$clearAll"];
+    NSMutableDictionary *setOpProperties = [NSMutableDictionary dictionary];
+    [setOpProperties setValue:@"value" forKey:@"prop"];
+    [userProperties setValue:setOpProperties forKey:@"$set"];
+    
+    [client logEvent:@"$identify" withEventProperties:nil withUserProperties:userProperties];
+    [client flushQueue];
+    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
+    XCTAssertEqual([identifys count], 1);
+
+    XCTAssertEqualObjects([identifys[0] objectForKey:@"user_properties"], userProperties);
+}
+
+
 @end
