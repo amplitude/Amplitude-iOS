@@ -113,3 +113,6 @@ NSString *const AMP_PLAN_BRANCH = @"branch";
 NSString *const AMP_PLAN_SOURCE = @"source";
 NSString *const AMP_PLAN_VERSION = @"version";
 NSString *const AMP_PLAN_VERSION_ID = @"versionId";
+
+NSString *const AMP_INGESTION_METADATA_SOURCE_NAME = @"source_name";
+NSString *const AMP_INGESTION_METADATA_SOURCE_VERSION = @"source_version";

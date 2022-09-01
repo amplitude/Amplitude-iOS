@@ -92,3 +92,7 @@ extern NSString *const AMP_PLAN_BRANCH;
 extern NSString *const AMP_PLAN_SOURCE;
 extern NSString *const AMP_PLAN_VERSION;
 extern NSString *const AMP_PLAN_VERSION_ID;
+
+// Ingestion Metadata
+extern NSString *const AMP_INGESTION_METADATA_SOURCE_NAME;
+extern NSString *const AMP_INGESTION_METADATA_SOURCE_VERSION;

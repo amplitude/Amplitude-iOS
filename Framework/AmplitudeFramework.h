@@ -5,6 +5,7 @@
 #import <Amplitude/AMPTrackingOptions.h>
 #import <Amplitude/Amplitude+SSLPinning.h>
 #import <Amplitude/AMPPlan.h>
+#import <Amplitude/AMPIngestionMetadata.h>
 #import <Amplitude/AMPMiddleware.h>
 #import <Amplitude/AMPServerZone.h>
 

@@ -59,6 +59,7 @@
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
 #import "AMPPlan.h"
+#import "AMPIngestionMetadata.h"
 #import "AMPServerZone.h"
 #import "AMPServerZoneUtil.h"
 #import "AMPMiddleware.h"
@@ -140,6 +141,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     NSString *_serverUrl;
     NSString *_token;
     AMPPlan *_plan;
+    AMPIngestionMetadata *_ingestionMetadata;
     AMPServerZone _serverZone;
     AMPMiddlewareRunner *_middlewareRunner;
 }
@@ -716,6 +718,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     
     if (_plan) {
         [event setValue:[_plan toNSDictionary] forKey:@"plan"];
+    }
+
+    if (_ingestionMetadata) {
+        [event setValue:[_ingestionMetadata toNSDictionary] forKey:@"ingestion_metadata"];
     }
 
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
@@ -1492,6 +1498,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (void)setPlan:(AMPPlan *)plan {
     _plan = plan;
+}
+
+- (void)setIngestionMetadata:(AMPIngestionMetadata *)ingestionMetadata {
+    _ingestionMetadata = ingestionMetadata;
 }
 
 - (void)setServerZone:(AMPServerZone)serverZone {
