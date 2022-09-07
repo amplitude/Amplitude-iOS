@@ -26,6 +26,7 @@
 #import "AMPRevenue.h"
 #import "AMPTrackingOptions.h"
 #import "AMPPlan.h"
+#import "AMPIngestionMetadata.h"
 #import "AMPServerZone.h"
 #import "AMPMiddleware.h"
 
@@ -655,6 +656,8 @@ typedef void (^AMPInitCompletionBlock)(void);
 - (void)setBearerToken:(NSString *)token;
 
 - (void)setPlan:(AMPPlan *)plan;
+
+- (void)setIngestionMetadata:(AMPIngestionMetadata *)ingestionMetadata;
 
 /**
  * Set Amplitude Server Zone, switch to zone related configuration, including dynamic configuration and server url.

@@ -16,6 +16,7 @@
 #import "AMPUtils.h"
 #import "AMPTrackingOptions.h"
 #import "AMPPlan.h"
+#import "AMPIngestionMetadata.h"
 #import "AMPServerZone.h"
 
 @interface Amplitude (Tests)
@@ -1107,6 +1108,23 @@
     XCTAssertEqualObjects(source, planValue[@"source"]);
     XCTAssertEqualObjects(version, planValue[@"version"]);
     XCTAssertEqualObjects(versionId, planValue[@"versionId"]);
+}
+
+- (void)testSetIngestionMetadata {
+    Amplitude *client = [Amplitude instanceWithName:@"ingestion_metadata"];
+    [client initializeApiKey:@"ingestion_metadata"];
+    NSString *sourceName = @"ampli";
+    NSString *sourceVersion = @"2.0.0";
+
+    AMPIngestionMetadata *ingestionMetadata = [[[AMPIngestionMetadata ingestionMetadata] setSourceName:sourceName] setSourceVersion:sourceVersion];
+    [client setIngestionMetadata:ingestionMetadata];
+    [client logEvent:@"test"];
+    [client flushQueue];
+    NSDictionary *event = [client getLastEventFromInstanceName:@"ingestion_metadata"];
+
+    NSDictionary *ingestionMetadataValue = event[@"ingestion_metadata"];
+    XCTAssertEqualObjects(sourceName, ingestionMetadataValue[@"source_name"]);
+    XCTAssertEqualObjects(sourceVersion, ingestionMetadataValue[@"source_version"]);
 }
 
 - (void)testSetServerZone {
