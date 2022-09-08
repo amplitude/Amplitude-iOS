@@ -1,3 +1,10 @@
+# [8.13.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.12.0...v8.13.0) (2022-09-08)
+
+
+### Features
+
+* add ingestion_metadata field ([#410](https://github.com/amplitude/Amplitude-iOS/issues/410)) ([49e1126](https://github.com/amplitude/Amplitude-iOS/commit/49e1126213d4b4cc9010d1bf32e4dec3a2855698))
+
 # [8.12.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.11.1...v8.12.0) (2022-08-10)
 
 
