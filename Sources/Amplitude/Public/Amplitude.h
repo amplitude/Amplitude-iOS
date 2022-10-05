@@ -196,12 +196,6 @@ typedef void (^AMPInitCompletionBlock)(void);
  */
 @property (nonatomic, strong, nullable) AMPInitCompletionBlock initCompletionBlock;
 
-/**
- * Defer the forground check in initializeApiKey.
- * checkInForeground need to be manually called in order to get the right config and session info if deferCheckInForeground = true has been set.
- */
-@property (nonatomic, assign) BOOL deferCheckInForeground;
-
 #pragma mark - Methods
 
 /**-----------------------------------------------------------------------------
@@ -257,10 +251,6 @@ typedef void (^AMPInitCompletionBlock)(void);
 */
 - (void)initializeApiKey:(NSString *)apiKey userId:(nullable NSString *)userId;
 
-/**
-* Manually check in and set the forground related settings including dynamic config and sesstion. Need to be called manually when onEnterForeground if  deferCheckInForeground = true.
-*/
-- (void)checkInForeground;
 
 /**-----------------------------------------------------------------------------
  * @name Logging Events

@@ -21,8 +21,6 @@
 
 @interface Amplitude (Tests)
 
-@property (nonatomic, assign) bool initialized;
-
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id)truncate:(id) obj;
 - (long long)getNextSequenceNumber;
@@ -1201,22 +1199,5 @@
     XCTAssertEqualObjects([identifys[0] objectForKey:@"user_properties"], userProperties);
 }
 
--(void)testNoDeferCheckInForeground {
-    NSString *instanceName = @"noDeferCheckInForegroundInstance";
-    Amplitude *client = [Amplitude instanceWithName:instanceName];
-    [client initializeApiKey:@"api-key"];
-    XCTAssertEqual(client.initialized, YES);
-}
-
--(void)testDeferCheckInForeground {
-    NSString *instanceName = @"DeferCheckInForegroundInstance";
-    Amplitude *client = [Amplitude instanceWithName:instanceName];
-    [client setDeferCheckInForeground:YES];
-    [client initializeApiKey:@"api-key"];
-    XCTAssertEqual(client.initialized, NO);
-
-    [client checkInForeground];
-    XCTAssertEqual(client.initialized, YES);
-}
 
 @end
