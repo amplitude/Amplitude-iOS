@@ -1,3 +1,10 @@
+# [8.14.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.13.0...v8.14.0) (2022-10-05)
+
+
+### Features
+
+* add possibility to manually check in foreground ([#414](https://github.com/amplitude/Amplitude-iOS/issues/414)) ([9b8ada6](https://github.com/amplitude/Amplitude-iOS/commit/9b8ada694c212ba3f67a59467f6b924d03d622eb))
+
 # [8.13.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.12.0...v8.13.0) (2022-09-08)
 
 
