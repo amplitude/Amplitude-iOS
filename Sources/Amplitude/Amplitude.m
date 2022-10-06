@@ -92,6 +92,8 @@
 @property (nonatomic, assign) int backoffUploadBatchSize;
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
+@property (nonatomic, readonly) dispatch_semaphore_t deviceIdSemaphore;
+
 @end
 
 NSString *const kAMPSessionStartEvent = @"session_start";
@@ -200,6 +202,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         _sslPinningEnabled = NO;
 #endif
 
+        _deviceIdSemaphore = dispatch_semaphore_create(0);
         _initialized = NO;
         _sessionId = -1;
         _updateScheduled = NO;
@@ -403,6 +406,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     [self initializeApiKey:apiKey userId:userId setUserId:YES];
 }
 
+- (void)waitForDeviceIdSetWithTimeout:(dispatch_time_t)timeout {
+    dispatch_semaphore_wait(self.deviceIdSemaphore, timeout);
+    dispatch_semaphore_signal(self.deviceIdSemaphore);
+}
+
 /**
  * SetUserId: client explicitly initialized with a userId (can be nil).
  * If setUserId is NO, then attempt to load userId from saved eventsData.
@@ -438,6 +446,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             } else {
                 self.userId = [self.dbHelper getValue:USER_ID];
             }
+            
+            dispatch_semaphore_signal(self.deviceIdSemaphore);
         }];
 
 #if TARGET_OS_IPHONE
