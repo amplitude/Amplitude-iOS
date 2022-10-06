@@ -70,7 +70,7 @@ typedef NSDictionary *_Nullable (^AMPLocationInfoBlock)(void);
 /**
  Identifier for the current device.
  */
-@property (nonatomic, copy, readonly) NSString *deviceId;
+@property (nonatomic, copy, readonly, nullable) NSString *deviceId;
 
 /**
  Name of the SDK instance (ex: no name for default instance, or custom name for a named instance)
