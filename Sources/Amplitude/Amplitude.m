@@ -647,14 +647,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type %@ resulted in an NULL string", eventType);
             return;
         }
-        if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
+        if ([eventType isEqualToString:AMP_IDENTIFY_EVENT] || [eventType isEqualToString:AMP_GROUP_IDENTIFY_EVENT]) {
             (void) [self.dbHelper addIdentify:jsonString];
         } else {
             (void) [self.dbHelper addEvent:jsonString];
         }
         
         // Apply identify events to amplitude core to notify experiment SDK that user properties have changed.
-        if ([eventType isEqualToString:IDENTIFY_EVENT]) {
+        if ([eventType isEqualToString:AMP_IDENTIFY_EVENT]) {
             id<IdentityStoreEditor> editor = [[[AnalyticsConnector getInstance:self.instanceName] identityStore] editIdentity];
             [[editor updateUserProperties:[event valueForKey:@"user_properties"]] commit];
         }
@@ -1295,7 +1295,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     if (identify == nil || [identify.userPropertyOperations count] == 0) {
         return;
     }
-    [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:outOfSession];
+    [self logEvent:AMP_IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:outOfSession];
 }
 
 - (void)groupIdentifyWithGroupType:(NSString *)groupType groupName:(NSObject *)groupName groupIdentify:(AMPIdentify *)groupIdentify {
@@ -1313,7 +1313,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     NSMutableDictionary *groups = [NSMutableDictionary dictionaryWithObjectsAndKeys:groupName, groupType, nil];
-    [self logEvent:GROUP_IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:groupIdentify.userPropertyOperations withTimestamp:nil outOfSession:outOfSession];
+    [self logEvent:AMP_GROUP_IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:nil withGroups:groups withGroupProperties:groupIdentify.userPropertyOperations withTimestamp:nil outOfSession:outOfSession];
 }
 
 #pragma mark - configurations
@@ -1364,7 +1364,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     NSMutableDictionary *groups = [NSMutableDictionary dictionaryWithObjectsAndKeys:groupName, groupType, nil];
     AMPIdentify *identify = [[AMPIdentify identify] set:groupType value:groupName];
-    [self logEvent:IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:groups withGroupProperties:nil withTimestamp:nil outOfSession:NO];
+    [self logEvent:AMP_IDENTIFY_EVENT withEventProperties:nil withApiProperties:nil withUserProperties:identify.userPropertyOperations withGroups:groups withGroupProperties:nil withTimestamp:nil outOfSession:NO];
 
 }
 

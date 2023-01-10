@@ -49,8 +49,8 @@ extern const long kAMPMinTimeBetweenSessionsMillis;
 extern const int kAMPMaxStringLength;
 extern const int kAMPMaxPropertyKeys;
 
-extern NSString *const IDENTIFY_EVENT;
-extern NSString *const GROUP_IDENTIFY_EVENT;
+extern NSString *const AMP_IDENTIFY_EVENT;
+extern NSString *const AMP_GROUP_IDENTIFY_EVENT;
 extern NSString *const AMP_OP_ADD;
 extern NSString *const AMP_OP_APPEND;
 extern NSString *const AMP_OP_CLEAR_ALL;

@@ -73,8 +73,8 @@ const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5 minutes
 const int kAMPMaxStringLength = 1024;
 const int kAMPMaxPropertyKeys = 1000;
 
-NSString *const IDENTIFY_EVENT = @"$identify";
-NSString *const GROUP_IDENTIFY_EVENT = @"$groupidentify";
+NSString *const AMP_IDENTIFY_EVENT = @"$identify";
+NSString *const AMP_GROUP_IDENTIFY_EVENT = @"$groupidentify";
 NSString *const AMP_OP_ADD = @"$add";
 NSString *const AMP_OP_APPEND = @"$append";
 NSString *const AMP_OP_CLEAR_ALL = @"$clearAll";
