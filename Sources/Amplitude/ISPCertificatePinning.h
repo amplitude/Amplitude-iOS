@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 iSEC Partners. All rights reserved.
 //
 
-#if AMPLITUDE_SSL_PINNING || 1
 
 #import <Foundation/Foundation.h>
 
@@ -64,4 +63,3 @@
 + (BOOL)verifyPinnedCertificateForTrust:(SecTrustRef)trust andDomain:(NSString *)domain;
 
 @end
-#endif

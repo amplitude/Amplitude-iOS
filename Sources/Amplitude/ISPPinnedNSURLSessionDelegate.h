@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 iSEC Partners. All rights reserved.
 //
 
-#ifdef AMPLITUDE_SSL_PINNING || 1
 
 #import <Foundation/Foundation.h>
 
@@ -24,4 +23,3 @@
 - (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler;
 
 @end
-#endif

@@ -21,7 +21,6 @@
 //  THE SOFTWARE.
 //
 
-#if AMPLITUDE_SSL_PINNING || 1
 
 #ifndef AMPLITUDE_DEBUG
 #define AMPLITUDE_DEBUG 0
@@ -121,4 +120,3 @@
 
 @end
 
-#endif
