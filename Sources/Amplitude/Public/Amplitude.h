@@ -698,6 +698,15 @@ typedef void (^AMPInitCompletionBlock)(void);
  */
 - (void)printEventsCount;
 
+
+/**
+ Fetches the current userId.
+
+ @returns the userId.
+ */
+- (NSString *)getUserId;
+
+
 /**
  Fetches the deviceId, a unique identifier shared between multiple users using the same app on the same device.
 
