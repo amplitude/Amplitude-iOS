@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 iSEC Partners. All rights reserved.
 //
 
-#ifdef AMPLITUDE_SSL_PINNING || true
+#if AMPLITUDE_SSL_PINNING || 1
 
 #import <Foundation/Foundation.h>
 

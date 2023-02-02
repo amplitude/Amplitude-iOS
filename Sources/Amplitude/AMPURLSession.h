@@ -21,7 +21,7 @@
 //  THE SOFTWARE.
 //
 
-#ifdef AMPLITUDE_SSL_PINNING || true
+#if AMPLITUDE_SSL_PINNING || 1
 
 #import <Foundation/Foundation.h>
 #import "ISPPinnedNSURLSessionDelegate.h"
