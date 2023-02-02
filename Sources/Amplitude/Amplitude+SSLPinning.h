@@ -26,7 +26,7 @@
 
 @interface Amplitude (SSLPinning)
 
-#ifdef AMPLITUDE_SSL_PINNING
+#ifdef AMPLITUDE_SSL_PINNING || true
 @property (nonatomic, assign) BOOL sslPinningEnabled;
 #endif
 

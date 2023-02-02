@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 iSEC Partners. All rights reserved.
 //
 
-#if AMPLITUDE_SSL_PINNING
+#ifdef AMPLITUDE_SSL_PINNING || true
 
 #ifndef AMPLITUDE_DEBUG
 #define AMPLITUDE_DEBUG 0

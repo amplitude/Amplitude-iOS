@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 iSEC Partners. All rights reserved.
 //
 
-#if AMPLITUDE_SSL_PINNING
+#ifdef AMPLITUDE_SSL_PINNING || true
 
 #import <Foundation/NSURLSession.h>
 #import "ISPPinnedNSURLSessionDelegate.h"

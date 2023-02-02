@@ -192,7 +192,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
     if ((self = [super init])) {
 
-#if AMPLITUDE_SSL_PINNING
+#ifdef AMPLITUDE_SSL_PINNING || true
         _sslPinningEnabled = YES;
 #else
         _sslPinningEnabled = NO;
@@ -1011,7 +1011,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     AMPLITUDE_LOG(@"Events: %@", events);
 
     // If pinning is enabled, use the AMPURLSession that handles it.
-#if AMPLITUDE_SSL_PINNING
+#ifdef AMPLITUDE_SSL_PINNING || true
     id session = (self.sslPinningEnabled ? [AMPURLSession class] : [NSURLSession class]);
 #else
     id session = [NSURLSession class];

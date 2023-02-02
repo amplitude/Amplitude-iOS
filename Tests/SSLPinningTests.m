@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Amplitude. All rights reserved.
 //
 
-#if AMPLITUDE_SSL_PINNING
+#ifdef AMPLITUDE_SSL_PINNING || true
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
