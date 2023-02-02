@@ -1585,6 +1585,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return YES;
 }
 
+- (NSString *)getUserId {
+    return self.userId;
+}
+
+
 - (NSDictionary *)replaceWithEmptyJSON:(NSDictionary *)dictionary {
     return dictionary == nil ? [NSMutableDictionary dictionary] : dictionary;
 }
