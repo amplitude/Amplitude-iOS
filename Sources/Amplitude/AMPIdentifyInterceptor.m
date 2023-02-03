@@ -41,19 +41,15 @@
 
 @implementation AMPIdentifyInterceptor
 
+static NSArray *INTERCEPT_OPS;
++ (NSArray *) INTERCEPT_OPS { return @[AMP_OP_SET, AMP_OP_SET_ONCE]; }
+
 BOOL _uploadScheduled;
 Amplitude *_Nonnull _amplitude;
 NSOperationQueue *_Nonnull _backgroundQueue;
 AMPDatabaseHelper *_Nonnull _dbHelper;
 long _lastIdentifyInterceptorId;
 int _interceptedUploadPeriodSeconds;
-
-static NSArray *ACTIVE_OPS;
-// Doesn't include: AMP_OP_SET, AMP_OP_SET_ONCE
-+ (NSArray *) ACTIVE_OPS { return @[AMP_OP_CLEAR_ALL, AMP_OP_ADD, AMP_OP_REMOVE, AMP_OP_APPEND, AMP_OP_PREPEND, AMP_OP_PREINSERT, AMP_OP_POSTINSERT, AMP_OP_UNSET]; }
-
-static NSArray *INTERCEPT_OPS;
-+ (NSArray *) INTERCEPT_OPS { return @[AMP_OP_SET, AMP_OP_SET_ONCE]; }
 
 - (instancetype)init {
     if ((self = [super init])) {
@@ -87,7 +83,7 @@ static NSArray *INTERCEPT_OPS;
 - (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperations withUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperationsToMerge {
     NSMutableDictionary *mergedUserProperties = [[NSMutableDictionary alloc] init];
 
-    // This assumes we only evey merge "inactive" Identify's
+    // This assumes we only evey merge INTERCEPT_OPS for Identify's
     for(int opIndex = 0; opIndex < INTERCEPT_OPS.count; opIndex++) {
         NSString *operation = [INTERCEPT_OPS objectAtIndex:opIndex];
         NSMutableDictionary *operationKVPs = [userPropertyOperations objectForKey:operation];
