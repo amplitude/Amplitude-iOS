@@ -246,7 +246,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         success &= [self execSQLString:db SQLString:createIdentifysTable];
 
         NSString *createInterceptedIdentifysTable = [NSString stringWithFormat:CREATE_IDENTIFY_TABLE, INTERCEPTED_IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
-        success &= [self execSQLString:db SQLString:createIdentifysTable];
+        success &= [self execSQLString:db SQLString:createInterceptedIdentifysTable];
 
         NSString *createStoreTable = [NSString stringWithFormat:CREATE_STORE_TABLE, STORE_TABLE_NAME, KEY_FIELD, VALUE_FIELD];
         success &= [self execSQLString:db SQLString:createStoreTable];
@@ -570,6 +570,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [self removeEventsFromTable:IDENTIFY_TABLE_NAME maxId:maxIdentifyId];
 }
 
+- (BOOL)removeInterceptedIdentifys:(long long)maxIdentifyId {
+    return [self removeEventsFromTable:INTERCEPTED_IDENTIFY_TABLE_NAME maxId:maxIdentifyId];
+}
+
 - (BOOL)removeEventsFromTable:(NSString *)table maxId:(long long)maxId {
     __block BOOL success = YES;
 
@@ -589,6 +593,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [self removeEventFromTable:IDENTIFY_TABLE_NAME eventId:identifyId];
 }
 
+- (BOOL)removeInterceptedIdentify:(long long)identifyId {
+    return [self removeEventFromTable:INTERCEPTED_IDENTIFY_TABLE_NAME eventId:identifyId];
+}
+
 - (BOOL)removeEventFromTable:(NSString *)table eventId:(long long)eventId {
     __block BOOL success = YES;
 
@@ -606,6 +614,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (long long)getNthIdentifyId:(long long)n {
     return [self getNthEventIdFromTable:IDENTIFY_TABLE_NAME n:n];
+}
+
+- (long long)getNthInterceptedIdentifyId:(long long)n {
+    return [self getNthEventIdFromTable:INTERCEPTED_IDENTIFY_TABLE_NAME n:n];
 }
 
 - (long long)getNthEventIdFromTable:(NSString *)table n:(long long)n {
