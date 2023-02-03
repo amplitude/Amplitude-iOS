@@ -592,7 +592,7 @@
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     int limit = 10;
     for (int i = 0; i < limit; i++) {
-        XCTAssertEqual([self.amplitude getNextSequenceNumber], i+1);
+        XCTAssertEqual([dbHelper getNextSequenceNumber], i+1);
         XCTAssertEqual([[dbHelper getLongValue:@"sequence_number"] intValue], i+1);
     }
 }
@@ -1183,7 +1183,7 @@
     NSString *instanceName = @"eventWithUserProperties";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client initializeApiKey:@"api-key"];
-    
+
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
     [dbHelper resetDB:NO];
 
@@ -1192,7 +1192,7 @@
     NSMutableDictionary *setOpProperties = [NSMutableDictionary dictionary];
     [setOpProperties setValue:@"value" forKey:@"prop"];
     [userProperties setValue:setOpProperties forKey:@"$set"];
-    
+
     [client logEvent:@"$identify" withEventProperties:nil withUserProperties:userProperties];
     [client flushQueue];
     NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
