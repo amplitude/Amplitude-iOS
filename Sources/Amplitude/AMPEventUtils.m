@@ -48,30 +48,30 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return nil;
 }
 
-+ (long long)getEventId:(NSDictionary *)event {
++ (long long)getEventId:(NSDictionary *_Nonnull)event {
     return [[event objectForKey:@"event_id"] longValue];
 }
 
-+ (NSString *)getEventType:(NSDictionary *)event {
++ (NSString *)getEventType:(NSDictionary *_Nonnull)event {
     return [[event valueForKey:@"event_type"] string];
 }
 
-+ (NSMutableDictionary *)getUserProperties:(NSDictionary *)event {
++ (NSMutableDictionary *)getUserProperties:(NSDictionary *_Nonnull)event {
     return [event valueForKey:@"user_properties"];
 }
 
-+ (void)setUserProperties:(NSMutableDictionary *)event userProperties:(NSMutableDictionary *)userProperties {
++ (void)setUserProperties:(NSMutableDictionary *_Nonnull)event userProperties:(NSMutableDictionary *_Nonnull)userProperties {
     return [event setValue:userProperties forKey:@"user_properties"];
 }
 
 // Note: This doesn't handle equality
-+ (BOOL)hasLowerSequenceNumber:(NSDictionary *)event comparedTo:(NSDictionary *)otherEvent {
++ (BOOL)hasLowerSequenceNumber:(NSDictionary *_Nonnull)event comparedTo:(NSDictionary *_Nonnull)otherEvent {
     return ([event objectForKey:SEQUENCE_NUMBER] == nil ||
                 ([[event objectForKey:SEQUENCE_NUMBER] longLongValue] <
                  [[otherEvent objectForKey:SEQUENCE_NUMBER] longLongValue]));
 }
 
-+ (NSString *)getJsonString:(NSDictionary *)event eventType:(NSString *)eventType error:(NSError **)error {
++ (NSString *_Nullable)getJsonString:(NSDictionary *_Nonnull)event eventType:(NSString *)eventType error:(NSError **)error {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:error];
     if (*error != nil) {
         AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type %@: %@", eventType, *error);

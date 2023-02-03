@@ -660,7 +660,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [[editor updateUserProperties:[event valueForKey:@"user_properties"]] commit];
         }
 
-        event = [_identifyInterceptor intercept:event];
+        event = [self->_identifyInterceptor intercept:event];
         if (event != nil) {
             if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
                 (void) [self.dbHelper addIdentify:jsonString];

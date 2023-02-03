@@ -28,11 +28,11 @@
 
 @interface AMPEventUtils : NSObject
 
-+ (long long)getEventId:(NSDictionary *)event;
-+ (NSString *)getEventType:(NSDictionary *)event;
-+ (NSMutableDictionary *)getUserProperties:(NSDictionary *)event;
-+ (void)setUserProperties:(NSMutableDictionary *)event userProperties:(NSMutableDictionary *)userProperties;
-+ (BOOL)hasLowerSequenceNumber:(NSDictionary *)event comparedTo:(NSDictionary *)otherEvent;
-+ (NSString *)getJsonString:(NSDictionary *)event eventType:(NSString *)eventType error:(NSError **)error;
++ (long long)getEventId:(NSDictionary *_Nonnull)event;
++ (NSString *_Nonnull)getEventType:(NSDictionary *_Nonnull)event;
++ (NSMutableDictionary *_Nonnull)getUserProperties:(NSDictionary *_Nonnull)event;
++ (void)setUserProperties:(NSMutableDictionary *_Nonnull)event userProperties:(NSMutableDictionary *_Nonnull)userProperties;
++ (BOOL)hasLowerSequenceNumber:(NSDictionary *_Nonnull)event comparedTo:(NSDictionary *_Nonnull)otherEvent;
++ (NSString *_Nullable)getJsonString:(NSDictionary *_Nonnull)event eventType:(NSString *_Nonnull)eventType error:(NSError ** _Nonnull)error;
 
 @end
