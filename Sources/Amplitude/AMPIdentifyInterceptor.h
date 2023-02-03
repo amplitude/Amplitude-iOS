@@ -31,8 +31,7 @@
                                       amplitude:(Amplitude *_Nonnull) amplitude
                                 backgroundQueue:(NSOperationQueue *_Nonnull)backgroundQueue;
 
-- (NSMutableDictionary *_Nonnull)intercept:(NSMutableDictionary *_Nonnull)event
-                           eventJsonString:(NSString *_Nonnull)eventJsonString;
+- (NSMutableDictionary *_Nonnull)intercept:(NSMutableDictionary *_Nonnull)event;
 - (NSMutableDictionary *_Nullable)getCombinedInterceptedIdentify;
 - (BOOL)setInterceptedIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds;
 

@@ -247,9 +247,11 @@ static NSArray *INTERCEPT_OPS;
 -(BOOL)setInterceptedIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds {
     if (uploadPeriodSeconds < kAMPMinIdentifyUploadPeriodSeconds) {
         AMPLITUDE_ERROR(@"ERROR: Minimum Identify upload period is %@ seconds", kAMPMinIdentifyUploadPeriodSeconds);
-        return;
+        return NO;
     }
     _interceptedUploadPeriodSeconds = uploadPeriodSeconds;
+
+    return YES;
 }
 
 
