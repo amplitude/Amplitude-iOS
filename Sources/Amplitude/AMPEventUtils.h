@@ -33,6 +33,6 @@
 + (NSMutableDictionary *_Nonnull)getUserProperties:(NSDictionary *_Nonnull)event;
 + (void)setUserProperties:(NSMutableDictionary *_Nonnull)event userProperties:(NSMutableDictionary *_Nonnull)userProperties;
 + (BOOL)hasLowerSequenceNumber:(NSDictionary *_Nonnull)event comparedTo:(NSDictionary *_Nonnull)otherEvent;
-+ (NSString *_Nullable)getJsonString:(NSDictionary *_Nonnull)event eventType:(NSString *_Nonnull)eventType error:(NSError ** _Nonnull)error;
++ (NSString *_Nullable)getJsonString:(NSDictionary *_Nonnull)event eventType:(NSString *_Nonnull)eventType error:(NSError * _Nullable * _Nullable)error;
 
 @end

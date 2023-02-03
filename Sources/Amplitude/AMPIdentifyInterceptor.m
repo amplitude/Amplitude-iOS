@@ -242,7 +242,7 @@ int _interceptedUploadPeriodSeconds;
 
 -(BOOL)setInterceptedIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds {
     if (uploadPeriodSeconds < kAMPMinIdentifyUploadPeriodSeconds) {
-        AMPLITUDE_ERROR(@"ERROR: Minimum Identify upload period is %@ seconds", kAMPMinIdentifyUploadPeriodSeconds);
+        AMPLITUDE_ERROR(@"ERROR: Minimum Identify upload period is %d seconds", kAMPMinIdentifyUploadPeriodSeconds);
         return NO;
     }
     _interceptedUploadPeriodSeconds = uploadPeriodSeconds;

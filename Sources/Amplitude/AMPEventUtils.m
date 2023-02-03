@@ -71,11 +71,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                  [[otherEvent objectForKey:SEQUENCE_NUMBER] longLongValue]));
 }
 
-+ (NSString *_Nullable)getJsonString:(NSDictionary *_Nonnull)event eventType:(NSString *)eventType error:(NSError **)error {
++ (NSString *_Nullable)getJsonString:(NSDictionary *_Nonnull)event eventType:(NSString *_Nonnull)eventType error:(NSError **)error {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:error];
     if (*error != nil) {
         AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type %@: %@", eventType, *error);
-        return;
+        return nil;
     }
 
     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -87,7 +87,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                             NSLocalizedDescriptionKey:@"Something went wrong"
                           }
                  ];
-        return;
+        return nil;
     }
 
     return jsonString;
