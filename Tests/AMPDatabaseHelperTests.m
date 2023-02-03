@@ -453,6 +453,20 @@
     XCTAssertTrue([self.databaseHelper addIdentify:@"test"]);
 }
 
+- (void)testUpgradeFromVersion3ToVersion4{
+    // FIXME: Update to test version 4
+    // upgrade does nothing, can insert into event, store, long_store, identify
+    [self.databaseHelper dropTables];
+    XCTAssertTrue([self.databaseHelper upgrade:3 newVersion:4]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+    // TODO: Add both active and in-active identify's
+    XCTAssertTrue([self.databaseHelper addInterceptedIdentify:@"test"]);
+    XCTAssertEqual(1, [self.databaseHelper getInterceptedIdentifyCount]);
+    XCTAssertEqual(0, [self.databaseHelper getIdentifyCount]);
+}
+
 - (void)testInsertAndReplaceKeyLargeLongValue {
     NSString *key = @"test_key";
     NSNumber *value1 = [NSNumber numberWithLongLong:214748364700000LL];

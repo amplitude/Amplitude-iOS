@@ -652,7 +652,7 @@ typedef void (^AMPInitCompletionBlock)(void);
 
 /**
  Sends events to a different URL other than kAMPEventLogUrl. Used for proxy servers
- 
+
  We now have a new method setServerZone. To send data to Amplitude's EU servers, recommend to use setServerZone
  method like [client setServerZone:EU]
  */
@@ -685,6 +685,17 @@ typedef void (^AMPInitCompletionBlock)(void);
  * Adds a new middleware function to run on each logEvent() call prior to sending to Amplitude.
  */
 - (void)addEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware;
+
+/**
+ * The amount of time after an identify is logged that identify events will be batched before being uploaded to the server.
+ * The default is 30 seconds.
+ */
+- (BOOL)setIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds;
+
+/**
+ * Don't.
+ */
+- (void)disableIdentifyBatching:(BOOL)disable;
 
 /**-----------------------------------------------------------------------------
  * @name Other Methods
