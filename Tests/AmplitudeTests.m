@@ -308,6 +308,75 @@
     XCTAssertNotEqual([events[0] objectForKey:@"uuid"], [events[1] objectForKey:@"uuid"]);
 }
 
+- (void)testLogEventSuccess {
+    [self.amplitude setEventUploadThreshold:1];
+    // configure response body to be random, as we only care about the status code
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"random-response-body" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 0);
+}
+
+- (void)testLogEventFailedWithInvalidApiKeyResponse {
+    [self.amplitude setEventUploadThreshold:1];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:400 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"invalid_api_key" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
+}
+
+- (void)testLogEventFailedWithBadChecksumResponse {
+    [self.amplitude setEventUploadThreshold:1];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:400 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
+}
+
+- (void)testLogEventFailedWithRequestDbWriteFailedResponse {
+    [self.amplitude setEventUploadThreshold:1];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:500 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
+}
+
 - (void)testIdentify {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:2];

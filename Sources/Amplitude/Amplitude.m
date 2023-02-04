@@ -1020,26 +1020,22 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         BOOL uploadSuccessful = NO;
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         if (response != nil) {
+            NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             if ([httpResponse statusCode] == 200) {
-                NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                if ([result isEqualToString:@"success"]) {
-                    // success, remove existing events from dictionary
-                    uploadSuccessful = YES;
-                    if (maxEventId >= 0) {
-                        (void) [self.dbHelper removeEvents:maxEventId];
-                    }
-                    if (maxIdentifyId >= 0) {
-                        (void) [self.dbHelper removeIdentifys:maxIdentifyId];
-                    }
-                } else if ([result isEqualToString:@"invalid_api_key"]) {
-                    AMPLITUDE_ERROR(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey:");
-                } else if ([result isEqualToString:@"bad_checksum"]) {
-                    AMPLITUDE_ERROR(@"ERROR: Bad checksum, post request was mangled in transit, will attempt to reupload later");
-                } else if ([result isEqualToString:@"request_db_write_failed"]) {
-                    AMPLITUDE_ERROR(@"ERROR: Couldn't write to request database on server, will attempt to reupload later");
-                } else {
-                    AMPLITUDE_ERROR(@"ERROR: %@, will attempt to reupload later", result);
+                // success, remove existing events from dictionary
+                uploadSuccessful = YES;
+                if (maxEventId >= 0) {
+                    (void) [self.dbHelper removeEvents:maxEventId];
                 }
+                if (maxIdentifyId >= 0) {
+                    (void) [self.dbHelper removeIdentifys:maxIdentifyId];
+                }
+            } else if ([result isEqualToString:@"invalid_api_key"]) {
+                AMPLITUDE_ERROR(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey");
+            } else if ([result isEqualToString:@"bad_checksum"]) {
+                AMPLITUDE_ERROR(@"ERROR: Bad checksum, post request was mangled in transit, will attempt to reupload later");
+            } else if ([result isEqualToString:@"request_db_write_failed"]) {
+                AMPLITUDE_ERROR(@"ERROR: Couldn't write to request database on server, will attempt to reupload later");
             } else if ([httpResponse statusCode] == 413) {
                 // If blocked by one massive event, drop it
                 if (numEvents == 1) {
@@ -1058,7 +1054,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 AMPLITUDE_LOG(@"Request too large, will decrease size and attempt to reupload");
                 self->_updatingCurrently = NO;
                 [self uploadEventsWithLimit:self->_backoffUploadBatchSize];
-
             } else {
                 AMPLITUDE_ERROR(@"ERROR: Connection response received:%ld, %@", (long)[httpResponse statusCode],
                     [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
