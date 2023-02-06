@@ -306,6 +306,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }];
 
         _identifyInterceptor = [AMPIdentifyInterceptor getIdentifyInterceptor:_dbHelper amplitude:self backgroundQueue:_backgroundQueue];
+        [_identifyInterceptor setDisabled:YES];
 
         [self addObservers];
     }
@@ -1536,7 +1537,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  * Don't.
  */
 - (void)disableIdentifyBatching:(BOOL)disable {
-  // TODO:
+  return [_identifyInterceptor setDisabled:disable];
 }
 
 #pragma mark - Getters for device data

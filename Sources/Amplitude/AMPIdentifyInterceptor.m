@@ -50,12 +50,14 @@ NSOperationQueue *_Nonnull _backgroundQueue;
 AMPDatabaseHelper *_Nonnull _dbHelper;
 long _lastIdentifyInterceptorId;
 int _interceptedUploadPeriodSeconds;
+BOOL _disabled;
 
 - (instancetype)init {
     if ((self = [super init])) {
         _lastIdentifyInterceptorId = -1;
         _interceptedUploadPeriodSeconds = kAMPIdentifyUploadPeriodSeconds;
         _uploadScheduled = NO;
+        _disabled = NO;
     }
     return self;
 }
@@ -126,6 +128,10 @@ int _interceptedUploadPeriodSeconds;
 }
 
 - (NSMutableDictionary *)intercept:(NSMutableDictionary *_Nonnull)event {
+    if (_disabled) {
+        return event;
+    }
+
     NSString *eventType = [AMPEventUtils getEventType:event];
 
     NSMutableDictionary *userPropertyOperations = [AMPEventUtils getUserProperties:event];
@@ -250,5 +256,8 @@ int _interceptedUploadPeriodSeconds;
     return YES;
 }
 
+- (void)setDisabled:(BOOL)disable {
+    _disabled = disable;
+}
 
 @end

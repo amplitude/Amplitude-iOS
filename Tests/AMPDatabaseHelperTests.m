@@ -444,8 +444,10 @@
 }
 
 - (void)testUpgradeFromVersion3ToVersion3{
-    // upgrade does nothing, can insert into event, store, long_store, identify
     [self.databaseHelper dropTables];
+    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:3]);
+    // upgrade does nothing, can insert into event, store, long_store, identify
+
     XCTAssertTrue([self.databaseHelper upgrade:3 newVersion:3]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
@@ -457,7 +459,7 @@
     // FIXME: Update to test version 4
     // upgrade does nothing, can insert into event, store, long_store, identify
     [self.databaseHelper dropTables];
-    XCTAssertTrue([self.databaseHelper upgrade:3 newVersion:4]);
+    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:4]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);

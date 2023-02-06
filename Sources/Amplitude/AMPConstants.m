@@ -36,7 +36,7 @@ NSString *const kAMPDyanmicConfigUrl = @"https://regionconfig.amplitude.com/";
 NSString *const kAMPDyanmicConfigEuUrl = @"https://regionconfig.eu.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";
 const int kAMPApiVersion = 3;
-const int kAMPDBVersion = 3;
+const int kAMPDBVersion = 4;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
 
 #if TARGET_OS_OSX
