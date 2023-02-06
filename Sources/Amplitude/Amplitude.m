@@ -919,6 +919,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 }
 
+- (long long)getNextSequenceNumber {
+    return [self.dbHelper getNextSequenceNumber];
+}
+
 - (NSDictionary *)mergeEventsAndIdentifys:(NSMutableArray *)events identifys:(NSMutableArray *)identifys numEvents:(long)numEvents {
     NSMutableArray *mergedEvents = [[NSMutableArray alloc] init];
     long long maxEventId = -1;
