@@ -446,8 +446,14 @@
 - (void)testUpgradeFromVersion3ToVersion3{
     [self.databaseHelper dropTables];
     XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:3]);
-    // upgrade does nothing, can insert into event, store, long_store, identify
+    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
+    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
+    XCTAssertTrue([self.databaseHelper addIdentify:@"test"]);
 
+    // upgrade does nothing, can insert into event, store, long_store, identify
+    // FIXME: Update from 3 to 3 drops all tables and recreates, seems like a bug.
+    // FIXME: Ask Daniel Jih.
     XCTAssertTrue([self.databaseHelper upgrade:3 newVersion:3]);
     XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
     XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
@@ -456,17 +462,25 @@
 }
 
 - (void)testUpgradeFromVersion3ToVersion4{
-    // FIXME: Update to test version 4
-    // upgrade does nothing, can insert into event, store, long_store, identify
     [self.databaseHelper dropTables];
-    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:4]);
-    XCTAssertTrue([self.databaseHelper addEvent:@"test"]);
-    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyValue:@"key" value:@"value"]);
-    XCTAssertTrue([self.databaseHelper insertOrReplaceKeyLongValue:@"key" value:[NSNumber numberWithLongLong:0LL]]);
-    // TODO: Add both active and in-active identify's
-    XCTAssertTrue([self.databaseHelper addInterceptedIdentify:@"test"]);
+    XCTAssertTrue([self.databaseHelper upgrade:0 newVersion:3]);
+    // FIXME: These events are dropped on the upgrade to v4, seems like a bug.
+    // FIXME: Ask Daniel Jih.
+//     XCTAssertTrue([self.databaseHelper addEvent:@"test_event"]);
+//     XCTAssertTrue([self.databaseHelper addIdentify:@"test_identify"]);
+    XCTAssertFalse([self.databaseHelper addInterceptedIdentify:@"test_intercept_fail"]);
+
+    // upgrade add intercepted identify's table
+    // WARNING: It looks like the DB is dropped
+    XCTAssertTrue([self.databaseHelper upgrade:3 newVersion:4]);
+    XCTAssertTrue([self.databaseHelper addEvent:@"test_event"]);
+    XCTAssertTrue([self.databaseHelper addIdentify:@"test_identify"]);
+    XCTAssertTrue([self.databaseHelper addInterceptedIdentify:@"test_intercept_success"]);
+
+    // Verify: Add both active and in-active identify's
     XCTAssertEqual(1, [self.databaseHelper getInterceptedIdentifyCount]);
-    XCTAssertEqual(0, [self.databaseHelper getIdentifyCount]);
+    XCTAssertEqual(1, [self.databaseHelper getIdentifyCount]);
+    XCTAssertEqual(1, [self.databaseHelper getEventCount]);
 }
 
 - (void)testInsertAndReplaceKeyLargeLongValue {

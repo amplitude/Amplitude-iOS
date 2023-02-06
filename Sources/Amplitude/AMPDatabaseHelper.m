@@ -276,11 +276,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 if (newVersion <= 2) break;
             }
             case 2: {
+                // Apply changes for v3
                 NSString *createIdentifysTable = [NSString stringWithFormat:CREATE_IDENTIFY_TABLE, IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
                 success &= [self execSQLString:db SQLString:createIdentifysTable];
                 if (newVersion <= 3) break;
             }
             case 3: {
+                // Apply changes for v4
                 NSString *createInterceptedIdentifysTable = [NSString stringWithFormat:CREATE_IDENTIFY_TABLE, INTERCEPTED_IDENTIFY_TABLE_NAME, ID_FIELD, EVENT_FIELD];
                 success &= [self execSQLString:db SQLString:createInterceptedIdentifysTable];
                 if (newVersion <= 4) break;
