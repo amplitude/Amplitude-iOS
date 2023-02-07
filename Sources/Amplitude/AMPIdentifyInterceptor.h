@@ -33,6 +33,7 @@
 
 - (NSMutableDictionary *_Nonnull)intercept:(NSMutableDictionary *_Nonnull)event;
 - (NSMutableDictionary *_Nullable)getCombinedInterceptedIdentify;
+- (NSMutableDictionary *_Nullable)transferInterceptedIdentify;
 - (BOOL)setInterceptedIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds;
 - (void)setDisabled:(BOOL)disable;
 

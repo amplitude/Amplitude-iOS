@@ -869,6 +869,9 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
 
+        // Include any pending Identify operations
+        [self->_identifyInterceptor transferInterceptedIdentify];
+
         long eventCount = [self.dbHelper getTotalEventCount];
         long numEvents = limit > 0 ? fminl(eventCount, limit) : eventCount;
         if (numEvents == 0) {

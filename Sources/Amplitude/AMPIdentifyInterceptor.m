@@ -44,7 +44,7 @@
 static NSArray *INTERCEPT_OPS;
 + (NSArray *) INTERCEPT_OPS { return @[AMP_OP_SET, AMP_OP_SET_ONCE]; }
 
-BOOL _uploadScheduled;
+BOOL _transferScheduled;
 Amplitude *_Nonnull _amplitude;
 NSOperationQueue *_Nonnull _backgroundQueue;
 AMPDatabaseHelper *_Nonnull _dbHelper;
@@ -56,7 +56,7 @@ BOOL _disabled;
     if ((self = [super init])) {
         _lastIdentifyInterceptorId = -1;
         _interceptedUploadPeriodSeconds = kAMPIdentifyUploadPeriodSeconds;
-        _uploadScheduled = NO;
+        _transferScheduled = NO;
         _disabled = NO;
     }
     return self;
@@ -149,7 +149,7 @@ BOOL _disabled;
             [_dbHelper addInterceptedIdentify:eventJsonString];
 
             // Set timeout for transfer
-            [self scheduleUpload];
+            [self scheduleTransfer];
 
             // Event is intercepted, return nil
             return nil;
@@ -178,20 +178,20 @@ BOOL _disabled;
     return [operations isSubsetOfSet:interceptSet];
 }
 
-- (void)scheduleUpload {
+- (void)scheduleTransfer {
     // TODO:
-    if (!_uploadScheduled) {
-        _uploadScheduled = YES;
+    if (!_transferScheduled) {
+        _transferScheduled = YES;
         __block __weak AMPIdentifyInterceptor *weakSelf = self;
         [_backgroundQueue addOperationWithBlock:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf performSelector:@selector(uploadCombinedInterceptedIdentify) withObject:nil afterDelay:_interceptedUploadPeriodSeconds];
+                [weakSelf performSelector:@selector(transferInterceptedIdentify) withObject:nil afterDelay:_interceptedUploadPeriodSeconds];
             });
         }];
     }
 }
 
-- (void)uploadCombinedInterceptedIdentify {
+- (void)transferInterceptedIdentify {
     NSMutableDictionary *interceptedIdentify = [self getCombinedInterceptedIdentify];
     if (interceptedIdentify != nil) {
         NSString *eventType = [AMPEventUtils getEventType:interceptedIdentify];
@@ -205,14 +205,12 @@ BOOL _disabled;
 
             // Save combined Identify to "active" storage
             [_dbHelper addIdentify:eventJsonString];
-
-            // Upload immediately
-            [_amplitude uploadEvents];
         } else {
             AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize intercepted event type %@: %@", eventType, error);
+            // TODO: If the events are unreadable, should we clear intercepted storage to prevent errors for subsequent events?
         }
     }
-    _uploadScheduled = NO;
+    _transferScheduled = NO;
 }
 
 /**
