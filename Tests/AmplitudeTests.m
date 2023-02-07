@@ -362,6 +362,7 @@
 
 - (void)testLogEventFailedWithRequestDbWriteFailedResponse {
     [self.amplitude setEventUploadThreshold:1];
+    // Note that "request_db_write_failed" error response might not exist anymore, leave this test to make sure we can handle it.
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:500 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding]
