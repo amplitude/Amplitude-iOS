@@ -1030,11 +1030,11 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 if (maxIdentifyId >= 0) {
                     (void) [self.dbHelper removeIdentifys:maxIdentifyId];
                 }
-            } else if ([result isEqualToString:@"invalid_api_key"]) {
+            } else if ([httpResponse statusCode] == 400 && [result isEqualToString:@"invalid_api_key"]) {
                 AMPLITUDE_ERROR(@"ERROR: Invalid API Key, make sure your API key is correct in initializeApiKey");
-            } else if ([result isEqualToString:@"bad_checksum"]) {
+            } else if ([httpResponse statusCode] == 400 && [result isEqualToString:@"bad_checksum"]) {
                 AMPLITUDE_ERROR(@"ERROR: Bad checksum, post request was mangled in transit, will attempt to reupload later");
-            } else if ([result isEqualToString:@"request_db_write_failed"]) {
+            } else if ([httpResponse statusCode] == 500 && [result isEqualToString:@"request_db_write_failed"]) {
                 AMPLITUDE_ERROR(@"ERROR: Couldn't write to request database on server, will attempt to reupload later");
             } else if ([httpResponse statusCode] == 413) {
                 // If blocked by one massive event, drop it
