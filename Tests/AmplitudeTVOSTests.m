@@ -54,7 +54,7 @@
 
 - (void)testLogEventUploadLogic {
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:400 HTTPVersion:nil headerFields:@{}],
                                               @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:serverResponse];
