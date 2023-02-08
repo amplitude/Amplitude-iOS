@@ -1,3 +1,10 @@
+## [8.14.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.14.0...v8.14.1) (2023-02-08)
+
+
+### Bug Fixes
+
+* response handler when 200 and various errors ([#424](https://github.com/amplitude/Amplitude-iOS/issues/424)) ([74c9e57](https://github.com/amplitude/Amplitude-iOS/commit/74c9e5721cc6d4849eed5c55470a8437ad1ad987))
+
 # [8.14.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.13.0...v8.14.0) (2022-10-05)
 
 
