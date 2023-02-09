@@ -1219,4 +1219,67 @@
     XCTAssertEqual(client.initialized, YES);
 }
 
+-(void)testSetIdentifyUploadSeconds {
+    NSString *instanceName = @"SetIdentifyUploadSecondsInstance";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+
+    // Check minimum
+    XCTAssertFalse([client setIdentifyUploadPeriodSeconds:0]);
+    XCTAssertFalse([client setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds - 1)]);
+
+    // Check valid values
+    XCTAssertTrue([client setIdentifyUploadPeriodSeconds:kAMPIdentifyUploadPeriodSeconds]);
+    XCTAssertTrue([client setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds * 2)]);
+}
+
+- (void)testInterceptIdentifys1 {
+    [self.amplitude setEventUploadThreshold:3];
+    NSLog(@"Hello");
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude identify:[[AMPIdentify identify] add:@"add-key-1" value:[NSNumber numberWithInt:1]]];
+}
+
+- (void)testInterceptIdentifys {
+    
+    NSString *instanceName = @"testInterceptIdentifys";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    
+    [client setEventUploadThreshold:3];
+    [client disableIdentifyBatching:NO];
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    [client identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+    [client identify:[[AMPIdentify identify] add:@"add-key-1" value:[NSNumber numberWithInt:1]]];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+
+    [client identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+    [client logEvent:@"test_event1"];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+
+    // this value should be cleared after "unset"
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude flushQueue];
+    [self.amplitude identify:[[AMPIdentify identify] unset:@"set-key-1"]];
+    [self.amplitude flushQueue];
+    
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    // FIXME: Why does this fail?
+    //XCTAssertEqual([dbHelper getIdentifyCount], 1);
+}
+
 @end

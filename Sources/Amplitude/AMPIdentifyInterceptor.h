@@ -23,17 +23,15 @@
 #import <Foundation/Foundation.h>
 #import "AMPIdentifyInterceptor.h"
 #import "AMPDatabaseHelper.h"
-#import "AmplitudePrivate.h"
 
 @interface AMPIdentifyInterceptor : NSObject
 
 + (instancetype _Nonnull)getIdentifyInterceptor:(AMPDatabaseHelper *_Nonnull)dbHelper
-                                      amplitude:(Amplitude *_Nonnull) amplitude
                                 backgroundQueue:(NSOperationQueue *_Nonnull)backgroundQueue;
 
 - (NSMutableDictionary *_Nonnull)intercept:(NSMutableDictionary *_Nonnull)event;
 - (NSMutableDictionary *_Nullable)getCombinedInterceptedIdentify;
-- (NSMutableDictionary *_Nullable)transferInterceptedIdentify;
+- (void)transferInterceptedIdentify;
 - (BOOL)setInterceptedIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds;
 - (void)setDisabled:(BOOL)disable;
 

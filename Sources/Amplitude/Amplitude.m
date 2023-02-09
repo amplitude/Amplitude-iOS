@@ -305,7 +305,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self->_backgroundQueue setSuspended:NO];
         }];
 
-        _identifyInterceptor = [AMPIdentifyInterceptor getIdentifyInterceptor:_dbHelper amplitude:self backgroundQueue:_backgroundQueue];
+        _identifyInterceptor = [AMPIdentifyInterceptor getIdentifyInterceptor:_dbHelper backgroundQueue:_backgroundQueue];
         [_identifyInterceptor setDisabled:YES];
 
         [self addObservers];

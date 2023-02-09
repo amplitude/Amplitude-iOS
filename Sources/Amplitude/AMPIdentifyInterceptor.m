@@ -37,94 +37,46 @@
 #import "AMPEventUtils.h"
 #import "AMPIdentifyInterceptor.h"
 #import "AMPDatabaseHelper.h"
-#import "AmplitudePrivate.h"
 
 @implementation AMPIdentifyInterceptor
 
-static NSArray *INTERCEPT_OPS;
-+ (NSArray *) INTERCEPT_OPS { return @[AMP_OP_SET, AMP_OP_SET_ONCE]; }
-
+NSArray *_Nonnull _interceptOps;
+NSSet *_Nonnull _interceptOpsSet;
 BOOL _transferScheduled;
-Amplitude *_Nonnull _amplitude;
 NSOperationQueue *_Nonnull _backgroundQueue;
 AMPDatabaseHelper *_Nonnull _dbHelper;
 long _lastIdentifyInterceptorId;
 int _interceptedUploadPeriodSeconds;
 BOOL _disabled;
 
-- (instancetype)init {
-    if ((self = [super init])) {
-        _lastIdentifyInterceptorId = -1;
-        _interceptedUploadPeriodSeconds = kAMPIdentifyUploadPeriodSeconds;
-        _transferScheduled = NO;
-        _disabled = NO;
-    }
-    return self;
-}
-
 -(id)initWithParams:(AMPDatabaseHelper *_Nonnull)dbHelper
-          amplitude:(Amplitude *_Nonnull) amplitude
     backgroundQueue:(NSOperationQueue *_Nonnull)backgroundQueue
 {
     if(self = [super init]) {
         _dbHelper = dbHelper;
-        _amplitude = amplitude;
         _backgroundQueue = backgroundQueue;
+        _lastIdentifyInterceptorId = -1;
+        _interceptedUploadPeriodSeconds = kAMPIdentifyUploadPeriodSeconds;
+        _transferScheduled = NO;
+        _disabled = NO;
+        _interceptOps = @[AMP_OP_SET]; // Notice: Supporting AMP_OP_SET_ONCE would require more complex merge logic
+        _interceptOpsSet = [NSSet setWithArray:_interceptOps];
     }
 
     return self;
 }
 
 + (instancetype _Nonnull)getIdentifyInterceptor:(AMPDatabaseHelper *_Nonnull) dbHelper
-                                      amplitude:(Amplitude *_Nonnull) amplitude
                                 backgroundQueue:(NSOperationQueue *_Nonnull)backgroundQueue
 {
-    return [[self alloc] initWithParams:dbHelper amplitude:amplitude backgroundQueue:backgroundQueue];
+    return [[self alloc] initWithParams:dbHelper backgroundQueue:backgroundQueue];
 }
 
-- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperations withUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperationsToMerge {
-    NSMutableDictionary *mergedUserProperties = [[NSMutableDictionary alloc] init];
+// If this returns YES, the given Identify user property operations should be queued and batched later
+- (BOOL)hasInterceptOperationsOnly:(NSDictionary *_Nonnull)userPropertyOperations {
+   NSSet *operations = [NSSet setWithArray:[userPropertyOperations allKeys]];
 
-    // This assumes we only evey merge INTERCEPT_OPS for Identify's
-    for(int opIndex = 0; opIndex < INTERCEPT_OPS.count; opIndex++) {
-        NSString *operation = [INTERCEPT_OPS objectAtIndex:opIndex];
-        NSMutableDictionary *operationKVPs = [userPropertyOperations objectForKey:operation];
-        NSMutableDictionary *operationKVPsToMerge = [userPropertyOperationsToMerge objectForKey:operation];
-
-        NSMutableDictionary *mergedOperationKVPs = [[NSMutableDictionary alloc] init];
-        [mergedOperationKVPs addEntriesFromDictionary:operationKVPs];
-        [mergedOperationKVPs addEntriesFromDictionary:operationKVPsToMerge];
-
-        [mergedUserProperties setValue:mergedOperationKVPs forKey:operation];
-    }
-
-    return mergedUserProperties;
-}
-
-/**
- * Merged all pending intercepted user properties to the given @event
- * Clears intercepted Idenitfy's from DB
- */
-- (void)mergeInterceptedUserProperties:(NSMutableDictionary *_Nonnull) event {
-    NSMutableDictionary *mergedUserProperties = [[NSMutableDictionary alloc] init];
-
-    // Load any intercepted Identify events from DB
-    NSMutableDictionary *interceptedIdentify = [self getCombinedInterceptedIdentify];
-    if (interceptedIdentify != nil) {
-        mergedUserProperties = [self mergeUserProperties:mergedUserProperties withUserProperties:interceptedIdentify];
-    }
-
-    // Get the event's userProperties and apply them over the intercepted values
-    NSMutableDictionary *eventUserProperties = [AMPEventUtils getUserProperties:event];
-    if (eventUserProperties != nil) {
-        mergedUserProperties = [self mergeUserProperties:mergedUserProperties withUserProperties:eventUserProperties];
-    }
-
-    // Apply merged user properties to the
-    [AMPEventUtils setUserProperties:event userProperties:mergedUserProperties];
-
-    // remove inter
-    [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
+   return [operations isSubsetOfSet:_interceptOpsSet];
 }
 
 - (NSMutableDictionary *)intercept:(NSMutableDictionary *_Nonnull)event {
@@ -135,47 +87,112 @@ BOOL _disabled;
     NSString *eventType = [AMPEventUtils getEventType:event];
 
     NSMutableDictionary *userPropertyOperations = [AMPEventUtils getUserProperties:event];
-    if (eventType == IDENTIFY_EVENT) {
-        // Check to intercept
-        if ([self hasInterceptOperationsOnly:userPropertyOperations]) {
-            NSError *error = nil;
-            NSString *eventJsonString = [AMPEventUtils getJsonString:event eventType:eventType error:&error];
-            // Conversion to JSON string failed, return unmodified event to try to store as a normal identify
-            if (error != nil) {
-                return event;
-            }
+   if (eventType == IDENTIFY_EVENT) {
+       // Check to intercept
+       if ([self hasInterceptOperationsOnly:userPropertyOperations]) {
+           NSError *error = nil;
+           NSString *eventJsonString = [AMPEventUtils getJsonString:event eventType:eventType error:&error];
+           // Conversion to JSON string failed, return unmodified event to try to store as a normal identify
+           if (error != nil) {
+               return event;
+           }
 
-            // Store in Intercepted Identify DB
-            [_dbHelper addInterceptedIdentify:eventJsonString];
+           // Store in Intercepted Identify DB
+           [_dbHelper addInterceptedIdentify:eventJsonString];
 
-            // Set timeout for transfer
-            [self scheduleTransfer];
+           // Set timeout for transfer
+           [self scheduleTransfer];
 
-            // Event is intercepted, return nil
-            return nil;
-        } else if ([userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] != nil) {
+           // Event is intercepted, return nil
+           return nil;
+       } else if ([userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] != nil) {
            // Clear all pending intercepted Identify's
            [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
-        } else {
+       } else {
            // This is an "active" Identify, merge intercepted user properties
+           event = [event mutableCopy];
            [self mergeInterceptedUserProperties:event];
-        }
-    } else if ([eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
-        // Group identify = no op
-    } else {
-        // Normal event, merge intercepted user properties
-        [self mergeInterceptedUserProperties:event];
-    }
+       }
+   } else if ([eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
+       // Group identify = no op
+   } else {
+       event = [event mutableCopy];
+       // Normal event, merge intercepted user properties
+       [self mergeInterceptedUserProperties:event];
+   }
 
     return event;
 }
 
-// If this returns YES, the given Identify user property operations should be queued and batched later
-- (BOOL)hasInterceptOperationsOnly:(NSDictionary *_Nonnull)userPropertyOperations {
-    NSSet *operations = [NSSet setWithArray:[userPropertyOperations allKeys]];
-    NSSet *interceptSet = [NSSet setWithArray:INTERCEPT_OPS];
+/**
+ * Merged all pending intercepted user properties to the given @event
+ * Clears intercepted Idenitfy's from DB
+ */
+- (void)mergeInterceptedUserProperties:(NSMutableDictionary *_Nonnull) event {
+    BOOL flattenOperations = [[AMPEventUtils getEventType:event] isEqualToString:IDENTIFY_EVENT];
 
-    return [operations isSubsetOfSet:interceptSet];
+    NSMutableDictionary *mergedUserProperties = [[AMPEventUtils getUserProperties:event] mutableCopy];
+
+    // Load any intercepted Identify events from DB
+    NSMutableDictionary *interceptedIdentify = [self getCombinedInterceptedIdentify];
+    // NSLog(@"INTERCEPTED = %@", interceptedIdentify);
+    if (interceptedIdentify != nil) {
+        mergedUserProperties = [self mergeUserProperties:mergedUserProperties
+                                      withUserProperties:[AMPEventUtils getUserProperties:interceptedIdentify]];
+    }
+
+    // Get the event's userProperties and apply them over the intercepted values
+    NSMutableDictionary *eventUserProperties = [AMPEventUtils getUserProperties:event];
+    // NSLog(@"EVENT USER PROPS = %@", eventUserProperties);
+    if (eventUserProperties != nil) {
+        mergedUserProperties = [self mergeUserProperties:mergedUserProperties
+                                      withUserProperties:eventUserProperties];
+    }
+
+    // NSLog(@"mergedUserProperties = %@", mergedUserProperties);
+    // NSLog(@"EVENT = %@", event);
+    // Apply merged user properties to the
+    [AMPEventUtils setUserProperties:event userProperties:mergedUserProperties];
+
+    // remove inter
+    [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
+}
+
+- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperations withUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperationsToMerge {
+    NSMutableDictionary *mergedUserProperties = [userPropertyOperations mutableCopy] ?: [NSMutableDictionary dictionary];
+
+    // NSLog(@"MERGED(1) = %@", mergedUserProperties);
+
+    // This assumes we only evey merge INTERCEPT_OPS for Identify's
+    for(int opIndex = 0; opIndex < _interceptOps.count; opIndex++) {
+        NSString *operation = _interceptOps[opIndex];
+        // NSLog(@"operation = %@", operation);
+
+        NSMutableDictionary *mergedOperationKVPs = [NSMutableDictionary dictionary];
+
+        NSMutableDictionary *operationKVPs = userPropertyOperations[operation];
+        // NSLog(@"operationKVPs = %@", operationKVPs);
+        if (operationKVPs != nil) {
+            [mergedOperationKVPs addEntriesFromDictionary:operationKVPs];
+        }
+        // NSLog(@"mergedOperationKVPs(1) = %@", mergedOperationKVPs);
+
+        NSMutableDictionary *operationKVPsToMerge = userPropertyOperationsToMerge[operation];
+        // NSLog(@"operationKVPsToMerge = %@", operationKVPsToMerge);
+        if (operationKVPsToMerge != nil) {
+            [mergedOperationKVPs addEntriesFromDictionary:operationKVPsToMerge];
+        }
+
+        // NSLog(@"mergedOperationKVPs(2) = %@", mergedOperationKVPs);
+
+        if (mergedOperationKVPs.count > 0) {
+            [mergedUserProperties setValue:mergedOperationKVPs forKey:operation];
+        }
+    }
+
+    // NSLog(@"MERGED(2) = %@", mergedUserProperties);
+
+    return mergedUserProperties;
 }
 
 - (void)scheduleTransfer {

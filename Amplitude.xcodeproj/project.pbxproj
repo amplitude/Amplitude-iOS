@@ -245,6 +245,9 @@
 		D00A34E8298DA0EC00BA484F /* AMPEventUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A34DA298DA0EB00BA484F /* AMPEventUtils.m */; };
 		D00A34E9298DA0EC00BA484F /* AMPEventUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A34DA298DA0EB00BA484F /* AMPEventUtils.m */; };
 		D00A34EA298DA0EC00BA484F /* AMPEventUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A34DA298DA0EB00BA484F /* AMPEventUtils.m */; };
+		D00A34F02991F02400BA484F /* IdentifyInterceptorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A34EB2991EBE300BA484F /* IdentifyInterceptorTests.m */; };
+		D00A34F12991F02700BA484F /* IdentifyInterceptorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A34EB2991EBE300BA484F /* IdentifyInterceptorTests.m */; };
+		D00A34F22991F02800BA484F /* IdentifyInterceptorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D00A34EB2991EBE300BA484F /* IdentifyInterceptorTests.m */; };
 		DC927E962616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
 		DC927E972616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
 		DC927E982616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
@@ -373,6 +376,7 @@
 		D00A34D8298DA0EB00BA484F /* AMPEventUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPEventUtils.h; sourceTree = "<group>"; };
 		D00A34D9298DA0EB00BA484F /* AMPIdentifyInterceptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPIdentifyInterceptor.m; sourceTree = "<group>"; };
 		D00A34DA298DA0EB00BA484F /* AMPEventUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPEventUtils.m; sourceTree = "<group>"; };
+		D00A34EB2991EBE300BA484F /* IdentifyInterceptorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IdentifyInterceptorTests.m; sourceTree = "<group>"; };
 		DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
 		E2467100EE86AF0108A37E87 /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -545,6 +549,7 @@
 		12C9730F24108DFF00E9CDDB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				D00A34EB2991EBE300BA484F /* IdentifyInterceptorTests.m */,
 				3E2411F026F9A4C600793829 /* PlanTests.m */,
 				12C9731824108DFF00E9CDDB /* BaseTestCase.h */,
 				12C9731E24108DFF00E9CDDB /* BaseTestCase.m */,
@@ -1143,6 +1148,7 @@
 				12C973C4241244F000E9CDDB /* BaseTestCase.m in Sources */,
 				3E2411F626F9A4E200793829 /* PlanTests.m in Sources */,
 				12C973BD241244E400E9CDDB /* SessionTests.m in Sources */,
+				D00A34F12991F02700BA484F /* IdentifyInterceptorTests.m in Sources */,
 				3EF608FF272666E400133703 /* MiddlewareRunnerTests.m in Sources */,
 				12C973AD241244B700E9CDDB /* AmplitudeTests.m in Sources */,
 				3EF608E227211F8A00133703 /* ConfigManagerTests.m in Sources */,
@@ -1194,6 +1200,7 @@
 				12C973B0241244BE00E9CDDB /* RevenueTests.m in Sources */,
 				12C973C1241244EF00E9CDDB /* BaseTestCase.m in Sources */,
 				3E2411F526F9A4E100793829 /* PlanTests.m in Sources */,
+				D00A34F02991F02400BA484F /* IdentifyInterceptorTests.m in Sources */,
 				12C973BC241244E300E9CDDB /* SessionTests.m in Sources */,
 				3EF608FE272666E400133703 /* MiddlewareRunnerTests.m in Sources */,
 				3EF608E127211F8A00133703 /* ConfigManagerTests.m in Sources */,
@@ -1243,6 +1250,7 @@
 				12C973AB241244AF00E9CDDB /* Amplitude+Test.m in Sources */,
 				582516F228C075D300ECAD0D /* IngestionMetadataTests.m in Sources */,
 				12C973B4241244BF00E9CDDB /* RevenueTests.m in Sources */,
+				D00A34F22991F02800BA484F /* IdentifyInterceptorTests.m in Sources */,
 				3EF608E327211F8A00133703 /* ConfigManagerTests.m in Sources */,
 				12C973C7241244F100E9CDDB /* BaseTestCase.m in Sources */,
 				12C973BE241244E500E9CDDB /* SessionTests.m in Sources */,
