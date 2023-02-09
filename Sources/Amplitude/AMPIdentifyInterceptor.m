@@ -129,7 +129,7 @@ BOOL _disabled;
  * Clears intercepted Idenitfy's from DB
  */
 - (void)mergeInterceptedUserProperties:(NSMutableDictionary *_Nonnull) event {
-    BOOL flattenOperations = [[AMPEventUtils getEventType:event] isEqualToString:IDENTIFY_EVENT];
+    // BOOL flattenOperations = [[AMPEventUtils getEventType:event] isEqualToString:IDENTIFY_EVENT];
 
     NSMutableDictionary *mergedUserProperties = [[AMPEventUtils getUserProperties:event] mutableCopy];
 
