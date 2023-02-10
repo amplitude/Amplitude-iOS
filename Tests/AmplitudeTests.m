@@ -51,7 +51,7 @@
 
 - (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
     [[[_sharedSessionMock stub] andDo:^(NSInvocation *invocation) {
-        _connectionCallCount++;
+        self->_connectionCallCount++;
         void (^handler)(NSURLResponse*, NSData*, NSError*);
         [invocation getArgument:&handler atIndex:3];
         handler(serverResponse[@"data"], serverResponse[@"response"], serverResponse[@"error"]);
@@ -1233,22 +1233,14 @@
     XCTAssertTrue([client setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds * 2)]);
 }
 
-- (void)testInterceptIdentifys1 {
-    [self.amplitude setEventUploadThreshold:3];
-    NSLog(@"Hello");
-    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
-    [self.amplitude identify:[[AMPIdentify identify] add:@"add-key-1" value:[NSNumber numberWithInt:1]]];
-}
-
 - (void)testInterceptIdentifys {
-    
     NSString *instanceName = @"testInterceptIdentifys";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client initializeApiKey:@"api-key"];
 
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
-    
-    [client setEventUploadThreshold:3];
+
+    [client setEventUploadThreshold:5];
     [client disableIdentifyBatching:NO];
 
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
@@ -1257,29 +1249,79 @@
                                               }];
     [self setupAsyncResponse:serverResponse];
 
+    // log intercept identify 1
     [client identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
     [client flushQueue];
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log active identify
     [client identify:[[AMPIdentify identify] add:@"add-key-1" value:[NSNumber numberWithInt:1]]];
     [client flushQueue];
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
 
+    // log intercept identify 2
     [client identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
     [client flushQueue];
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log an event
     [client logEvent:@"test_event1"];
     [client flushQueue];
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
 
+    // log intercept identify 3
     // this value should be cleared after "unset"
     [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
     [self.amplitude flushQueue];
+    // log intercept identify 4 with "unset"
     [self.amplitude identify:[[AMPIdentify identify] unset:@"set-key-1"]];
     [self.amplitude flushQueue];
-    
+    [self.amplitude flushQueue];
+
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
-    // FIXME: Why does this fail?
-    //XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    // FIXME: Why does this fail sometimes?
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    
+    // TODO: send request and check payloads
+}
+
+
+- (void)testInterceptedIdentifysAreSentOnUploadEvents {
+    NSString *instanceName = @"testInterceptedIdentifysAreSentOnUploadEvents";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+
+    [client setEventUploadThreshold:5];
+    [client disableIdentifyBatching:NO];
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    // log intercept identify 1
+    [client identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log intercept identify 2
+    [client identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 2);
+
+    // log an event
+    [client uploadEvents];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+}
+
+
+- (void)testInterceptedIdentifysFlushInterval {
+    // TODO: 
 }
 
 @end
