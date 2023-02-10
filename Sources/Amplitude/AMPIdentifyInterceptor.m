@@ -129,28 +129,36 @@ BOOL _disabled;
  * Clears intercepted Idenitfy's from DB
  */
 - (void)mergeInterceptedUserProperties:(NSMutableDictionary *_Nonnull) event {
-    // BOOL flattenOperations = [[AMPEventUtils getEventType:event] isEqualToString:IDENTIFY_EVENT];
+    BOOL flattenOperations = [[AMPEventUtils getEventType:event] isEqualToString:IDENTIFY_EVENT] == NO;
 
     NSMutableDictionary *mergedUserProperties = [[AMPEventUtils getUserProperties:event] mutableCopy];
 
     // Load any intercepted Identify events from DB
     NSMutableDictionary *interceptedIdentify = [self getCombinedInterceptedIdentify];
-    // NSLog(@"INTERCEPTED = %@", interceptedIdentify);
     if (interceptedIdentify != nil) {
-        mergedUserProperties = [self mergeUserProperties:mergedUserProperties
-                                      withUserProperties:[AMPEventUtils getUserProperties:interceptedIdentify]];
+        NSMutableDictionary * interceptedUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+        if (flattenOperations) {
+            interceptedUserProperties = interceptedUserProperties[AMP_OP_SET];
+            mergedUserProperties = [self mergeUserProperties:mergedUserProperties
+                                          withUserProperties:interceptedUserProperties];
+        } else {
+            mergedUserProperties = [self mergeUserPropertyOperations:mergedUserProperties
+                                        withUserPropertiesOperations:interceptedUserProperties];
+        }
     }
 
     // Get the event's userProperties and apply them over the intercepted values
     NSMutableDictionary *eventUserProperties = [AMPEventUtils getUserProperties:event];
-    // NSLog(@"EVENT USER PROPS = %@", eventUserProperties);
     if (eventUserProperties != nil) {
-        mergedUserProperties = [self mergeUserProperties:mergedUserProperties
-                                      withUserProperties:eventUserProperties];
+        if (flattenOperations) {
+            mergedUserProperties = [self mergeUserProperties:mergedUserProperties
+                                          withUserProperties:eventUserProperties];
+        } else {
+            mergedUserProperties = [self mergeUserPropertyOperations:mergedUserProperties
+                                        withUserPropertiesOperations:eventUserProperties];
+        }
     }
 
-    // NSLog(@"mergedUserProperties = %@", mergedUserProperties);
-    // NSLog(@"EVENT = %@", event);
     // Apply merged user properties to the
     [AMPEventUtils setUserProperties:event userProperties:mergedUserProperties];
 
@@ -158,10 +166,8 @@ BOOL _disabled;
     [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
 }
 
-- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperations withUserProperties:(NSMutableDictionary *_Nonnull) userPropertyOperationsToMerge {
+- (NSMutableDictionary *_Nonnull)mergeUserPropertyOperations:(NSMutableDictionary *_Nonnull) userPropertyOperations withUserPropertiesOperations:(NSMutableDictionary *_Nonnull) userPropertyOperationsToMerge {
     NSMutableDictionary *mergedUserProperties = [userPropertyOperations mutableCopy] ?: [NSMutableDictionary dictionary];
-
-    // NSLog(@"MERGED(1) = %@", mergedUserProperties);
 
     // This assumes we only evey merge INTERCEPT_OPS for Identify's
     for(int opIndex = 0; opIndex < _interceptOps.count; opIndex++) {
@@ -191,6 +197,16 @@ BOOL _disabled;
     }
 
     // NSLog(@"MERGED(2) = %@", mergedUserProperties);
+
+    return mergedUserProperties;
+}
+
+- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userPropertiess withUserProperties:(NSMutableDictionary *_Nonnull) userPropertiesToMerge {
+    NSMutableDictionary *mergedUserProperties = [userPropertiess mutableCopy] ?: [NSMutableDictionary dictionary];
+
+    if (userPropertiesToMerge != nil) {
+        [mergedUserProperties addEntriesFromDictionary:userPropertiesToMerge];
+    }
 
     return mergedUserProperties;
 }
@@ -251,7 +267,8 @@ BOOL _disabled;
         NSMutableDictionary *curIdentify = interceptedIdentifys[interceptedIndex];
         NSMutableDictionary *curUserProperties = [AMPEventUtils getUserProperties:curIdentify];
 
-        mergedUserProperties = [self mergeUserProperties:mergedUserProperties withUserProperties:curUserProperties];
+        mergedUserProperties = [self mergeUserPropertyOperations:mergedUserProperties
+                                    withUserPropertiesOperations:curUserProperties];
     }
 
     if (mergedUserProperties != nil && combinedInterceptedIdentify != nil) {
