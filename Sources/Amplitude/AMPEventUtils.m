@@ -1,6 +1,6 @@
 //
-//  AMPUtils.m
-//  Copyright (c) 2015 Amplitude Inc. (https://amplitude.com/)
+//  AMPEventUtils.m
+//  Copyright (c) 2023 Amplitude Inc. (https://amplitude.com/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal

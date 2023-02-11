@@ -233,6 +233,7 @@
     XCTAssertNotNil(userProperties3);
     XCTAssertEqual(userPropertiesOperations3.count, 1);
     XCTAssertTrue([userPropertiesOperations3[0] isEqualToString:@"set-key"]);
+    XCTAssertTrue([userProperties3[@"set-key"] isEqualToString:@"set-value"]);
 }
 
 - (void)testMultipleInterceptedIdentifyIsAppliedToNextActiveEvent {
