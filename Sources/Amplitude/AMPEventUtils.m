@@ -56,6 +56,10 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return [event valueForKey:@"event_type"];
 }
 
++ (NSMutableDictionary *_Nullable)getGroups:(NSDictionary *_Nonnull)event {
+    return [event valueForKey:@"groups"];
+}
+
 + (NSMutableDictionary *)getUserProperties:(NSDictionary *_Nonnull)event {
     return [event valueForKey:@"user_properties"];
 }

@@ -30,6 +30,7 @@
 
 + (long long)getEventId:(NSDictionary *_Nonnull)event;
 + (NSString *_Nullable)getEventType:(NSDictionary *_Nonnull)event;
++ (NSMutableDictionary *_Nullable)getGroups:(NSDictionary *_Nonnull)event;
 + (NSMutableDictionary *_Nonnull)getUserProperties:(NSDictionary *_Nonnull)event;
 + (void)setUserProperties:(NSMutableDictionary *_Nonnull)event userProperties:(NSMutableDictionary *_Nonnull)userProperties;
 + (BOOL)hasLowerSequenceNumber:(NSDictionary *_Nonnull)event comparedTo:(NSDictionary *_Nonnull)otherEvent;

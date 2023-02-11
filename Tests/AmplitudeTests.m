@@ -312,16 +312,17 @@
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:2];
 
-    AMPIdentify *identify = [[AMPIdentify identify] set:@"key1" value:@"value1"];
+    AMPIdentify *identify = [[AMPIdentify identify] setOnce:@"key1" value:@"value1"];
     [self.amplitude identify:identify];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
     XCTAssertEqual([dbHelper getIdentifyCount], 1);
     XCTAssertEqual([dbHelper getTotalEventCount], 1);
 
     NSDictionary *operations = [NSDictionary dictionaryWithObject:@"value1" forKey:@"key1"];
-    NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$set"];
+    NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$setOnce"];
     NSDictionary *event = [self.amplitude getLastIdentify];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
     XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
@@ -333,7 +334,7 @@
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:serverResponse];
-    AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
+    AMPIdentify *identify2 = [[[AMPIdentify alloc] init] setOnce:@"key2" value:@"value2"];
     [self.amplitude identify:identify2];
     [self.amplitude flushQueue];
 
@@ -452,7 +453,7 @@
     [self.amplitude logEvent:@"test_event2"];
     [self.amplitude logEvent:@"test_event3"];
     [self.amplitude logEvent:@"test_event4"];
-    [self.amplitude identify:[[AMPIdentify identify] set:@"gender" value:@"male"]];
+    [self.amplitude identify:[[AMPIdentify identify] setOnce:@"gender" value:@"male"]];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 4);
@@ -493,7 +494,7 @@
     XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"event_type"], @"$identify");
     XCTAssertEqual([[mergedEvents[5] objectForKey:@"event_id"] intValue], 2);
     XCTAssertEqual([[mergedEvents[5] objectForKey:@"sequence_number"] intValue], 6);
-    XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:@"male" forKey:@"gender"] forKey:@"$set"]);
+    XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:@"male" forKey:@"gender"] forKey:@"$setOnce"]);
 
     [self.amplitude identify:[[AMPIdentify identify] unset:@"karma"]];
     [self.amplitude flushQueue];
@@ -575,6 +576,7 @@
 
     NSDictionary *props = [NSDictionary dictionaryWithObjectsAndKeys:longString, @"long_string", longString, AMP_REVENUE_RECEIPT, nil];
     [self.amplitude logEvent:@"test" withEventProperties:props];
+    [self.amplitude identify:[[AMPIdentify identify] setOnce:@"long_string" value:longString]];
     [self.amplitude identify:[[AMPIdentify identify] set:@"long_string" value:longString]];
     [self.amplitude flushQueue];
 
@@ -585,7 +587,11 @@
 
     NSDictionary *identify = [self.amplitude getLastIdentify];
     XCTAssertEqualObjects([identify objectForKey:@"event_type"], @"$identify");
-    XCTAssertEqualObjects([identify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$set"]);
+    XCTAssertEqualObjects([identify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$setOnce"]);
+    
+    NSDictionary *interceptedIdentify = [self.amplitude getLastInterceptedIdentify];
+    XCTAssertEqualObjects([interceptedIdentify objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqualObjects([interceptedIdentify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$set"]);
 }
 
 -(void)testAutoIncrementSequenceNumber {
@@ -608,7 +614,7 @@
     [self.amplitude setOffline:YES];
     [self.amplitude logEvent:@"test"];
     [self.amplitude logEvent:@"test"];
-    [self.amplitude identify:[[AMPIdentify identify] set:@"key" value:@"value"]];
+    [self.amplitude identify:[[AMPIdentify identify] setOnce:@"key" value:@"value"]];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 2);
@@ -1237,10 +1243,7 @@
     NSString *instanceName = @"testInterceptIdentifys";
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
     Amplitude *client = [Amplitude instanceWithName:instanceName];
-    
     [client initializeApiKey:@"api-key"];
-    [client setEventUploadThreshold:5];
-    [client disableIdentifyBatching:NO];
 
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
@@ -1289,11 +1292,8 @@
     NSString *instanceName = @"testInterceptedIdentifysAreSentOnUploadEvents";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client initializeApiKey:@"api-key"];
-
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
 
-    [client setEventUploadThreshold:5];
-    [client disableIdentifyBatching:NO];
 
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],

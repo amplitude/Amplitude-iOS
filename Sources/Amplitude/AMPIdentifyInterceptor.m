@@ -74,9 +74,9 @@ BOOL _disabled;
 
 // If this returns YES, the given Identify user property operations should be queued and batched later
 - (BOOL)hasInterceptOperationsOnly:(NSDictionary *_Nonnull)userPropertyOperations {
-   NSSet *operations = [NSSet setWithArray:[userPropertyOperations allKeys]];
+    NSSet *operations = [NSSet setWithArray:[userPropertyOperations allKeys]];
 
-   return [operations isSubsetOfSet:_interceptOpsSet];
+    return [operations isSubsetOfSet:_interceptOpsSet];
 }
 
 - (NSMutableDictionary *)intercept:(NSMutableDictionary *_Nonnull)event {
@@ -87,9 +87,9 @@ BOOL _disabled;
     NSString *eventType = [AMPEventUtils getEventType:event];
 
     NSMutableDictionary *userPropertyOperations = [AMPEventUtils getUserProperties:event];
-   if (eventType == IDENTIFY_EVENT) {
+    if (eventType == IDENTIFY_EVENT) {
        // Check to intercept
-       if ([self hasInterceptOperationsOnly:userPropertyOperations]) {
+        if ([self hasInterceptOperationsOnly:userPropertyOperations] && [AMPEventUtils getGroups:event] == nil) {
            NSError *error = nil;
            NSString *eventJsonString = [AMPEventUtils getJsonString:event eventType:eventType error:&error];
            // Conversion to JSON string failed, return unmodified event to try to store as a normal identify
@@ -113,13 +113,13 @@ BOOL _disabled;
            event = [event mutableCopy];
            [self mergeInterceptedUserProperties:event];
        }
-   } else if ([eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
+    } else if ([eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
        // Group identify = no op
-   } else {
+    } else {
        event = [event mutableCopy];
        // Normal event, merge intercepted user properties
        [self mergeInterceptedUserProperties:event];
-   }
+    }
 
     return event;
 }
