@@ -162,7 +162,7 @@ BOOL _disabled;
     // Apply merged user properties to the
     [AMPEventUtils setUserProperties:event userProperties:mergedUserProperties];
 
-    // remove inter
+    // remove intercepted identifies from db
     [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
 }
 
