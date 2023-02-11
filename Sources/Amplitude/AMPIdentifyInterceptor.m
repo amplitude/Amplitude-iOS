@@ -172,31 +172,22 @@ BOOL _disabled;
     // This assumes we only evey merge INTERCEPT_OPS for Identify's
     for(int opIndex = 0; opIndex < _interceptOps.count; opIndex++) {
         NSString *operation = _interceptOps[opIndex];
-        // NSLog(@"operation = %@", operation);
-
         NSMutableDictionary *mergedOperationKVPs = [NSMutableDictionary dictionary];
 
         NSMutableDictionary *operationKVPs = userPropertyOperations[operation];
-        // NSLog(@"operationKVPs = %@", operationKVPs);
         if (operationKVPs != nil) {
             [mergedOperationKVPs addEntriesFromDictionary:operationKVPs];
         }
-        // NSLog(@"mergedOperationKVPs(1) = %@", mergedOperationKVPs);
 
         NSMutableDictionary *operationKVPsToMerge = userPropertyOperationsToMerge[operation];
-        // NSLog(@"operationKVPsToMerge = %@", operationKVPsToMerge);
         if (operationKVPsToMerge != nil) {
             [mergedOperationKVPs addEntriesFromDictionary:operationKVPsToMerge];
         }
-
-        // NSLog(@"mergedOperationKVPs(2) = %@", mergedOperationKVPs);
 
         if (mergedOperationKVPs.count > 0) {
             [mergedUserProperties setValue:mergedOperationKVPs forKey:operation];
         }
     }
-
-    // NSLog(@"MERGED(2) = %@", mergedUserProperties);
 
     return mergedUserProperties;
 }
@@ -212,7 +203,6 @@ BOOL _disabled;
 }
 
 - (void)scheduleTransfer {
-    // TODO:
     if (!_transferScheduled) {
         _transferScheduled = YES;
         __block __weak AMPIdentifyInterceptor *weakSelf = self;

@@ -1235,11 +1235,10 @@
 
 - (void)testInterceptIdentifys {
     NSString *instanceName = @"testInterceptIdentifys";
-    Amplitude *client = [Amplitude instanceWithName:instanceName];
-    [client initializeApiKey:@"api-key"];
-
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
-
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    
+    [client initializeApiKey:@"api-key"];
     [client setEventUploadThreshold:5];
     [client disableIdentifyBatching:NO];
 
