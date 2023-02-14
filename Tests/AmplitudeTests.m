@@ -1226,8 +1226,8 @@
     XCTAssertEqual(client.initialized, YES);
 }
 
--(void)testSetIdentifyUploadSeconds {
-    NSString *instanceName = @"SetIdentifyUploadSecondsInstance";
+-(void)testSetIdentifyUploadSecondsOnInitializedClient {
+    NSString *instanceName = @"SetIdentifyUploadSecondsOnInitializedClient";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client initializeApiKey:@"api-key"];
 
@@ -1238,6 +1238,21 @@
     // Check valid values
     XCTAssertTrue([client setIdentifyUploadPeriodSeconds:kAMPIdentifyUploadPeriodSeconds]);
     XCTAssertTrue([client setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds * 2)]);
+}
+
+-(void)testSetIdentifyUploadSecondsOnUninitializedClient {
+    NSString *instanceName = @"SetIdentifyUploadSecondsOnUninitializedClient";
+    Amplitude *uninitializedClient = [Amplitude instanceWithName:instanceName];
+
+    // Don't initialized the client
+
+    // Check minimum
+    XCTAssertFalse([uninitializedClient setIdentifyUploadPeriodSeconds:0]);
+    XCTAssertFalse([uninitializedClient setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds - 1)]);
+
+    // Check valid values
+    XCTAssertTrue([uninitializedClient setIdentifyUploadPeriodSeconds:kAMPIdentifyUploadPeriodSeconds]);
+    XCTAssertTrue([uninitializedClient setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds * 2)]);
 }
 
 - (void)testInterceptIdentifys {
