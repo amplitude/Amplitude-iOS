@@ -1258,6 +1258,8 @@
 - (void)testInterceptIdentifys {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude flushQueue];
+    // This is necessary for tvOs and macOS which have default eventUploadThreshold = 1
+    [self.amplitude setEventUploadThreshold:30];
 
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
@@ -1275,6 +1277,7 @@
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
     XCTAssertEqual([dbHelper getIdentifyCount], 1);
 
     NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
