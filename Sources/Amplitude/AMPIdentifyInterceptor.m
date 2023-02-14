@@ -88,10 +88,8 @@ BOOL _disabled;
 
     NSMutableDictionary *userPropertyOperations = [AMPEventUtils getUserProperties:event];
     if (eventType == IDENTIFY_EVENT) {
-        // Check to intercept
-        if ([AMPEventUtils getGroups:event] != nil) {
-            // Set Group = no op
-        } else if ([self hasInterceptOperationsOnly:userPropertyOperations]) {
+        // Check to intercept - "set" ops only, and not setGroup
+        if ([self hasInterceptOperationsOnly:userPropertyOperations] && [AMPEventUtils getGroups:event] == nil) {
             NSError *error = nil;
             NSString *eventJsonString = [AMPEventUtils getJsonString:event eventType:eventType error:&error];
             // Conversion to JSON string failed, return unmodified event to try to store as a normal identify

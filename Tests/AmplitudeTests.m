@@ -1362,9 +1362,38 @@
     XCTAssertEqual([dbHelper getIdentifyCount], 0);
 }
 
+- (void)testInterceptedIdentifyIsAppliedToSetGroup {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
+    // This is necessary for tvOs and macOS which have default eventUploadThreshold = 1
+    [self.amplitude setEventUploadThreshold:30];
 
-- (void)testInterceptedIdentifysFlushInterval {
-    // TODO:
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    // log intercept identify 1
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log active identify
+    [self.amplitude setGroup:@"group_type" groupName:@"group_value"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+
+    NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
+    NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
+
+    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
+    XCTAssertTrue([lastIdentify[@"groups"][@"group_type"] isEqualToString:@"group_value"]);
 }
 
 @end
