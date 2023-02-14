@@ -572,6 +572,8 @@
 }
 
 -(void)testTruncateEventAndIdentify {
+    [self.amplitude setEventUploadThreshold:5];
+    
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
     NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
 
