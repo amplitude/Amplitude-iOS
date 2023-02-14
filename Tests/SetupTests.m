@@ -101,12 +101,12 @@
     [self.amplitude setUserProperties:properties];
     [self.amplitude flushQueue];
     XCTAssertEqual([dbHelper getEventCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 0);
 
     NSDictionary *expected = [NSDictionary dictionaryWithObject:properties forKey:AMP_OP_SET];
 
-    NSDictionary *event = [self.amplitude getLastIdentify];
+    NSDictionary *event = [self.amplitude getLastInterceptedIdentify];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
     XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
     XCTAssertEqualObjects([event objectForKey:@"event_properties"], [NSDictionary dictionary]); // event properties should be empty

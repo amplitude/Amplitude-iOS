@@ -305,7 +305,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             [self->_backgroundQueue setSuspended:NO];
         }];
 
-        _identifyInterceptor = [AMPIdentifyInterceptor getIdentifyInterceptor:_dbHelper backgroundQueue:_backgroundQueue];
+        _identifyInterceptor = [AMPIdentifyInterceptor getIdentifyInterceptor:_dbHelper
+                                                              backgroundQueue:_backgroundQueue];
 
         [self addObservers];
     }
@@ -641,19 +642,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             return;
         }
 
-        // convert event dictionary to JSON String
-        NSError *error = nil;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
-        if (error != nil) {
-            AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type %@: %@", eventType, error);
-            return;
-        }
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        if ([AMPUtils isEmptyString:jsonString]) {
-            AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type %@ resulted in an NULL string", eventType);
-            return;
-        }
-
         // Apply identify events to amplitude core to notify experiment SDK that user properties have changed.
         if ([eventType isEqualToString:IDENTIFY_EVENT]) {
             id<IdentityStoreEditor> editor = [[[AnalyticsConnector getInstance:self.instanceName] identityStore] editIdentity];
@@ -662,6 +650,19 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
         event = [self->_identifyInterceptor intercept:event];
         if (event != nil) {
+            // convert event dictionary to JSON String
+            NSError *error = nil;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];
+            if (error != nil) {
+                AMPLITUDE_ERROR(@"ERROR: could not JSONSerialize event type %@: %@", eventType, error);
+                return;
+            }
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            if ([AMPUtils isEmptyString:jsonString]) {
+                AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type %@ resulted in an NULL string", eventType);
+                return;
+            }
+            
             if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
                 (void) [self.dbHelper addIdentify:jsonString];
             } else {

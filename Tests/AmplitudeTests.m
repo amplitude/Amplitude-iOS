@@ -14,6 +14,7 @@
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
 #import "AMPUtils.h"
+#import "AMPEventUtils.h"
 #import "AMPTrackingOptions.h"
 #import "AMPPlan.h"
 #import "AMPIngestionMetadata.h"
@@ -588,7 +589,7 @@
     NSDictionary *identify = [self.amplitude getLastIdentify];
     XCTAssertEqualObjects([identify objectForKey:@"event_type"], @"$identify");
     XCTAssertEqualObjects([identify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$setOnce"]);
-    
+
     NSDictionary *interceptedIdentify = [self.amplitude getLastInterceptedIdentify];
     XCTAssertEqualObjects([interceptedIdentify objectForKey:@"event_type"], @"$identify");
     XCTAssertEqualObjects([interceptedIdentify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$set"]);
@@ -1240,10 +1241,8 @@
 }
 
 - (void)testInterceptIdentifys {
-    NSString *instanceName = @"testInterceptIdentifys";
-    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
-    Amplitude *client = [Amplitude instanceWithName:instanceName];
-    [client initializeApiKey:@"api-key"];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
 
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
@@ -1252,39 +1251,66 @@
     [self setupAsyncResponse:serverResponse];
 
     // log intercept identify 1
-    [client identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
-    [client flushQueue];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude flushQueue];
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
 
     // log active identify
-    [client identify:[[AMPIdentify identify] add:@"add-key-1" value:[NSNumber numberWithInt:1]]];
-    [client flushQueue];
+    [self.amplitude identify:[[AMPIdentify identify] add:@"add-key-1" value:[NSNumber numberWithInt:1]]];
+    [self.amplitude flushQueue];
+
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+
+    NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
+    NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
+
+    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 2);
+    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
+    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_ADD][@"add-key-1"] isEqualToNumber:@1]);
+
 
     // log intercept identify 2
-    [client identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
-    [client flushQueue];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
+    [self.amplitude flushQueue];
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
 
     // log an event
-    [client logEvent:@"test_event1"];
-    [client flushQueue];
+    [self.amplitude logEvent:@"test_event1"];
+    [self.amplitude flushQueue];
+
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getEventCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 2);
+
+    NSDictionary *lastEvent = [self.amplitude getLastEvent];
+    NSMutableDictionary *lastEventUserProperties = [AMPEventUtils getUserProperties:lastEvent];
+    NSArray *lastEventUserPropertiesOperations = [lastEventUserProperties allKeys];
+
+    XCTAssertEqual(lastEventUserPropertiesOperations.count, 1);
+    XCTAssertTrue([lastEventUserProperties[@"set-key-2"] isEqualToString:@"set-value-2"]);
 
     // log intercept identify 3
     // this value should be cleared after "unset"
     [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
     [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
     // log intercept identify 4 with "unset"
-    [self.amplitude identify:[[AMPIdentify identify] unset:@"set-key-1"]];
-    [self.amplitude flushQueue];
+    [self.amplitude identify:[[AMPIdentify identify] clearAll]];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
-    // FIXME: Why does this fail sometimes?
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
-    
-    // TODO: send request and check payloads
+    XCTAssertEqual([dbHelper getIdentifyCount], 2);
+    XCTAssertEqual([dbHelper getTotalEventCount], 3);
+
+    NSDictionary *unsetIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *unsetIdentifyUserProperties = [AMPEventUtils getUserProperties:unsetIdentify];
+    NSArray *unsetIdentifyUserPropertiesOperations = [unsetIdentifyUserProperties allKeys];
+
+    XCTAssertEqual(unsetIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([unsetIdentifyUserProperties[AMP_OP_CLEAR_ALL] isEqualToString:@"-"]);
 }
 
 
@@ -1320,7 +1346,7 @@
 
 
 - (void)testInterceptedIdentifysFlushInterval {
-    // TODO: 
+    // TODO:
 }
 
 @end

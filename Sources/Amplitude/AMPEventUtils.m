@@ -57,7 +57,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 + (NSMutableDictionary *_Nullable)getGroups:(NSDictionary *_Nonnull)event {
-    return [event valueForKey:@"groups"];
+    NSMutableDictionary *groups = [event valueForKey:@"groups"];
+    return (groups == nil || groups.count == 0) ? nil : groups;
 }
 
 + (NSMutableDictionary *)getUserProperties:(NSDictionary *_Nonnull)event {

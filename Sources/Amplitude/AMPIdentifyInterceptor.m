@@ -88,37 +88,39 @@ BOOL _disabled;
 
     NSMutableDictionary *userPropertyOperations = [AMPEventUtils getUserProperties:event];
     if (eventType == IDENTIFY_EVENT) {
-       // Check to intercept
-        if ([self hasInterceptOperationsOnly:userPropertyOperations] && [AMPEventUtils getGroups:event] == nil) {
-           NSError *error = nil;
-           NSString *eventJsonString = [AMPEventUtils getJsonString:event eventType:eventType error:&error];
-           // Conversion to JSON string failed, return unmodified event to try to store as a normal identify
-           if (error != nil) {
+        // Check to intercept
+        if ([AMPEventUtils getGroups:event] != nil) {
+            // Set Group = no op
+        } else if ([self hasInterceptOperationsOnly:userPropertyOperations]) {
+            NSError *error = nil;
+            NSString *eventJsonString = [AMPEventUtils getJsonString:event eventType:eventType error:&error];
+            // Conversion to JSON string failed, return unmodified event to try to store as a normal identify
+            if (error != nil) {
                return event;
-           }
+            }
 
-           // Store in Intercepted Identify DB
-           [_dbHelper addInterceptedIdentify:eventJsonString];
+            // Store in Intercepted Identify DB
+            [_dbHelper addInterceptedIdentify:eventJsonString];
 
-           // Set timeout for transfer
-           [self scheduleTransfer];
+            // Set timeout for transfer
+            [self scheduleTransfer];
 
-           // Event is intercepted, return nil
-           return nil;
+            // Event is intercepted, return nil
+            return nil;
        } else if ([userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] != nil) {
-           // Clear all pending intercepted Identify's
-           [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
+            // Clear all pending intercepted Identify's
+            [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
        } else {
-           // This is an "active" Identify, merge intercepted user properties
-           event = [event mutableCopy];
-           [self mergeInterceptedUserProperties:event];
+            // This is an "active" Identify, merge intercepted user properties
+            event = [event mutableCopy];
+            [self mergeInterceptedUserProperties:event];
        }
     } else if ([eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
-       // Group identify = no op
+        // Group identify = no op
     } else {
-       event = [event mutableCopy];
-       // Normal event, merge intercepted user properties
-       [self mergeInterceptedUserProperties:event];
+        // Normal event, merge intercepted user properties
+        event = [event mutableCopy];
+        [self mergeInterceptedUserProperties:event];
     }
 
     return event;
