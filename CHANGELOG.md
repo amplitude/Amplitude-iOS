@@ -1,3 +1,10 @@
+# [8.15.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.14.1...v8.15.0) (2023-02-15)
+
+
+### Features
+
+* AMP-66570 added IdentifyInterceptor ([#423](https://github.com/amplitude/Amplitude-iOS/issues/423)) ([0c7f0d4](https://github.com/amplitude/Amplitude-iOS/commit/0c7f0d4e7e3c41a1b71bee960127b69e5baf278a))
+
 ## [8.14.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.14.0...v8.14.1) (2023-02-08)
 
 
