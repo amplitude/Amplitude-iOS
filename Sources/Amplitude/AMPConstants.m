@@ -36,7 +36,7 @@ NSString *const kAMPDyanmicConfigUrl = @"https://regionconfig.amplitude.com/";
 NSString *const kAMPDyanmicConfigEuUrl = @"https://regionconfig.eu.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";
 const int kAMPApiVersion = 3;
-const int kAMPDBVersion = 3;
+const int kAMPDBVersion = 4;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
 
 #if TARGET_OS_OSX
@@ -69,6 +69,8 @@ const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
 const int kAMPEventUploadMaxBatchSize = 100;
 const int kAMPEventRemoveBatchSize = 20;
 const int kAMPEventUploadPeriodSeconds = 30; // 30 seconds
+const int kAMPIdentifyUploadPeriodSeconds = 30; // 30 seconds
+const int kAMPMinIdentifyUploadPeriodSeconds = 30; // 30 seconds
 const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5 minutes
 const int kAMPMaxStringLength = 1024;
 const int kAMPMaxPropertyKeys = 1000;

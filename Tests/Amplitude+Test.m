@@ -50,6 +50,11 @@
     return [identifys lastObject];
 }
 
+- (NSDictionary *)getLastInterceptedIdentify {
+    NSArray *interceptedIdentifys = [[AMPDatabaseHelper getDatabaseHelper] getInterceptedIdentifys:-1 limit:-1];
+    return [interceptedIdentifys lastObject];
+}
+
 - (NSUInteger)queuedEventCount {
     return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
 }

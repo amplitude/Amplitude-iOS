@@ -26,6 +26,7 @@
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName;
 - (NSDictionary *)getLastIdentify;
+- (NSDictionary *)getLastInterceptedIdentify;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
 - (void)enterForeground;
