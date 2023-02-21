@@ -46,6 +46,9 @@ BOOL _transferScheduled;
 NSOperationQueue *_Nonnull _backgroundQueue;
 AMPDatabaseHelper *_Nonnull _dbHelper;
 long _lastIdentifyInterceptorId;
+BOOL _hasIdentity;
+NSString *_Nullable _userId;
+NSString *_Nullable _deviceId;
 int _interceptedUploadPeriodSeconds;
 BOOL _disabled;
 
@@ -61,6 +64,7 @@ BOOL _disabled;
         _disabled = NO;
         _interceptOps = @[AMP_OP_SET]; // Notice: Supporting AMP_OP_SET_ONCE would require more complex merge logic
         _interceptOpsSet = [NSSet setWithArray:_interceptOps];
+        _hasIdentity = NO;
     }
 
     return self;
@@ -79,13 +83,47 @@ BOOL _disabled;
     return [operations isSubsetOfSet:_interceptOpsSet];
 }
 
+// If this returns YES, the given Identify has a different `user_id` or `device_id` than previous intercepts
+- (BOOL)hasDifferentIdentity:(NSMutableDictionary *_Nonnull)event {
+    NSString *eventUserId = [AMPEventUtils getUserId:event];
+    NSString *eventDeviceId= [AMPEventUtils getDeviceId:event];
+
+    @synchronized (self) {
+        if (!_hasIdentity) {
+            _hasIdentity = YES;
+            _userId = eventUserId;
+            _deviceId = eventDeviceId;
+            return true;
+        }
+
+        BOOL isUpdated = NO;
+        if (![self isIdEqual:_userId toId:eventUserId]) {
+            _userId = eventUserId;
+            isUpdated = YES;
+        }
+        if (![self isIdEqual:_deviceId toId:eventDeviceId]) {
+            _deviceId = eventDeviceId;
+            isUpdated = YES;
+        }
+        return isUpdated;
+    }
+}
+
+- (BOOL)isIdEqual:(NSString *_Nonnull)id1 toId:(NSString *_Nonnull)id2 {
+    return (id1 == nil ? id2 == nil : [id1 isEqualToString:id2]);
+}
+
 - (NSMutableDictionary *)intercept:(NSMutableDictionary *_Nonnull)event {
     if (_disabled) {
         return event;
     }
 
-    NSString *eventType = [AMPEventUtils getEventType:event];
+    if ([self hasDifferentIdentity:event]) {
+        // if userId or deviceId is updated, send out intercepted identify's for older identity
+        [self transferInterceptedIdentify];
+    }
 
+    NSString *eventType = [AMPEventUtils getEventType:event];
     NSMutableDictionary *userPropertyOperations = [AMPEventUtils getUserProperties:event];
     if (eventType == IDENTIFY_EVENT) {
         // Check to intercept - "set" ops only, and not setGroup

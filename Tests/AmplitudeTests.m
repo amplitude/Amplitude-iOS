@@ -643,7 +643,7 @@
 
 -(void)testTruncateEventAndIdentify {
     [self.amplitude setEventUploadThreshold:5];
-    
+
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
     NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
 
@@ -1466,6 +1466,54 @@
     XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
     XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
     XCTAssertTrue([lastIdentify[@"groups"][@"group_type"] isEqualToString:@"group_value"]);
+}
+
+- (void)testInterceptIdentifysAreSentOnUserIdChange {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
+    // This is necessary for tvOs and macOS which have default eventUploadThreshold = 1
+    [self.amplitude setEventUploadThreshold:30];
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    // userId #1
+    [self.amplitude setUserId:@"test-user-1"];
+    // log intercepted identify's
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 2);
+
+    // userId #2
+    [self.amplitude setUserId:@"test-user-2"];
+    // log intercept identify with new user_id
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-3" value:@"set-value-3"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+
+    // verify idenitfy was transfered
+    NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
+    NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
+
+    XCTAssertEqualObjects([AMPEventUtils getUserId:lastIdentify], @"test-user-1");
+    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertEqualObjects(lastIdentifyUserProperties[AMP_OP_SET][@"set-key-1"], @"set-value-1");
+    XCTAssertEqualObjects(lastIdentifyUserProperties[AMP_OP_SET][@"set-key-2"], @"set-value-2");
+
+    // verify intercepted
+    NSDictionary *interceptedIdentify = [self.amplitude getLastInterceptedIdentify];
+    NSMutableDictionary *interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    NSArray *interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqualObjects([AMPEventUtils getUserId:interceptedIdentify], @"test-user-2");
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertEqualObjects(interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-3"], @"set-value-3");
 }
 
 @end

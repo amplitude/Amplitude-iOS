@@ -28,6 +28,8 @@
 
 @interface AMPEventUtils : NSObject
 
++ (NSString *_Nullable)getUserId:(NSDictionary *_Nonnull)event;
++ (NSString *_Nullable)getDeviceId:(NSDictionary *_Nonnull)event;
 + (long long)getEventId:(NSDictionary *_Nonnull)event;
 + (NSString *_Nullable)getEventType:(NSDictionary *_Nonnull)event;
 + (NSMutableDictionary *_Nullable)getGroups:(NSDictionary *_Nonnull)event;
