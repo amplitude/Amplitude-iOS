@@ -48,6 +48,14 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return nil;
 }
 
++ (NSString *_Nullable)getUserId:(NSDictionary *_Nonnull)event {
+    return [event valueForKey:@"user_id"];
+}
+
++ (NSString *_Nullable)getDeviceId:(NSDictionary *_Nonnull)event {
+    return [event valueForKey:@"device_id"];
+}
+
 + (long long)getEventId:(NSDictionary *_Nonnull)event {
     return [[event objectForKey:@"event_id"] longValue];
 }
