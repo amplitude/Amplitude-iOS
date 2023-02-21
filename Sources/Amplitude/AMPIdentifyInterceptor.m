@@ -252,6 +252,7 @@ BOOL _disabled;
     }
 }
 
+// Transfers all intercepted Identify's as a single Identify to (non-intercepted) Identify storage
 - (void)transferInterceptedIdentify {
     NSMutableDictionary *interceptedIdentify = [self getCombinedInterceptedIdentify];
     if (interceptedIdentify != nil) {
