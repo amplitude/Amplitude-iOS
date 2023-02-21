@@ -1,3 +1,10 @@
+## [8.15.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.0...v8.15.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* transfer intercepted Identify's on user identity change ([#427](https://github.com/amplitude/Amplitude-iOS/issues/427)) ([3279b78](https://github.com/amplitude/Amplitude-iOS/commit/3279b787d531a474f70b833c36f52beafb3c7f18))
+
 # [8.15.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.14.1...v8.15.0) (2023-02-15)
 
 
