@@ -76,7 +76,7 @@
     if (!_osVersion) {
         #if TARGET_OS_WATCH
         _osVersion = [[WKInterfaceDevice currentDevice] systemVersion];
-        #elif !TARGET_OS_OSX
+        #elif !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
         _osVersion = [[UIDevice currentDevice] systemVersion];
         #else
         NSOperatingSystemVersion systemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
