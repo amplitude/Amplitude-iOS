@@ -1,3 +1,10 @@
+## [8.15.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.1...v8.15.2) (2023-03-08)
+
+
+### Bug Fixes
+
+* fix os version ([#430](https://github.com/amplitude/Amplitude-iOS/issues/430)) ([23fcf7d](https://github.com/amplitude/Amplitude-iOS/commit/23fcf7d798c2c94cdba39489f72d9032388058ba))
+
 ## [8.15.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.0...v8.15.1) (2023-02-21)
 
 
