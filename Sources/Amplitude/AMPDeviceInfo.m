@@ -78,11 +78,6 @@
         _osVersion = [[WKInterfaceDevice currentDevice] systemVersion];
         #elif !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
         _osVersion = [[UIDevice currentDevice] systemVersion];
-        /*        
-        #elif TARGET_OS_IPHONE
-         _osVersion = [[UIDevice currentDevice] systemVersion];
-        #else
-        */
         #else
         NSOperatingSystemVersion systemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
         _osVersion = [NSString stringWithFormat:@"%ld.%ld.%ld",
