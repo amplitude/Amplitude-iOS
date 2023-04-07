@@ -34,6 +34,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AMPConstants.h"
+#import "AMPUtils.h"
 #import "AMPEventUtils.h"
 #import "AMPIdentifyInterceptor.h"
 #import "AMPDatabaseHelper.h"
@@ -214,12 +215,12 @@ BOOL _disabled;
 
         NSMutableDictionary *operationKVPs = userPropertyOperations[operation];
         if (operationKVPs != nil) {
-            [mergedOperationKVPs addEntriesFromDictionary:operationKVPs];
+            [mergedOperationKVPs addEntriesFromDictionary:[AMPUtils removeNilValues:operationKVPs]];
         }
 
         NSMutableDictionary *operationKVPsToMerge = userPropertyOperationsToMerge[operation];
         if (operationKVPsToMerge != nil) {
-            [mergedOperationKVPs addEntriesFromDictionary:operationKVPsToMerge];
+            [mergedOperationKVPs addEntriesFromDictionary:[AMPUtils removeNilValues:operationKVPsToMerge]];
         }
 
         if (mergedOperationKVPs.count > 0) {
@@ -230,11 +231,11 @@ BOOL _disabled;
     return mergedUserProperties;
 }
 
-- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userPropertiess withUserProperties:(NSMutableDictionary *_Nonnull) userPropertiesToMerge {
-    NSMutableDictionary *mergedUserProperties = [userPropertiess mutableCopy] ?: [NSMutableDictionary dictionary];
+- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userProperties withUserProperties:(NSMutableDictionary *_Nonnull) userPropertiesToMerge {
+    NSMutableDictionary *mergedUserProperties = [userProperties mutableCopy] ?: [NSMutableDictionary dictionary];
 
     if (userPropertiesToMerge != nil) {
-        [mergedUserProperties addEntriesFromDictionary:userPropertiesToMerge];
+        [mergedUserProperties addEntriesFromDictionary:[AMPUtils removeNilValues:userPropertiesToMerge]];
     }
 
     return mergedUserProperties;

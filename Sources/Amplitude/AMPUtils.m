@@ -96,6 +96,13 @@
     return str;
 }
 
++ (NSMutableDictionary *)removeNilValues:(NSDictionary *)dict {
+    NSMutableDictionary *d = [dict mutableCopy];
+    NSArray *keysForNullValues = [d allKeysForObject:[NSNull null]];
+    [d removeObjectsForKeys:keysForNullValues];
+    return d;
+}
+
 + (BOOL)isEmptyString:(NSString *)str {
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
 }
