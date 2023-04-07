@@ -482,9 +482,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     // Normally _inForeground is set by the enterForeground callback, but initializeWithApiKey will be called after the app's enterForeground
     // notification is already triggered, so we need to manually check and set it now.
     // UIApplication methods are only allowed on the main thread so need to dispatch this synchronously to the main thread.
-    self->_inForeground = YES;
-
     void (^checkInForeground)(void) = ^{
+        self->_inForeground = YES;
     #if !TARGET_OS_OSX && !TARGET_OS_WATCH
         UIApplication *app = [AMPUtils getSharedApplication];
         if (app != nil) {
