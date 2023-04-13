@@ -483,13 +483,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     // notification is already triggered, so we need to manually check and set it now.
     // UIApplication methods are only allowed on the main thread so need to dispatch this synchronously to the main thread.
     void (^checkInForeground)(void) = ^{
-        self->_inForeground = YES;
     #if !TARGET_OS_OSX && !TARGET_OS_WATCH
         UIApplication *app = [AMPUtils getSharedApplication];
         if (app != nil) {
             UIApplicationState state = app.applicationState;
             if (state != UIApplicationStateBackground) {
+                self->_inForeground = YES;
                 [self runOnBackgroundQueue:^{
+    #else
+                    self->_inForeground = YES;
     #endif
                     // The earliest time to fetch dynamic config
                     [self refreshDynamicConfig];
