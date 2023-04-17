@@ -97,10 +97,13 @@
 }
 
 + (NSMutableDictionary *)removeNilValues:(NSDictionary *)dict {
-    NSMutableDictionary *d = [dict mutableCopy];
-    NSArray *keysForNullValues = [d allKeysForObject:[NSNull null]];
-    [d removeObjectsForKeys:keysForNullValues];
-    return d;
+    NSMutableDictionary *pruned = [NSMutableDictionary dictionary];
+    for (NSString * key in [dict allKeys]) {
+        if (![[dict objectForKey:key] isKindOfClass:[NSNull class]]) {
+            [pruned setObject:[dict objectForKey:key] forKey:key];
+        }
+    }
+    return pruned;
 }
 
 + (BOOL)isEmptyString:(NSString *)str {
