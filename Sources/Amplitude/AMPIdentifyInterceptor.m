@@ -213,15 +213,8 @@ BOOL _disabled;
         NSString *operation = _interceptOps[opIndex];
         NSMutableDictionary *mergedOperationKVPs = [NSMutableDictionary dictionary];
 
-        NSMutableDictionary *operationKVPs = userPropertyOperations[operation];
-        if (operationKVPs != nil) {
-            [mergedOperationKVPs addEntriesFromDictionary:[AMPUtils removeNilValues:operationKVPs]];
-        }
-
-        NSMutableDictionary *operationKVPsToMerge = userPropertyOperationsToMerge[operation];
-        if (operationKVPsToMerge != nil) {
-            [mergedOperationKVPs addEntriesFromDictionary:[AMPUtils removeNilValues:operationKVPsToMerge]];
-        }
+        [AMPUtils addNonNilEntriesToDictionary:mergedOperationKVPs fromDictionary:userPropertyOperations[operation]];
+        [AMPUtils addNonNilEntriesToDictionary:mergedOperationKVPs fromDictionary:userPropertyOperationsToMerge[operation]];
 
         if (mergedOperationKVPs.count > 0) {
             [mergedUserProperties setValue:mergedOperationKVPs forKey:operation];
@@ -234,9 +227,7 @@ BOOL _disabled;
 - (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userProperties withUserProperties:(NSMutableDictionary *_Nonnull) userPropertiesToMerge {
     NSMutableDictionary *mergedUserProperties = [userProperties mutableCopy] ?: [NSMutableDictionary dictionary];
 
-    if (userPropertiesToMerge != nil) {
-        [mergedUserProperties addEntriesFromDictionary:[AMPUtils removeNilValues:userPropertiesToMerge]];
-    }
+    [AMPUtils addNonNilEntriesToDictionary:mergedUserProperties fromDictionary:userPropertiesToMerge];
 
     return mergedUserProperties;
 }

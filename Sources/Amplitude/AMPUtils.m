@@ -96,14 +96,16 @@
     return str;
 }
 
-+ (NSMutableDictionary *)removeNilValues:(NSDictionary *)dict {
-    NSMutableDictionary *pruned = [NSMutableDictionary dictionary];
-    for (NSString * key in [dict allKeys]) {
-        if (![[dict objectForKey:key] isKindOfClass:[NSNull class]]) {
-            [pruned setObject:[dict objectForKey:key] forKey:key];
++ (NSMutableDictionary *)addNonNilEntriesToDictionary:(NSMutableDictionary *)destination fromDictionary:(NSDictionary *)source {
+    if (source != nil) {
+        for (NSString * key in [source allKeys]) {
+            if (![[source objectForKey:key] isKindOfClass:[NSNull class]]) {
+                [destination setObject:[source objectForKey:key] forKey:key];
+            }
         }
     }
-    return pruned;
+    
+    return destination;
 }
 
 + (BOOL)isEmptyString:(NSString *)str {
