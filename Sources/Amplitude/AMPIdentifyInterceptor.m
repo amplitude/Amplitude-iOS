@@ -34,6 +34,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AMPConstants.h"
+#import "AMPUtils.h"
 #import "AMPEventUtils.h"
 #import "AMPIdentifyInterceptor.h"
 #import "AMPDatabaseHelper.h"
@@ -212,15 +213,8 @@ BOOL _disabled;
         NSString *operation = _interceptOps[opIndex];
         NSMutableDictionary *mergedOperationKVPs = [NSMutableDictionary dictionary];
 
-        NSMutableDictionary *operationKVPs = userPropertyOperations[operation];
-        if (operationKVPs != nil) {
-            [mergedOperationKVPs addEntriesFromDictionary:operationKVPs];
-        }
-
-        NSMutableDictionary *operationKVPsToMerge = userPropertyOperationsToMerge[operation];
-        if (operationKVPsToMerge != nil) {
-            [mergedOperationKVPs addEntriesFromDictionary:operationKVPsToMerge];
-        }
+        [AMPUtils addNonNilEntriesToDictionary:mergedOperationKVPs fromDictionary:userPropertyOperations[operation]];
+        [AMPUtils addNonNilEntriesToDictionary:mergedOperationKVPs fromDictionary:userPropertyOperationsToMerge[operation]];
 
         if (mergedOperationKVPs.count > 0) {
             [mergedUserProperties setValue:mergedOperationKVPs forKey:operation];
@@ -230,12 +224,10 @@ BOOL _disabled;
     return mergedUserProperties;
 }
 
-- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userPropertiess withUserProperties:(NSMutableDictionary *_Nonnull) userPropertiesToMerge {
-    NSMutableDictionary *mergedUserProperties = [userPropertiess mutableCopy] ?: [NSMutableDictionary dictionary];
+- (NSMutableDictionary *_Nonnull)mergeUserProperties:(NSMutableDictionary *_Nonnull) userProperties withUserProperties:(NSMutableDictionary *_Nonnull) userPropertiesToMerge {
+    NSMutableDictionary *mergedUserProperties = [userProperties mutableCopy] ?: [NSMutableDictionary dictionary];
 
-    if (userPropertiesToMerge != nil) {
-        [mergedUserProperties addEntriesFromDictionary:userPropertiesToMerge];
-    }
+    [AMPUtils addNonNilEntriesToDictionary:mergedUserProperties fromDictionary:userPropertiesToMerge];
 
     return mergedUserProperties;
 }
