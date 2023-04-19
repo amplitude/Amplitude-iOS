@@ -96,6 +96,18 @@
     return str;
 }
 
++ (NSMutableDictionary *)addNonNilEntriesToDictionary:(NSMutableDictionary *)destination fromDictionary:(NSDictionary *)source {
+    if (source != nil) {
+        for (NSString * key in [source allKeys]) {
+            if (![[source objectForKey:key] isKindOfClass:[NSNull class]]) {
+                [destination setObject:[source objectForKey:key] forKey:key];
+            }
+        }
+    }
+    
+    return destination;
+}
+
 + (BOOL)isEmptyString:(NSString *)str {
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
 }

@@ -30,6 +30,7 @@
 
 + (NSString *)generateUUID;
 + (id)makeJSONSerializable:(id)obj;
++ (NSMutableDictionary *)addNonNilEntriesToDictionary:(NSMutableDictionary *)destination fromDictionary:(NSDictionary *)source;
 + (BOOL)isEmptyString:(NSString *)str;
 + (NSDictionary *)validateGroups:(NSDictionary *)obj;
 + (NSString *)platformDataDirectory;
