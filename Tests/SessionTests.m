@@ -50,6 +50,8 @@
     [mockAmplitude initializeApiKey:apiKey];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     [mockAmplitude verify];
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
 }
@@ -64,6 +66,8 @@
     [mockAmplitude initializeApiKey:apiKey];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
 }
 
@@ -77,6 +81,8 @@
     [mockAmplitude initializeApiKey:apiKey userId:nil];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
     XCTAssertEqual([mockAmplitude sessionId], 1000000);
 
@@ -87,12 +93,15 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
     [mockAmplitude enterBackground]; // simulate app entering background
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([mockAmplitude sessionId], 1000000);
 
     NSDate *date2 = [NSDate dateWithTimeIntervalSince1970:1000 + (self.amplitude.minTimeBetweenSessionsMillis / 1000)];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)] currentTime];
     [mockAmplitude enterForeground]; // simulate app entering foreground
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 0);
     XCTAssertEqual([mockAmplitude sessionId], 1000000 + self.amplitude.minTimeBetweenSessionsMillis);
@@ -103,6 +112,7 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date3)] currentTime];
     [mockAmplitude logEvent:@"continue_session"];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
 
     XCTAssertEqual([[mockAmplitude lastEventTime] longLongValue], 1001000 + self.amplitude.minTimeBetweenSessionsMillis);
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
@@ -118,6 +128,7 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date5)] currentTime];
     [mockAmplitude enterForeground]; // simulate app entering foreground
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
     XCTAssertEqual([mockAmplitude sessionId], 1000000 + self.amplitude.minTimeBetweenSessionsMillis);
@@ -128,6 +139,8 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date6)] currentTime];
     [mockAmplitude logEvent:@"No Session" withEventProperties:nil outOfSession:NO];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssert([[mockAmplitude getLastEvent][@"session_id"]
                isEqualToNumber:[NSNumber numberWithLongLong:1000000 + self.amplitude.minTimeBetweenSessionsMillis]]);
 
@@ -136,6 +149,8 @@
     // An out of session event should have session_id = -1
     [mockAmplitude logEvent:@"No Session" withEventProperties:nil outOfSession:YES];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssert([[mockAmplitude getLastEvent][@"session_id"]
                isEqualToNumber:[NSNumber numberWithLongLong:-1]]);
 
@@ -160,6 +175,8 @@
 #endif
 
     [self.amplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([self.amplitude queuedEventCount], 0);
 }
 
@@ -172,6 +189,7 @@
     [mockAmplitude initializeApiKey:apiKey userId:nil];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
     XCTAssertEqual([[mockAmplitude getLastEvent][@"session_id"] longLongValue], 1000000);
@@ -186,6 +204,8 @@
     [((Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)]) currentTime];
     [mockAmplitude enterForeground]; // simulate app entering foreground
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([mockAmplitude queuedEventCount], 3);
 
     long long expectedSessionId = 1000000 + self.amplitude.minTimeBetweenSessionsMillis;
@@ -207,6 +227,8 @@
     AMPIdentify *identify = [[AMPIdentify identify] set:@"key" value:@"value"];
     [mockAmplitude identify:identify outOfSession:NO];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([mockAmplitude queuedEventCount], 5); // triggers session events
 
     // test out of session identify with app in background
@@ -214,6 +236,8 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date4)] currentTime];
     [mockAmplitude identify:identify outOfSession:YES];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([mockAmplitude queuedEventCount], 5); // does not trigger session events
 }
 
@@ -226,6 +250,7 @@
     [mockAmplitude initializeApiKey:apiKey userId:nil];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
     [mockAmplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
 
     XCTAssertEqual([mockAmplitude queuedEventCount], 1);
     XCTAssertEqual([[mockAmplitude getLastEvent][@"session_id"] longLongValue], 21474836470000);
@@ -240,6 +265,8 @@
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date2)] currentTime];
     [mockAmplitude enterForeground]; // simulate app entering foreground
     [self.amplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([mockAmplitude queuedEventCount], 3);
 
     XCTAssertEqual([mockAmplitude sessionId], 214748364700000);
@@ -262,6 +289,8 @@
     [self.amplitude initializeApiKey:apiKey userId:nil];
 
     [self.amplitude flushQueue];
+    [NSThread sleepForTimeInterval:0.2];
+
     XCTAssertEqual([dbHelper getEventCount], 2);
     NSArray *events = [dbHelper getEvents:-1 limit:2];
     XCTAssertEqualObjects(events[0][@"event_type"], kAMPSessionEndEvent);
