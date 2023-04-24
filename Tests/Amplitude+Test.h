@@ -28,6 +28,7 @@
 - (NSDictionary *)getLastIdentify;
 - (NSDictionary *)getLastInterceptedIdentify;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
+- (NSDictionary *)getIdentify:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
 - (void)enterForeground;
 - (void)enterBackground;

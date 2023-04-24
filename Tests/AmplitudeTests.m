@@ -1345,21 +1345,24 @@
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
 
     // log active identify
-    [self.amplitude identify:[[AMPIdentify identify] add:@"add-key-1" value:[NSNumber numberWithInt:1]]];
+    [self.amplitude identify:[[AMPIdentify identify] add:@"add-key-1" value:@1]];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 2);
+    XCTAssertEqual([dbHelper getIdentifyCount], 2);
 
     NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
     NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
     NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
-
-    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 2);
-    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
+    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
     XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_ADD][@"add-key-1"] isEqualToNumber:@1]);
 
+    NSDictionary *interceptedIdentify = [self.amplitude getIdentify:1];
+    NSMutableDictionary *interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    NSArray *interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
 
     // log intercept identify 2
     [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
@@ -1372,14 +1375,20 @@
 
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
     XCTAssertEqual([dbHelper getEventCount], 1);
-    XCTAssertEqual([dbHelper getTotalEventCount], 2);
+    XCTAssertEqual([dbHelper getTotalEventCount], 4);
+    XCTAssertEqual([dbHelper getIdentifyCount], 3);
 
     NSDictionary *lastEvent = [self.amplitude getLastEvent];
     NSMutableDictionary *lastEventUserProperties = [AMPEventUtils getUserProperties:lastEvent];
+    XCTAssertNotNil(lastEventUserProperties);
     NSArray *lastEventUserPropertiesOperations = [lastEventUserProperties allKeys];
+    XCTAssertEqual(lastEventUserPropertiesOperations.count, 0);
 
-    XCTAssertEqual(lastEventUserPropertiesOperations.count, 1);
-    XCTAssertTrue([lastEventUserProperties[@"set-key-2"] isEqualToString:@"set-value-2"]);
+    interceptedIdentify = [self.amplitude getLastIdentify];
+    interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-2"] isEqualToString:@"set-value-2"]);
 
     // log intercept identify 3
     // this value should be cleared after "unset"
@@ -1392,8 +1401,8 @@
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getIdentifyCount], 2);
-    XCTAssertEqual([dbHelper getTotalEventCount], 3);
+    XCTAssertEqual([dbHelper getIdentifyCount], 4);
+    XCTAssertEqual([dbHelper getTotalEventCount], 5);
 
     NSDictionary *unsetIdentify = [self.amplitude getLastIdentify];
     NSMutableDictionary *unsetIdentifyUserProperties = [AMPEventUtils getUserProperties:unsetIdentify];
@@ -1456,16 +1465,21 @@
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
-    XCTAssertEqual([dbHelper getTotalEventCount], 1);
-    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 2);
+    XCTAssertEqual([dbHelper getIdentifyCount], 2);
 
     NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
     NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
     NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
-
     XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
-    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
+    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_SET][@"group_type"] isEqualToString:@"group_value"]);
     XCTAssertTrue([lastIdentify[@"groups"][@"group_type"] isEqualToString:@"group_value"]);
+
+    NSDictionary *interceptedIdentify = [self.amplitude getIdentify:1];
+    NSMutableDictionary *interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    NSArray *interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
 }
 
 - (void)testInterceptIdentifysAreSentOnUserIdChange {
