@@ -198,7 +198,68 @@
 
     // active identify
     AMPIdentify *identify3 = [AMPIdentify.identify add:@"add-key" value:@1];
-    [identify3 set:@"set-once-key" value:@"set-once-value"];
+    [identify3 setOnce:@"set-once-key" value:@"set-once-value"];
+    NSMutableDictionary *event3 = [self getIdentifyEvent:identify3];
+
+    event3 = [self->_identifyInterceptor intercept:event3];
+
+    XCTAssertNotNil(event3);
+    XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 3);
+    XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 0);
+    XCTAssertEqual(self->_dbHelper.getIdentifyCount, 1);
+
+    // Active identify should not include intercepted values.
+    NSMutableDictionary *userProperties3 = [AMPEventUtils getUserProperties:event3];
+    NSArray *userPropertiesOperations3 = [userProperties3 allKeys];
+    XCTAssertNotNil(userProperties3);
+    XCTAssertEqual(userPropertiesOperations3.count, 2);
+    BOOL hasAllOperations = [[NSSet setWithArray:userPropertiesOperations3] isEqualToSet:[NSSet setWithArray:@[AMP_OP_SET_ONCE, AMP_OP_ADD]]];
+    XCTAssertTrue(hasAllOperations);
+    XCTAssertTrue([userProperties3[AMP_OP_ADD][@"add-key"] isEqualToNumber:@1]);
+    XCTAssertTrue([userProperties3[AMP_OP_SET_ONCE][@"set-once-key"] isEqualToString:@"set-once-value"]);
+    // Active identify should not include intercepted values.
+    XCTAssertNil(userProperties3[AMP_OP_SET]);
+
+    NSArray *identifies = [_dbHelper getIdentifys:-1 limit:1];
+    NSDictionary *interceptedIdentify = [identifies lastObject];
+    NSMutableDictionary *userProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    NSArray *userPropertiesOperations = [userProperties allKeys];
+    XCTAssertNotNil(userProperties);
+    XCTAssertEqual(userPropertiesOperations.count, 1);
+    BOOL hasSetOperationsOnly = [[NSSet setWithArray:userPropertiesOperations] isEqualToSet:[NSSet setWithArray:@[AMP_OP_SET]]];
+    XCTAssertTrue(hasSetOperationsOnly);
+    XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key"] isEqualToString:@"set-value-c"]);
+    XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key-2"] isEqualToString:@"set-value-b"]);
+    XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key-3"] isEqualToString:@"set-value-d"]);
+}
+
+- (void)testMultipleInterceptedIdentifyIsTransferredOnNextActiveIdentifyWithSetOperation {
+    AMPIdentify *identify1 = [AMPIdentify.identify set:@"set-key" value:@"set-value-a"];
+    [identify1 set:@"set-key-2" value:@"set-value-b"];
+    NSMutableDictionary *event1 = [self getIdentifyEvent:identify1];
+
+    event1 = [self->_identifyInterceptor intercept:event1];
+
+    XCTAssertNil(event1);
+    XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
+    XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
+    XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
+
+    // identify with intercept props only
+    AMPIdentify *identify2 = [AMPIdentify.identify set:@"set-key" value:@"set-value-c"];
+    [identify2 set:@"set-key-3" value:@"set-value-d"];
+    NSMutableDictionary *event2 = [self getIdentifyEvent:identify2];
+
+    event2 = [self->_identifyInterceptor intercept:event2];
+
+    XCTAssertNil(event2);
+    XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 2);
+    XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 2);
+    XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
+
+    // active identify
+    AMPIdentify *identify3 = [AMPIdentify.identify add:@"add-key" value:@1];
+    [identify3 set:@"set-key-active" value:@"set-value-active"];
     NSMutableDictionary *event3 = [self getIdentifyEvent:identify3];
 
     event3 = [self->_identifyInterceptor intercept:event3];
@@ -215,7 +276,11 @@
     BOOL hasAllOperations = [[NSSet setWithArray:userPropertiesOperations3] isEqualToSet:[NSSet setWithArray:@[AMP_OP_SET, AMP_OP_ADD]]];
     XCTAssertTrue(hasAllOperations);
     XCTAssertTrue([userProperties3[AMP_OP_ADD][@"add-key"] isEqualToNumber:@1]);
-    XCTAssertTrue([userProperties3[AMP_OP_SET][@"set-once-key"] isEqualToString:@"set-once-value"]);
+    // Active identify should not include intercepted values.
+    XCTAssertTrue([userProperties3[AMP_OP_SET][@"set-key-active"] isEqualToString:@"set-value-active"]);
+    XCTAssertNil(userProperties3[AMP_OP_SET][@"set-key"]);
+    XCTAssertNil(userProperties3[AMP_OP_SET][@"set-key-2"]);
+    XCTAssertNil(userProperties3[AMP_OP_SET][@"set-key-3"]);
 
     NSArray *identifies = [_dbHelper getIdentifys:-1 limit:1];
     NSDictionary *interceptedIdentify = [identifies lastObject];
@@ -228,6 +293,8 @@
     XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key"] isEqualToString:@"set-value-c"]);
     XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key-2"] isEqualToString:@"set-value-b"]);
     XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key-3"] isEqualToString:@"set-value-d"]);
+    // Intercepted identify should not include active values.
+    XCTAssertNil(userProperties[AMP_OP_SET][@"set-key-active"]);
 }
 
 - (void)testInterceptedIdentifyIsTransferredOnNextActiveEvent {
