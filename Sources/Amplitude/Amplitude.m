@@ -143,7 +143,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     
     int _numRetries;
     int _maxRetries;
-    int _originalUploadPeriosdInSeconds;
+    int _originalUploadPeriodsInSeconds;
 
     NSString *_serverUrl;
     NSString *_token;
@@ -232,7 +232,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self.eventUploadPeriodSeconds = kAMPEventUploadPeriodSeconds;
         self.minTimeBetweenSessionsMillis = kAMPMinTimeBetweenSessionsMillis;
         _backoffUploadBatchSize = self.eventUploadMaxBatchSize;
-        _originalUploadPeriosdInSeconds = self.eventUploadPeriodSeconds;
+        _originalUploadPeriodsInSeconds = self.eventUploadPeriodSeconds;
         _numRetries = 0;
         _maxRetries = 5;
 
@@ -1071,7 +1071,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                 self->_backoffUpload = YES;
                 if (self->_numRetries == 0) {
                     // cache the recent valus of event upload period
-                    self->_originalUploadPeriosdInSeconds = self.eventUploadPeriodSeconds;
+                    self->_originalUploadPeriodsInSeconds = self.eventUploadPeriodSeconds;
                 }
                 self->_numRetries++;
                 if (self->_numRetries <= self->_maxRetries) {
@@ -1106,7 +1106,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (uploadSuccessful) {
                 self->_backoffUpload = NO;
                 self->_backoffUploadBatchSize = self.eventUploadMaxBatchSize;
-                self.eventUploadPeriodSeconds = self->_originalUploadPeriosdInSeconds;
+                self.eventUploadPeriodSeconds = self->_originalUploadPeriodsInSeconds;
                 self->_numRetries = 0;
             }
 
