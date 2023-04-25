@@ -1516,4 +1516,23 @@
     XCTAssertEqualObjects(interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-3"], @"set-value-3");
 }
 
+- (void)testRateLimitBackoffLogic {
+    [self.amplitude setEventUploadThreshold:2];
+    [self.amplitude setEventUploadPeriodSeconds:10];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:429 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+
+    // 429 error force backoff with 2 events --> new upload period will be 20
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    // after first 429, the backoff event upload period should now be 20
+    XCTAssertTrue(self.amplitude.backoffUpload);
+    XCTAssertEqual(self.amplitude.eventUploadPeriodSeconds, 20);
+}
+
 @end
