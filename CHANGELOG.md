@@ -1,3 +1,16 @@
+# [8.16.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.2...v8.16.0) (2023-04-26)
+
+
+### Bug Fixes
+
+* update identify collapsing logic to send actions on separate identify event ([#437](https://github.com/amplitude/Amplitude-iOS/issues/437)) ([9fb64c3](https://github.com/amplitude/Amplitude-iOS/commit/9fb64c30bb65aff375969b8f23119310d51b8a28))
+* updated identify merging logic to ignore nil values ([#434](https://github.com/amplitude/Amplitude-iOS/issues/434)) ([8e1239c](https://github.com/amplitude/Amplitude-iOS/commit/8e1239c369e0dfe4c26f2dce1b05d093f6e18aff))
+
+
+### Features
+
+* update back off for rate limit ([#436](https://github.com/amplitude/Amplitude-iOS/issues/436)) ([9fc1ba9](https://github.com/amplitude/Amplitude-iOS/commit/9fc1ba9bcec8b7df3d80f9ec28edff40033d237e))
+
 ## [8.15.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.1...v8.15.2) (2023-03-08)
 
 
