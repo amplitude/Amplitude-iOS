@@ -11,7 +11,7 @@ on:
 jobs:
   authorize:
     name: Authorize
-    runs-on: macos-10.15
+    runs-on: macos-12
     steps:
       - name: ${{ github.actor }} permission check to do a release
         uses: octokit/request-action@v2.0.0
@@ -23,7 +23,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: macos-10.15
+    runs-on: macos-12
     needs: [authorize]
     strategy:
       matrix:
@@ -33,9 +33,9 @@ jobs:
       - name: Checkout Amplitude-iOS
         uses: actions/checkout@v2
 
-      - name: Set Xcode 12
+      - name: Set Xcode 14
         run: |
-          sudo xcode-select -switch /Applications/Xcode_12.app
+          sudo xcode-select -switch /Applications/Xcode_14.1.app
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -68,7 +68,7 @@ jobs:
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+            -destination 'platform=iOS Simulator,name=iPhone 14'
 
       # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
       #   run: |

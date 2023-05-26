@@ -495,14 +495,16 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         if (app != nil) {
             UIApplicationState state = app.applicationState;
             if (state != UIApplicationStateBackground) {
+                self->_inForeground = YES;
                 [self runOnBackgroundQueue:^{
+    #else
+                    self->_inForeground = YES;
     #endif
                     // The earliest time to fetch dynamic config
                     [self refreshDynamicConfig];
 
                     NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-                    [self startOrContinueSessionNSNumber:now];
-                    self->_inForeground = YES;
+                    [self startOrContinueSessionNSNumber:now inForeground:NO];
     #if !TARGET_OS_OSX && !TARGET_OS_WATCH
                 }];
 
@@ -610,6 +612,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     userProperties = [userProperties copy];
     groups = [groups copy];
     groupProperties = [groupProperties copy];
+    BOOL inForeground = _inForeground;
 
     [self runOnBackgroundQueue:^{
         // Respect the opt-out setting by not sending or storing any events.
@@ -621,7 +624,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // skip session check if logging start_session or end_session events
         BOOL loggingSessionEvent = self->_trackingSessionEvents && ([eventType isEqualToString:kAMPSessionStartEvent] || [eventType isEqualToString:kAMPSessionEndEvent]);
         if (!loggingSessionEvent && !outOfSession) {
-            [self startOrContinueSessionNSNumber:timestamp];
+            [self startOrContinueSessionNSNumber:timestamp inForeground:inForeground];
         }
 
         NSMutableDictionary *event = [NSMutableDictionary dictionary];
@@ -1122,16 +1125,15 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #pragma mark - application lifecycle methods
 
 - (void)enterForeground {
+    self->_inForeground = YES;
+    NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIApplication *app = [AMPUtils getSharedApplication];
     if (app == nil) {
         return;
     }
-#endif
 
-    NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
 #endif
@@ -1139,23 +1141,21 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         // Fetch the data ingestion endpoint based on current device's geo location.
 
         [self refreshDynamicConfig];
-        [self startOrContinueSessionNSNumber:now];
-        self->_inForeground = YES;
+        [self startOrContinueSessionNSNumber:now inForeground:NO];
         [self uploadEvents];
     }];
 }
 
 - (void)enterBackground {
+    self->_inForeground = NO;
+    NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIApplication *app = [AMPUtils getSharedApplication];
     if (app == nil) {
         return;
     }
-#endif
 
-    NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
-
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
     _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
@@ -1165,7 +1165,6 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 #endif
 
     [self runOnBackgroundQueue:^{
-        self->_inForeground = NO;
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
     }];
@@ -1194,8 +1193,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
  *
  * Returns YES if a new session was created.
  */
-- (BOOL)startOrContinueSessionNSNumber:(NSNumber *)timestamp {
-    if (!_inForeground) {
+- (BOOL)startOrContinueSessionNSNumber:(NSNumber *)timestamp inForeground:(BOOL) inForeground {
+    if (!inForeground) {
         if ([self inSession]) {
             if ([self isWithinMinTimeBetweenSessions:timestamp]) {
                 [self refreshSessionTime:timestamp];
@@ -1228,7 +1227,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
 - (BOOL)startOrContinueSession:(long long)timestamp {
     NSNumber *timestampNumber = [NSNumber numberWithLongLong:timestamp];
-    return [self startOrContinueSessionNSNumber:timestampNumber];
+    return [self startOrContinueSessionNSNumber:timestampNumber inForeground:_inForeground];
 }
 
 - (void)startNewSession:(NSNumber *)timestamp {
