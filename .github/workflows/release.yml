@@ -68,7 +68,7 @@ jobs:
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
+            -destination 'platform=iOS Simulator,name=iPhone 14'
 
       # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
       #   run: |
