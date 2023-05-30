@@ -1,3 +1,12 @@
+## [8.16.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.0...v8.16.1) (2023-05-30)
+
+
+### Bug Fixes
+
+* set _inForeground value earlier ([#433](https://github.com/amplitude/Amplitude-iOS/issues/433)) ([3cee4c2](https://github.com/amplitude/Amplitude-iOS/commit/3cee4c2db581ec8be5cbbf9e44d58e4a0b486504))
+* sudo rm appledoc ([#444](https://github.com/amplitude/Amplitude-iOS/issues/444)) ([53ba490](https://github.com/amplitude/Amplitude-iOS/commit/53ba490e3b93de95af6164b14e29563531338522))
+* XCode 14 fixes - update iPhone targets to 11, MacOS to 10.15, appledoc ([#442](https://github.com/amplitude/Amplitude-iOS/issues/442)) ([5c15979](https://github.com/amplitude/Amplitude-iOS/commit/5c159794dfcb2f14828c892ac3a5fefbb8226c25))
+
 # [8.16.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.2...v8.16.0) (2023-04-26)
 
 
