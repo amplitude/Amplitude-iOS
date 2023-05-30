@@ -98,7 +98,7 @@ jobs:
           cd appledoc/
           sudo sh install-appledoc.sh
           cd ../
-          rm -rf appledoc/
+          sudo rm -rf appledoc/
 
       - name: Semantic Release --dry-run
         if: ${{ github.event.inputs.dryRun == 'true'}}
