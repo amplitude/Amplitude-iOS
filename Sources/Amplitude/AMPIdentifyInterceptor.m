@@ -39,18 +39,18 @@
 #import "AMPIdentifyInterceptor.h"
 #import "AMPDatabaseHelper.h"
 
-@implementation AMPIdentifyInterceptor
-
-NSArray *_Nonnull _interceptOps;
-NSSet *_Nonnull _interceptOpsSet;
-BOOL _transferScheduled;
-NSOperationQueue *_Nonnull _backgroundQueue;
-AMPDatabaseHelper *_Nonnull _dbHelper;
-BOOL _hasIdentity;
-NSString *_Nullable _userId;
-NSString *_Nullable _deviceId;
-int _interceptedUploadPeriodSeconds;
-BOOL _disabled;
+@implementation AMPIdentifyInterceptor {
+    NSArray *_Nonnull _interceptOps;
+    NSSet *_Nonnull _interceptOpsSet;
+    BOOL _transferScheduled;
+    NSOperationQueue *_Nonnull _backgroundQueue;
+    AMPDatabaseHelper *_Nonnull _dbHelper;
+    BOOL _hasIdentity;
+    NSString *_Nullable _userId;
+    NSString *_Nullable _deviceId;
+    int _interceptedUploadPeriodSeconds;
+    BOOL _disabled;
+}
 
 -(id)initWithParams:(AMPDatabaseHelper *_Nonnull)dbHelper
     backgroundQueue:(NSOperationQueue *_Nonnull)backgroundQueue
@@ -255,6 +255,10 @@ BOOL _disabled;
 
 - (void)setDisabled:(BOOL)disable {
     _disabled = disable;
+}
+
+- (AMPDatabaseHelper *)dbHelper {
+    return _dbHelper;
 }
 
 @end
