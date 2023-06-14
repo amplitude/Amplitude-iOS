@@ -68,4 +68,4 @@ Prerequisites
 Click [here](https://github.com/amplitude/Amplitude-iOS/blob/main/CHANGELOG.md) to view the iOS SDK Changelog.
 
 ## Need Help?
-If you have any problems or issues over our SDK, feel free to create a github issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).
+If you have any problems or issues over our SDK, please refer to the [Developer Center](https://developers.amplitude.com/docs/ios) for help. If you don't find a solution there, then feel free to create a GitHub issue or submit a request on [Amplitude Help](https://help.amplitude.com/hc/en-us/requests/new).
