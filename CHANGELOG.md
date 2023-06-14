@@ -1,3 +1,10 @@
+## [8.16.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.1...v8.16.2) (2023-06-14)
+
+
+### Bug Fixes
+
+* bump dependencies to fix cocoapods vulnerability ([#448](https://github.com/amplitude/Amplitude-iOS/issues/448)) ([a57f4dc](https://github.com/amplitude/Amplitude-iOS/commit/a57f4dcda90760c7e8244496717155d196f6a9b2))
+
 ## [8.16.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.0...v8.16.1) (2023-05-30)
 
 
