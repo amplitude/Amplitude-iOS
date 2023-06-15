@@ -1,3 +1,10 @@
+## [8.16.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.2...v8.16.3) (2023-06-15)
+
+
+### Bug Fixes
+
+* malloc -> calloc to fix CWE-789 vulnerability ([#449](https://github.com/amplitude/Amplitude-iOS/issues/449)) ([3793d58](https://github.com/amplitude/Amplitude-iOS/commit/3793d58ec1b4091742efa5d01aeffb5e20c67646))
+
 ## [8.16.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.1...v8.16.2) (2023-06-14)
 
 
