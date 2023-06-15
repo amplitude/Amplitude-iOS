@@ -224,7 +224,7 @@
 #endif
     size_t size;
     sysctlbyname(sysctl_name, NULL, &size, NULL, 0);
-    char *machine = malloc(size);
+    char *machine = calloc(1, size);
     sysctlbyname(sysctl_name, machine, &size, NULL, 0);
     NSString *platform = [NSString stringWithUTF8String:machine];
     free(machine);
@@ -435,7 +435,7 @@
             errorFlag = @"sysctl mgmtInfoBase failure";
         } else {
             // Alloc memory based on above call
-            if ((msgBuffer = malloc(length)) == NULL) {
+            if ((msgBuffer = calloc(1, length)) == NULL) {
                 errorFlag = @"buffer allocation failure";
             } else {
                 msgBufferAllocated = true;
