@@ -14,6 +14,7 @@ jobs:
     uses: amplitude/Amplitude-TypeScript/.github/workflows/jira-issue-create-template.yml@main
     with:
       label: "iOS"
+      subcomponent: "dx_ios_sdk"
     secrets:
       JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
       JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
