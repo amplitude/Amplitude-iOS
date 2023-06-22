@@ -180,9 +180,10 @@
     if (!_transferScheduled) {
         _transferScheduled = YES;
         __block __weak AMPIdentifyInterceptor *weakSelf = self;
+        int interceptedUploadPeriodSeconds = _interceptedUploadPeriodSeconds;
         [_backgroundQueue addOperationWithBlock:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf performSelector:@selector(transferInterceptedIdentify) withObject:nil afterDelay:_interceptedUploadPeriodSeconds];
+                [weakSelf performSelector:@selector(transferInterceptedIdentify) withObject:nil afterDelay:interceptedUploadPeriodSeconds];
             });
         }];
     }
