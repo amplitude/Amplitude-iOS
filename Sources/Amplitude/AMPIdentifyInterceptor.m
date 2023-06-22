@@ -39,18 +39,18 @@
 #import "AMPIdentifyInterceptor.h"
 #import "AMPDatabaseHelper.h"
 
-@implementation AMPIdentifyInterceptor
-
-NSArray *_Nonnull _interceptOps;
-NSSet *_Nonnull _interceptOpsSet;
-BOOL _transferScheduled;
-NSOperationQueue *_Nonnull _backgroundQueue;
-AMPDatabaseHelper *_Nonnull _dbHelper;
-BOOL _hasIdentity;
-NSString *_Nullable _userId;
-NSString *_Nullable _deviceId;
-int _interceptedUploadPeriodSeconds;
-BOOL _disabled;
+@implementation AMPIdentifyInterceptor {
+    NSArray *_Nonnull _interceptOps;
+    NSSet *_Nonnull _interceptOpsSet;
+    BOOL _transferScheduled;
+    NSOperationQueue *_Nonnull _backgroundQueue;
+    AMPDatabaseHelper *_Nonnull _dbHelper;
+    BOOL _hasIdentity;
+    NSString *_Nullable _userId;
+    NSString *_Nullable _deviceId;
+    int _interceptedUploadPeriodSeconds;
+    BOOL _disabled;
+}
 
 -(id)initWithParams:(AMPDatabaseHelper *_Nonnull)dbHelper
     backgroundQueue:(NSOperationQueue *_Nonnull)backgroundQueue
@@ -180,9 +180,10 @@ BOOL _disabled;
     if (!_transferScheduled) {
         _transferScheduled = YES;
         __block __weak AMPIdentifyInterceptor *weakSelf = self;
+        int interceptedUploadPeriodSeconds = _interceptedUploadPeriodSeconds;
         [_backgroundQueue addOperationWithBlock:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf performSelector:@selector(transferInterceptedIdentify) withObject:nil afterDelay:_interceptedUploadPeriodSeconds];
+                [weakSelf performSelector:@selector(transferInterceptedIdentify) withObject:nil afterDelay:interceptedUploadPeriodSeconds];
             });
         }];
     }
@@ -255,6 +256,10 @@ BOOL _disabled;
 
 - (void)setDisabled:(BOOL)disable {
     _disabled = disable;
+}
+
+- (AMPDatabaseHelper *)dbHelper {
+    return _dbHelper;
 }
 
 @end

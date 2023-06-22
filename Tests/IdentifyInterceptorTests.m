@@ -12,6 +12,10 @@
 #import "AMPIdentify.h"
 #import "AMPIdentifyInterceptor.h"
 
+@interface AMPIdentifyInterceptor(PrivateTests)
+- (AMPDatabaseHelper *)dbHelper;
+@end
+
 @interface IdentifyInterceptorTests : XCTestCase
 
 @property AMPIdentifyInterceptor *identifyInterceptor;
@@ -491,5 +495,18 @@
     XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key"] isEqualToString:@"set-value-a"]);
     XCTAssertTrue([userProperties[AMP_OP_SET][@"set-key-2"] isEqualToString:@"set-value-c"]);
     XCTAssertNil(userProperties[AMP_OP_SET][@"set-key-3"]);
+}
+
+- (void)testDbHelperIsNotReusedAcrossDifferentIdentifyInterceptorInstances {
+    AMPDatabaseHelper *dbHelper1 = [AMPDatabaseHelper getDatabaseHelper:@"dbHelper1"];
+    AMPIdentifyInterceptor *identifyInterceptor1 = [AMPIdentifyInterceptor getIdentifyInterceptor:dbHelper1
+                                                                                  backgroundQueue:[[NSOperationQueue alloc] init]];
+
+    AMPDatabaseHelper *dbHelper2 = [AMPDatabaseHelper getDatabaseHelper:@"dbHelper2"];
+    AMPIdentifyInterceptor *identifyInterceptor2 = [AMPIdentifyInterceptor getIdentifyInterceptor:dbHelper2
+                                                                                  backgroundQueue:[[NSOperationQueue alloc] init]];
+
+    XCTAssertIdentical(identifyInterceptor1.dbHelper, dbHelper1);
+    XCTAssertIdentical(identifyInterceptor2.dbHelper, dbHelper2);
 }
 @end
