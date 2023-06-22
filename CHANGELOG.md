@@ -1,3 +1,10 @@
+## [8.16.4](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.3...v8.16.4) (2023-06-22)
+
+
+### Bug Fixes
+
+* avoid global variables in AMPIdentifyInterceptor to fix missing user properties updates ([#445](https://github.com/amplitude/Amplitude-iOS/issues/445)) ([eb820a2](https://github.com/amplitude/Amplitude-iOS/commit/eb820a254f1e13b617d3c81209f0b307a1f5de8e))
+
 ## [8.16.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.2...v8.16.3) (2023-06-15)
 
 
