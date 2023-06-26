@@ -186,6 +186,17 @@
 		582516F028C075D100ECAD0D /* IngestionMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 582516EB28C075C300ECAD0D /* IngestionMetadataTests.m */; };
 		582516F128C075D200ECAD0D /* IngestionMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 582516EB28C075C300ECAD0D /* IngestionMetadataTests.m */; };
 		582516F228C075D300ECAD0D /* IngestionMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 582516EB28C075C300ECAD0D /* IngestionMetadataTests.m */; };
+		58B7FACB2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B7FACA2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		58B7FACC2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B7FACA2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		58B7FACD2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B7FACA2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		58B7FACE2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B7FACA2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		58B7FAD02A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B7FACF2A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m */; };
+		58B7FAD12A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B7FACF2A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m */; };
+		58B7FAD22A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B7FACF2A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m */; };
+		58B7FAD32A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B7FACF2A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m */; };
+		58B7FAD92A3D0D6000CC5BB4 /* DefaultTrackingOptionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B7FAD42A3D0D5500CC5BB4 /* DefaultTrackingOptionsTests.m */; };
+		58B7FADA2A3D0D6100CC5BB4 /* DefaultTrackingOptionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B7FAD42A3D0D5500CC5BB4 /* DefaultTrackingOptionsTests.m */; };
+		58B7FADB2A3D0D6200CC5BB4 /* DefaultTrackingOptionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B7FAD42A3D0D5500CC5BB4 /* DefaultTrackingOptionsTests.m */; };
 		58E4B1BC287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
 		58E4B1BD287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
 		58E4B1BE287F62C3007AC408 /* AmazonRootCA1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */; };
@@ -365,6 +376,9 @@
 		582516E128C048D600ECAD0D /* AMPIngestionMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPIngestionMetadata.h; sourceTree = "<group>"; };
 		582516E628C048E700ECAD0D /* AMPIngestionMetadata.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPIngestionMetadata.m; sourceTree = "<group>"; };
 		582516EB28C075C300ECAD0D /* IngestionMetadataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IngestionMetadataTests.m; sourceTree = "<group>"; };
+		58B7FACA2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPDefaultTrackingOptions.h; sourceTree = "<group>"; };
+		58B7FACF2A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPDefaultTrackingOptions.m; sourceTree = "<group>"; };
+		58B7FAD42A3D0D5500CC5BB4 /* DefaultTrackingOptionsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DefaultTrackingOptionsTests.m; sourceTree = "<group>"; };
 		58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AmazonRootCA1.cer; sourceTree = "<group>"; };
 		6C55E7B2C7CB09D0EDC07910 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		70CE71E7AEFA4FE3E4F565AD /* Pods-shared-Amplitude_iOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -530,6 +544,7 @@
 				3EF608EE2726256800133703 /* AMPMiddlewareRunner.m */,
 				3EF6090127267C9800133703 /* AMPMiddleware.m */,
 				582516E628C048E700ECAD0D /* AMPIngestionMetadata.m */,
+				58B7FACF2A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m */,
 			);
 			path = Amplitude;
 			sourceTree = "<group>";
@@ -572,6 +587,7 @@
 				3EF608E027211F8A00133703 /* ConfigManagerTests.m */,
 				3EF608FD272666E300133703 /* MiddlewareRunnerTests.m */,
 				582516EB28C075C300ECAD0D /* IngestionMetadataTests.m */,
+				58B7FAD42A3D0D5500CC5BB4 /* DefaultTrackingOptionsTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -594,6 +610,7 @@
 				3EF608C82720E74D00133703 /* AMPServerZone.h */,
 				3EF608E42724BFB700133703 /* AMPMiddleware.h */,
 				582516E128C048D600ECAD0D /* AMPIngestionMetadata.h */,
+				58B7FACA2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -675,6 +692,7 @@
 				1279F91725244E8E003DCE07 /* AMPConfigManager.h in Headers */,
 				1279F91625244E8E003DCE07 /* AMPUtils.h in Headers */,
 				582516E328C048D600ECAD0D /* AMPIngestionMetadata.h in Headers */,
+				58B7FACC2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +724,7 @@
 				1279F8F925244E8D003DCE07 /* AMPConfigManager.h in Headers */,
 				1279F8F825244E8D003DCE07 /* AMPUtils.h in Headers */,
 				582516E228C048D600ECAD0D /* AMPIngestionMetadata.h in Headers */,
+				58B7FACB2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -737,6 +756,7 @@
 				1279F93525244E8F003DCE07 /* AMPConfigManager.h in Headers */,
 				1279F93425244E8F003DCE07 /* AMPUtils.h in Headers */,
 				582516E428C048D600ECAD0D /* AMPIngestionMetadata.h in Headers */,
+				58B7FACD2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -768,6 +788,7 @@
 				759E93A525FBF44500BF7C3D /* AMPConfigManager.h in Headers */,
 				759E93B125FBF44500BF7C3D /* AMPUtils.h in Headers */,
 				582516E528C048D600ECAD0D /* AMPIngestionMetadata.h in Headers */,
+				58B7FACE2A3BD71F00CC5BB4 /* AMPDefaultTrackingOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1127,6 +1148,7 @@
 				1279F91D25244E8E003DCE07 /* AMPTrackingOptions.m in Sources */,
 				1279FA782525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				3E2411ED26F9A46500793829 /* AMPPlan.m in Sources */,
+				58B7FAD12A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */,
 				3EF608D92720F64500133703 /* AMPServerZoneUtil.m in Sources */,
 				1279F91C25244E8E003DCE07 /* AMPRevenue.m in Sources */,
 				1279F91F25244E8E003DCE07 /* AMPURLSession.m in Sources */,
@@ -1140,6 +1162,7 @@
 				12C973B6241244C600E9CDDB /* SetupTests.m in Sources */,
 				12C973C3241244F000E9CDDB /* IdentifyTests.m in Sources */,
 				12C973A7241244A600E9CDDB /* DeviceInfoTests.m in Sources */,
+				58B7FADA2A3D0D6100CC5BB4 /* DefaultTrackingOptionsTests.m in Sources */,
 				12C973B1241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
 				58E4B1C1287F6FD7007AC408 /* SSLPinningTests.m in Sources */,
 				12C973C8241244F800E9CDDB /* AmplitudeTVOSTests.m in Sources */,
@@ -1179,6 +1202,7 @@
 				1279FA772525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				1279FA6E2525949D003DCE07 /* ISPCertificatePinning.m in Sources */,
 				3EF6090227267C9800133703 /* AMPMiddleware.m in Sources */,
+				58B7FAD02A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */,
 				1279F90725244E8D003DCE07 /* AMPDeviceInfo.m in Sources */,
 				1279F90425244E8D003DCE07 /* Amplitude.m in Sources */,
 				3EF608EF2726256800133703 /* AMPMiddlewareRunner.m in Sources */,
@@ -1192,6 +1216,7 @@
 				12C973B5241244C500E9CDDB /* SetupTests.m in Sources */,
 				12DF9471251DAC27008B2C25 /* AmplitudeiOSTests.m in Sources */,
 				12C973C0241244EF00E9CDDB /* IdentifyTests.m in Sources */,
+				58B7FAD92A3D0D6000CC5BB4 /* DefaultTrackingOptionsTests.m in Sources */,
 				19619D9628A247DF00A2CC53 /* AmplitudeTests.m in Sources */,
 				12C973A6241244A400E9CDDB /* DeviceInfoTests.m in Sources */,
 				58E4B1C0287F6FD6007AC408 /* SSLPinningTests.m in Sources */,
@@ -1231,6 +1256,7 @@
 				1279F93B25244E8F003DCE07 /* AMPTrackingOptions.m in Sources */,
 				1279FA792525949D003DCE07 /* ISPPinnedNSURLSessionDelegate.m in Sources */,
 				3E2411EE26F9A46500793829 /* AMPPlan.m in Sources */,
+				58B7FAD22A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */,
 				3EF608DA2720F64500133703 /* AMPServerZoneUtil.m in Sources */,
 				1279F93A25244E8F003DCE07 /* AMPRevenue.m in Sources */,
 				1279F93D25244E8F003DCE07 /* AMPURLSession.m in Sources */,
@@ -1244,6 +1270,7 @@
 				12C973B7241244C700E9CDDB /* SetupTests.m in Sources */,
 				3E2411F726F9A4E400793829 /* PlanTests.m in Sources */,
 				12C973C6241244F100E9CDDB /* IdentifyTests.m in Sources */,
+				58B7FADB2A3D0D6200CC5BB4 /* DefaultTrackingOptionsTests.m in Sources */,
 				12C973A8241244A700E9CDDB /* DeviceInfoTests.m in Sources */,
 				12C973B3241244BF00E9CDDB /* AMPDatabaseHelperTests.m in Sources */,
 				58E4B1C2287F6FD7007AC408 /* SSLPinningTests.m in Sources */,
@@ -1282,6 +1309,7 @@
 				759E939925FBF3DC00BF7C3D /* AMPURLSession.m in Sources */,
 				759E939A25FBF3DC00BF7C3D /* AMPUtils.m in Sources */,
 				759E939B25FBF3DC00BF7C3D /* ISPCertificatePinning.m in Sources */,
+				58B7FAD32A3CDC7E00CC5BB4 /* AMPDefaultTrackingOptions.m in Sources */,
 				3E2411EF26F9A46500793829 /* AMPPlan.m in Sources */,
 				3EF608DB2720F64500133703 /* AMPServerZoneUtil.m in Sources */,
 				759E939D25FBF3DC00BF7C3D /* ISPPinnedNSURLSessionDelegate.m in Sources */,

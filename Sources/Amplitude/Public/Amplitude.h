@@ -29,6 +29,7 @@
 #import "AMPIngestionMetadata.h"
 #import "AMPServerZone.h"
 #import "AMPMiddleware.h"
+#import "AMPDefaultTrackingOptions.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -129,7 +130,12 @@ typedef void (^AMPInitCompletionBlock)(void);
 /**
  Whether to automatically log start and end session events corresponding to the start and end of a user's session.
  */
-@property (nonatomic, assign) BOOL trackingSessionEvents;
+@property (nonatomic, assign) BOOL trackingSessionEvents DEPRECATED_MSG_ATTRIBUTE("Use `defaultTracking.sessions` instead");
+
+/**
+ Whether to automatically log start and end session events corresponding to the start and end of a user's session.
+ */
+@property (nonatomic, strong) AMPDefaultTrackingOptions *defaultTracking;
 
 /**
  Library name is default as `amplitude-ios`.

@@ -66,6 +66,7 @@
 #import "AMPMiddlewareRunner.h"
 #import "AMPIdentifyInterceptor.h"
 #import "AMPEventUtils.h"
+#import "UIViewController+AMPScreen.h"
 #import <math.h>
 #import <CommonCrypto/CommonDigest.h>
 
@@ -103,7 +104,22 @@
 
 NSString *const kAMPSessionStartEvent = @"session_start";
 NSString *const kAMPSessionEndEvent = @"session_end";
+NSString *const kAMPApplicationInstalled = @"[Amplitude] Application Installed";
+NSString *const kAMPApplicationUpdated = @"[Amplitude] Application Updated";
+NSString *const kAMPApplicationOpened = @"[Amplitude] Application Opened";
+NSString *const kAMPApplicationBackgrounded = @"[Amplitude] Application Backgrounded";
+NSString *const kAMPDeepLinkOpened = @"[Amplitude] Deep Link Opened";
 NSString *const kAMPRevenueEvent = @"revenue_amount";
+
+NSString *const kAMPEventPropVersion = @"[Amplitude] Version";
+NSString *const kAMPEventPropBuild = @"[Amplitude] Build";
+NSString *const kAMPEventPropPreviousVersion = @"[Amplitude] Previous Version";
+NSString *const kAMPEventPropPreviousBuild = @"[Amplitude] Previous Build";
+NSString *const kAMPEventPropFromBackground = @"[Amplitude] From Background";
+NSString *const kAMPEventPropReferringApplication = @"[Amplitude] Referring Application";
+NSString *const kAMPEventPropReferringUrl = @"[Amplitude] Referring URL";
+NSString *const kAMPEventPropLinkUrl = @"[Amplitude] Link URL";
+NSString *const kAMPEventPropLinkReferrer = @"[Amplitude] Link Referrer";
 
 static NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
 static NSString *const DATABASE_VERSION = @"database_version";
@@ -117,6 +133,9 @@ static NSString *const MAX_IDENTIFY_ID = @"max_identify_id";
 static NSString *const OPT_OUT = @"opt_out";
 static NSString *const USER_ID = @"user_id";
 static NSString *const SEQUENCE_NUMBER = @"sequence_number";
+// for app lifecycle events
+static NSString *const APP_VERSION = @"app_version";
+static NSString *const APP_BUILD = @"app_build";
 
 
 @implementation Amplitude {
@@ -240,6 +259,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         [[[AnalyticsConnector getInstance:self.instanceName] eventBridge] setEventReceiver:^(AnalyticsEvent * _Nonnull event) {
             [self logEvent:[event eventType] withEventProperties:[event eventProperties] withApiProperties:nil withUserProperties:[event userProperties] withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:false];
         }];
+        
+        self.defaultTracking = [[AMPDefaultTrackingOptions alloc] init];
 
         _initializerQueue = [[NSOperationQueue alloc] init];
         _backgroundQueue = [[NSOperationQueue alloc] init];
@@ -316,6 +337,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                                                               backgroundQueue:_backgroundQueue];
 
         [self addObservers];
+        
+
     }
     return self;
 }
@@ -403,20 +426,70 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
                    name:NSApplicationDidResignActiveNotification
                  object:nil];
 #endif
+
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+    // mount the default events handler
+    UIApplication *app = [AMPUtils getSharedApplication];
+    if (app && self.defaultTracking.appLifecycles) {
+        for (NSString *name in @[UIApplicationDidEnterBackgroundNotification,
+                                 UIApplicationDidFinishLaunchingNotification,
+                                 UIApplicationWillEnterForegroundNotification]) {
+            [center addObserver:self selector:@selector(handleAppStateUpdates:) name:name object:app];
+        }
+    }
+#endif
 }
+
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+- (void)handleAppStateUpdates:(NSNotification *)notification {
+    if ([notification.name isEqualToString:UIApplicationDidFinishLaunchingNotification]) {
+        NSDictionary *launchOptions = notification.userInfo;
+        NSString *previousBuild = [_dbHelper getValue:APP_BUILD];
+        NSString *previousVersion = [_dbHelper getValue:APP_VERSION];
+        NSString *currentBuild = [[NSBundle mainBundle] infoDictionary][@"CFBundleVersion"];
+        NSString *currentVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
+        if (!previousBuild) {
+            [self logEvent:kAMPApplicationInstalled withEventProperties:@{
+                kAMPEventPropBuild: currentBuild ?: @"",
+                kAMPEventPropVersion: currentVersion ?: @"",
+            }];
+        } else if (![currentBuild isEqualToString:previousBuild]) {
+            [self logEvent:kAMPApplicationUpdated withEventProperties:@{
+                kAMPEventPropBuild: currentBuild ?: @"",
+                kAMPEventPropVersion: currentVersion ?: @"",
+                kAMPEventPropPreviousBuild: previousBuild ?: @"",
+                kAMPEventPropPreviousVersion: previousVersion ?: @"",
+            }];
+        }
+        [self logEvent:kAMPApplicationOpened withEventProperties:@{
+            kAMPEventPropBuild: currentBuild ?: @"",
+            kAMPEventPropVersion: currentVersion ?: @"",
+            kAMPEventPropFromBackground: @NO,
+            kAMPEventPropReferringApplication: launchOptions[UIApplicationLaunchOptionsSourceApplicationKey] ?: @"",
+            kAMPEventPropReferringUrl: launchOptions[UIApplicationLaunchOptionsURLKey] ?: @"",
+        }];
+
+        // persist the build/version
+        [_dbHelper insertOrReplaceKeyValue:APP_BUILD value:currentBuild];
+        [_dbHelper insertOrReplaceKeyValue:APP_VERSION value:currentVersion];
+    } else if ([notification.name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
+        NSString *currentBuild = [[NSBundle mainBundle] infoDictionary][@"CFBundleVersion"];
+        NSString *currentVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
+        [self logEvent:kAMPApplicationOpened withEventProperties:@{
+            kAMPEventPropBuild: currentBuild ?: @"",
+            kAMPEventPropVersion: currentVersion ?: @"",
+            kAMPEventPropFromBackground: @YES,
+        }];
+    } else if ([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification]) {
+        [self logEvent:kAMPApplicationBackgrounded];
+    }
+}
+#endif
 
 - (void)removeObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-#if TARGET_OS_WATCH
-    [center removeObserver:self name:AMPAppWillEnterForegroundNotification object:nil];
-    [center removeObserver:self name:AMPAppDidEnterBackgroundNotification object:nil];
-#elif !TARGET_OS_OSX
-    [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
-    [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-#else
-    [center removeObserver:self name:NSApplicationDidBecomeActiveNotification object:nil];
-    [center removeObserver:self name:NSApplicationDidResignActiveNotification object:nil];
-#endif
+    // unregister all observers added by addObservers method
+    [center removeObserver:self];
 }
 
 - (void)dealloc {
@@ -477,6 +550,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             if (self.initCompletionBlock != nil) {
                 self.initCompletionBlock();
             }
+            
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+            // Unlike other default events options that can be evaluated later, screenViews has to be evaluated during the actual initialization
+            if (self.defaultTracking.screenViews) {
+                [UIViewController amp_swizzleViewDidAppear];
+            }
+#endif
         }];
 
         if (!self.deferCheckInForeground) {
@@ -622,7 +702,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         }
 
         // skip session check if logging start_session or end_session events
-        BOOL loggingSessionEvent = self->_trackingSessionEvents && ([eventType isEqualToString:kAMPSessionStartEvent] || [eventType isEqualToString:kAMPSessionEndEvent]);
+        BOOL loggingSessionEvent = (self->_trackingSessionEvents || self.defaultTracking.sessions) && ([eventType isEqualToString:kAMPSessionStartEvent] || [eventType isEqualToString:kAMPSessionEndEvent]);
         if (!loggingSessionEvent && !outOfSession) {
             [self startOrContinueSessionNSNumber:timestamp inForeground:inForeground];
         }
@@ -1231,12 +1311,13 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (void)startNewSession:(NSNumber *)timestamp {
-    if (_trackingSessionEvents) {
+    BOOL loggingSessionEvent = _trackingSessionEvents || self.defaultTracking.sessions;
+    if (loggingSessionEvent) {
         [self sendSessionEvent:kAMPSessionEndEvent];
     }
     [self setSessionId:[timestamp longLongValue]];
     [self refreshSessionTime:timestamp];
-    if (_trackingSessionEvents) {
+    if (loggingSessionEvent) {
         [self sendSessionEvent:kAMPSessionStartEvent];
     }
 }
@@ -1426,7 +1507,8 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     }
 
     [self runOnBackgroundQueue:^{
-        if (startNewSession && self->_trackingSessionEvents) {
+        BOOL loggingSessionEvent = self->_trackingSessionEvents || self.defaultTracking.sessions;
+        if (startNewSession && loggingSessionEvent) {
             [self sendSessionEvent:kAMPSessionEndEvent];
         }
 
@@ -1442,7 +1524,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
             NSNumber *timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
             [self setSessionId:[timestamp longLongValue]];
             [self refreshSessionTime:timestamp];
-            if (self->_trackingSessionEvents) {
+            if (loggingSessionEvent) {
                 [self sendSessionEvent:kAMPSessionStartEvent];
             }
         }
