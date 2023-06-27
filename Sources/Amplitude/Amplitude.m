@@ -116,8 +116,6 @@ NSString *const kAMPEventPropBuild = @"[Amplitude] Build";
 NSString *const kAMPEventPropPreviousVersion = @"[Amplitude] Previous Version";
 NSString *const kAMPEventPropPreviousBuild = @"[Amplitude] Previous Build";
 NSString *const kAMPEventPropFromBackground = @"[Amplitude] From Background";
-NSString *const kAMPEventPropReferringApplication = @"[Amplitude] Referring Application";
-NSString *const kAMPEventPropReferringUrl = @"[Amplitude] Referring URL";
 NSString *const kAMPEventPropLinkUrl = @"[Amplitude] Link URL";
 NSString *const kAMPEventPropLinkReferrer = @"[Amplitude] Link Referrer";
 
@@ -465,8 +463,6 @@ static NSString *const APP_BUILD = @"app_build";
             kAMPEventPropBuild: currentBuild ?: @"",
             kAMPEventPropVersion: currentVersion ?: @"",
             kAMPEventPropFromBackground: @NO,
-            kAMPEventPropReferringApplication: launchOptions[UIApplicationLaunchOptionsSourceApplicationKey] ?: @"",
-            kAMPEventPropReferringUrl: launchOptions[UIApplicationLaunchOptionsURLKey] ?: @"",
         }];
 
         // persist the build/version
@@ -911,6 +907,36 @@ static NSString *const APP_BUILD = @"app_build";
     }
 
     [self logEvent:kAMPRevenueEvent withEventProperties:[revenue toNSDictionary]];
+}
+
+#pragma mark - Deep link methods
+- (void)continueUserActivity:(NSUserActivity *)activity {
+    if (!self.defaultTracking.deepLinks) {
+        return;
+    }
+
+    if ([activity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+        NSString *urlString = activity.webpageURL.absoluteString;
+        NSString *referrerString = nil;
+        if (@available(iOS 11, tvOS 11.0, macOS 10.13, watchOS 4.0, *)) {
+            referrerString = activity.referrerURL.absoluteString;
+        }
+        [self logEvent:kAMPDeepLinkOpened withEventProperties:@{
+            kAMPEventPropLinkUrl: urlString ?: @"",
+            kAMPEventPropLinkReferrer: referrerString ?: @"",
+        }];
+    }
+}
+
+- (void)openURL:(NSURL *)url options:(NSDictionary *)options {
+    if (!self.defaultTracking.deepLinks) {
+        return;
+    }
+
+    NSString *urlString = url.absoluteString;
+    [self logEvent:kAMPDeepLinkOpened withEventProperties:@{
+        kAMPEventPropLinkUrl: urlString ?: @"",
+    }];
 }
 
 #pragma mark - Upload events
