@@ -441,7 +441,6 @@ static NSString *const APP_BUILD = @"app_build";
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (void)handleAppStateUpdates:(NSNotification *)notification {
     if ([notification.name isEqualToString:UIApplicationDidFinishLaunchingNotification]) {
-        NSDictionary *launchOptions = notification.userInfo;
         NSString *previousBuild = [_dbHelper getValue:APP_BUILD];
         NSString *previousVersion = [_dbHelper getValue:APP_VERSION];
         NSString *currentBuild = [[NSBundle mainBundle] infoDictionary][@"CFBundleVersion"];

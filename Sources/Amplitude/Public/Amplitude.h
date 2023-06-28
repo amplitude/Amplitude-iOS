@@ -771,8 +771,8 @@ typedef void (^AMPInitCompletionBlock)(void);
 /**
  Call to send the Deep Link Opened event, only when defaultTracking.deepLinks is enabled.
  */
-- (void)continueUserActivity:(NSUserActivity *)activity;
-- (void)openURL:(NSURL *)url options:(NSDictionary *)options;
+- (void)continueUserActivity:(NSUserActivity *)activity NS_SWIFT_NAME(continueUserActivity(activity:));
+- (void)openURL:(NSURL *)url options:(NSDictionary *)options NS_SWIFT_NAME(openURL(url:options:));
 
 @end
 
