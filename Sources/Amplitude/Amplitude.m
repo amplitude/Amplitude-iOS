@@ -335,8 +335,6 @@ static NSString *const APP_BUILD = @"app_build";
                                                               backgroundQueue:_backgroundQueue];
 
         [self addObservers];
-        
-
     }
     return self;
 }
@@ -428,7 +426,7 @@ static NSString *const APP_BUILD = @"app_build";
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
     // mount the default events handler
     UIApplication *app = [AMPUtils getSharedApplication];
-    if (app && self.defaultTracking.appLifecycles) {
+    if (app) {
         for (NSString *name in @[UIApplicationDidEnterBackgroundNotification,
                                  UIApplicationDidFinishLaunchingNotification,
                                  UIApplicationWillEnterForegroundNotification]) {
@@ -440,6 +438,10 @@ static NSString *const APP_BUILD = @"app_build";
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (void)handleAppStateUpdates:(NSNotification *)notification {
+    // lazy checking the settings here to avoid early init with false value
+    if (!self.defaultTracking.appLifecycles) {
+        return;
+    }
     if ([notification.name isEqualToString:UIApplicationDidFinishLaunchingNotification]) {
         NSString *previousBuild = [_dbHelper getValue:APP_BUILD];
         NSString *previousVersion = [_dbHelper getValue:APP_VERSION];
@@ -927,7 +929,7 @@ static NSString *const APP_BUILD = @"app_build";
     }
 }
 
-- (void)openURL:(NSURL *)url options:(NSDictionary *)options {
+- (void)openURL:(NSURL *)url {
     if (!self.defaultTracking.deepLinks) {
         return;
     }

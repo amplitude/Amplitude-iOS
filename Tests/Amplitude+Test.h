@@ -25,11 +25,13 @@
 - (void)flushUploads:(void (^)(void))handler;
 - (NSDictionary *)getLastEvent;
 - (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName;
+- (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName fromEnd:(NSInteger)fromEnd;
 - (NSDictionary *)getLastIdentify;
 - (NSDictionary *)getLastInterceptedIdentify;
 - (NSDictionary *)getEvent:(NSInteger) fromEnd;
 - (NSDictionary *)getIdentify:(NSInteger) fromEnd;
 - (NSUInteger)queuedEventCount;
+- (NSUInteger)queuedEventCountFromInstanceName:(NSString *)instanceName;
 - (void)enterForeground;
 - (void)enterBackground;
 - (NSDate*)currentTime;
