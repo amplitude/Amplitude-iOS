@@ -184,7 +184,9 @@
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
-    [mockAmplitude setTrackingSessionEvents:YES];
+    AMPDefaultTrackingOptions *defaultTracking = [AMPDefaultTrackingOptions initWithNoneEnabled];
+    defaultTracking.sessions = YES;
+    [mockAmplitude setDefaultTracking:defaultTracking];
 
     [mockAmplitude initializeApiKey:apiKey userId:nil];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
@@ -245,7 +247,9 @@
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:21474836470];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
-    [mockAmplitude setTrackingSessionEvents:YES];
+    AMPDefaultTrackingOptions *defaultTracking = [AMPDefaultTrackingOptions initWithNoneEnabled];
+    defaultTracking.sessions = YES;
+    [mockAmplitude setDefaultTracking:defaultTracking];
 
     [mockAmplitude initializeApiKey:apiKey userId:nil];
     [mockAmplitude flushQueueWithQueue:[mockAmplitude initializerQueue]];
@@ -285,7 +289,9 @@
     NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970] * 1000];
     [dbHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
 
-    self.amplitude.trackingSessionEvents = YES;
+    AMPDefaultTrackingOptions *defaultTracking = [AMPDefaultTrackingOptions initWithNoneEnabled];
+    defaultTracking.sessions = YES;
+    [self.amplitude setDefaultTracking:defaultTracking];
     [self.amplitude initializeApiKey:apiKey userId:nil];
 
     [self.amplitude flushQueue];

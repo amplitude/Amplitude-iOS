@@ -7,23 +7,16 @@
 //
 
 #import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
-
-#if !TARGET_OS_OSX
-#import <UIKit/UIKit.h>
-#else
-#import <Cocoa/Cocoa.h>
-#endif
 #import "Amplitude.h"
 #import "Amplitude+Test.h"
 #import "BaseTestCase.h"
 #import "UIViewController+AMPScreen.h"
 
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 @interface ScreenViewTests : BaseTestCase
 
 @end
 
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 @implementation ScreenViewTests {
     UIWindow *window;
     UIViewController *rootViewController;
@@ -90,5 +83,5 @@
     XCTAssertEqual(controller, [UIViewController amp_topViewController:rootViewController]);
 }
 
-#endif
 @end
+#endif

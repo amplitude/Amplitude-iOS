@@ -21,11 +21,8 @@
 //  THE SOFTWARE.
 //
 
-#include <TargetConditionals.h>
-
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 #import <UIKit/UIKit.h>
-#endif
 
 @interface UIViewController (AMPScreen)
 
@@ -34,3 +31,4 @@
 + (UIViewController *)amp_topViewController:(UIViewController *)rootViewController;
 
 @end
+#endif

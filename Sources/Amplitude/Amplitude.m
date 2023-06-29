@@ -66,7 +66,11 @@
 #import "AMPMiddlewareRunner.h"
 #import "AMPIdentifyInterceptor.h"
 #import "AMPEventUtils.h"
+
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 #import "UIViewController+AMPScreen.h"
+#endif
+
 #import <math.h>
 #import <CommonCrypto/CommonDigest.h>
 

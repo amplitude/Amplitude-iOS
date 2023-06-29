@@ -37,6 +37,7 @@
 #import "UIViewController+AMPScreen.h"
 #import "Amplitude.h"
 
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 NSString *const kAMPScreenViewed = @"[Amplitude] Screen Viewed";
 NSString *const kAMPEventPropScreenName = @"[Amplitude] Screen Name";
 
@@ -142,3 +143,4 @@ NSString *const kAMPEventPropScreenName = @"[Amplitude] Screen Name";
 }
 
 @end
+#endif
