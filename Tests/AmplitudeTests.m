@@ -1593,11 +1593,11 @@
     [client flushQueue];
 
     NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
-    XCTAssertEqualObjects([event1 objectForKey:@"event_type"], @"[Amplitude] Application Installed");
+    XCTAssertEqualObjects([event1 objectForKey:@"event_type"], kAMPApplicationInstalled);
 
     NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
-    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], @"[Amplitude] Application Opened");
-    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:@"[Amplitude] From Background"], @NO);
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
 }
 
 - (void)testObserveDidFinishLaunchingNotificationWithPreviousBuild {
@@ -1625,8 +1625,8 @@
     XCTAssertTrue([[event1 objectForKey:@"event_type"] hasPrefix:@"[Amplitude] Application"]);
 
     NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
-    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], @"[Amplitude] Application Opened");
-    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:@"[Amplitude] From Background"], @NO);
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
 }
 
 - (void)testObserveWillEnterForegroundNotification {
@@ -1646,8 +1646,8 @@
     [client flushQueue];
 
     NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
-    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], @"[Amplitude] Application Opened");
-    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:@"[Amplitude] From Background"], @YES);
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @YES);
 }
 
 - (void)testObserveDidEnterBackgroundNotification {
@@ -1667,7 +1667,7 @@
     [client flushQueue];
 
     NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
-    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], @"[Amplitude] Application Backgrounded");
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationBackgrounded);
 }
 
 #endif
@@ -1685,8 +1685,8 @@
     [client flushQueue];
 
     NSDictionary *event = [client getLastEventFromInstanceName:instanceName];
-    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"[Amplitude] Deep Link Opened");
-    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:@"[Amplitude] Link URL"], @"https://test-app.com");
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], kAMPDeepLinkOpened);
+    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
 }
 
 - (void)testOpenURLFiresDeepLinkEvent {
@@ -1701,8 +1701,8 @@
     [client flushQueue];
 
     NSDictionary *event = [client getLastEventFromInstanceName:instanceName];
-    XCTAssertEqualObjects([event objectForKey:@"event_type"], @"[Amplitude] Deep Link Opened");
-    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:@"[Amplitude] Link URL"], @"https://test-app.com");
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], kAMPDeepLinkOpened);
+    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
 }
 
 @end

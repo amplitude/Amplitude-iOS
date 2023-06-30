@@ -118,3 +118,23 @@ NSString *const AMP_PLAN_VERSION_ID = @"versionId";
 
 NSString *const AMP_INGESTION_METADATA_SOURCE_NAME = @"source_name";
 NSString *const AMP_INGESTION_METADATA_SOURCE_VERSION = @"source_version";
+
+// Amplitude Events
+NSString *const kAMPSessionStartEvent = @"session_start";
+NSString *const kAMPSessionEndEvent = @"session_end";
+NSString *const kAMPApplicationInstalled = @"[Amplitude] Application Installed";
+NSString *const kAMPApplicationUpdated = @"[Amplitude] Application Updated";
+NSString *const kAMPApplicationOpened = @"[Amplitude] Application Opened";
+NSString *const kAMPApplicationBackgrounded = @"[Amplitude] Application Backgrounded";
+NSString *const kAMPDeepLinkOpened = @"[Amplitude] Deep Link Opened";
+NSString *const kAMPScreenViewed = @"[Amplitude] Screen Viewed";
+NSString *const kAMPRevenueEvent = @"revenue_amount";
+
+NSString *const kAMPEventPropVersion = @"[Amplitude] Version";
+NSString *const kAMPEventPropBuild = @"[Amplitude] Build";
+NSString *const kAMPEventPropPreviousVersion = @"[Amplitude] Previous Version";
+NSString *const kAMPEventPropPreviousBuild = @"[Amplitude] Previous Build";
+NSString *const kAMPEventPropFromBackground = @"[Amplitude] From Background";
+NSString *const kAMPEventPropLinkUrl = @"[Amplitude] Link URL";
+NSString *const kAMPEventPropLinkReferrer = @"[Amplitude] Link Referrer";
+NSString *const kAMPEventPropScreenName = @"[Amplitude] Screen Name";

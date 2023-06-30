@@ -106,23 +106,6 @@
 @property (nonatomic, copy, readwrite) NSString *contentTypeHeader;
 @end
 
-NSString *const kAMPSessionStartEvent = @"session_start";
-NSString *const kAMPSessionEndEvent = @"session_end";
-NSString *const kAMPApplicationInstalled = @"[Amplitude] Application Installed";
-NSString *const kAMPApplicationUpdated = @"[Amplitude] Application Updated";
-NSString *const kAMPApplicationOpened = @"[Amplitude] Application Opened";
-NSString *const kAMPApplicationBackgrounded = @"[Amplitude] Application Backgrounded";
-NSString *const kAMPDeepLinkOpened = @"[Amplitude] Deep Link Opened";
-NSString *const kAMPRevenueEvent = @"revenue_amount";
-
-NSString *const kAMPEventPropVersion = @"[Amplitude] Version";
-NSString *const kAMPEventPropBuild = @"[Amplitude] Build";
-NSString *const kAMPEventPropPreviousVersion = @"[Amplitude] Previous Version";
-NSString *const kAMPEventPropPreviousBuild = @"[Amplitude] Previous Build";
-NSString *const kAMPEventPropFromBackground = @"[Amplitude] From Background";
-NSString *const kAMPEventPropLinkUrl = @"[Amplitude] Link URL";
-NSString *const kAMPEventPropLinkReferrer = @"[Amplitude] Link Referrer";
-
 static NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
 static NSString *const DATABASE_VERSION = @"database_version";
 static NSString *const DEVICE_ID = @"device_id";
@@ -470,9 +453,13 @@ static NSString *const APP_BUILD = @"app_build";
             kAMPEventPropFromBackground: @NO,
         }];
 
-        // persist the build/version
-        [_dbHelper insertOrReplaceKeyValue:APP_BUILD value:currentBuild];
-        [_dbHelper insertOrReplaceKeyValue:APP_VERSION value:currentVersion];
+        // persist the build/version when changed
+        if (currentBuild ? ![currentBuild isEqualToString:previousBuild] : (previousBuild != nil)) {
+            [_dbHelper insertOrReplaceKeyValue:APP_BUILD value:currentBuild];
+        }
+        if (currentVersion ? ![currentVersion isEqualToString:previousVersion] : (previousVersion != nil)) {
+            [_dbHelper insertOrReplaceKeyValue:APP_VERSION value:currentVersion];
+        }
     } else if ([notification.name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
         NSString *currentBuild = [[NSBundle mainBundle] infoDictionary][@"CFBundleVersion"];
         NSString *currentVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
