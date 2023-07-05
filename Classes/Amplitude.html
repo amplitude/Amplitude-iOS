@@ -56,11 +56,15 @@
 	
 	<optgroup label="Properties">
 		
+		<option value="//api/name/)">)</option>
+		
 		<option value="//api/name/adSupportBlock">adSupportBlock</option>
 		
 		<option value="//api/name/apiKey">apiKey</option>
 		
 		<option value="//api/name/contentTypeHeader">contentTypeHeader</option>
+		
+		<option value="//api/name/defaultTracking">defaultTracking</option>
 		
 		<option value="//api/name/deferCheckInForeground">deferCheckInForeground</option>
 		
@@ -85,8 +89,6 @@
 		<option value="//api/name/locationInfoBlock">locationInfoBlock</option>
 		
 		<option value="//api/name/minTimeBetweenSessionsMillis">minTimeBetweenSessionsMillis</option>
-		
-		<option value="//api/name/trackingSessionEvents">trackingSessionEvents</option>
 		
 		<option value="//api/name/useDynamicConfig">useDynamicConfig</option>
 		
@@ -113,6 +115,8 @@
 		<option value="//api/name/checkInForeground">- checkInForeground</option>
 		
 		<option value="//api/name/clearUserProperties">- clearUserProperties</option>
+		
+		<option value="//api/name/continueUserActivity:">- continueUserActivity:</option>
 		
 		<option value="//api/name/disableCoppaControl">- disableCoppaControl</option>
 		
@@ -1574,6 +1578,52 @@ If setUserId is NO, then attempt to load <a href="#//api/name/userId">userId</a>
 					
 				</ul>
 			</div>
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/continueUserActivity:" title="continueUserActivity:"></a>
+	<h3 class="method-title"><code><a href="#//api/name/continueUserActivity:">&ndash;&nbsp;continueUserActivity:</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Call to send the Deep Link Opened event, only when <a href="#//api/name/defaultTracking">defaultTracking</a>.deepLinks is enabled.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>- (void)continueUserActivity:(NSUserActivity *)<em>activity</em></code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Call to send the Deep Link Opened event, only when <a href="#//api/name/defaultTracking">defaultTracking</a>.deepLinks is enabled.</p>
+			</div>
+			
+
+			
+
 			
 
 			
@@ -3964,8 +4014,8 @@ Note:
 		</div>
 	</div>
 </div><div class="section-method">
-	<a name="//api/name/trackingSessionEvents" title="trackingSessionEvents"></a>
-	<h3 class="method-title"><code><a href="#//api/name/trackingSessionEvents">&nbsp;&nbsp;trackingSessionEvents</a></code>
+	<a name="//api/name/)" title=")"></a>
+	<h3 class="method-title"><code><a href="#//api/name/)">&nbsp;&nbsp;)</a></code>
 </h3>
 
 	<div class="method-info">
@@ -3980,7 +4030,7 @@ Note:
 			
 		    
 
-			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL trackingSessionEvents</code></div>
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, assign) BOOL trackingSessionEvents DEPRECATED_MSG_ATTRIBUTE ( &quot;Use `defaultTracking.sessions` instead&quot; )</code></div>
 
 		    
 			
@@ -3993,6 +4043,60 @@ Note:
 			<div class="method-subsection discussion-section">
 				<h4 class="method-subtitle">Discussion</h4>
 				<p>Whether to automatically log start and end session events corresponding to the start and end of a user&rsquo;s session.</p>
+			</div>
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection declared-in-section">
+				<h4 class="method-subtitle">Declared In</h4>
+				<p><code class="declared-in-ref">Amplitude.h</code></p>
+			</div>
+			
+			
+		</div>
+	</div>
+</div><div class="section-method">
+	<a name="//api/name/defaultTracking" title="defaultTracking"></a>
+	<h3 class="method-title"><code><a href="#//api/name/defaultTracking">&nbsp;&nbsp;defaultTracking</a></code>
+</h3>
+
+	<div class="method-info">
+		<div class="pointy-thing"></div>
+
+		<div class="method-info-container">
+			
+			
+			<div class="method-subsection brief-description">
+				<p>Whether to enable the default events:
+    - sessions tracking, replacing the previous trackingSessionEvents, including session_start, session_end, default to disabled.
+    - appLifecycles tracking, including Application Installed, Application Updated, Application Opened, Application Backgrounded, default to disabled.
+    - deepLinks tracking, including Deep Link Opened, note you will still need to call continueUserActivity or openURL method manually, default to disabled.
+    - screenViews tracking, including Screen Viewed, default to disabled.</p>
+			</div>
+			
+		    
+
+			<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) AMPDefaultTrackingOptions *defaultTracking</code></div>
+
+		    
+			
+
+			
+
+			
+
+			
+			<div class="method-subsection discussion-section">
+				<h4 class="method-subtitle">Discussion</h4>
+				<p>Whether to enable the default events:
+    - sessions tracking, replacing the previous trackingSessionEvents, including session_start, session_end, default to disabled.
+    - appLifecycles tracking, including Application Installed, Application Updated, Application Opened, Application Backgrounded, default to disabled.
+    - deepLinks tracking, including Deep Link Opened, note you will still need to call continueUserActivity or openURL method manually, default to disabled.
+    - screenViews tracking, including Screen Viewed, default to disabled.</p>
 			</div>
 			
 
@@ -4395,7 +4499,7 @@ NSLog(@&ldquo;deviceId: %@, userId: %@&rdquo;, weakAmp.<a href="#//api/name/devi
 				<footer>
 					<div class="footer-copyright">
 						
-						<p class="copyright">Copyright &copy; 2023 Amplitude Inc. All rights reserved. Updated: 2023-06-22</p>
+						<p class="copyright">Copyright &copy; 2023 Amplitude Inc. All rights reserved. Updated: 2023-07-05</p>
 						
 						
 						<p class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2.1 (build 1334)</a>.</p>
