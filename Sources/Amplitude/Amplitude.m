@@ -144,7 +144,7 @@ static NSString *const APP_BUILD = @"app_build";
 
     BOOL _inForeground;
     BOOL _offline;
-    
+
     int _numRetries;
     int _maxRetries;
     int _originalUploadPeriodsInSeconds;
@@ -740,7 +740,7 @@ static NSString *const APP_BUILD = @"app_build";
                 AMPLITUDE_ERROR(@"ERROR: JSONSerializing event type %@ resulted in an NULL string", eventType);
                 return;
             }
-            
+
             if ([eventType isEqualToString:IDENTIFY_EVENT] || [eventType isEqualToString:GROUP_IDENTIFY_EVENT]) {
                 (void) [self.dbHelper addIdentify:jsonString];
             } else {
@@ -1105,12 +1105,6 @@ static NSString *const APP_BUILD = @"app_build";
     [postData appendData:[@"&upload_time=" dataUsingEncoding:NSUTF8StringEncoding]];
     NSString *timestampString = [[NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000] stringValue];
     [postData appendData:[timestampString dataUsingEncoding:NSUTF8StringEncoding]];
-
-    // Add checksum
-    [postData appendData:[@"&checksum=" dataUsingEncoding:NSUTF8StringEncoding]];
-    NSString *checksumData = [NSString stringWithFormat:@"%@%@%@%@", apiVersionString, self.apiKey, events, timestampString];
-    NSString *checksum = [self md5HexDigest:checksumData];
-    [postData appendData:[checksum dataUsingEncoding:NSUTF8StringEncoding]];
 
     [request setHTTPMethod:@"POST"];
     [request setValue:self.contentTypeHeader forHTTPHeaderField:@"Content-Type"];
@@ -1773,26 +1767,6 @@ static NSString *const APP_BUILD = @"app_build";
         AMPLITUDE_ERROR(@"ERROR: Invalid type argument to method %@, expected %@, received %@, ", methodName, class, [argument class]);
         return NO;
     }
-}
-
-- (NSString *)md5HexDigest:(NSString *)input {
-    const char *str = [input UTF8String];
-    unsigned char result[CC_MD5_DIGEST_LENGTH];
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    // As mentioned by @haoliu-amp in // https://github.com/amplitude/Amplitude-iOS/issues/250#issuecomment-655224554,
-    // > This crypto algorithm is used for our checksum field, actually you don't need to worry about the security concern for that.
-    // > However, we will see if we wanna switch it to SHA256.
-    // Based on this, we can silence the compile warning here until a fix is implemented.
-    CC_MD5(str, (CC_LONG) strlen(str), result);
-#pragma clang diagnostic pop
-
-    NSMutableString *ret = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH*2];
-    for(int i = 0; i<CC_MD5_DIGEST_LENGTH; i++) {
-        [ret appendFormat:@"%02x",result[i]];
-    }
-    return ret;
 }
 
 - (NSString *)urlEncodeString:(NSString *)string {
