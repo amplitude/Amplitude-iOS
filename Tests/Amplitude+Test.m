@@ -40,6 +40,11 @@
     return [events lastObject];
 }
 
+- (NSDictionary *)getLastEventFromInstanceName:(NSString *)instanceName fromEnd:(NSInteger)fromEnd {
+    NSArray *events = [[AMPDatabaseHelper getDatabaseHelper: instanceName] getEvents:-1 limit:-1];
+    return [events objectAtIndex:[events count] - fromEnd - 1];
+}
+
 - (NSDictionary *)getLastEvent {
     NSArray *events = [[AMPDatabaseHelper getDatabaseHelper] getEvents:-1 limit:-1];
     return [events lastObject];
@@ -62,6 +67,10 @@
 
 - (NSUInteger)queuedEventCount {
     return [[AMPDatabaseHelper getDatabaseHelper] getEventCount];
+}
+
+- (NSUInteger)queuedEventCountFromInstanceName:(NSString *)instanceName {
+    return [[AMPDatabaseHelper getDatabaseHelper: instanceName] getEventCount];
 }
 
 - (void)flushUploads:(void (^)(void))handler {

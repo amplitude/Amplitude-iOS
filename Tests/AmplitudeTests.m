@@ -1549,4 +1549,160 @@
     XCTAssertEqual(self.amplitude.eventUploadPeriodSeconds, 20);
 }
 
+- (void)testInitWithDefaultTrackingOptions {
+    XCTAssertFalse(self.amplitude.defaultTracking.sessions);
+    XCTAssertFalse(self.amplitude.defaultTracking.appLifecycles);
+    XCTAssertFalse(self.amplitude.defaultTracking.screenViews);
+    XCTAssertFalse(self.amplitude.defaultTracking.deepLinks);
+}
+
+- (void)testSetDefaultTrackingOptions {
+    Amplitude *client = [Amplitude instanceWithName:@"default_tracking"];
+    client.defaultTracking = [AMPDefaultTrackingOptions initWithSessions:NO
+                                                           appLifecycles:YES
+                                                               deepLinks:YES
+                                                             screenViews:YES];
+    [client initializeApiKey:@"default_tracking"];
+
+    XCTAssertFalse(client.defaultTracking.sessions);
+    XCTAssertTrue(client.defaultTracking.appLifecycles);
+    XCTAssertTrue(client.defaultTracking.screenViews);
+    XCTAssertTrue(client.defaultTracking.deepLinks);
+}
+
+
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+- (void)testObserveDidFinishLaunchingNotification {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveDidFinishLaunchingNotification";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidFinishLaunchingNotification object:app];
+    
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"app_build" value:nil];
+    [dbHelper insertOrReplaceKeyValue:@"app_version" value:nil];
+
+    [client flushQueue];
+
+    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
+    XCTAssertEqualObjects([event1 objectForKey:@"event_type"], kAMPApplicationInstalled);
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
+}
+
+- (void)testObserveDidFinishLaunchingNotificationWithPreviousBuild {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveDidFinishLaunchingNotificationWithPreviousBuild";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidFinishLaunchingNotification object:app];
+    
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"app_build" value:@"test"];
+    [dbHelper insertOrReplaceKeyValue:@"app_version" value:@"test"];
+
+    [client flushQueue];
+
+    // This check is not ideal, to avoid flaky test, we only check the first event prefix.
+    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
+    XCTAssertTrue([[event1 objectForKey:@"event_type"] hasPrefix:@"[Amplitude] Application"]);
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
+}
+
+- (void)testObserveWillEnterForegroundNotification {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveWillEnterForegroundNotification";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationWillEnterForegroundNotification object:app];
+
+    [client flushQueue];
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @YES);
+}
+
+- (void)testObserveDidEnterBackgroundNotification {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveDidEnterBackgroundNotification";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:app];
+
+    [client flushQueue];
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationBackgrounded);
+}
+
+#endif
+
+- (void)testContinueUserActivityFiresDeepLinkEvent {
+    NSString *instanceName = @"default_tracking_UserActivityFiresDeepLinkEvent";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.deepLinks = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    [userActivity setWebpageURL:[NSURL URLWithString:@"https://test-app.com"]];
+    [client continueUserActivity:userActivity];
+
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:instanceName];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], kAMPDeepLinkOpened);
+    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
+}
+
+- (void)testOpenURLFiresDeepLinkEvent {
+    NSString *instanceName = @"default_tracking_OpenURLFiresDeepLinkEvent";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.deepLinks = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    NSURL *url = [NSURL URLWithString:@"https://test-app.com"];
+    [client openURL:url];
+
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:instanceName];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], kAMPDeepLinkOpened);
+    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
+}
+
 @end

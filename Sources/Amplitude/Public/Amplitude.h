@@ -29,6 +29,7 @@
 #import "AMPIngestionMetadata.h"
 #import "AMPServerZone.h"
 #import "AMPMiddleware.h"
+#import "AMPDefaultTrackingOptions.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -129,7 +130,16 @@ typedef void (^AMPInitCompletionBlock)(void);
 /**
  Whether to automatically log start and end session events corresponding to the start and end of a user's session.
  */
-@property (nonatomic, assign) BOOL trackingSessionEvents;
+@property (nonatomic, assign) BOOL trackingSessionEvents DEPRECATED_MSG_ATTRIBUTE("Use `defaultTracking.sessions` instead");
+
+/**
+ Whether to enable the default events:
+    - sessions tracking, replacing the previous trackingSessionEvents, including session_start, session_end, default to disabled.
+    - appLifecycles tracking, including Application Installed, Application Updated, Application Opened, Application Backgrounded, default to disabled.
+    - deepLinks tracking, including Deep Link Opened, note you will still need to call continueUserActivity or openURL method manually, default to disabled.
+    - screenViews tracking, including Screen Viewed, default to disabled.
+ */
+@property (nonatomic, strong) AMPDefaultTrackingOptions *defaultTracking;
 
 /**
  Library name is default as `amplitude-ios`.
@@ -757,6 +767,12 @@ typedef void (^AMPInitCompletionBlock)(void);
 
 
 - (NSString *)getContentTypeHeader;
+
+/**
+ Call to send the Deep Link Opened event, only when defaultTracking.deepLinks is enabled.
+ */
+- (void)continueUserActivity:(NSUserActivity *)activity NS_SWIFT_NAME(continueUserActivity(activity:));
+- (void)openURL:(NSURL *)url NS_SWIFT_NAME(openURL(url:));
 
 @end
 

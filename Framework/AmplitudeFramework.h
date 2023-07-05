@@ -8,6 +8,7 @@
 #import <Amplitude/AMPIngestionMetadata.h>
 #import <Amplitude/AMPMiddleware.h>
 #import <Amplitude/AMPServerZone.h>
+#import <Amplitude/AMPDefaultTrackingOptions.h>
 
 #if TARGET_OS_WATCH
 #import <Amplitude/AMPBackgroundNotifier.h>

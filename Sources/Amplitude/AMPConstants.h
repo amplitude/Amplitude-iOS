@@ -98,3 +98,23 @@ extern NSString *const AMP_PLAN_VERSION_ID;
 // Ingestion Metadata
 extern NSString *const AMP_INGESTION_METADATA_SOURCE_NAME;
 extern NSString *const AMP_INGESTION_METADATA_SOURCE_VERSION;
+
+// Events
+extern NSString *const kAMPSessionStartEvent;
+extern NSString *const kAMPSessionEndEvent;
+extern NSString *const kAMPApplicationInstalled;
+extern NSString *const kAMPApplicationUpdated;
+extern NSString *const kAMPApplicationOpened;
+extern NSString *const kAMPApplicationBackgrounded;
+extern NSString *const kAMPDeepLinkOpened;
+extern NSString *const kAMPScreenViewed;
+extern NSString *const kAMPRevenueEvent;
+
+extern NSString *const kAMPEventPropVersion;
+extern NSString *const kAMPEventPropBuild;
+extern NSString *const kAMPEventPropPreviousVersion;
+extern NSString *const kAMPEventPropPreviousBuild;
+extern NSString *const kAMPEventPropFromBackground;
+extern NSString *const kAMPEventPropLinkUrl;
+extern NSString *const kAMPEventPropLinkReferrer;
+extern NSString *const kAMPEventPropScreenName;
