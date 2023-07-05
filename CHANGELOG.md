@@ -1,3 +1,10 @@
+# [8.17.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.4...v8.17.0) (2023-07-05)
+
+
+### Features
+
+* add default events ([#455](https://github.com/amplitude/Amplitude-iOS/issues/455)) ([9bf9664](https://github.com/amplitude/Amplitude-iOS/commit/9bf9664199d9c5ea7367205180e9ee3c52a9aaa7))
+
 ## [8.16.4](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.3...v8.16.4) (2023-06-22)
 
 
