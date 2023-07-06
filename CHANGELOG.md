@@ -1,3 +1,10 @@
+## [8.17.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.0...v8.17.1) (2023-07-06)
+
+
+### Bug Fixes
+
+* remove MD5 usage ([#456](https://github.com/amplitude/Amplitude-iOS/issues/456)) ([4e2d35f](https://github.com/amplitude/Amplitude-iOS/commit/4e2d35fba1081ebd21124b8a8d3998509129be54))
+
 # [8.17.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.4...v8.17.0) (2023-07-05)
 
 
