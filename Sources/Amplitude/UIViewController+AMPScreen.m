@@ -134,12 +134,29 @@
         }
     }
 
+    NSLog(@"**********Before print view hierarchy**********");
+
+    
     [[Amplitude instance] logEvent:kAMPScreenViewed withEventProperties:@{
         kAMPEventPropScreenName: name ?: @"",
     }];
 
     // call original method, this is not recurrsive method call
     [self amp_viewDidAppear:animated];
+    
+    printViewHierarchy(self.view, 0);
+}
+
+void printViewHierarchy(UIView *view, int indent) {
+    NSMutableString *indentation = [NSMutableString string];
+    for (int i = 0; i < indent; i++) {
+        [indentation appendString:@" "];
+    }
+    NSLog(@"**********Print View Hierarchy**********");
+    NSLog(@"%@%@", indentation, view);
+    for (UIView *subview in view.subviews) {
+        printViewHierarchy(subview, indent + 4);
+    }
 }
 
 @end
