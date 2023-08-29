@@ -152,7 +152,7 @@ void printViewHierarchy(UIView *view, int indent) {
     for (int i = 0; i < indent; i++) {
         [indentation appendString:@" "];
     }
-    NSLog(@"**********Print View Hierarchy**********");
+   // NSLog(@"**********Print View Hierarchy**********");
     NSLog(@"%@%@", indentation, view);
     for (UIView *subview in view.subviews) {
         printViewHierarchy(subview, indent + 4);
