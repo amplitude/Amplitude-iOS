@@ -37,6 +37,10 @@
 #import "UIViewController+AMPScreen.h"
 #import "Amplitude.h"
 #import "AMPConstants.h"
+#import <UIKit/UIKit.h>
+
+static NSNotificationName const __UIWindowSceneDidChangeScreenNotification = @"__UIWindowSceneDidChangeScreenNotification";
+
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
 
@@ -134,7 +138,10 @@
         }
     }
 
-    NSLog(@"**********Before print view hierarchy**********");
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(screenChanged:)
+                                                 name:__UIWindowSceneDidChangeScreenNotification
+                                               object:nil];
 
     
     [[Amplitude instance] logEvent:kAMPScreenViewed withEventProperties:@{
@@ -143,7 +150,12 @@
 
     // call original method, this is not recurrsive method call
     [self amp_viewDidAppear:animated];
-    
+}
+
+- (void)screenChanged:(NSNotification *)notification {
+    // Handle the screen change here
+    NSLog(@"**********Before print view hierarchy**********");
+    NSLog(@"Screen changed!");
     printViewHierarchy(self.view, 0);
 }
 
