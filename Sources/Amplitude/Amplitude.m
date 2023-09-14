@@ -727,7 +727,7 @@ static NSString *const APP_BUILD = @"app_build";
         }
 
         event = [self->_identifyInterceptor intercept:event];
-        if (event != nil) {
+        if ([event count] != 0) {
             // convert event dictionary to JSON String
             NSError *error = nil;
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[AMPUtils makeJSONSerializable:event] options:0 error:&error];

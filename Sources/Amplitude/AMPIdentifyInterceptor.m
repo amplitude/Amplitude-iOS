@@ -141,7 +141,7 @@
             [self scheduleTransfer];
 
             // Event is intercepted, return nil
-            return nil;
+            return [NSMutableDictionary dictionary];
        } else if ([userPropertyOperations objectForKey:AMP_OP_CLEAR_ALL] != nil) {
             // Clear all pending intercepted Identify's
             [_dbHelper removeInterceptedIdentifys:[_dbHelper getLastSequenceNumber]];
