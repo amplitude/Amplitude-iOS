@@ -80,7 +80,7 @@
 
     event = [self->_identifyInterceptor intercept:event];
 
-    XCTAssertEqual(event, nil);
+    XCTAssertEqual([event count], 0);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
 
@@ -141,7 +141,7 @@
 
     event1 = [self->_identifyInterceptor intercept:event1];
 
-    XCTAssertNil(event1);
+    XCTAssertEqual([event1 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -183,7 +183,7 @@
 
     event1 = [self->_identifyInterceptor intercept:event1];
 
-    XCTAssertNil(event1);
+    XCTAssertEqual([event1 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -195,7 +195,7 @@
 
     event2 = [self->_identifyInterceptor intercept:event2];
 
-    XCTAssertNil(event2);
+    XCTAssertEqual([event2 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 2);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 2);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -244,7 +244,7 @@
 
     event1 = [self->_identifyInterceptor intercept:event1];
 
-    XCTAssertNil(event1);
+    XCTAssertEqual([event1 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -256,7 +256,7 @@
 
     event2 = [self->_identifyInterceptor intercept:event2];
 
-    XCTAssertNil(event2);
+    XCTAssertEqual([event2 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 2);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 2);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -308,7 +308,7 @@
 
     event = [self->_identifyInterceptor intercept:event];
 
-    XCTAssertNil(event);
+    XCTAssertEqual([event count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -345,7 +345,7 @@
 
     event1 = [self->_identifyInterceptor intercept:event1];
 
-    XCTAssertNil(event1);
+    XCTAssertEqual([event1 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -357,7 +357,7 @@
 
     event2 = [self->_identifyInterceptor intercept:event2];
 
-    XCTAssertNil(event2);
+    XCTAssertEqual([event2 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 2);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 2);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -396,7 +396,7 @@
 
     event1 = [self->_identifyInterceptor intercept:event1];
 
-    XCTAssertNil(event1);
+    XCTAssertEqual([event1 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -409,7 +409,7 @@
 
     event2 = [self->_identifyInterceptor intercept:event2];
 
-    XCTAssertNil(event2);
+    XCTAssertEqual([event2 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 2);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 2);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -454,7 +454,7 @@
 
     event1 = [self->_identifyInterceptor intercept:event1];
 
-    XCTAssertNil(event1);
+    XCTAssertEqual([event1 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 1);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 1);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
@@ -467,7 +467,7 @@
 
     event2 = [self->_identifyInterceptor intercept:event2];
 
-    XCTAssertNil(event2);
+    XCTAssertEqual([event2 count], 0);
     XCTAssertEqual(self->_dbHelper.getLastSequenceNumber, 2);
     XCTAssertEqual(self->_dbHelper.getInterceptedIdentifyCount, 2);
     XCTAssertEqual(self->_dbHelper.getIdentifyCount, 0);
