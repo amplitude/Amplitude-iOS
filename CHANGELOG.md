@@ -1,3 +1,10 @@
+## [8.17.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.1...v8.17.2) (2023-09-15)
+
+
+### Bug Fixes
+
+* fix the compatible issue with macOSSonoma ([#463](https://github.com/amplitude/Amplitude-iOS/issues/463)) ([fd9495f](https://github.com/amplitude/Amplitude-iOS/commit/fd9495f7c3cfcd13047b36b0cebc81bdc0e62731))
+
 ## [8.17.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.0...v8.17.1) (2023-07-06)
 
 
