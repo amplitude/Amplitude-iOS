@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-12
     steps:
       - name: ${{ github.actor }} permission check to do a release
-        uses: octokit/request-action@v2.0.0
+        uses: octokit/request-action@v2.1.9
         with:
           route: GET /repos/:repository/collaborators/${{ github.actor }}
           repository: ${{ github.repository }}
@@ -115,7 +115,7 @@ jobs:
           -p semantic-release@17 \
           -p @semantic-release/changelog@5 \
           -p @semantic-release/git@9 \
-          -p @google/semantic-release-replace-plugin@1 \
+          -p @google/semantic-release-replace-plugin@1.2.0 \
           -p @semantic-release/exec@5 \
           semantic-release --dry-run
 
@@ -134,6 +134,6 @@ jobs:
           -p semantic-release@17 \
           -p @semantic-release/changelog@5 \
           -p @semantic-release/git@9 \
-          -p @google/semantic-release-replace-plugin@1 \
+          -p @google/semantic-release-replace-plugin@1.2.0 \
           -p @semantic-release/exec@5 \
           semantic-release
