@@ -22,7 +22,7 @@
 //
 
 #ifndef AMPLITUDE_DEBUG
-#define AMPLITUDE_DEBUG 0
+#define AMPLITUDE_DEBUG 1
 #endif
 
 #ifndef AMPLITUDE_LOG
@@ -281,7 +281,7 @@ static NSString *const APP_BUILD = @"app_build";
                     AMPLITUDE_ERROR(@"ERROR: Unable to save propertyList to file on initialization");
                 }
             } else {
-                AMPLITUDE_LOG(@"Loaded from %@", _propertyListPath);
+                AMPLITUDE_LOG(@"Loaded from %@", self->_propertyListPath);
             }
 
             // update database if necessary
@@ -312,7 +312,10 @@ static NSString *const APP_BUILD = @"app_build";
             // try to restore previous session
             long long previousSessionId = [self previousSessionId];
             if (previousSessionId >= 0) {
+                AMPLITUDE_LOG(@"initWithInstanceName: restore previous session %lli", previousSessionId);
                 self->_sessionId = previousSessionId;
+            } else {
+                AMPLITUDE_LOG(@"initWithInstanceName: previous session not found");
             }
 
             [self->_backgroundQueue setSuspended:NO];
@@ -369,10 +372,12 @@ static NSString *const APP_BUILD = @"app_build";
     }
     NSNumber *previousSessionId = [eventsData objectForKey:PREVIOUS_SESSION_ID];
     if (previousSessionId != nil) {
+        AMPLITUDE_LOG(@"migrateEventsDataToDB: restore previous session %@", previousSessionId);
         success &= [defaultDbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:previousSessionId];
     }
     NSNumber *previousSessionTime = [eventsData objectForKey:PREVIOUS_SESSION_TIME];
     if (previousSessionTime != nil) {
+        AMPLITUDE_LOG(@"migrateEventsDataToDB: restore previous time %@", previousSessionTime);
         success &= [defaultDbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:previousSessionTime];
     }
 
@@ -572,6 +577,7 @@ static NSString *const APP_BUILD = @"app_build";
                     [self refreshDynamicConfig];
 
                     NSNumber *now = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+                    AMPLITUDE_LOG(@"checkInForeground: startOrContinueSessionNSNumber %@", now);
                     [self startOrContinueSessionNSNumber:now inForeground:NO];
     #if !TARGET_OS_OSX && !TARGET_OS_WATCH
                 }];
@@ -692,6 +698,7 @@ static NSString *const APP_BUILD = @"app_build";
         // skip session check if logging start_session or end_session events
         BOOL loggingSessionEvent = (self->_trackingSessionEvents || self.defaultTracking.sessions) && ([eventType isEqualToString:kAMPSessionStartEvent] || [eventType isEqualToString:kAMPSessionEndEvent]);
         if (!loggingSessionEvent && !outOfSession) {
+            AMPLITUDE_LOG(@"logEvent '%@': startOrContinueSessionNSNumber %@, inForeground %@", eventType, timestamp, inForeground ? @"YES" : @"NO");
             [self startOrContinueSessionNSNumber:timestamp inForeground:inForeground];
         }
 
@@ -1233,6 +1240,7 @@ static NSString *const APP_BUILD = @"app_build";
         // Fetch the data ingestion endpoint based on current device's geo location.
 
         [self refreshDynamicConfig];
+        AMPLITUDE_LOG(@"enterForeground: startOrContinueSessionNSNumber %@", now);
         [self startOrContinueSessionNSNumber:now inForeground:NO];
         [self uploadEvents];
     }];
@@ -1257,6 +1265,7 @@ static NSString *const APP_BUILD = @"app_build";
 #endif
 
     [self runOnBackgroundQueue:^{
+        AMPLITUDE_LOG(@"enterBackground: refreshSessionTime %@", now);
         [self refreshSessionTime:now];
         [self uploadEventsWithLimit:0];
     }];
@@ -1286,50 +1295,67 @@ static NSString *const APP_BUILD = @"app_build";
  * Returns YES if a new session was created.
  */
 - (BOOL)startOrContinueSessionNSNumber:(NSNumber *)timestamp inForeground:(BOOL) inForeground {
+    AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: timestamp %@, inForeground %@", timestamp, inForeground ? @"YES" : @"NO");
     if (!inForeground) {
         if ([self inSession]) {
+            AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, inSession");
             if ([self isWithinMinTimeBetweenSessions:timestamp]) {
+                AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, refreshSessionTime %@", timestamp);
                 [self refreshSessionTime:timestamp];
                 return NO;
             }
+            AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, startNewSession %@", timestamp);
             [self startNewSession:timestamp];
             return YES;
         }
         // no current session, check for previous session
+        AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, not inSession");
         if ([self isWithinMinTimeBetweenSessions:timestamp]) {
             // extract session id
             long long previousSessionId = [self previousSessionId];
+            AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, previousSessionId %lli", previousSessionId);
             if (previousSessionId == -1) {
+                AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, startNewSession %@", timestamp);
                 [self startNewSession:timestamp];
                 return YES;
             }
             // extend previous session
+            AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, setSessionId %lli", previousSessionId);
             [self setSessionId:previousSessionId];
+            AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, refreshSessionTime %@", timestamp);
             [self refreshSessionTime:timestamp];
             return NO;
         } else {
+            AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: background, startNewSession %@", timestamp);
             [self startNewSession:timestamp];
             return YES;
         }
     }
     // not creating a session means we should continue the session
+    AMPLITUDE_LOG(@"startOrContinueSessionNSNumber: foreground, refreshSessionTime %@", timestamp);
     [self refreshSessionTime:timestamp];
     return NO;
 }
 
 - (BOOL)startOrContinueSession:(long long)timestamp {
+    AMPLITUDE_LOG(@"startOrContinueSession: %lli", timestamp);
     NSNumber *timestampNumber = [NSNumber numberWithLongLong:timestamp];
     return [self startOrContinueSessionNSNumber:timestampNumber inForeground:_inForeground];
 }
 
 - (void)startNewSession:(NSNumber *)timestamp {
+    AMPLITUDE_LOG(@"startNewSession: timestamp %@", timestamp);
     BOOL loggingSessionEvent = _trackingSessionEvents || self.defaultTracking.sessions;
     if (loggingSessionEvent) {
+        AMPLITUDE_LOG(@"startNewSession: sendSessionEndEvent");
         [self sendSessionEvent:kAMPSessionEndEvent];
     }
+    AMPLITUDE_LOG(@"startNewSession: setSessionId %@", timestamp);
     [self setSessionId:[timestamp longLongValue]];
+    AMPLITUDE_LOG(@"startNewSession: refreshSessionTime %@", timestamp);
     [self refreshSessionTime:timestamp];
     if (loggingSessionEvent) {
+        AMPLITUDE_LOG(@"startNewSession: sendSessionStartEvent");
         [self sendSessionEvent:kAMPSessionStartEvent];
     }
 }
@@ -1357,7 +1383,8 @@ static NSString *const APP_BUILD = @"app_build";
 - (BOOL)isWithinMinTimeBetweenSessions:(NSNumber *)timestamp {
     NSNumber *previousSessionTime = [self lastEventTime];
     long long timeDelta = [timestamp longLongValue] - [previousSessionTime longLongValue];
-
+    AMPLITUDE_LOG(@"isWithinMinTimeBetweenSessions: timestamp %@ - previousSessionTime %@ = %lli < minTimeBetweenSessionsMillis %li => %@",
+            timestamp, previousSessionTime, timeDelta, self.minTimeBetweenSessionsMillis, timeDelta < self.minTimeBetweenSessionsMillis ? @"YES" : @"NO");
     return timeDelta < self.minTimeBetweenSessionsMillis;
 }
 
@@ -1365,6 +1392,7 @@ static NSString *const APP_BUILD = @"app_build";
  * Sets the session ID in memory and persists it to disk.
  */
 - (void)setSessionId:(long long)timestamp {
+    AMPLITUDE_LOG(@"setSessionId: timestamp %lli", timestamp);
     _sessionId = timestamp;
     [self setPreviousSessionId:_sessionId];
 }
@@ -1374,12 +1402,15 @@ static NSString *const APP_BUILD = @"app_build";
  */
 - (void)refreshSessionTime:(NSNumber *)timestamp {
     if (![self inSession]) {
+        AMPLITUDE_LOG(@"refreshSessionTime: IGNORE timestamp %@", timestamp);
         return;
     }
+    AMPLITUDE_LOG(@"refreshSessionTime: setLastEventTime %@", timestamp);
     [self setLastEventTime:timestamp];
 }
 
 - (void)setPreviousSessionId:(long long)previousSessionId {
+    AMPLITUDE_LOG(@"setPreviousSessionId: %lli", previousSessionId);
     NSNumber *value = [NSNumber numberWithLongLong:previousSessionId];
     (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_ID value:value];
 }
@@ -1387,17 +1418,22 @@ static NSString *const APP_BUILD = @"app_build";
 - (long long)previousSessionId {
     NSNumber *previousSessionId = [self.dbHelper getLongValue:PREVIOUS_SESSION_ID];
     if (previousSessionId == nil) {
+        AMPLITUDE_LOG(@"previousSessionId: -1");
         return -1;
     }
+    AMPLITUDE_LOG(@"previousSessionId: %@", previousSessionId);
     return [previousSessionId longLongValue];
 }
 
 - (void)setLastEventTime:(NSNumber *)timestamp {
+    AMPLITUDE_LOG(@"setLastEventTime: %@", timestamp);
     (void) [self.dbHelper insertOrReplaceKeyLongValue:PREVIOUS_SESSION_TIME value:timestamp];
 }
 
 - (NSNumber *)lastEventTime {
-    return [self.dbHelper getLongValue:PREVIOUS_SESSION_TIME];
+    NSNumber *timestamp = [self.dbHelper getLongValue:PREVIOUS_SESSION_TIME];
+    AMPLITUDE_LOG(@"lastEventTime: %@", timestamp);
+    return timestamp;
 }
 
 - (void)identify:(AMPIdentify *)identify {
@@ -1521,6 +1557,7 @@ static NSString *const APP_BUILD = @"app_build";
     [self runOnBackgroundQueue:^{
         BOOL loggingSessionEvent = self->_trackingSessionEvents || self.defaultTracking.sessions;
         if (startNewSession && loggingSessionEvent) {
+            AMPLITUDE_LOG(@"setUserId: sendSessionEndEvent");
             [self sendSessionEvent:kAMPSessionEndEvent];
         }
 
@@ -1534,9 +1571,12 @@ static NSString *const APP_BUILD = @"app_build";
 
         if (startNewSession) {
             NSNumber *timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
+            AMPLITUDE_LOG(@"setUserId: setSessionId %@", timestamp);
             [self setSessionId:[timestamp longLongValue]];
+            AMPLITUDE_LOG(@"setUserId: refreshSessionTime %@", timestamp);
             [self refreshSessionTime:timestamp];
             if (loggingSessionEvent) {
+                AMPLITUDE_LOG(@"setUserId: sendSessionStartEvent");
                 [self sendSessionEvent:kAMPSessionStartEvent];
             }
         }
