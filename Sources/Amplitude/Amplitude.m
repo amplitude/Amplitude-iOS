@@ -1251,7 +1251,7 @@ static NSString *const APP_BUILD = @"app_build";
 
     // Stop uploading
     [self endBackgroundTaskIfNeeded];
-    _uploadTaskID = [app beginBackgroundTaskWithExpirationHandler:^{
+    _uploadTaskID = [app beginBackgroundTaskWithName:@"Amplitude: enterBackground" expirationHandler:^{
         //Took too long, manually stop
         [self endBackgroundTaskIfNeeded];
     }];
