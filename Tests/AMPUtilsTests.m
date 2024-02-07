@@ -13,9 +13,18 @@
 
 @end
 
-@implementation AMPUtilTests {
-    
+@interface FakeAMPUtils: AMPUtils
+@end
+
+@implementation FakeAMPUtils
+
++ (NSDictionary *)getEnvironment {
+    return @{@"APP_SANDBOX_CONTAINER_ID": @"test-container-id"};
 }
+
+@end
+
+@implementation AMPUtilTests {}
 
 - (void) testIsSandboxEnabled {
     BOOL isSandboxEnabled = [AMPUtils isSandboxEnabled];
@@ -25,5 +34,12 @@
         XCTAssertEqual(isSandboxEnabled, YES);
     #endif
 }
+
+#if TARGET_OS_OSX
+- (void) testIsSandboxEnabledWhenMacOSIsSandboxed {
+    BOOL isSandboxEnabled = [FakeAMPUtils isSandboxEnabled];
+    XCTAssertEqual(isSandboxEnabled, YES);
+}
+#endif
 
 @end
