@@ -34,6 +34,8 @@
 + (BOOL)isEmptyString:(NSString *)str;
 + (NSDictionary *)validateGroups:(NSDictionary *)obj;
 + (NSString *)platformDataDirectory;
++ (NSDictionary<NSString *, NSString *> *)getEnvironment;
++ (BOOL)isSandboxEnabled;
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
 + (UIApplication *)getSharedApplication;
