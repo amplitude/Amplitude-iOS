@@ -27,8 +27,8 @@ jobs:
     needs: [authorize]
     strategy:
       matrix:
-        ruby-version: ["2.7.x"]
-        node-version: ["12.x"]
+        ruby-version: ["2.7"]
+        node-version: ["16.x"]
     steps:
       - name: Checkout Amplitude-iOS
         uses: actions/checkout@v2
@@ -41,13 +41,13 @@ jobs:
         run: carthage bootstrap --use-xcframeworks
 
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
 
       - name: Install Cocoapods
         run: |
-          gem install bundler
+          gem install bundler -v 2.4.22
           bundle config path vendor/bundle
           bundle install
           pod install
