@@ -5,9 +5,20 @@
   <br />
 </p>
 
+[![Legacy SDK](https://img.shields.io/badge/state-legacy-yellow)](https://github.com/amplitude/Amplitude-Swift)
 [![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude)](https://cocoapods.org/pods/Amplitude)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat)](#contributors-)
+
+# Announcement 📣
+
+Amplitude is introducing a new [iOS Swift SDK](https://github.com/amplitude/Amplitude-Swift). This new SDK provides improved developer experience, helps users instrument data more seamlessly and provide more control over data being instrumented using custom plugins.
+
+To learn more about the new SDK, here are some useful links:
+
+* GitHub: https://github.com/amplitude/Amplitude-Swift
+* Documentation: https://www.docs.developers.amplitude.com/data/sdks/ios-swift/
+* Migration Guide: https://www.docs.developers.amplitude.com/data/sdks/ios-swift/migration/
 
 # Official Amplitude iOS SDK
 iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.amplitude.com).
