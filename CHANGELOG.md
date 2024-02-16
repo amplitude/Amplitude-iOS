@@ -1,3 +1,16 @@
+# [8.18.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.2...v8.18.0) (2024-02-08)
+
+
+### Bug Fixes
+
+* fix for release pipeline ([#478](https://github.com/amplitude/Amplitude-iOS/issues/478)) ([324aced](https://github.com/amplitude/Amplitude-iOS/commit/324acedfadc4e20be473474aab9aa0c2c44565f8))
+* fix for when macos sandbox disabled ([#477](https://github.com/amplitude/Amplitude-iOS/issues/477)) ([e148734](https://github.com/amplitude/Amplitude-iOS/commit/e148734de89b9cea0255f46c358f763eda283386))
+
+
+### Features
+
+* add privacy manifest for iOS 17 ([#476](https://github.com/amplitude/Amplitude-iOS/issues/476)) ([007e169](https://github.com/amplitude/Amplitude-iOS/commit/007e169949fbda9c0576f4ee5e724d880153c96b))
+
 ## [8.17.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.1...v8.17.2) (2023-09-15)
 
 

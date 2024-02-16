@@ -138,6 +138,9 @@
 		3E2411F526F9A4E100793829 /* PlanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2411F026F9A4C600793829 /* PlanTests.m */; };
 		3E2411F626F9A4E200793829 /* PlanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2411F026F9A4C600793829 /* PlanTests.m */; };
 		3E2411F726F9A4E400793829 /* PlanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E2411F026F9A4C600793829 /* PlanTests.m */; };
+		3E6FCF262B71B11900A31DC3 /* AMPUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6FCF252B71B11900A31DC3 /* AMPUtilsTests.m */; };
+		3E6FCF272B71B11900A31DC3 /* AMPUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6FCF252B71B11900A31DC3 /* AMPUtilsTests.m */; };
+		3E6FCF282B71B11900A31DC3 /* AMPUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E6FCF252B71B11900A31DC3 /* AMPUtilsTests.m */; };
 		3EF608C92720E74D00133703 /* AMPServerZone.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EF608C82720E74D00133703 /* AMPServerZone.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EF608CA2720E74D00133703 /* AMPServerZone.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EF608C82720E74D00133703 /* AMPServerZone.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EF608CB2720E74D00133703 /* AMPServerZone.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EF608C82720E74D00133703 /* AMPServerZone.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -372,6 +375,7 @@
 		3E2411E626F9A40100793829 /* AMPPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPPlan.h; sourceTree = "<group>"; };
 		3E2411EB26F9A46500793829 /* AMPPlan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPPlan.m; sourceTree = "<group>"; };
 		3E2411F026F9A4C600793829 /* PlanTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlanTests.m; sourceTree = "<group>"; };
+		3E6FCF252B71B11900A31DC3 /* AMPUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPUtilsTests.m; sourceTree = "<group>"; };
 		3EF608C82720E74D00133703 /* AMPServerZone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPServerZone.h; sourceTree = "<group>"; };
 		3EF608D22720F52400133703 /* AMPServerZoneUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPServerZoneUtil.h; sourceTree = "<group>"; };
 		3EF608D72720F64500133703 /* AMPServerZoneUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPServerZoneUtil.m; sourceTree = "<group>"; };
@@ -580,6 +584,7 @@
 		12C9730F24108DFF00E9CDDB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				3E6FCF252B71B11900A31DC3 /* AMPUtilsTests.m */,
 				D00A34EB2991EBE300BA484F /* IdentifyInterceptorTests.m */,
 				3E2411F026F9A4C600793829 /* PlanTests.m */,
 				12C9731824108DFF00E9CDDB /* BaseTestCase.h */,
@@ -1201,6 +1206,7 @@
 				3EF608DE27211AC000133703 /* ServerZoneUtilTests.m in Sources */,
 				58D45C332A4CDC7C00A090A3 /* ScreenViewTests.m in Sources */,
 				582516F128C075D200ECAD0D /* IngestionMetadataTests.m in Sources */,
+				3E6FCF272B71B11900A31DC3 /* AMPUtilsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1257,6 +1263,7 @@
 				3EF608DD27211AC000133703 /* ServerZoneUtilTests.m in Sources */,
 				58D45C322A4CDC7C00A090A3 /* ScreenViewTests.m in Sources */,
 				582516F028C075D100ECAD0D /* IngestionMetadataTests.m in Sources */,
+				3E6FCF262B71B11900A31DC3 /* AMPUtilsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1293,6 +1300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E6FCF282B71B11900A31DC3 /* AMPUtilsTests.m in Sources */,
 				12C973B7241244C700E9CDDB /* SetupTests.m in Sources */,
 				3E2411F726F9A4E400793829 /* PlanTests.m in Sources */,
 				12C973C6241244F100E9CDDB /* IdentifyTests.m in Sources */,

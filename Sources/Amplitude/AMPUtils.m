@@ -220,4 +220,21 @@
 
 #endif
 
+// Helper function to get the environment variables
++ (NSDictionary<NSString *, NSString *> *)getEnvironment {
+    return [[NSProcessInfo processInfo] environment];
+}
+
+// Method to check if sandbox is enabled
++ (BOOL)isSandboxEnabled {
+    #if TARGET_OS_OSX
+        // Check if macOS app has "App Sandbox" enabled
+        NSDictionary<NSString *, NSString *> *environment = [self getEnvironment];
+        return environment[@"APP_SANDBOX_CONTAINER_ID"] != nil;
+    #else
+        // Other platforms (iOS, tvOS, watchOS) are sandboxed by default
+        return YES;
+    #endif
+}
+
 @end
