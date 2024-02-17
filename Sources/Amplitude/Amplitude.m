@@ -680,6 +680,7 @@ static NSString *const APP_BUILD = @"app_build";
     userProperties = [userProperties copy];
     groups = [groups copy];
     groupProperties = [groupProperties copy];
+    extra = [extra copy];
     BOOL inForeground = _inForeground;
 
     [self runOnBackgroundQueue:^{
