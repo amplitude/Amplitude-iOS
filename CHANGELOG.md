@@ -1,3 +1,10 @@
+## [8.18.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.0...v8.18.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* Copy extra params to prevent deallocation ([#483](https://github.com/amplitude/Amplitude-iOS/issues/483)) ([6cfed00](https://github.com/amplitude/Amplitude-iOS/commit/6cfed00a42db3d1eaf28bd804709fe2290c2a0bc))
+
 # [8.18.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.2...v8.18.0) (2024-02-08)
 
 
