@@ -11,7 +11,6 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat)](#contributors-)
 
 # Announcement 📣
-
 Amplitude is introducing a new [iOS Swift SDK](https://github.com/amplitude/Amplitude-Swift). This new SDK provides improved developer experience, helps users instrument data more seamlessly and provide more control over data being instrumented using custom plugins.
 
 To learn more about the new SDK, here are some useful links:
@@ -21,6 +20,7 @@ To learn more about the new SDK, here are some useful links:
 * Migration Guide: https://www.docs.developers.amplitude.com/data/sdks/ios-swift/migration/
 
 # Official Amplitude iOS SDK
+
 iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.amplitude.com).
 
 ## Amplitude and Ampli SDK
