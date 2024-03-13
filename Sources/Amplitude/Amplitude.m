@@ -151,6 +151,7 @@ static NSString *const APP_BUILD = @"app_build";
 
     NSString *_serverUrl;
     NSString *_token;
+    NSDictionary *_HTTPAdditionalHeaders;
     AMPPlan *_plan;
     AMPIngestionMetadata *_ingestionMetadata;
     AMPServerZone _serverZone;
@@ -1117,6 +1118,11 @@ static NSString *const APP_BUILD = @"app_build";
         [request setValue:auth forHTTPHeaderField:@"Authorization"];
     }
 
+    if (_HTTPAdditionalHeaders != nil){
+        [_HTTPAdditionalHeaders enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            [request setValue:obj forHTTPHeaderField:key];
+        }];
+    }
     [request setHTTPBody:postData];
     AMPLITUDE_LOG(@"Events: %@", events);
 
@@ -1581,6 +1587,10 @@ static NSString *const APP_BUILD = @"app_build";
     }
 
     self->_token = token;
+}
+
+- (void)setHTTPAdditionalHeaders: (NSDictionary *)HTTPAdditionalHeaders{
+    self->_HTTPAdditionalHeaders = HTTPAdditionalHeaders;
 }
 
 - (void)updateEventUploadMaxBatchSize:(int)eventUploadMaxBatchSize {
