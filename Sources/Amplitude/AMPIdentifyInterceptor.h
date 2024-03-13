@@ -29,7 +29,7 @@
 + (instancetype _Nonnull)getIdentifyInterceptor:(AMPDatabaseHelper *_Nonnull)dbHelper
                                 backgroundQueue:(NSOperationQueue *_Nonnull)backgroundQueue;
 
-- (NSMutableDictionary *_Nonnull)intercept:(NSMutableDictionary *_Nonnull)event;
+- (NSMutableDictionary *_Nullable)intercept:(NSMutableDictionary *_Nonnull)event;
 - (NSMutableDictionary *_Nullable)getCombinedInterceptedIdentify;
 - (void)transferInterceptedIdentify;
 - (BOOL)setInterceptedIdentifyUploadPeriodSeconds:(int)uploadPeriodSeconds;
