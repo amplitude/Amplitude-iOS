@@ -15,19 +15,19 @@ Pod::Spec.new do |s|
   
   s.ios.deployment_target  = '10.0'
   s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}'
-  s.ios.resources          = 'Sources/Resources/*.{der}'
+  s.ios.resources          = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
 
   s.tvos.deployment_target = '9.0'
   s.tvos.source_files      = 'Sources/Amplitude/**/*.{h,m}'
-  s.tvos.resources         = 'Sources/Resources/*.{der}'
+  s.tvos.resources         = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
 
   s.osx.deployment_target  = '10.10'
   s.osx.source_files       = 'Sources/Amplitude/**/*.{h,m}'
-  s.osx.resources          = 'Sources/Resources/*.{der}'
+  s.osx.resources          = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
 
   s.watchos.deployment_target  = '3.0'
   s.watchos.source_files       = 'Sources/Amplitude/**/*.{h,m}'
-  s.watchos.resources          = 'Sources/Resources/*.{der}'
+  s.watchos.resources          = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
   
   s.dependency 'AnalyticsConnector', '~> 1.0.0'
 

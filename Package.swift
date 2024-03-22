@@ -26,6 +26,7 @@ let package = Package(
             path: "Sources",
             resources: [
                 .process("Resources"),
+                .copy("PrivacyInfo.xcprivacy")
             ],
             publicHeadersPath: "Amplitude/Public"),
     ]
