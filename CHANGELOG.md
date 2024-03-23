@@ -1,3 +1,10 @@
+## [8.18.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.2...v8.18.3) (2024-03-23)
+
+
+### Bug Fixes
+
+* force push ([c4ffb7c](https://github.com/amplitude/Amplitude-iOS/commit/c4ffb7cbc296fc852752ac941131a6672acc0b16))
+
 ## [8.18.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.1...v8.18.2) (2024-03-12)
 
 
