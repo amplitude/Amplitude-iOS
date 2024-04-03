@@ -727,6 +727,13 @@ typedef void (^AMPInitCompletionBlock)(void);
 - (NSString *)getDeviceId;
 
 /**
+ Fetches the deviceId synchronously. This must be called after initialization, but will access the device ID from the storage or generate one if the asynchronous intialization function has not reached that point yet. The device ID is a unique identifier shared between multiple users using the same app on the same device.
+
+ @returns the deviceId.
+ */
+- (NSString *)getDeviceIdSync;
+
+/**
  Regenerates a new random deviceId for current user. Note: this is not recommended unless you know what you are doing. This can be used in conjunction with setUserId:nil to anonymize users after they log out. With a nil userId and a completely new deviceId, the current user would appear as a brand new user in dashboard.
 
  @see [Logging Out Users](https://github.com/amplitude/Amplitude-iOS#logging-out-and-anonymous-users)
