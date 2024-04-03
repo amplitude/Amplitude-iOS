@@ -1681,11 +1681,13 @@ static NSString *const APP_BUILD = @"app_build";
 }
 
 - (NSString *)initializeDeviceId {
-    if (self.deviceId == nil) {
-        self.deviceId = [self.dbHelper getValue:DEVICE_ID];
-        if (![self isValidDeviceId:self.deviceId]) {
-            self.deviceId = [self _getDeviceId];
-            [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self.deviceId];
+    @synchronized (self) {
+        if (self.deviceId == nil) {
+            self.deviceId = [self.dbHelper getValue:DEVICE_ID];
+            if (![self isValidDeviceId:self.deviceId]) {
+                self.deviceId = [self _getDeviceId];
+                [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self.deviceId];
+            }
         }
     }
     return self.deviceId;
