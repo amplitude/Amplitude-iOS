@@ -1170,11 +1170,6 @@
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> main
 - (void)testSetPlan {
     Amplitude *client = [Amplitude instanceWithName:@"observe_plan"];
     [client initializeApiKey:@"tracking_plan"];
