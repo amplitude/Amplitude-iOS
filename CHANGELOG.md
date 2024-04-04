@@ -1,3 +1,10 @@
+# [8.19.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.3...v8.19.0) (2024-04-04)
+
+
+### Features
+
+* add method to get device ID synchronously ([#490](https://github.com/amplitude/Amplitude-iOS/issues/490)) ([f5066b2](https://github.com/amplitude/Amplitude-iOS/commit/f5066b25a604518784f0e2c89de233afaa6d7fb5))
+
 ## [8.18.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.2...v8.18.3) (2024-03-23)
 
 
