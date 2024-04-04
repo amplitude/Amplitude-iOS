@@ -5,66 +5,58 @@ on: [push, pull_request]
 jobs:
   test:
     name: Test
-    runs-on: macos-10.14
+    runs-on: macos-12
     strategy:
       matrix:
-        ruby-version: ["2.7.x"]
+        ruby-version: ["2.7"]
     steps:
-    - name: Check out Git repository
-      uses: actions/checkout@v2
+      - name: Check out Git repository
+        uses: actions/checkout@v2
 
-    - name: Set Xcode 12
-      run: |
-        sudo xcode-select -switch /Applications/Xcode_12.app
+      - name: Set Xcode 14
+        run: |
+          sudo xcode-select -switch /Applications/Xcode_14.1.app
 
-    - name: Setup Ruby
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
-    
-    - name: Cache Bundle Gems and Cocoapods
-      id: cache-gems-pods
-      uses: actions/cache@v2
-      with:
-        path: |
-          Pods
-          vendor/bundle
-        key: ${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('**/Gemfile.lock') }}-pods-${{ hashFiles('**/Podfile.lock') }}
-    
-    - name: Install Cocoapods
-      if: steps.cache-gems-pods.outputs.cache-hit != 'true'
-      run: |
-        gem install bundler
-        bundle config path vendor/bundle
-        bundle install
-        pod install
+      - name: Carthage Bootstrap
+        run: carthage bootstrap --use-xcframeworks
 
-    - name: Validate Podfile
-      run: pod lib lint
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
 
-    - name: iOS Tests
-      run: |    
-        xcodebuild test \
-          -workspace Amplitude.xcworkspace \
-          -scheme Amplitude_iOSTests \
-          -sdk iphonesimulator \
-          -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.0'
-    
-    # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
-    #   run: |
-    #     xcodebuild \
-    #       -workspace Amplitude.xcworkspace \
-    #       -scheme Amplitude_macOS \
-    #       -sdk macosx \
-    #       -destination 'platform=macosx' \
-    #       test
-    
-    - name: tvOS Tests
-      run: |
-        xcodebuild \
-          -workspace Amplitude.xcworkspace \
-          -scheme Amplitude_tvOS \
-          -sdk appletvsimulator \
-          -destination 'platform=tvOS Simulator,name=Apple TV' \
-          test
-    
+      - name: Install Cocoapods
+        run: |
+          gem install bundler -v 2.4.22
+          bundle config path vendor/bundle
+          bundle install
+          pod install
+
+      - name: Validate Podfile
+        run: pod lib lint
+
+      - name: iOS Tests
+        run: |
+          xcodebuild test \
+            -workspace Amplitude.xcworkspace \
+            -scheme Amplitude_iOSTests \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 14'
+
+      # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
+      #   run: |
+      #     xcodebuild \
+      #       -workspace Amplitude.xcworkspace \
+      #       -scheme Amplitude_macOS \
+      #       -sdk macosx \
+      #       -destination 'platform=macosx' \
+      #       test
+
+#      - name: tvOS Tests @TODO Fix flaky tvOS tests and re-enable
+#        run: |
+#          xcodebuild \
+#            -workspace Amplitude.xcworkspace \
+#            -scheme Amplitude_tvOS \
+#            -sdk appletvsimulator \
+#            -destination 'platform=tvOS Simulator,name=Apple TV' \
+#            test

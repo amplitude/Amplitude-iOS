@@ -96,6 +96,18 @@
     return str;
 }
 
++ (NSMutableDictionary *)addNonNilEntriesToDictionary:(NSMutableDictionary *)destination fromDictionary:(NSDictionary *)source {
+    if (source != nil) {
+        for (NSString * key in [source allKeys]) {
+            if (![[source objectForKey:key] isKindOfClass:[NSNull class]]) {
+                [destination setObject:[source objectForKey:key] forKey:key];
+            }
+        }
+    }
+    
+    return destination;
+}
+
 + (BOOL)isEmptyString:(NSString *)str {
     return str == nil || [str isKindOfClass:[NSNull class]] || [str length] == 0;
 }
@@ -154,7 +166,7 @@
 #endif
 }
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 + (UIApplication *)getSharedApplication {
     Class UIApplicationClass = NSClassFromString(@"UIApplication");
     if (UIApplicationClass && [UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
@@ -187,9 +199,11 @@
 
 + (UIWindow *)getKeyWindow {
     if (@available(iOS 13.0, *)) {
-        for (UIWindow *window in [[AMPUtils getSharedApplication] windows]) {
-            if ([window isKeyWindow]) {
-                return window;
+        for (UIWindowScene *windowScene in [[AMPUtils getSharedApplication] connectedScenes]) {
+            for (UIWindow *window in [windowScene windows]) {
+                if ([window isKeyWindow]) {
+                    return window;
+                }
             }
         }
         return nil;
@@ -205,5 +219,22 @@
 }
 
 #endif
+
+// Helper function to get the environment variables
++ (NSDictionary<NSString *, NSString *> *)getEnvironment {
+    return [[NSProcessInfo processInfo] environment];
+}
+
+// Method to check if sandbox is enabled
++ (BOOL)isSandboxEnabled {
+    #if TARGET_OS_OSX
+        // Check if macOS app has "App Sandbox" enabled
+        NSDictionary<NSString *, NSString *> *environment = [self getEnvironment];
+        return environment[@"APP_SANDBOX_CONTAINER_ID"] != nil;
+    #else
+        // Other platforms (iOS, tvOS, watchOS) are sandboxed by default
+        return YES;
+    #endif
+}
 
 @end

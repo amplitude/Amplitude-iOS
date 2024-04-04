@@ -30,8 +30,12 @@ extern NSString *const kAMPUnknownVersion;
 extern NSString *const kAMPPlatform;
 extern NSString *const kAMPOSName;
 extern NSString *const kAMPEventLogDomain;
+extern NSString *const kAMPEventLogEuDomain;
 extern NSString *const kAMPEventLogUrl;
+extern NSString *const kAMPEventLogEuUrl;
+extern NSString *const kAMPContentTypeHeader;
 extern NSString *const kAMPDyanmicConfigUrl;
+extern NSString *const kAMPDyanmicConfigEuUrl;
 extern NSString *const kAMPDefaultInstance;
 extern const int kAMPApiVersion;
 extern const int kAMPDBVersion;
@@ -41,6 +45,8 @@ extern const int kAMPEventUploadMaxBatchSize;
 extern const int kAMPEventMaxCount;
 extern const int kAMPEventRemoveBatchSize;
 extern const int kAMPEventUploadPeriodSeconds;
+extern const int kAMPIdentifyUploadPeriodSeconds;
+extern const int kAMPMinIdentifyUploadPeriodSeconds;
 extern const long kAMPMinTimeBetweenSessionsMillis;
 extern const int kAMPMaxStringLength;
 extern const int kAMPMaxPropertyKeys;
@@ -54,6 +60,9 @@ extern NSString *const AMP_OP_PREPEND;
 extern NSString *const AMP_OP_SET;
 extern NSString *const AMP_OP_SET_ONCE;
 extern NSString *const AMP_OP_UNSET;
+extern NSString *const AMP_OP_PREINSERT;
+extern NSString *const AMP_OP_POSTINSERT;
+extern NSString *const AMP_OP_REMOVE;
 
 // Revenue
 extern NSString *const AMP_REVENUE_PRODUCT_ID;
@@ -79,3 +88,33 @@ extern NSString *const AMP_TRACKING_OPTION_OS_VERSION;
 extern NSString *const AMP_TRACKING_OPTION_PLATFORM;
 extern NSString *const AMP_TRACKING_OPTION_REGION;
 extern NSString *const AMP_TRACKING_OPTION_VERSION_NAME;
+
+// Plan
+extern NSString *const AMP_PLAN_BRANCH;
+extern NSString *const AMP_PLAN_SOURCE;
+extern NSString *const AMP_PLAN_VERSION;
+extern NSString *const AMP_PLAN_VERSION_ID;
+
+// Ingestion Metadata
+extern NSString *const AMP_INGESTION_METADATA_SOURCE_NAME;
+extern NSString *const AMP_INGESTION_METADATA_SOURCE_VERSION;
+
+// Events
+extern NSString *const kAMPSessionStartEvent;
+extern NSString *const kAMPSessionEndEvent;
+extern NSString *const kAMPApplicationInstalled;
+extern NSString *const kAMPApplicationUpdated;
+extern NSString *const kAMPApplicationOpened;
+extern NSString *const kAMPApplicationBackgrounded;
+extern NSString *const kAMPDeepLinkOpened;
+extern NSString *const kAMPScreenViewed;
+extern NSString *const kAMPRevenueEvent;
+
+extern NSString *const kAMPEventPropVersion;
+extern NSString *const kAMPEventPropBuild;
+extern NSString *const kAMPEventPropPreviousVersion;
+extern NSString *const kAMPEventPropPreviousBuild;
+extern NSString *const kAMPEventPropFromBackground;
+extern NSString *const kAMPEventPropLinkUrl;
+extern NSString *const kAMPEventPropLinkReferrer;
+extern NSString *const kAMPEventPropScreenName;

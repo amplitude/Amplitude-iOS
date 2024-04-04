@@ -1,4 +1,4 @@
-amplitude_version = "7.2.2" # Version is managed automatically by semantic-release, please don't change it manually
+amplitude_version = "8.19.0" # Version is managed automatically by semantic-release, please don't change it manually
 
 Pod::Spec.new do |s|
   s.name                   = "Amplitude"
@@ -10,16 +10,26 @@ Pod::Spec.new do |s|
   s.source                 = { :git => "https://github.com/amplitude/Amplitude-iOS.git", :tag => "v#{s.version}" }
   s.requires_arc           = true
   s.library                = 'sqlite3.0'
+
+  s.swift_version = '4.1'
   
   s.ios.deployment_target  = '10.0'
-  s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}', 'Sources/EventExplorer/**/*.{h,m}'
-  s.ios.resources          = 'Sources/Amplitude/**/*.{der,xib,png}', 'Sources/EventExplorer/**/*.{der,xib,png}'
+  s.ios.source_files       = 'Sources/Amplitude/**/*.{h,m}'
+  s.ios.resources          = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
 
   s.tvos.deployment_target = '9.0'
   s.tvos.source_files      = 'Sources/Amplitude/**/*.{h,m}'
-  s.tvos.resources         = 'Sources/Amplitude/**/*.{der}'
+  s.tvos.resources         = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
 
   s.osx.deployment_target  = '10.10'
   s.osx.source_files       = 'Sources/Amplitude/**/*.{h,m}'
-  s.osx.resources          = 'Sources/Amplitude/**/*.{der}'
+  s.osx.resources          = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
+
+  s.watchos.deployment_target  = '3.0'
+  s.watchos.source_files       = 'Sources/Amplitude/**/*.{h,m}'
+  s.watchos.resources          = 'Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'
+  
+  s.dependency 'AnalyticsConnector', '~> 1.0.0'
+
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end

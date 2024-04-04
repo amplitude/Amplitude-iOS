@@ -1,3 +1,322 @@
+# [8.19.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.3...v8.19.0) (2024-04-04)
+
+
+### Features
+
+* add method to get device ID synchronously ([#490](https://github.com/amplitude/Amplitude-iOS/issues/490)) ([f5066b2](https://github.com/amplitude/Amplitude-iOS/commit/f5066b25a604518784f0e2c89de233afaa6d7fb5))
+
+## [8.18.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.2...v8.18.3) (2024-03-23)
+
+
+### Bug Fixes
+
+* force push ([c4ffb7c](https://github.com/amplitude/Amplitude-iOS/commit/c4ffb7cbc296fc852752ac941131a6672acc0b16))
+
+## [8.18.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.1...v8.18.2) (2024-03-12)
+
+
+### Bug Fixes
+
+* Force push version ([#486](https://github.com/amplitude/Amplitude-iOS/issues/486)) ([bec3731](https://github.com/amplitude/Amplitude-iOS/commit/bec3731423159375d14d5241993dee41c0afed61))
+
+## [8.18.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.0...v8.18.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* Copy extra params to prevent deallocation ([#483](https://github.com/amplitude/Amplitude-iOS/issues/483)) ([6cfed00](https://github.com/amplitude/Amplitude-iOS/commit/6cfed00a42db3d1eaf28bd804709fe2290c2a0bc))
+
+# [8.18.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.2...v8.18.0) (2024-02-08)
+
+
+### Bug Fixes
+
+* fix for release pipeline ([#478](https://github.com/amplitude/Amplitude-iOS/issues/478)) ([324aced](https://github.com/amplitude/Amplitude-iOS/commit/324acedfadc4e20be473474aab9aa0c2c44565f8))
+* fix for when macos sandbox disabled ([#477](https://github.com/amplitude/Amplitude-iOS/issues/477)) ([e148734](https://github.com/amplitude/Amplitude-iOS/commit/e148734de89b9cea0255f46c358f763eda283386))
+
+
+### Features
+
+* add privacy manifest for iOS 17 ([#476](https://github.com/amplitude/Amplitude-iOS/issues/476)) ([007e169](https://github.com/amplitude/Amplitude-iOS/commit/007e169949fbda9c0576f4ee5e724d880153c96b))
+
+## [8.17.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.1...v8.17.2) (2023-09-15)
+
+
+### Bug Fixes
+
+* fix the compatible issue with macOSSonoma ([#463](https://github.com/amplitude/Amplitude-iOS/issues/463)) ([fd9495f](https://github.com/amplitude/Amplitude-iOS/commit/fd9495f7c3cfcd13047b36b0cebc81bdc0e62731))
+
+## [8.17.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.17.0...v8.17.1) (2023-07-06)
+
+
+### Bug Fixes
+
+* remove MD5 usage ([#456](https://github.com/amplitude/Amplitude-iOS/issues/456)) ([4e2d35f](https://github.com/amplitude/Amplitude-iOS/commit/4e2d35fba1081ebd21124b8a8d3998509129be54))
+
+# [8.17.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.4...v8.17.0) (2023-07-05)
+
+
+### Features
+
+* add default events ([#455](https://github.com/amplitude/Amplitude-iOS/issues/455)) ([9bf9664](https://github.com/amplitude/Amplitude-iOS/commit/9bf9664199d9c5ea7367205180e9ee3c52a9aaa7))
+
+## [8.16.4](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.3...v8.16.4) (2023-06-22)
+
+
+### Bug Fixes
+
+* avoid global variables in AMPIdentifyInterceptor to fix missing user properties updates ([#445](https://github.com/amplitude/Amplitude-iOS/issues/445)) ([eb820a2](https://github.com/amplitude/Amplitude-iOS/commit/eb820a254f1e13b617d3c81209f0b307a1f5de8e))
+
+## [8.16.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.2...v8.16.3) (2023-06-15)
+
+
+### Bug Fixes
+
+* malloc -> calloc to fix CWE-789 vulnerability ([#449](https://github.com/amplitude/Amplitude-iOS/issues/449)) ([3793d58](https://github.com/amplitude/Amplitude-iOS/commit/3793d58ec1b4091742efa5d01aeffb5e20c67646))
+
+## [8.16.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.1...v8.16.2) (2023-06-14)
+
+
+### Bug Fixes
+
+* bump dependencies to fix cocoapods vulnerability ([#448](https://github.com/amplitude/Amplitude-iOS/issues/448)) ([a57f4dc](https://github.com/amplitude/Amplitude-iOS/commit/a57f4dcda90760c7e8244496717155d196f6a9b2))
+
+## [8.16.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.16.0...v8.16.1) (2023-05-30)
+
+
+### Bug Fixes
+
+* set _inForeground value earlier ([#433](https://github.com/amplitude/Amplitude-iOS/issues/433)) ([3cee4c2](https://github.com/amplitude/Amplitude-iOS/commit/3cee4c2db581ec8be5cbbf9e44d58e4a0b486504))
+* sudo rm appledoc ([#444](https://github.com/amplitude/Amplitude-iOS/issues/444)) ([53ba490](https://github.com/amplitude/Amplitude-iOS/commit/53ba490e3b93de95af6164b14e29563531338522))
+* XCode 14 fixes - update iPhone targets to 11, MacOS to 10.15, appledoc ([#442](https://github.com/amplitude/Amplitude-iOS/issues/442)) ([5c15979](https://github.com/amplitude/Amplitude-iOS/commit/5c159794dfcb2f14828c892ac3a5fefbb8226c25))
+
+# [8.16.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.2...v8.16.0) (2023-04-26)
+
+
+### Bug Fixes
+
+* update identify collapsing logic to send actions on separate identify event ([#437](https://github.com/amplitude/Amplitude-iOS/issues/437)) ([9fb64c3](https://github.com/amplitude/Amplitude-iOS/commit/9fb64c30bb65aff375969b8f23119310d51b8a28))
+* updated identify merging logic to ignore nil values ([#434](https://github.com/amplitude/Amplitude-iOS/issues/434)) ([8e1239c](https://github.com/amplitude/Amplitude-iOS/commit/8e1239c369e0dfe4c26f2dce1b05d093f6e18aff))
+
+
+### Features
+
+* update back off for rate limit ([#436](https://github.com/amplitude/Amplitude-iOS/issues/436)) ([9fc1ba9](https://github.com/amplitude/Amplitude-iOS/commit/9fc1ba9bcec8b7df3d80f9ec28edff40033d237e))
+
+## [8.15.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.1...v8.15.2) (2023-03-08)
+
+
+### Bug Fixes
+
+* fix os version ([#430](https://github.com/amplitude/Amplitude-iOS/issues/430)) ([23fcf7d](https://github.com/amplitude/Amplitude-iOS/commit/23fcf7d798c2c94cdba39489f72d9032388058ba))
+
+## [8.15.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.15.0...v8.15.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* transfer intercepted Identify's on user identity change ([#427](https://github.com/amplitude/Amplitude-iOS/issues/427)) ([3279b78](https://github.com/amplitude/Amplitude-iOS/commit/3279b787d531a474f70b833c36f52beafb3c7f18))
+
+# [8.15.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.14.1...v8.15.0) (2023-02-15)
+
+
+### Features
+
+* AMP-66570 added IdentifyInterceptor ([#423](https://github.com/amplitude/Amplitude-iOS/issues/423)) ([0c7f0d4](https://github.com/amplitude/Amplitude-iOS/commit/0c7f0d4e7e3c41a1b71bee960127b69e5baf278a))
+
+## [8.14.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.14.0...v8.14.1) (2023-02-08)
+
+
+### Bug Fixes
+
+* response handler when 200 and various errors ([#424](https://github.com/amplitude/Amplitude-iOS/issues/424)) ([74c9e57](https://github.com/amplitude/Amplitude-iOS/commit/74c9e5721cc6d4849eed5c55470a8437ad1ad987))
+
+# [8.14.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.13.0...v8.14.0) (2022-10-05)
+
+
+### Features
+
+* add possibility to manually check in foreground ([#414](https://github.com/amplitude/Amplitude-iOS/issues/414)) ([9b8ada6](https://github.com/amplitude/Amplitude-iOS/commit/9b8ada694c212ba3f67a59467f6b924d03d622eb))
+
+# [8.13.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.12.0...v8.13.0) (2022-09-08)
+
+
+### Features
+
+* add ingestion_metadata field ([#410](https://github.com/amplitude/Amplitude-iOS/issues/410)) ([49e1126](https://github.com/amplitude/Amplitude-iOS/commit/49e1126213d4b4cc9010d1bf32e4dec3a2855698))
+
+# [8.12.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.11.1...v8.12.0) (2022-08-10)
+
+
+### Features
+
+* expose more function signature for logEvent ([#409](https://github.com/amplitude/Amplitude-iOS/issues/409)) ([c6195f8](https://github.com/amplitude/Amplitude-iOS/commit/c6195f85a3a2aa6a786485c0f5a8fa545e26acb6))
+
+## [8.11.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.11.0...v8.11.1) (2022-07-31)
+
+
+### Bug Fixes
+
+* turn requiringSecureCoding on, adjust the available version ([#407](https://github.com/amplitude/Amplitude-iOS/issues/407)) ([53d7026](https://github.com/amplitude/Amplitude-iOS/commit/53d7026d75bbf87967576fb98d36d16f84a4def0))
+
+# [8.11.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.2...v8.11.0) (2022-07-19)
+
+
+### Bug Fixes
+
+* deprecation fix ([#404](https://github.com/amplitude/Amplitude-iOS/issues/404)) ([2f1203c](https://github.com/amplitude/Amplitude-iOS/commit/2f1203c18f5e50d2a4699f93aadb9218e3c7df1c))
+
+
+### Features
+
+* add EU SSL pinning cert, extent it to support multiple domains ([#403](https://github.com/amplitude/Amplitude-iOS/issues/403)) ([aba104d](https://github.com/amplitude/Amplitude-iOS/commit/aba104d98f51b04481046cc4228cea1529139bd8))
+
+## [8.10.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.1...v8.10.2) (2022-06-21)
+
+
+### Reverts
+
+* Revert "Compile with code coverage enabled (#398)" (#402) ([bd00ae5](https://github.com/amplitude/Amplitude-iOS/commit/bd00ae527e154204eccbde595f9c7bdf4aec982a)), closes [#398](https://github.com/amplitude/Amplitude-iOS/issues/398) [#402](https://github.com/amplitude/Amplitude-iOS/issues/402)
+
+## [8.10.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.10.0...v8.10.1) (2022-06-15)
+
+
+### Bug Fixes
+
+* wrong carrier info with deprecated method ([#400](https://github.com/amplitude/Amplitude-iOS/issues/400)) ([2af05da](https://github.com/amplitude/Amplitude-iOS/commit/2af05da0651cf032aee394e471349ad9ce5587df))
+
+# [8.10.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.9.0...v8.10.0) (2022-03-31)
+
+
+### Features
+
+* Add versionId to tracking plan data ([#392](https://github.com/amplitude/Amplitude-iOS/issues/392)) ([a09f022](https://github.com/amplitude/Amplitude-iOS/commit/a09f02230a76b85ce3e12400cf6613cd03a68ab0))
+
+# [8.9.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.8.0...v8.9.0) (2022-03-30)
+
+
+### Bug Fixes
+
+* fix release action ([5eb7ee6](https://github.com/amplitude/Amplitude-iOS/commit/5eb7ee6c363c8c6c11cab965cdd0201e581d8843))
+
+
+### Features
+
+* Add support on Swift Package Manager for WatchOS ([#381](https://github.com/amplitude/Amplitude-iOS/issues/381)) ([74d3227](https://github.com/amplitude/Amplitude-iOS/commit/74d3227cf5b069bac45f6e26d1c7e357bc0bb936))
+
+# [8.8.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.2...v8.8.0) (2022-02-10)
+
+
+### Bug Fixes
+
+* update swift package to support connector package ([#383](https://github.com/amplitude/Amplitude-iOS/issues/383)) ([95501aa](https://github.com/amplitude/Amplitude-iOS/commit/95501aa6f1938cf40bb5f22abfa76dfea7b87843))
+
+
+### Features
+
+* Support seamless integration with amplitude experiment SDK ([#378](https://github.com/amplitude/Amplitude-iOS/issues/378)) ([26e7830](https://github.com/amplitude/Amplitude-iOS/commit/26e78304f6436d6c1aefd2065936a6c7e8576978))
+
+## [8.7.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.1...v8.7.2) (2022-01-23)
+
+
+### Bug Fixes
+
+* show correct device info for ios app runs on M1 mac ([#379](https://github.com/amplitude/Amplitude-iOS/issues/379)) ([7a75adb](https://github.com/amplitude/Amplitude-iOS/commit/7a75adbee74aad675a50a7b7006b2952c11a73f0))
+
+## [8.7.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.7.0...v8.7.1) (2021-12-22)
+
+
+### Bug Fixes
+
+* fix method for swift ([#377](https://github.com/amplitude/Amplitude-iOS/issues/377)) ([293f665](https://github.com/amplitude/Amplitude-iOS/commit/293f665ffba077c9c90199c1ca856f775c0ca540))
+
+# [8.7.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.6.0...v8.7.0) (2021-12-17)
+
+
+### Features
+
+* public the setEventUploadMaxBatchSize api ([#376](https://github.com/amplitude/Amplitude-iOS/issues/376)) ([86b8ea9](https://github.com/amplitude/Amplitude-iOS/commit/86b8ea9aad3e4e9835f116fd247726a1b6eb37dc))
+
+# [8.6.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.5.0...v8.6.0) (2021-12-08)
+
+
+### Bug Fixes
+
+* Add watchOS scheme for building with Carthage ([#351](https://github.com/amplitude/Amplitude-iOS/issues/351)) ([4b893a8](https://github.com/amplitude/Amplitude-iOS/commit/4b893a8423316dc1053bfd33db6c5997f5332c93))
+
+
+### Features
+
+* add middleware support ([#371](https://github.com/amplitude/Amplitude-iOS/issues/371)) ([02a0994](https://github.com/amplitude/Amplitude-iOS/commit/02a09945be92d9334140a69f8b4b7b7f25d1643d))
+
+# [8.5.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.4.0...v8.5.0) (2021-10-22)
+
+
+### Features
+
+* add server zone for eu dynamic configuration support ([#369](https://github.com/amplitude/Amplitude-iOS/issues/369)) ([3c9a590](https://github.com/amplitude/Amplitude-iOS/commit/3c9a590a7fd4fa60445ba8d65915a41737877b94))
+
+# [8.4.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.1...v8.4.0) (2021-09-24)
+
+
+### Features
+
+* add observe plan information support ([62e8bab](https://github.com/amplitude/Amplitude-iOS/commit/62e8bab0a2d53cabda9f251454d465d350271a56))
+
+## [8.3.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.3.0...v8.3.1) (2021-08-21)
+
+
+### Bug Fixes
+
+* rename to initCompletionBlock ([f43a86c](https://github.com/amplitude/Amplitude-iOS/commit/f43a86c576af02957cacae3aac96fabba9c71450))
+
+# [8.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.1...v8.3.0) (2021-04-30)
+
+
+### Bug Fixes
+
+* fix umbrella header warning ([#346](https://github.com/amplitude/Amplitude-iOS/issues/346)) ([f5d10f7](https://github.com/amplitude/Amplitude-iOS/commit/f5d10f751402e91492c74558dc5da49c90c7c427))
+
+
+### Features
+
+* Add preInsert, postInsert and remove functions to Identify and Group Identify ([#338](https://github.com/amplitude/Amplitude-iOS/issues/338)) ([4cc28bf](https://github.com/amplitude/Amplitude-iOS/commit/4cc28bf3950d5aa91f0a3a494bd1318da8119d6c))
+
+## [8.2.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.2.0...v8.2.1) (2021-04-01)
+
+
+### Bug Fixes
+
+* Cocoapods resources directory path fix ([#336](https://github.com/amplitude/Amplitude-iOS/issues/336)) ([8680587](https://github.com/amplitude/Amplitude-iOS/commit/8680587c9fd3e207c974d55c2f907d026e1f6ccd))
+
+# [8.2.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.1.0...v8.2.0) (2021-03-18)
+
+
+### Features
+
+* **podspec:** Add defines modules to podspec for React Native support ([#331](https://github.com/amplitude/Amplitude-iOS/issues/331)) ([e7d1257](https://github.com/amplitude/Amplitude-iOS/commit/e7d1257ea025f08d82e76f6809a9fa671e9672af))
+
+# [8.1.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.0.0...v8.1.0) (2021-03-16)
+
+
+### Features
+
+* Add support for watchOS ([#330](https://github.com/amplitude/Amplitude-iOS/issues/330)) ([9db310a](https://github.com/amplitude/Amplitude-iOS/commit/9db310a91e264ab84a3bcc871818da9d031300bf))
+
+# [8.0.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.3.0...v8.0.0) (2021-03-06)
+
+
+### Bug Fixes
+
+* Removes event explorer to fix problems with swift package manager import ([#329](https://github.com/amplitude/Amplitude-iOS/issues/329)) ([11022b8](https://github.com/amplitude/Amplitude-iOS/commit/11022b89f344d85bef5530e37c2e844ede1950f3))
+
+# [7.3.0](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.2...v7.3.0) (2021-02-22)
+
+
+### Features
+
+* Set content-type header for HTTP requests ([#328](https://github.com/amplitude/Amplitude-iOS/issues/328)) ([21f138c](https://github.com/amplitude/Amplitude-iOS/commit/21f138c3886e781004f6604ba6b1e1f07dfdb9a4))
+
 ## [7.2.2](https://github.com/amplitude/Amplitude-iOS/compare/v7.2.1...v7.2.2) (2020-12-23)
 
 

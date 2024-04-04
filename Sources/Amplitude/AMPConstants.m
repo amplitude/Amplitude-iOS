@@ -24,15 +24,19 @@
 #import "AMPConstants.h"
 
 NSString *const kAMPLibrary = @"amplitude-ios";
-NSString *const kAMPVersion = @"7.2.2"; // Version is managed automatically by semantic-release, please don't change it manually
+NSString *const kAMPVersion = @"8.19.0"; // Version is managed automatically by semantic-release, please don't change it manually
 NSString *const kAMPUnknownLibrary = @"unknown-library";
 NSString *const kAMPUnknownVersion = @"unknown-version";
 NSString *const kAMPEventLogDomain = @"api2.amplitude.com";
+NSString *const kAMPEventLogEuDomain = @"api.eu.amplitude.com";
 NSString *const kAMPEventLogUrl = @"https://api2.amplitude.com/";
+NSString *const kAMPEventLogEuUrl = @"https://api.eu.amplitude.com/";
+NSString *const kAMPContentTypeHeader = @"application/x-www-form-urlencoded";
 NSString *const kAMPDyanmicConfigUrl = @"https://regionconfig.amplitude.com/";
+NSString *const kAMPDyanmicConfigEuUrl = @"https://regionconfig.eu.amplitude.com/";
 NSString *const kAMPDefaultInstance = @"$default_instance";
 const int kAMPApiVersion = 3;
-const int kAMPDBVersion = 3;
+const int kAMPDBVersion = 4;
 const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
 
 #if TARGET_OS_OSX
@@ -50,6 +54,11 @@ const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
     const int kAMPEventMaxCount = 1000;
     NSString *const kAMPPlatform = @"macOS";
     NSString *const kAMPOSName = @"macos";
+#elif TARGET_OS_WATCH // watchOS, simulator, etc.
+    const int kAMPEventUploadThreshold = 30;
+    const int kAMPEventMaxCount = 1000;
+    NSString *const kAMPPlatform = @"watchOS";
+    NSString *const kAMPOSName = @"watchos";
 #else // iOS, simulator, etc.
     const int kAMPEventUploadThreshold = 30;
     const int kAMPEventMaxCount = 1000;
@@ -60,6 +69,8 @@ const int kAMPDBFirstVersion = 2; // to detect if DB exists yet
 const int kAMPEventUploadMaxBatchSize = 100;
 const int kAMPEventRemoveBatchSize = 20;
 const int kAMPEventUploadPeriodSeconds = 30; // 30 seconds
+const int kAMPIdentifyUploadPeriodSeconds = 30; // 30 seconds
+const int kAMPMinIdentifyUploadPeriodSeconds = 30; // 30 seconds
 const long kAMPMinTimeBetweenSessionsMillis = 5 * 60 * 1000; // 5 minutes
 const int kAMPMaxStringLength = 1024;
 const int kAMPMaxPropertyKeys = 1000;
@@ -73,6 +84,9 @@ NSString *const AMP_OP_PREPEND = @"$prepend";
 NSString *const AMP_OP_SET = @"$set";
 NSString *const AMP_OP_SET_ONCE = @"$setOnce";
 NSString *const AMP_OP_UNSET = @"$unset";
+NSString *const AMP_OP_PREINSERT = @"$preInsert";
+NSString *const AMP_OP_POSTINSERT = @"$postInsert";
+NSString *const AMP_OP_REMOVE = @"$remove";
 
 NSString *const AMP_REVENUE_PRODUCT_ID = @"$productId";
 NSString *const AMP_REVENUE_QUANTITY = @"$quantity";
@@ -96,3 +110,31 @@ NSString *const AMP_TRACKING_OPTION_OS_VERSION = @"os_version";
 NSString *const AMP_TRACKING_OPTION_PLATFORM = @"platform";
 NSString *const AMP_TRACKING_OPTION_REGION = @"region";
 NSString *const AMP_TRACKING_OPTION_VERSION_NAME = @"version_name";
+
+NSString *const AMP_PLAN_BRANCH = @"branch";
+NSString *const AMP_PLAN_SOURCE = @"source";
+NSString *const AMP_PLAN_VERSION = @"version";
+NSString *const AMP_PLAN_VERSION_ID = @"versionId";
+
+NSString *const AMP_INGESTION_METADATA_SOURCE_NAME = @"source_name";
+NSString *const AMP_INGESTION_METADATA_SOURCE_VERSION = @"source_version";
+
+// Amplitude Events
+NSString *const kAMPSessionStartEvent = @"session_start";
+NSString *const kAMPSessionEndEvent = @"session_end";
+NSString *const kAMPApplicationInstalled = @"[Amplitude] Application Installed";
+NSString *const kAMPApplicationUpdated = @"[Amplitude] Application Updated";
+NSString *const kAMPApplicationOpened = @"[Amplitude] Application Opened";
+NSString *const kAMPApplicationBackgrounded = @"[Amplitude] Application Backgrounded";
+NSString *const kAMPDeepLinkOpened = @"[Amplitude] Deep Link Opened";
+NSString *const kAMPScreenViewed = @"[Amplitude] Screen Viewed";
+NSString *const kAMPRevenueEvent = @"revenue_amount";
+
+NSString *const kAMPEventPropVersion = @"[Amplitude] Version";
+NSString *const kAMPEventPropBuild = @"[Amplitude] Build";
+NSString *const kAMPEventPropPreviousVersion = @"[Amplitude] Previous Version";
+NSString *const kAMPEventPropPreviousBuild = @"[Amplitude] Previous Build";
+NSString *const kAMPEventPropFromBackground = @"[Amplitude] From Background";
+NSString *const kAMPEventPropLinkUrl = @"[Amplitude] Link URL";
+NSString *const kAMPEventPropLinkReferrer = @"[Amplitude] Link Referrer";
+NSString *const kAMPEventPropScreenName = @"[Amplitude] Screen Name";

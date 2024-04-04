@@ -22,7 +22,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 #import <UIKit/UIKit.h>
 #endif
 
@@ -30,11 +30,14 @@
 
 + (NSString *)generateUUID;
 + (id)makeJSONSerializable:(id)obj;
++ (NSMutableDictionary *)addNonNilEntriesToDictionary:(NSMutableDictionary *)destination fromDictionary:(NSDictionary *)source;
 + (BOOL)isEmptyString:(NSString *)str;
 + (NSDictionary *)validateGroups:(NSDictionary *)obj;
 + (NSString *)platformDataDirectory;
++ (NSDictionary<NSString *, NSString *> *)getEnvironment;
++ (BOOL)isSandboxEnabled;
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 + (UIApplication *)getSharedApplication;
 #endif
 

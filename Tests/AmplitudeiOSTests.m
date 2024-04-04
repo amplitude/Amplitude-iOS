@@ -53,7 +53,7 @@
 
 - (void)testLogEventUploadLogic {
     NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
-                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                            @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:400 HTTPVersion:nil headerFields:@{}],
                                             @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
                                             }];
 
@@ -67,6 +67,7 @@
     // no sent events, event count will be threshold + 1
     XCTAssertEqual([self.amplitude queuedEventCount], kAMPEventUploadThreshold + 1);
 
+    [serverResponse setValue:[[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:500 HTTPVersion:nil headerFields:@{}] forKey:@"response"];
     [serverResponse setValue:[@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding] forKey:@"data"];
     [self setupAsyncResponse:serverResponse];
     for (int i = 0; i < kAMPEventUploadThreshold; i++) {

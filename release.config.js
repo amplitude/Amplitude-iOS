@@ -1,5 +1,5 @@
 module.exports = {
-  "branches": ["master"],
+  "branches": ["main", "main-lts"],
   "plugins": [
     ["@semantic-release/commit-analyzer", {
       "preset": "angular",
@@ -55,7 +55,7 @@ module.exports = {
     }],
     ["@semantic-release/exec", {
       "publishCmd": "pod trunk push Amplitude.podspec",
-      "successCmd": "appledoc . && rsync -av doc/html/*  Amplitude-iOS-gh-pages/ && cd Amplitude-iOS-gh-pages && git commit -am '${nextRelease.version}' && git push"
+      "successCmd": "appledoc . && rsync -av doc/html/*  Amplitude-iOS-gh-pages/ && cd Amplitude-iOS-gh-pages && git add . && git commit -am '${nextRelease.version}' && git push"
     }],
   ],
 }

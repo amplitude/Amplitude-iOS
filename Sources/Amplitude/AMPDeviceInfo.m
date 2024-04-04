@@ -28,7 +28,9 @@
 #import <sys/sysctl.h>
 #import <sys/types.h>
 
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+#import <WatchKit/WatchKit.h>
+#elif !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
 #else
 #import <Cocoa/Cocoa.h>
@@ -72,7 +74,9 @@
 
 - (NSString *)osVersion {
     if (!_osVersion) {
-        #if !TARGET_OS_OSX
+        #if TARGET_OS_WATCH
+        _osVersion = [[WKInterfaceDevice currentDevice] systemVersion];
+        #elif !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
         _osVersion = [[UIDevice currentDevice] systemVersion];
         #else
         NSOperatingSystemVersion systemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
@@ -97,26 +101,48 @@
 }
 
 - (NSString *)carrier {
+    // unable to fetch carrier information
     if (!_carrier) {
-        Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
+        _carrier = @"Unknown";
+    }
+
+    Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
+    if (!CTTelephonyNetworkInfo) {
+        return _carrier;
+    }
+    if (networkInfo == nil) {
+        networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+    }
+    id carrier = nil;
+    SEL carrierName = NSSelectorFromString(@"carrierName");
+
+    // subscriberCellularProvider is deprecated after iOS 12.0
+    if (@available(iOS 12, *)) {
+        SEL serviceSubscriberCellularProviders = NSSelectorFromString(@"serviceSubscriberCellularProviders");
+        id carrierMap = nil;
+        id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:serviceSubscriberCellularProviders];
+        if (imp1) {
+            carrierMap = imp1(networkInfo, serviceSubscriberCellularProviders);
+        }
+        SEL mobileNetworkCode = NSSelectorFromString(@"mobileNetworkCode");
+        for (NSString* key in carrierMap){
+            NSString *(*getMobileNetworkCode)(id, SEL) = (NSString *(*)(id, SEL))[carrierMap[key] methodForSelector:mobileNetworkCode];
+            if (getMobileNetworkCode && getMobileNetworkCode(carrierMap[key], mobileNetworkCode) != nil){
+                carrier = carrierMap[key];
+                // exit early as we found a carrier here
+                break;
+            }
+        }
+    } else {
         SEL subscriberCellularProvider = NSSelectorFromString(@"subscriberCellularProvider");
-        SEL carrierName = NSSelectorFromString(@"carrierName");
-        if (CTTelephonyNetworkInfo && subscriberCellularProvider && carrierName) {
-            networkInfo = [[NSClassFromString(@"CTTelephonyNetworkInfo") alloc] init];
-            id carrier = nil;
-            id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
-            if (imp1) {
-                carrier = imp1(networkInfo, subscriberCellularProvider);
-            }
-            NSString *(*imp2)(id, SEL) = (NSString *(*)(id, SEL))[carrier methodForSelector:carrierName];
-            if (imp2) {
-                _carrier = imp2(carrier, carrierName);
-            }
+        id (*imp1)(id, SEL) = (id (*)(id, SEL))[networkInfo methodForSelector:subscriberCellularProvider];
+        if (imp1) {
+            carrier = imp1(networkInfo, subscriberCellularProvider);
         }
-        // unable to fetch carrier information
-        if (!_carrier) {
-            _carrier = @"Unknown";
-        }
+    }
+    NSString *(*imp2)(id, SEL) = (NSString *(*)(id, SEL))[carrier methodForSelector:carrierName];
+    if (imp2) {
+        _carrier = imp2(carrier, carrierName);
     }
     return _carrier;
 }
@@ -139,7 +165,7 @@
 
 - (NSString *)vendorID {
     if (!_vendorID) {
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
         if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0) {
 #endif
             NSString *identifierForVendor = [AMPDeviceInfo getVendorID:5];
@@ -148,14 +174,22 @@
                 _vendorID = identifierForVendor;
             }
         }
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     }
 #endif
     return _vendorID;
 }
 
 + (NSString *)getVendorID:(int)maxAttempts {
-#if !TARGET_OS_OSX
+#if TARGET_OS_WATCH
+    NSString *identifier;
+    if (@available(watchOS 6.2, *)) {
+        identifier = [[[WKInterfaceDevice currentDevice] identifierForVendor] UUIDString];
+    } else {
+        // Identifier for vendor is not available on this version.
+        identifier = [[NSUUID UUID] UUIDString];
+    }
+#elif !TARGET_OS_OSX
     NSString *identifier = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
 #else
     NSString *identifier = [self getMacAddress];
@@ -176,14 +210,21 @@
 }
 
 + (NSString *)getPlatformString {
-#if !TARGET_OS_OSX
-    const char *sysctl_name = "hw.machine";
-#else
     const char *sysctl_name = "hw.model";
+#if TARGET_OS_IOS
+    BOOL isiOSAppOnMac = NO;
+    if (@available(iOS 14.0, *)) {
+        isiOSAppOnMac = [NSProcessInfo processInfo].isiOSAppOnMac;
+    }
+    if (!isiOSAppOnMac){
+        sysctl_name = "hw.machine";
+    }
+#elif TARGET_OS_TV || TARGET_OS_WATCH
+    sysctl_name = "hw.machine";
 #endif
     size_t size;
     sysctlbyname(sysctl_name, NULL, &size, NULL, 0);
-    char *machine = malloc(size);
+    char *machine = calloc(1, size);
     sysctlbyname(sysctl_name, machine, &size, NULL, 0);
     NSString *platform = [NSString stringWithUTF8String:machine];
     free(machine);
@@ -328,6 +369,30 @@
     // iPad Mini 5
     if ([platform isEqualToString:@"iPad11,1"])      return @"iPad Mini 5";
     if ([platform isEqualToString:@"iPad11,2"])      return @"iPad Mini 5";
+
+    // == Apple Watch ==
+    if ([platform isEqualToString:@"Watch1,1"])     return @"Apple Watch 38mm";
+    if ([platform isEqualToString:@"Watch1,2"])     return @"Apple Watch 42mm";
+    if ([platform isEqualToString:@"Watch2,3"])     return @"Apple Watch Series 2 38mm";
+    if ([platform isEqualToString:@"Watch2,4"])     return @"Apple Watch Series 2 42mm";
+    if ([platform isEqualToString:@"Watch2,6"])     return @"Apple Watch Series 1 38mm";
+    if ([platform isEqualToString:@"Watch2,7"])     return @"Apple Watch Series 1 42mm";
+    if ([platform isEqualToString:@"Watch3,1"])     return @"Apple Watch Series 3 38mm Cellular";
+    if ([platform isEqualToString:@"Watch3,2"])     return @"Apple Watch Series 3 42mm Cellular";
+    if ([platform isEqualToString:@"Watch3,3"])     return @"Apple Watch Series 3 38mm";
+    if ([platform isEqualToString:@"Watch3,4"])     return @"Apple Watch Series 3 42mm";
+    if ([platform isEqualToString:@"Watch4,1"])     return @"Apple Watch Series 4 40mm";
+    if ([platform isEqualToString:@"Watch4,2"])     return @"Apple Watch Series 4 44mm";
+    if ([platform isEqualToString:@"Watch4,3"])     return @"Apple Watch Series 4 40mm Cellular";
+    if ([platform isEqualToString:@"Watch4,4"])     return @"Apple Watch Series 4 44mm Cellular";
+    if ([platform isEqualToString:@"Watch5,1"])     return @"Apple Watch Series 5 40mm";
+    if ([platform isEqualToString:@"Watch5,2"])     return @"Apple Watch Series 5 44mm";
+    if ([platform isEqualToString:@"Watch5,3"])     return @"Apple Watch Series 5 40mm Cellular";
+    if ([platform isEqualToString:@"Watch5,4"])     return @"Apple Watch Series 5 44mm Cellular";
+    if ([platform isEqualToString:@"Watch6,1"])     return @"Apple Watch Series 6 40mm";
+    if ([platform isEqualToString:@"Watch6,2"])     return @"Apple Watch Series 6 44mm";
+    if ([platform isEqualToString:@"Watch6,3"])     return @"Apple Watch Series 6 40mm Cellular";
+    if ([platform isEqualToString:@"Watch6,4"])     return @"Apple Watch Series 6 44mm Cellular";
     
     // == Others ==
     if ([platform isEqualToString:@"i386"])         return @"Simulator";
@@ -370,7 +435,7 @@
             errorFlag = @"sysctl mgmtInfoBase failure";
         } else {
             // Alloc memory based on above call
-            if ((msgBuffer = malloc(length)) == NULL) {
+            if ((msgBuffer = calloc(1, length)) == NULL) {
                 errorFlag = @"buffer allocation failure";
             } else {
                 msgBufferAllocated = true;

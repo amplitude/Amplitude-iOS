@@ -14,9 +14,15 @@
 #import "BaseTestCase.h"
 #import "AMPDeviceInfo.h"
 #import "AMPUtils.h"
+#import "AMPEventUtils.h"
 #import "AMPTrackingOptions.h"
+#import "AMPPlan.h"
+#import "AMPIngestionMetadata.h"
+#import "AMPServerZone.h"
 
 @interface Amplitude (Tests)
+
+@property (nonatomic, assign) bool initialized;
 
 - (NSDictionary*)mergeEventsAndIdentifys:(NSMutableArray*)events identifys:(NSMutableArray*)identifys numEvents:(long) numEvents;
 - (id)truncate:(id) obj;
@@ -46,7 +52,7 @@
 
 - (void)setupAsyncResponse: (NSMutableDictionary*) serverResponse {
     [[[_sharedSessionMock stub] andDo:^(NSInvocation *invocation) {
-        _connectionCallCount++;
+        self->_connectionCallCount++;
         void (^handler)(NSURLResponse*, NSData*, NSError*);
         [invocation getArgument:&handler atIndex:3];
         handler(serverResponse[@"data"], serverResponse[@"response"], serverResponse[@"error"]);
@@ -303,20 +309,91 @@
     XCTAssertNotEqual([events[0] objectForKey:@"uuid"], [events[1] objectForKey:@"uuid"]);
 }
 
+- (void)testLogEventSuccess {
+    [self.amplitude setEventUploadThreshold:1];
+    // configure response body to be random, as we only care about the status code
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"random-response-body" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 0);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 0);
+}
+
+- (void)testLogEventFailedWithInvalidApiKeyResponse {
+    [self.amplitude setEventUploadThreshold:1];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:400 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"invalid_api_key" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
+}
+
+- (void)testLogEventFailedWithBadChecksumResponse {
+    [self.amplitude setEventUploadThreshold:1];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:400 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"bad_checksum" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
+}
+
+- (void)testLogEventFailedWithRequestDbWriteFailedResponse {
+    [self.amplitude setEventUploadThreshold:1];
+    // Note that "request_db_write_failed" error response might not exist anymore, leave this test to make sure we can handle it.
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:500 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"request_db_write_failed" dataUsingEncoding:NSUTF8StringEncoding]
+                                           }];
+
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual(_connectionCallCount, 1);
+    XCTAssertEqual([self.databaseHelper getEventCount], 1);
+    XCTAssertEqual([self.databaseHelper getIdentifyCount], 0);
+    XCTAssertEqual([self.databaseHelper getTotalEventCount], 1);
+}
+
 - (void)testIdentify {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     [self.amplitude setEventUploadThreshold:2];
 
-    AMPIdentify *identify = [[AMPIdentify identify] set:@"key1" value:@"value1"];
+    AMPIdentify *identify = [[AMPIdentify identify] setOnce:@"key1" value:@"value1"];
     [self.amplitude identify:identify];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 0);
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
     XCTAssertEqual([dbHelper getIdentifyCount], 1);
     XCTAssertEqual([dbHelper getTotalEventCount], 1);
 
     NSDictionary *operations = [NSDictionary dictionaryWithObject:@"value1" forKey:@"key1"];
-    NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$set"];
+    NSDictionary *expected = [NSDictionary dictionaryWithObject:operations forKey:@"$setOnce"];
     NSDictionary *event = [self.amplitude getLastIdentify];
     XCTAssertEqualObjects([event objectForKey:@"event_type"], IDENTIFY_EVENT);
     XCTAssertEqualObjects([event objectForKey:@"user_properties"], expected);
@@ -328,7 +405,7 @@
                                               @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
                                               }];
     [self setupAsyncResponse:serverResponse];
-    AMPIdentify *identify2 = [[[AMPIdentify alloc] init] set:@"key2" value:@"value2"];
+    AMPIdentify *identify2 = [[[AMPIdentify alloc] init] setOnce:@"key2" value:@"value2"];
     [self.amplitude identify:identify2];
     [self.amplitude flushQueue];
 
@@ -447,7 +524,7 @@
     [self.amplitude logEvent:@"test_event2"];
     [self.amplitude logEvent:@"test_event3"];
     [self.amplitude logEvent:@"test_event4"];
-    [self.amplitude identify:[[AMPIdentify identify] set:@"gender" value:@"male"]];
+    [self.amplitude identify:[[AMPIdentify identify] setOnce:@"gender" value:@"male"]];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 4);
@@ -488,7 +565,7 @@
     XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"event_type"], @"$identify");
     XCTAssertEqual([[mergedEvents[5] objectForKey:@"event_id"] intValue], 2);
     XCTAssertEqual([[mergedEvents[5] objectForKey:@"sequence_number"] intValue], 6);
-    XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:@"male" forKey:@"gender"] forKey:@"$set"]);
+    XCTAssertEqualObjects([mergedEvents[5] objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:@"male" forKey:@"gender"] forKey:@"$setOnce"]);
 
     [self.amplitude identify:[[AMPIdentify identify] unset:@"karma"]];
     [self.amplitude flushQueue];
@@ -565,11 +642,14 @@
 }
 
 -(void)testTruncateEventAndIdentify {
+    [self.amplitude setEventUploadThreshold:5];
+
     NSString *longString = [@"" stringByPaddingToLength:kAMPMaxStringLength*2 withString: @"c" startingAtIndex:0];
     NSString *truncString = [@"" stringByPaddingToLength:kAMPMaxStringLength withString: @"c" startingAtIndex:0];
 
     NSDictionary *props = [NSDictionary dictionaryWithObjectsAndKeys:longString, @"long_string", longString, AMP_REVENUE_RECEIPT, nil];
     [self.amplitude logEvent:@"test" withEventProperties:props];
+    [self.amplitude identify:[[AMPIdentify identify] setOnce:@"long_string" value:longString]];
     [self.amplitude identify:[[AMPIdentify identify] set:@"long_string" value:longString]];
     [self.amplitude flushQueue];
 
@@ -580,14 +660,18 @@
 
     NSDictionary *identify = [self.amplitude getLastIdentify];
     XCTAssertEqualObjects([identify objectForKey:@"event_type"], @"$identify");
-    XCTAssertEqualObjects([identify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$set"]);
+    XCTAssertEqualObjects([identify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$setOnce"]);
+
+    NSDictionary *interceptedIdentify = [self.amplitude getLastInterceptedIdentify];
+    XCTAssertEqualObjects([interceptedIdentify objectForKey:@"event_type"], @"$identify");
+    XCTAssertEqualObjects([interceptedIdentify objectForKey:@"user_properties"], [NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObject:truncString forKey:@"long_string"] forKey:@"$set"]);
 }
 
 -(void)testAutoIncrementSequenceNumber {
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
     int limit = 10;
     for (int i = 0; i < limit; i++) {
-        XCTAssertEqual([self.amplitude getNextSequenceNumber], i+1);
+        XCTAssertEqual([dbHelper getNextSequenceNumber], i+1);
         XCTAssertEqual([[dbHelper getLongValue:@"sequence_number"] intValue], i+1);
     }
 }
@@ -603,7 +687,7 @@
     [self.amplitude setOffline:YES];
     [self.amplitude logEvent:@"test"];
     [self.amplitude logEvent:@"test"];
-    [self.amplitude identify:[[AMPIdentify identify] set:@"key" value:@"value"]];
+    [self.amplitude identify:[[AMPIdentify identify] setOnce:@"key" value:@"value"]];
     [self.amplitude flushQueue];
 
     XCTAssertEqual([dbHelper getEventCount], 2);
@@ -860,16 +944,16 @@
 
 -(void)testTrackIdfa {
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     self.amplitude.adSupportBlock = ^NSString * _Nonnull{
         return value;
     };
-    
+
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
-    
+
     self.amplitude.adSupportBlock = nil;
-    
+
     NSDictionary *apiProps = [self.amplitude getLastEvent][@"api_properties"];
     XCTAssertTrue([[apiProps objectForKey:@"ios_idfa"] isEqualToString:value]);
 }
@@ -881,9 +965,9 @@
     if (dbHelper != nil) {
         [dbHelper deleteDB];
     }
-    
+
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"idfa"];
     client.adSupportBlock = ^NSString * _Nonnull{
         return value;
@@ -904,9 +988,9 @@
     if (dbHelper != nil) {
         [dbHelper deleteDB];
     }
-    
+
     NSString *value = @"12340000-0000-0000-0000-000000000000";
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"disable_idfa"];
     client.adSupportBlock = ^NSString * _Nonnull{
         return value;
@@ -928,9 +1012,9 @@
     if (dbHelper != nil) {
         [dbHelper deleteDB];
     }
-    
+
     Amplitude *client = [Amplitude instanceWithName:@"idfv"];
-    
+
     AMPDeviceInfo * deviceInfo = [[AMPDeviceInfo alloc] init];
 
     [client flushQueueWithQueue:client.initializerQueue];
@@ -985,23 +1069,23 @@
 - (void)testEnableCoppaControl {
     NSDictionary *event = nil;
     NSDictionary *apiProperties = nil;
-    
+
     [self.amplitude disableCoppaControl];
-    
+
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
 
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNotNil([apiProperties objectForKey:@"ios_idfv"]);
-    
+
     [self.amplitude enableCoppaControl];
     [self.amplitude logEvent:@"test"];
     [self.amplitude flushQueue];
     event = [self.amplitude getLastEvent];
     apiProperties = [event objectForKey:@"api_properties"];
     XCTAssertNil([apiProperties objectForKey:@"ios_idfv"]);
-    
+
     // Minor guard covers 3 server configs. city, lat_lng, ip
     NSDictionary *trackingOptions = [apiProperties objectForKey:@"tracking_options"];
     XCTAssertEqual(3, trackingOptions.count);
@@ -1013,10 +1097,10 @@
 - (void)testCustomizedLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = @"amplitude-unity";
     client.libraryVersion = @"1.0.0";
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1024,7 +1108,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
                                           @"version" : @"1.0.0"
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1032,10 +1116,10 @@
 - (void)testCustomizedLibraryWithNilVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = @"amplitude-unity";
     client.libraryVersion = nil;
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1043,7 +1127,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : @"amplitude-unity",
                                           @"version" : kAMPUnknownVersion
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1051,10 +1135,10 @@
 - (void)testCustomizedLibraryWithNilLibrary {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = nil;
     client.libraryVersion = @"1.0.0";
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1062,7 +1146,7 @@
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : @"1.0.0"
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
@@ -1070,10 +1154,10 @@
 - (void)testCustomizedLibraryWithNilLibraryAndVersion {
     Amplitude *client = [Amplitude instanceWithName:@"custom_lib"];
     [client initializeApiKey:@"blah"];
-    
+
     client.libraryName = nil;
     client.libraryVersion = nil;
-    
+
     [client logEvent:@"test"];
     [client flushQueue];
 
@@ -1081,13 +1165,16 @@
     NSDictionary *targetLibraryValue = @{ @"name" : kAMPUnknownLibrary,
                                           @"version" : kAMPUnknownVersion
     };
-    
+
     NSDictionary *currentLibraryValue = event[@"library"];
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> main
 - (void)testSetPlan {
     Amplitude *client = [Amplitude instanceWithName:@"observe_plan"];
     [client initializeApiKey:@"tracking_plan"];
@@ -1641,6 +1728,4 @@
     NSString *deviceIdAfterInit = [client getDeviceId];
     XCTAssertEqualObjects(deviceId, deviceIdAfterInit);
 }
-
->>>>>>> Stashed changes
 @end
