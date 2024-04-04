@@ -1669,7 +1669,10 @@ static NSString *const APP_BUILD = @"app_build";
 }
 
 - (NSString *)getDeviceId {
-    return [self initializeDeviceId];
+    if (self.deviceId == nil) {
+        return [self initializeDeviceId];
+    }
+    return self.deviceId;
 }
 
 - (long long)getSessionId {
