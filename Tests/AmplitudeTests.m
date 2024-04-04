@@ -1705,10 +1705,21 @@
     XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
 }
 
+- (void)testGetDeviceIdBeforeInit {
+    NSString *instanceName = @"testGetDeviceIdBeforeInit";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    NSString *deviceId = [client getDeviceId];
+    XCTAssertNotEqual(deviceId, @"");
+    [client initializeApiKey:@"testGetDeviceIdBeforeInit"];
+    NSString *deviceIdAfterInit = [client getDeviceId];
+    XCTAssertEqual(deviceId, deviceIdAfterInit);
+
+}
+
 - (void)testGetDeviceIdAfterInit {
     NSString *instanceName = @"testGetDeviceIdAfterInit";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
-    [client initializeApiKey:@"test"];
+    [client initializeApiKey:@"testGetDeviceIdAfterInit"];
     NSString *deviceId = [client getDeviceId];
     XCTAssertNotEqual(deviceId, @"");
 }
