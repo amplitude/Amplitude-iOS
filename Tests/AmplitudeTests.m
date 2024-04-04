@@ -1712,7 +1712,7 @@
     XCTAssertNotEqual(deviceId, @"");
     [client initializeApiKey:@"testGetDeviceIdBeforeInit"];
     NSString *deviceIdAfterInit = [client getDeviceId];
-    XCTAssertEqual(deviceId, deviceIdAfterInit);
+    XCTAssertEqualObjects(deviceId, deviceIdAfterInit);
 
 }
 
@@ -1721,7 +1721,7 @@
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     [client initializeApiKey:@"testGetDeviceIdAfterInit"];
     NSString *deviceId = [client getDeviceId];
-    XCTAssertNotEqual(deviceId, @"");
+    XCTAssertNotEqualObjects(deviceId, @"");
 }
 
 @end
