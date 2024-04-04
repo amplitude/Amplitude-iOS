@@ -1669,10 +1669,6 @@ static NSString *const APP_BUILD = @"app_build";
 }
 
 - (NSString *)getDeviceId {
-    return self.deviceId;
-}
-
-- (NSString *)getDeviceIdSync {
     return [self initializeDeviceId];
 }
 
