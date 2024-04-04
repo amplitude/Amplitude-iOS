@@ -1086,4 +1086,561 @@
     XCTAssertEqualObjects(currentLibraryValue, targetLibraryValue);
 }
 
+<<<<<<< Updated upstream
+=======
+- (void)testSetPlan {
+    Amplitude *client = [Amplitude instanceWithName:@"observe_plan"];
+    [client initializeApiKey:@"tracking_plan"];
+    NSString *branch = @"main";
+    NSString *source = @"mobile";
+    NSString *version = @"1.0.0";
+    NSString *versionId = @"9ec23ba0-275f-468f-80d1-66b88bff9529";
+
+    AMPPlan *plan = [[[[[AMPPlan plan] setBranch:branch] setSource:source] setVersion:version] setVersionId:versionId];
+    [client setPlan:plan];
+    [client logEvent:@"test"];
+    [client flushQueue];
+    NSDictionary *event = [client getLastEventFromInstanceName:@"observe_plan"];
+
+    NSDictionary *planValue = event[@"plan"];
+    XCTAssertEqualObjects(branch, planValue[@"branch"]);
+    XCTAssertEqualObjects(source, planValue[@"source"]);
+    XCTAssertEqualObjects(version, planValue[@"version"]);
+    XCTAssertEqualObjects(versionId, planValue[@"versionId"]);
+}
+
+- (void)testSetIngestionMetadata {
+    Amplitude *client = [Amplitude instanceWithName:@"ingestion_metadata"];
+    [client initializeApiKey:@"ingestion_metadata"];
+    NSString *sourceName = @"ampli";
+    NSString *sourceVersion = @"2.0.0";
+
+    AMPIngestionMetadata *ingestionMetadata = [[[AMPIngestionMetadata ingestionMetadata] setSourceName:sourceName] setSourceVersion:sourceVersion];
+    [client setIngestionMetadata:ingestionMetadata];
+    [client logEvent:@"test"];
+    [client flushQueue];
+    NSDictionary *event = [client getLastEventFromInstanceName:@"ingestion_metadata"];
+
+    NSDictionary *ingestionMetadataValue = event[@"ingestion_metadata"];
+    XCTAssertEqualObjects(sourceName, ingestionMetadataValue[@"source_name"]);
+    XCTAssertEqualObjects(sourceVersion, ingestionMetadataValue[@"source_version"]);
+}
+
+- (void)testSetServerZone {
+    Amplitude *client = [Amplitude instanceWithName:@"eu_zone"];
+    XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
+    [client initializeApiKey:@"eu_api_key"];
+    [client setServerZone:EU];
+    XCTAssertEqualObjects(kAMPEventLogEuUrl, [client valueForKey:@"serverUrl"]);
+}
+
+- (void)testSetServerZoneWithoutUpdateServerUrl {
+    Amplitude *client = [Amplitude instanceWithName:@"eu_zone_2"];
+    XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
+    [client initializeApiKey:@"eu_api_key"];
+    [client setServerZone:EU updateServerUrl:NO];
+    XCTAssertEqualObjects(kAMPEventLogUrl, [client valueForKey:@"serverUrl"]);
+}
+
+- (void)testMiddlewareSupport {
+    NSString *eventType = @"middleware event";
+    AMPBlockMiddleware *updateEventTypeMiddleware = [[AMPBlockMiddleware alloc] initWithBlock: ^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext _Nonnull next) {
+        [payload.event setValue:eventType forKey:@"event_type"];
+        [payload.event setValue:payload.extra[@"description"] forKey:@"description"];
+        next(payload);
+    }];
+    Amplitude *client = [Amplitude instanceWithName:@"middleware_support"];
+    [client addEventMiddleware:updateEventTypeMiddleware];
+    [client initializeApiKey:@"middleware_api_key"];
+    NSMutableDictionary *eventProperties = [NSMutableDictionary dictionary];
+    [eventProperties setObject:@"green" forKey:@"color"];
+    NSMutableDictionary *middlewareExtra = [NSMutableDictionary dictionary];
+    [middlewareExtra setObject:@"some event description" forKey:@"description"];
+    [client logEvent:@"test" withEventProperties:eventProperties withMiddlewareExtra:middlewareExtra];
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:@"middleware_support"];
+    XCTAssertEqualObjects(eventType, event[@"event_type"]);
+    XCTAssertEqualObjects(middlewareExtra[@"description"], event[@"description"]);
+}
+
+- (void)testSwallowMiddleware {
+    AMPBlockMiddleware *swallowMiddleware = [[AMPBlockMiddleware alloc] initWithBlock: ^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext _Nonnull next) {
+    }];
+    Amplitude *client = [Amplitude instanceWithName:@"middleware_swallow"];
+    [client addEventMiddleware:swallowMiddleware];
+    [client initializeApiKey:@"middleware_api_key"];
+    [client logEvent:@"test"];
+    [client flushQueue];
+
+    XCTAssertNil([client getLastEventFromInstanceName:@"middleware_swallow"]);
+}
+
+-(void)testLogEventWithUserProperties {
+    NSString *instanceName = @"eventWithUserProperties";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper resetDB:NO];
+
+    NSMutableDictionary *userProperties = [NSMutableDictionary dictionary];
+    [userProperties setValue:@"-" forKey:@"$clearAll"];
+    NSMutableDictionary *setOpProperties = [NSMutableDictionary dictionary];
+    [setOpProperties setValue:@"value" forKey:@"prop"];
+    [userProperties setValue:setOpProperties forKey:@"$set"];
+
+    [client logEvent:@"$identify" withEventProperties:nil withUserProperties:userProperties];
+    [client flushQueue];
+    NSMutableArray *identifys = [dbHelper getIdentifys:-1 limit:-1];
+    XCTAssertEqual([identifys count], 1);
+
+    XCTAssertEqualObjects([identifys[0] objectForKey:@"user_properties"], userProperties);
+}
+
+-(void)testNoDeferCheckInForeground {
+    NSString *instanceName = @"noDeferCheckInForegroundInstance";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+    XCTAssertEqual(client.initialized, YES);
+}
+
+-(void)testDeferCheckInForeground {
+    NSString *instanceName = @"DeferCheckInForegroundInstance";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client setDeferCheckInForeground:YES];
+    [client initializeApiKey:@"api-key"];
+    XCTAssertEqual(client.initialized, NO);
+
+    [client checkInForeground];
+    XCTAssertEqual(client.initialized, YES);
+}
+
+-(void)testSetIdentifyUploadSecondsOnInitializedClient {
+    NSString *instanceName = @"SetIdentifyUploadSecondsOnInitializedClient";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+
+    // Check minimum
+    XCTAssertFalse([client setIdentifyUploadPeriodSeconds:0]);
+    XCTAssertFalse([client setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds - 1)]);
+
+    // Check valid values
+    XCTAssertTrue([client setIdentifyUploadPeriodSeconds:kAMPIdentifyUploadPeriodSeconds]);
+    XCTAssertTrue([client setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds * 2)]);
+}
+
+-(void)testSetIdentifyUploadSecondsOnUninitializedClient {
+    NSString *instanceName = @"SetIdentifyUploadSecondsOnUninitializedClient";
+    Amplitude *uninitializedClient = [Amplitude instanceWithName:instanceName];
+
+    // Don't initialized the client
+
+    // Check minimum
+    XCTAssertFalse([uninitializedClient setIdentifyUploadPeriodSeconds:0]);
+    XCTAssertFalse([uninitializedClient setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds - 1)]);
+
+    // Check valid values
+    XCTAssertTrue([uninitializedClient setIdentifyUploadPeriodSeconds:kAMPIdentifyUploadPeriodSeconds]);
+    XCTAssertTrue([uninitializedClient setIdentifyUploadPeriodSeconds:(kAMPIdentifyUploadPeriodSeconds * 2)]);
+}
+
+- (void)testInterceptIdentifys {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
+    // This is necessary for tvOs and macOS which have default eventUploadThreshold = 1
+    [self.amplitude setEventUploadThreshold:30];
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    // log intercept identify 1
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log active identify
+    [self.amplitude identify:[[AMPIdentify identify] add:@"add-key-1" value:@1]];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 2);
+    XCTAssertEqual([dbHelper getIdentifyCount], 2);
+
+    NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
+    NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
+    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_ADD][@"add-key-1"] isEqualToNumber:@1]);
+
+    NSDictionary *interceptedIdentify = [self.amplitude getIdentify:1];
+    NSMutableDictionary *interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    NSArray *interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
+
+    // log intercept identify 2
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log an event
+    [self.amplitude logEvent:@"test_event1"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getEventCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 4);
+    XCTAssertEqual([dbHelper getIdentifyCount], 3);
+
+    NSDictionary *lastEvent = [self.amplitude getLastEvent];
+    NSMutableDictionary *lastEventUserProperties = [AMPEventUtils getUserProperties:lastEvent];
+    XCTAssertNotNil(lastEventUserProperties);
+    NSArray *lastEventUserPropertiesOperations = [lastEventUserProperties allKeys];
+    XCTAssertEqual(lastEventUserPropertiesOperations.count, 0);
+
+    interceptedIdentify = [self.amplitude getLastIdentify];
+    interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-2"] isEqualToString:@"set-value-2"]);
+
+    // log intercept identify 3
+    // this value should be cleared after "unset"
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log intercept identify 4 with "unset"
+    [self.amplitude identify:[[AMPIdentify identify] clearAll]];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 4);
+    XCTAssertEqual([dbHelper getTotalEventCount], 5);
+
+    NSDictionary *unsetIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *unsetIdentifyUserProperties = [AMPEventUtils getUserProperties:unsetIdentify];
+    NSArray *unsetIdentifyUserPropertiesOperations = [unsetIdentifyUserProperties allKeys];
+
+    XCTAssertEqual(unsetIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([unsetIdentifyUserProperties[AMP_OP_CLEAR_ALL] isEqualToString:@"-"]);
+}
+
+
+- (void)testInterceptedIdentifysAreSentOnUploadEvents {
+    NSString *instanceName = @"testInterceptedIdentifysAreSentOnUploadEvents";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    [client initializeApiKey:@"api-key"];
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    // log intercept identify 1
+    [client identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log intercept identify 2
+    [client identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 2);
+
+    // log an event
+    [client uploadEvents];
+    [client flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getIdentifyCount], 0);
+}
+
+- (void)testInterceptedIdentifyIsAppliedToSetGroup {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
+    // This is necessary for tvOs and macOS which have default eventUploadThreshold = 1
+    [self.amplitude setEventUploadThreshold:30];
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    // log intercept identify 1
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+
+    // log active identify
+    [self.amplitude setGroup:@"group_type" groupName:@"group_value"];
+    [self.amplitude flushQueue];
+
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 0);
+    XCTAssertEqual([dbHelper getTotalEventCount], 2);
+    XCTAssertEqual([dbHelper getIdentifyCount], 2);
+
+    NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
+    NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
+    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([lastIdentifyUserProperties[AMP_OP_SET][@"group_type"] isEqualToString:@"group_value"]);
+    XCTAssertTrue([lastIdentify[@"groups"][@"group_type"] isEqualToString:@"group_value"]);
+
+    NSDictionary *interceptedIdentify = [self.amplitude getIdentify:1];
+    NSMutableDictionary *interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    NSArray *interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertTrue([interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-1"] isEqualToString:@"set-value-1"]);
+}
+
+- (void)testInterceptIdentifysAreSentOnUserIdChange {
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
+    [self.amplitude flushQueue];
+    // This is necessary for tvOs and macOS which have default eventUploadThreshold = 1
+    [self.amplitude setEventUploadThreshold:30];
+
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:200 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"success" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+    [self setupAsyncResponse:serverResponse];
+
+    // userId #1
+    [self.amplitude setUserId:@"test-user-1"];
+    // log intercepted identify's
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-1" value:@"set-value-1"]];
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-2" value:@"set-value-2"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 2);
+
+    // userId #2
+    [self.amplitude setUserId:@"test-user-2"];
+    // log intercept identify with new user_id
+    [self.amplitude identify:[[AMPIdentify identify] set:@"set-key-3" value:@"set-value-3"]];
+    [self.amplitude flushQueue];
+    XCTAssertEqual([dbHelper getInterceptedIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getIdentifyCount], 1);
+    XCTAssertEqual([dbHelper getTotalEventCount], 1);
+
+    // verify idenitfy was transfered
+    NSDictionary *lastIdentify = [self.amplitude getLastIdentify];
+    NSMutableDictionary *lastIdentifyUserProperties = [AMPEventUtils getUserProperties:lastIdentify];
+    NSArray *lastIdentifyUserPropertiesOperations = [lastIdentifyUserProperties allKeys];
+
+    XCTAssertEqualObjects([AMPEventUtils getUserId:lastIdentify], @"test-user-1");
+    XCTAssertEqual(lastIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertEqualObjects(lastIdentifyUserProperties[AMP_OP_SET][@"set-key-1"], @"set-value-1");
+    XCTAssertEqualObjects(lastIdentifyUserProperties[AMP_OP_SET][@"set-key-2"], @"set-value-2");
+
+    // verify intercepted
+    NSDictionary *interceptedIdentify = [self.amplitude getLastInterceptedIdentify];
+    NSMutableDictionary *interceptedIdentifyUserProperties = [AMPEventUtils getUserProperties:interceptedIdentify];
+    NSArray *interceptedIdentifyUserPropertiesOperations = [interceptedIdentifyUserProperties allKeys];
+    XCTAssertEqualObjects([AMPEventUtils getUserId:interceptedIdentify], @"test-user-2");
+    XCTAssertEqual(interceptedIdentifyUserPropertiesOperations.count, 1);
+    XCTAssertEqualObjects(interceptedIdentifyUserProperties[AMP_OP_SET][@"set-key-3"], @"set-value-3");
+}
+
+- (void)testRateLimitBackoffLogic {
+    [self.amplitude setEventUploadThreshold:2];
+    [self.amplitude setEventUploadPeriodSeconds:10];
+    NSMutableDictionary *serverResponse = [NSMutableDictionary dictionaryWithDictionary:
+                                           @{ @"response" : [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"/"] statusCode:429 HTTPVersion:nil headerFields:@{}],
+                                              @"data" : [@"response" dataUsingEncoding:NSUTF8StringEncoding]
+                                              }];
+
+    // 429 error force backoff with 2 events --> new upload period will be 20
+    [self setupAsyncResponse:serverResponse];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude logEvent:@"test"];
+    [self.amplitude flushQueue];
+
+    // after first 429, the backoff event upload period should now be 20
+    XCTAssertTrue(self.amplitude.backoffUpload);
+    XCTAssertEqual(self.amplitude.eventUploadPeriodSeconds, 20);
+}
+
+- (void)testInitWithDefaultTrackingOptions {
+    XCTAssertFalse(self.amplitude.defaultTracking.sessions);
+    XCTAssertFalse(self.amplitude.defaultTracking.appLifecycles);
+    XCTAssertFalse(self.amplitude.defaultTracking.screenViews);
+    XCTAssertFalse(self.amplitude.defaultTracking.deepLinks);
+}
+
+- (void)testSetDefaultTrackingOptions {
+    Amplitude *client = [Amplitude instanceWithName:@"default_tracking"];
+    client.defaultTracking = [AMPDefaultTrackingOptions initWithSessions:NO
+                                                           appLifecycles:YES
+                                                               deepLinks:YES
+                                                             screenViews:YES];
+    [client initializeApiKey:@"default_tracking"];
+
+    XCTAssertFalse(client.defaultTracking.sessions);
+    XCTAssertTrue(client.defaultTracking.appLifecycles);
+    XCTAssertTrue(client.defaultTracking.screenViews);
+    XCTAssertTrue(client.defaultTracking.deepLinks);
+}
+
+
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+- (void)testObserveDidFinishLaunchingNotification {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveDidFinishLaunchingNotification";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidFinishLaunchingNotification object:app];
+    
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"app_build" value:nil];
+    [dbHelper insertOrReplaceKeyValue:@"app_version" value:nil];
+
+    [client flushQueue];
+
+    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
+    XCTAssertEqualObjects([event1 objectForKey:@"event_type"], kAMPApplicationInstalled);
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
+}
+
+- (void)testObserveDidFinishLaunchingNotificationWithPreviousBuild {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveDidFinishLaunchingNotificationWithPreviousBuild";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidFinishLaunchingNotification object:app];
+    
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"app_build" value:@"test"];
+    [dbHelper insertOrReplaceKeyValue:@"app_version" value:@"test"];
+
+    [client flushQueue];
+
+    // This check is not ideal, to avoid flaky test, we only check the first event prefix.
+    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
+    XCTAssertTrue([[event1 objectForKey:@"event_type"] hasPrefix:@"[Amplitude] Application"]);
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
+}
+
+- (void)testObserveWillEnterForegroundNotification {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveWillEnterForegroundNotification";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationWillEnterForegroundNotification object:app];
+
+    [client flushQueue];
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @YES);
+}
+
+- (void)testObserveDidEnterBackgroundNotification {
+    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    
+    NSString *instanceName = @"default_tracking_ObserveDidEnterBackgroundNotification";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.appLifecycles = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    UIApplication *app = [AMPUtils getSharedApplication];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:UIApplicationDidEnterBackgroundNotification object:app];
+
+    [client flushQueue];
+
+    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
+    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationBackgrounded);
+}
+
+#endif
+
+- (void)testContinueUserActivityFiresDeepLinkEvent {
+    NSString *instanceName = @"default_tracking_UserActivityFiresDeepLinkEvent";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.deepLinks = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    [userActivity setWebpageURL:[NSURL URLWithString:@"https://test-app.com"]];
+    [client continueUserActivity:userActivity];
+
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:instanceName];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], kAMPDeepLinkOpened);
+    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
+}
+
+- (void)testOpenURLFiresDeepLinkEvent {
+    NSString *instanceName = @"default_tracking_OpenURLFiresDeepLinkEvent";
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    client.defaultTracking.deepLinks = YES;
+    [client initializeApiKey:@"default_tracking"];
+
+    NSURL *url = [NSURL URLWithString:@"https://test-app.com"];
+    [client openURL:url];
+
+    [client flushQueue];
+
+    NSDictionary *event = [client getLastEventFromInstanceName:instanceName];
+    XCTAssertEqualObjects([event objectForKey:@"event_type"], kAMPDeepLinkOpened);
+    XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
+}
+
+- (void)testGetDeviceIdBeforeInit {
+    NSString *instanceName = @"testGetDeviceIdBeforeAndAfterInit";
+    
+    // Clear device ID from db
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"device_id" value:nil];
+    
+    // Device ID should get generated before api key init
+    Amplitude *client = [Amplitude instanceWithName:instanceName];
+    NSString *deviceId = [client getDeviceId];
+    XCTAssertNotEqualObjects(deviceId, @"");
+    XCTAssertNotNil(deviceId);
+    
+    // Device ID should match after init.
+    [client initializeApiKey:@"testGetDeviceIdBeforeAndAfterInit"];
+    NSString *deviceIdAfterInit = [client getDeviceId];
+    XCTAssertEqualObjects(deviceId, deviceIdAfterInit);
+}
+
+>>>>>>> Stashed changes
 @end

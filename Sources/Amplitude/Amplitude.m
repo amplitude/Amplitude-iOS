@@ -421,8 +421,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         self.apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
-            self->_deviceInfo = [[AMPDeviceInfo alloc] init];
-            [self initializeDeviceId];
+            [self initializeDeviceInfo];
             if (setUserId) {
                 [self setUserId:userId];
             } else {
@@ -1430,6 +1429,12 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 }
 
 - (NSString *)getDeviceId {
+<<<<<<< Updated upstream
+=======
+    if (self.deviceId == nil) {
+        return [self initializeDeviceInfo];
+    }
+>>>>>>> Stashed changes
     return self.deviceId;
 }
 
@@ -1437,12 +1442,26 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
     return _sessionId;
 }
 
+<<<<<<< Updated upstream
 - (NSString *)initializeDeviceId {
     if (self.deviceId == nil) {
         self.deviceId = [self.dbHelper getValue:DEVICE_ID];
         if (![self isValidDeviceId:self.deviceId]) {
             self.deviceId = [self _getDeviceId];
             [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self.deviceId];
+=======
+- (NSString *)initializeDeviceInfo {
+    @synchronized (self) {
+        if (self->_deviceInfo == nil) {
+            self->_deviceInfo = [[AMPDeviceInfo alloc] init];
+        }
+        if (self.deviceId == nil) {
+            self.deviceId = [self.dbHelper getValue:DEVICE_ID];
+            if (![self isValidDeviceId:self.deviceId]) {
+                self.deviceId = [self _getDeviceId];
+                [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self.deviceId];
+            }
+>>>>>>> Stashed changes
         }
     }
     return self.deviceId;
