@@ -1686,7 +1686,7 @@ static NSString *const APP_BUILD = @"app_build";
         if (self.deviceId == nil) {
             self.deviceId = [self.dbHelper getValue:DEVICE_ID];
             if (![self isValidDeviceId:self.deviceId]) {
-                self.deviceId = [self _getDeviceId];
+                self->_deviceId = [self _getDeviceId];
                 [self.dbHelper insertOrReplaceKeyValue:DEVICE_ID value:self.deviceId];
             }
         }
