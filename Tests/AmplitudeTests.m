@@ -1708,9 +1708,9 @@
 - (void)testGetDeviceIdBeforeInit {
     NSString *instanceName = @"testGetDeviceIdBeforeAndAfterInit";
     
-    // Clear device ID from db
+    // Delete DB before running the test to start fresh
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
-    [dbHelper insertOrReplaceKeyValue:@"device_id" value:nil];
+    [dbHelper deleteDB];
     
     // Device ID should get generated before api key init
     Amplitude *client = [Amplitude instanceWithName:instanceName];

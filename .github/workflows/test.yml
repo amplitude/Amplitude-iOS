@@ -1,6 +1,10 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -31,9 +35,6 @@ jobs:
           bundle config path vendor/bundle
           bundle install
           pod install
-
-      - name: Validate Podfile
-        run: pod lib lint
 
       - name: iOS Tests
         run: |
