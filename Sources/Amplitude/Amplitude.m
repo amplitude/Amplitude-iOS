@@ -1669,7 +1669,7 @@ static NSString *const APP_BUILD = @"app_build";
 
 - (NSString *)getDeviceId {
     if (self.deviceId == nil) {
-        return [self initializeDeviceInfo];
+        [self initializeDeviceInfo];
     }
     return self.deviceId;
 }
@@ -1678,7 +1678,7 @@ static NSString *const APP_BUILD = @"app_build";
     return _sessionId;
 }
 
-- (NSString *)initializeDeviceInfo {
+- (void)initializeDeviceInfo {
     @synchronized (self) {
         if (self->_deviceInfo == nil) {
             self->_deviceInfo = [[AMPDeviceInfo alloc] init];
@@ -1691,7 +1691,6 @@ static NSString *const APP_BUILD = @"app_build";
             }
         }
     }
-    return self.deviceId;
 }
 
 - (NSString *)_getDeviceId {
