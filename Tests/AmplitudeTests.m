@@ -1705,12 +1705,22 @@
     XCTAssertEqualObjects([[event objectForKey:@"event_properties"] objectForKey:kAMPEventPropLinkUrl], @"https://test-app.com");
 }
 
-- (void)testGetDeviceIdAfterInit {
-    NSString *instanceName = @"testGetDeviceIdAfterInit";
+- (void)testGetDeviceIdBeforeInit {
+    NSString *instanceName = @"testGetDeviceIdBeforeAndAfterInit";
+    
+    // Clear device ID from db
+    AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper:instanceName];
+    [dbHelper insertOrReplaceKeyValue:@"device_id" value:nil];
+    
+    // Device ID should get generated before api key init
     Amplitude *client = [Amplitude instanceWithName:instanceName];
-    [client initializeApiKey:@"testGetDeviceIdAfterInit"];
     NSString *deviceId = [client getDeviceId];
     XCTAssertNotEqualObjects(deviceId, @"");
+    XCTAssertNotNil(deviceId);
+    
+    // Device ID should match after init.
+    [client initializeApiKey:@"testGetDeviceIdBeforeAndAfterInit"];
+    NSString *deviceIdAfterInit = [client getDeviceId];
+    XCTAssertEqualObjects(deviceId, deviceIdAfterInit);
 }
-
 @end

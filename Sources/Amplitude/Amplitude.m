@@ -524,8 +524,7 @@ static NSString *const APP_BUILD = @"app_build";
         self.apiKey = apiKey;
 
         [self runOnBackgroundQueue:^{
-            self->_deviceInfo = [[AMPDeviceInfo alloc] init];
-            [self initializeDeviceId];
+            [self initializeDeviceInfo];
             if (setUserId) {
                 [self setUserId:userId];
             } else {
@@ -1670,7 +1669,7 @@ static NSString *const APP_BUILD = @"app_build";
 
 - (NSString *)getDeviceId {
     if (self.deviceId == nil) {
-        return [self initializeDeviceId];
+        [self initializeDeviceInfo];
     }
     return self.deviceId;
 }
@@ -1679,8 +1678,11 @@ static NSString *const APP_BUILD = @"app_build";
     return _sessionId;
 }
 
-- (NSString *)initializeDeviceId {
+- (void)initializeDeviceInfo {
     @synchronized (self) {
+        if (self->_deviceInfo == nil) {
+            self->_deviceInfo = [[AMPDeviceInfo alloc] init];
+        }
         if (self.deviceId == nil) {
             self.deviceId = [self.dbHelper getValue:DEVICE_ID];
             if (![self isValidDeviceId:self.deviceId]) {
@@ -1689,7 +1691,6 @@ static NSString *const APP_BUILD = @"app_build";
             }
         }
     }
-    return self.deviceId;
 }
 
 - (NSString *)_getDeviceId {
