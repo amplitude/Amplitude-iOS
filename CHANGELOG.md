@@ -1,3 +1,11 @@
+## [8.19.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.0...v8.19.1) (2024-04-05)
+
+
+### Bug Fixes
+
+* assign deviceId correctly on new device ([#492](https://github.com/amplitude/Amplitude-iOS/issues/492)) ([a200db0](https://github.com/amplitude/Amplitude-iOS/commit/a200db0e981cfc2ce104f222676ed4e2748bd9c8))
+* initialize device info before generating the device ID ([#491](https://github.com/amplitude/Amplitude-iOS/issues/491)) ([7960a7e](https://github.com/amplitude/Amplitude-iOS/commit/7960a7e8118b8eae507b73e380a9d8057cf0f4ea))
+
 # [8.19.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.18.3...v8.19.0) (2024-04-04)
 
 
