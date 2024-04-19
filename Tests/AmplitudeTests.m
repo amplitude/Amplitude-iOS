@@ -1592,12 +1592,8 @@
 
     [client flushQueue];
 
-    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
+    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
     XCTAssertEqualObjects([event1 objectForKey:@"event_type"], kAMPApplicationInstalled);
-
-    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
-    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
-    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
 }
 
 - (void)testObserveDidFinishLaunchingNotificationWithPreviousBuild {
@@ -1621,19 +1617,15 @@
     [client flushQueue];
 
     // This check is not ideal, to avoid flaky test, we only check the first event prefix.
-    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
+    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
     XCTAssertTrue([[event1 objectForKey:@"event_type"] hasPrefix:@"[Amplitude] Application"]);
-
-    NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
-    XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);
-    XCTAssertEqualObjects([[event2 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
 }
 
 - (void)testObserveWillEnterForegroundNotification {
     id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
-    
+    OCMExpect([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+
     NSString *instanceName = @"default_tracking_ObserveWillEnterForegroundNotification";
     Amplitude *client = [Amplitude instanceWithName:instanceName];
     client.defaultTracking.appLifecycles = YES;
@@ -1643,7 +1635,14 @@
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center postNotificationName:UIApplicationWillEnterForegroundNotification object:app];
 
+    OCMExpect([mockApplication applicationState]).andReturn(UIApplicationStateBackground);
+    [center postNotificationName:UIApplicationWillEnterForegroundNotification object:app];
+
     [client flushQueue];
+
+    NSDictionary *event1 = [client getLastEventFromInstanceName:instanceName fromEnd: 1];
+    XCTAssertEqualObjects([event1 objectForKey:@"event_type"], kAMPApplicationOpened);
+    XCTAssertEqualObjects([[event1 objectForKey:@"event_properties"] objectForKey:kAMPEventPropFromBackground], @NO);
 
     NSDictionary *event2 = [client getLastEventFromInstanceName:instanceName fromEnd: 0];
     XCTAssertEqualObjects([event2 objectForKey:@"event_type"], kAMPApplicationOpened);

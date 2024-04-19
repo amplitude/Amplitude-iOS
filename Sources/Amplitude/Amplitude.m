@@ -244,7 +244,7 @@ static NSString *const APP_BUILD = @"app_build";
         [[[AnalyticsConnector getInstance:self.instanceName] eventBridge] setEventReceiver:^(AnalyticsEvent * _Nonnull event) {
             [self logEvent:[event eventType] withEventProperties:[event eventProperties] withApiProperties:nil withUserProperties:[event userProperties] withGroups:nil withGroupProperties:nil withTimestamp:nil outOfSession:false];
         }];
-        
+
         self.defaultTracking = [[AMPDefaultTrackingOptions alloc] init];
 
         _initializerQueue = [[NSOperationQueue alloc] init];
@@ -447,11 +447,6 @@ static NSString *const APP_BUILD = @"app_build";
                 kAMPEventPropPreviousVersion: previousVersion ?: @"",
             }];
         }
-        [self logEvent:kAMPApplicationOpened withEventProperties:@{
-            kAMPEventPropBuild: currentBuild ?: @"",
-            kAMPEventPropVersion: currentVersion ?: @"",
-            kAMPEventPropFromBackground: @NO,
-        }];
 
         // persist the build/version when changed
         if (currentBuild ? ![currentBuild isEqualToString:previousBuild] : (previousBuild != nil)) {
@@ -461,12 +456,25 @@ static NSString *const APP_BUILD = @"app_build";
             [_dbHelper insertOrReplaceKeyValue:APP_VERSION value:currentVersion];
         }
     } else if ([notification.name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
+        BOOL fromBackground = NO;
+        UIApplication *sharedApplication = [AMPUtils getSharedApplication];
+        if (sharedApplication) {
+            switch (sharedApplication.applicationState) {
+                case UIApplicationStateActive:
+                case UIApplicationStateInactive:
+                    fromBackground = NO;
+                    break;
+                case UIApplicationStateBackground:
+                    fromBackground = YES;
+                    break;
+            }
+        }
         NSString *currentBuild = [[NSBundle mainBundle] infoDictionary][@"CFBundleVersion"];
         NSString *currentVersion = [[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"];
         [self logEvent:kAMPApplicationOpened withEventProperties:@{
             kAMPEventPropBuild: currentBuild ?: @"",
             kAMPEventPropVersion: currentVersion ?: @"",
-            kAMPEventPropFromBackground: @YES,
+            kAMPEventPropFromBackground: @(fromBackground),
         }];
     } else if ([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification]) {
         [self logEvent:kAMPApplicationBackgrounded];
@@ -537,7 +545,7 @@ static NSString *const APP_BUILD = @"app_build";
             if (self.initCompletionBlock != nil) {
                 self.initCompletionBlock();
             }
-            
+
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
             // Unlike other default events options that can be evaluated later, screenViews has to be evaluated during the actual initialization
             if (self.defaultTracking.screenViews) {
