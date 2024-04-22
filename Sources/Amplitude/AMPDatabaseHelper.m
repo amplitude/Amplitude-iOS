@@ -81,6 +81,8 @@ static NSString *const GET_VALUE = @"SELECT %@, %@ FROM %@ WHERE %@ = ?;";
 
 static NSString *const SEQUENCE_NUMBER = @"sequence_number";
 
+static int const OPEN_DB_FLAGS = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX;
+
 + (AMPDatabaseHelper *)getDatabaseHelper {
     return [AMPDatabaseHelper getDatabaseHelper:nil];
 }
@@ -159,7 +161,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         __block BOOL success = YES;
 
         dispatch_sync(_queue, ^{
-            if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
+            if (sqlite3_open_v2(self->_databasePath.UTF8String, &self->_database, OPEN_DB_FLAGS, NULL) != SQLITE_OK) {
                 AMPLITUDE_LOG(@"Failed to open database");
                 sqlite3_close(self->_database);
                 success = NO;
@@ -195,7 +197,7 @@ static NSString *const SEQUENCE_NUMBER = @"sequence_number";
         __block BOOL success = YES;
 
         dispatch_sync(_queue, ^{
-            if (sqlite3_open([self->_databasePath UTF8String], &self->_database) != SQLITE_OK) {
+            if (sqlite3_open_v2(self->_databasePath.UTF8String, &self->_database, OPEN_DB_FLAGS, NULL) != SQLITE_OK) {
                 AMPLITUDE_LOG(@"Failed to open database");
                 sqlite3_close(self->_database);
                 success = NO;
