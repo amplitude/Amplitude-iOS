@@ -1,3 +1,11 @@
+## [8.19.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.1...v8.19.2) (2024-04-24)
+
+
+### Bug Fixes
+
+* Prevent crashes in multithreaded environments with sqlite. ([#495](https://github.com/amplitude/Amplitude-iOS/issues/495)) ([7020c95](https://github.com/amplitude/Amplitude-iOS/commit/7020c953ea36f8d66cbf1bd5a7c67c3a40ae42ee))
+* specify resource_bundle vs resource for resources in cocoapods ([#493](https://github.com/amplitude/Amplitude-iOS/issues/493)) ([f780c12](https://github.com/amplitude/Amplitude-iOS/commit/f780c123ca21339d37277f00449cb0f6494e676a))
+
 ## [8.19.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.0...v8.19.1) (2024-04-05)
 
 
