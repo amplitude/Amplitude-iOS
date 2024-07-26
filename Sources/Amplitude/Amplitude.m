@@ -104,6 +104,10 @@
 @property (nonatomic, copy, readwrite, nullable) NSString *userId;
 @property (nonatomic, copy, readwrite) NSString *deviceId;
 @property (nonatomic, copy, readwrite) NSString *contentTypeHeader;
+
+@property (atomic, strong, nonnull) AMPTrackingOptions *inputTrackingOptions;
+@property (atomic, strong, nonnull) AMPTrackingOptions *appliedTrackingOptions;
+@property (atomic, copy, nonnull) NSDictionary *apiPropertiesTrackingOptions;
 @end
 
 static NSString *const BACKGROUND_QUEUE_NAME = @"BACKGROUND";
@@ -137,9 +141,6 @@ static NSString *const APP_BUILD = @"app_build";
     AMPDeviceInfo *_deviceInfo;
     BOOL _useAdvertisingIdForDeviceId;
 
-    AMPTrackingOptions *_inputTrackingOptions;
-    AMPTrackingOptions *_appliedTrackingOptions;
-    NSDictionary *_apiPropertiesTrackingOptions;
     BOOL _coppaControlEnabled;
 
     BOOL _inForeground;
@@ -788,31 +789,31 @@ static NSString *const APP_BUILD = @"app_build";
 - (void)annotateEvent:(NSMutableDictionary *)event {
     [event setValue:self.userId forKey:@"user_id"];
     [event setValue:self.deviceId forKey:@"device_id"];
-    if ([_appliedTrackingOptions shouldTrackPlatform]) {
+    if ([self.appliedTrackingOptions shouldTrackPlatform]) {
         [event setValue:kAMPPlatform forKey:@"platform"];
     }
-    if ([_appliedTrackingOptions shouldTrackVersionName]) {
+    if ([self.appliedTrackingOptions shouldTrackVersionName]) {
         [event setValue:_deviceInfo.appVersion forKey:@"version_name"];
     }
-    if ([_appliedTrackingOptions shouldTrackOSName]) {
+    if ([self.appliedTrackingOptions shouldTrackOSName]) {
         [event setValue:_deviceInfo.osName forKey:@"os_name"];
     }
-    if ([_appliedTrackingOptions shouldTrackOSVersion]) {
+    if ([self.appliedTrackingOptions shouldTrackOSVersion]) {
         [event setValue:_deviceInfo.osVersion forKey:@"os_version"];
     }
-    if ([_appliedTrackingOptions shouldTrackDeviceModel]) {
+    if ([self.appliedTrackingOptions shouldTrackDeviceModel]) {
         [event setValue:_deviceInfo.model forKey:@"device_model"];
     }
-    if ([_appliedTrackingOptions shouldTrackDeviceManufacturer]) {
+    if ([self.appliedTrackingOptions shouldTrackDeviceManufacturer]) {
         [event setValue:_deviceInfo.manufacturer forKey:@"device_manufacturer"];
     }
-    if ([_appliedTrackingOptions shouldTrackCarrier]) {
+    if ([self.appliedTrackingOptions shouldTrackCarrier]) {
         [event setValue:_deviceInfo.carrier forKey:@"carrier"];
     }
-    if ([_appliedTrackingOptions shouldTrackCountry]) {
+    if ([self.appliedTrackingOptions shouldTrackCountry]) {
         [event setValue:_deviceInfo.country forKey:@"country"];
     }
-    if ([_appliedTrackingOptions shouldTrackLanguage]) {
+    if ([self.appliedTrackingOptions shouldTrackLanguage]) {
         [event setValue:_deviceInfo.language forKey:@"language"];
     }
     NSDictionary *library = @{
@@ -833,26 +834,26 @@ static NSString *const APP_BUILD = @"app_build";
 
     NSMutableDictionary *apiProperties = [event valueForKey:@"api_properties"];
 
-    if ([_appliedTrackingOptions shouldTrackIDFA]) {
+    if ([self.appliedTrackingOptions shouldTrackIDFA]) {
         NSString *advertiserID = [self getAdSupportID];
         if (advertiserID != nil) {
             [apiProperties setValue:advertiserID forKey:@"ios_idfa"];
         }
     }
     NSString *vendorID = _deviceInfo.vendorID;
-    if ([_appliedTrackingOptions shouldTrackIDFV] && vendorID) {
+    if ([self.appliedTrackingOptions shouldTrackIDFV] && vendorID) {
         [apiProperties setValue:vendorID forKey:@"ios_idfv"];
     }
 
-    if ([_appliedTrackingOptions shouldTrackLatLng] && self.locationInfoBlock != nil) {
+    if ([self.appliedTrackingOptions shouldTrackLatLng] && self.locationInfoBlock != nil) {
         NSDictionary *location = self.locationInfoBlock();
         if (location != nil) {
             [apiProperties setValue:location forKey:@"location"];
         }
     }
 
-    if (self->_apiPropertiesTrackingOptions.count > 0) {
-        [apiProperties setValue:self->_apiPropertiesTrackingOptions forKey:@"tracking_options"];
+    if (self.apiPropertiesTrackingOptions.count > 0) {
+        [apiProperties setValue:self.apiPropertiesTrackingOptions forKey:@"tracking_options"];
     }
 }
 
@@ -1495,26 +1496,26 @@ static NSString *const APP_BUILD = @"app_build";
     }
 
     _inputTrackingOptions = options;
-    _appliedTrackingOptions = [AMPTrackingOptions copyOf:options];
 
+    AMPTrackingOptions *appliedTrackingOptions = [AMPTrackingOptions copyOf:options];
     if (_coppaControlEnabled) {
-        [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forCoppaControl]];
+        [appliedTrackingOptions mergeIn:[AMPTrackingOptions forCoppaControl]];
     }
-
-    self->_apiPropertiesTrackingOptions = [NSDictionary dictionaryWithDictionary:[options getApiPropertiesTrackingOption]];
+    self.appliedTrackingOptions = appliedTrackingOptions;
+    self.apiPropertiesTrackingOptions = [options getApiPropertiesTrackingOption];
 }
 
 - (void)enableCoppaControl {
     _coppaControlEnabled = YES;
-    [_appliedTrackingOptions mergeIn:[AMPTrackingOptions forCoppaControl]];
-    _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];
+    [self.appliedTrackingOptions mergeIn:[AMPTrackingOptions forCoppaControl]];
+    self.apiPropertiesTrackingOptions = [self.appliedTrackingOptions getApiPropertiesTrackingOption];
 }
 
 - (void)disableCoppaControl {
     _coppaControlEnabled = NO;
     // Restore it to original input.
-    _appliedTrackingOptions = [AMPTrackingOptions copyOf:_inputTrackingOptions];
-    _apiPropertiesTrackingOptions = [_appliedTrackingOptions getApiPropertiesTrackingOption];
+    self.appliedTrackingOptions = [AMPTrackingOptions copyOf:self.inputTrackingOptions];
+    self.apiPropertiesTrackingOptions = [self.appliedTrackingOptions getApiPropertiesTrackingOption];
 }
 
 - (void)setUserId:(NSString *)userId {
@@ -1665,7 +1666,7 @@ static NSString *const APP_BUILD = @"app_build";
 #pragma mark - Getters for device data
 - (NSString *)getAdSupportID {
     NSString *result = nil;
-    if (self.adSupportBlock != nil && [_appliedTrackingOptions shouldTrackIDFA]) {
+    if (self.adSupportBlock != nil && [self.appliedTrackingOptions shouldTrackIDFA]) {
         result = self.adSupportBlock();
     }
     // IDFA access was denied or still in progress.
@@ -1703,12 +1704,12 @@ static NSString *const APP_BUILD = @"app_build";
 
 - (NSString *)_getDeviceId {
     NSString *deviceId = nil;
-    if (_useAdvertisingIdForDeviceId && [_appliedTrackingOptions shouldTrackIDFA]) {
+    if (_useAdvertisingIdForDeviceId && [self.appliedTrackingOptions shouldTrackIDFA]) {
         deviceId = [self getAdSupportID];
     }
 
     // return identifierForVendor
-    if ([_appliedTrackingOptions shouldTrackIDFV] && !deviceId) {
+    if ([self.appliedTrackingOptions shouldTrackIDFV] && !deviceId) {
         deviceId = _deviceInfo.vendorID;
     }
 
