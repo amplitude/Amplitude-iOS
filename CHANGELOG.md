@@ -1,3 +1,10 @@
+## [8.19.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.2...v8.19.3) (2024-08-05)
+
+
+### Bug Fixes
+
+* mark trackingoptions as atomic to prevent issues from concurrent access ([#499](https://github.com/amplitude/Amplitude-iOS/issues/499)) ([83465ed](https://github.com/amplitude/Amplitude-iOS/commit/83465ed614115748901457474cd5b9886c89d718))
+
 ## [8.19.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.1...v8.19.2) (2024-04-24)
 
 
