@@ -23,6 +23,8 @@
 #import <Foundation/Foundation.h>
 #import "AMPMiddleware.h"
 
+@class Amplitude;
+
 @interface AMPMiddlewareRunner : NSObject
 
 @property (nonatomic, nonnull, readonly) NSMutableArray<id<AMPMiddleware>> *middlewares;
@@ -32,5 +34,12 @@
 - (void) add:(id<AMPMiddleware> _Nonnull)middleware;
 
 - (void) run:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next;
+
+- (void)dispatchAmplitudeInitialized:(nonnull Amplitude *)amplitude;
+- (void)dispatchAmplitudeInitialized:(nonnull Amplitude *)amplitude
+                        toMiddleware:(nonnull id<AMPMiddleware>)middleware;
+
+- (void)dispatchAmplitude:(nonnull Amplitude *)amplitude
+  didUploadEventsManually:(BOOL)isManualUpload;
 
 @end

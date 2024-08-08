@@ -553,6 +553,8 @@ static NSString *const APP_BUILD = @"app_build";
                 [UIViewController amp_swizzleViewDidAppear];
             }
 #endif
+
+            [self->_middlewareRunner dispatchAmplitudeInitialized:self];
         }];
 
         if (!self.deferCheckInForeground) {
@@ -763,7 +765,7 @@ static NSString *const APP_BUILD = @"app_build";
 
         int eventCount = [self.dbHelper getTotalEventCount]; // refetch since events may have been deleted
         if ((eventCount % self.eventUploadThreshold) == 0 && eventCount >= self.eventUploadThreshold) {
-            [self uploadEvents];
+            [self uploadEvents:NO];
         } else {
             [self uploadEventsWithDelay:self.eventUploadPeriodSeconds];
         }
@@ -956,19 +958,25 @@ static NSString *const APP_BUILD = @"app_build";
 
 - (void)uploadEventsInBackground {
     _updateScheduled = NO;
-    [self uploadEvents];
+    [self uploadEvents:NO];
 }
 
 - (void)uploadEvents {
-    int limit = _backoffUpload ? _backoffUploadBatchSize : self.eventUploadMaxBatchSize;
-    [self uploadEventsWithLimit:limit];
+    [self uploadEvents:YES];
 }
 
-- (void)uploadEventsWithLimit:(int)limit {
+- (void)uploadEvents:(BOOL)isManualUpload {
+    int limit = _backoffUpload ? _backoffUploadBatchSize : self.eventUploadMaxBatchSize;
+    [self uploadEventsWithLimit:limit isManualUpload:isManualUpload];
+}
+
+- (void)uploadEventsWithLimit:(int)limit isManualUpload:(BOOL)isManualUpload {
     if (self.apiKey == nil) {
         AMPLITUDE_ERROR(@"ERROR: apiKey cannot be nil or empty, set apiKey with initializeApiKey: before calling uploadEvents:");
         return;
     }
+
+    [_middlewareRunner dispatchAmplitude:self didUploadEventsManually:isManualUpload];
 
     @synchronized (self) {
         if (_updatingCurrently) {
@@ -1169,7 +1177,7 @@ static NSString *const APP_BUILD = @"app_build";
                 self->_backoffUploadBatchSize = MAX((int)ceilf(newNumEvents / 2.0f), 1);
                 AMPLITUDE_LOG(@"Request too large, will decrease size and attempt to reupload");
                 self->_updatingCurrently = NO;
-                [self uploadEventsWithLimit:self->_backoffUploadBatchSize];
+                [self uploadEventsWithLimit:self->_backoffUploadBatchSize isManualUpload:NO];
             } else if ([httpResponse statusCode] == 429) {
                 // if rate limited
                 self->_backoffUpload = YES;
@@ -1204,7 +1212,7 @@ static NSString *const APP_BUILD = @"app_build";
 
         if (uploadSuccessful && [self.dbHelper getEventCount] > self.eventUploadThreshold) {
             int limit = self->_backoffUpload ? self->_backoffUploadBatchSize : 0;
-            [self uploadEventsWithLimit:limit];
+            [self uploadEventsWithLimit:limit isManualUpload:NO];
     #if !TARGET_OS_OSX && !TARGET_OS_WATCH
         } else if (self->_uploadTaskID != UIBackgroundTaskInvalid) {
             if (uploadSuccessful) {
@@ -1243,7 +1251,7 @@ static NSString *const APP_BUILD = @"app_build";
 
         [self refreshDynamicConfig];
         [self startOrContinueSessionNSNumber:now inForeground:NO];
-        [self uploadEvents];
+        [self uploadEvents:NO];
     }];
 }
 
@@ -1267,7 +1275,7 @@ static NSString *const APP_BUILD = @"app_build";
 
     [self runOnBackgroundQueue:^{
         [self refreshSessionTime:now];
-        [self uploadEventsWithLimit:0];
+        [self uploadEventsWithLimit:0 isManualUpload:NO];
     }];
 }
 
@@ -1563,7 +1571,7 @@ static NSString *const APP_BUILD = @"app_build";
     _offline = offline;
 
     if (!_offline) {
-        [self uploadEvents];
+        [self uploadEvents:NO];
     }
 }
 
@@ -1633,6 +1641,10 @@ static NSString *const APP_BUILD = @"app_build";
     _ingestionMetadata = ingestionMetadata;
 }
 
+- (AMPServerZone)serverZone {
+    return _serverZone;
+}
+
 - (void)setServerZone:(AMPServerZone)serverZone {
     [self setServerZone:serverZone updateServerUrl:YES];
 }
@@ -1646,6 +1658,9 @@ static NSString *const APP_BUILD = @"app_build";
 
 - (void)addEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware {
     [_middlewareRunner add:middleware];
+    if (_initialized) {
+        [_middlewareRunner dispatchAmplitudeInitialized:self toMiddleware:middleware];
+    }
 }
 
 /**
