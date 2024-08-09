@@ -679,6 +679,8 @@ typedef void (^AMPInitCompletionBlock)(void);
 
 - (void)setIngestionMetadata:(AMPIngestionMetadata *)ingestionMetadata;
 
+- (AMPServerZone)serverZone;
+
 /**
  * Set Amplitude Server Zone, switch to zone related configuration, including dynamic configuration and server url.
  * To send data to Amplitude's EU servers, you need to configure the serverZone to EU like [client setServerZone:EU]

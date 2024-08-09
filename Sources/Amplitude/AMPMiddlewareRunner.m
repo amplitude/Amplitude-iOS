@@ -22,6 +22,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <objc/runtime.h>
 #import "AMPMiddlewareRunner.h"
 #import "AMPMiddleware.h"
 
@@ -60,6 +61,39 @@
         NSArray *remainingMiddlewares = [middlewares subarrayWithRange:NSMakeRange(1, middlewares.count - 1)];
         [self runMiddlewares:remainingMiddlewares payload:newPayload callback:callback];
     }];
+}
+
+- (void)dispatchAmplitudeInitialized:(Amplitude *)amplitude {
+    for (id<AMPMiddleware> middleware in self.middlewares) {
+        [self dispatchAmplitudeInitialized:amplitude toMiddleware:middleware];
+    }
+}
+
+- (void)dispatchAmplitudeInitialized:(Amplitude *)amplitude
+                        toMiddleware:(id<AMPMiddleware>)middleware {
+    if ([AMPMiddlewareRunner object:middleware
+                 respondsToSelector:@selector(amplitudeDidFinishInitializing:)]) {
+        [middleware amplitudeDidFinishInitializing:amplitude];
+    }
+}
+
+- (void)dispatchAmplitude:(Amplitude *)amplitude didUploadEventsManually:(BOOL)isManualUpload {
+    for (id<AMPMiddleware> middleware in self.middlewares) {
+        if ([AMPMiddlewareRunner object:middleware
+                     respondsToSelector:@selector(amplitude:didUploadEventsManually:)]) {
+            [middleware amplitude:amplitude didUploadEventsManually:isManualUpload];
+        }
+    }
+}
+
+// AMPMiddleware never conformed to NSObject, which means we can't use the standard
+// [object respondsToSelector:] syntax to check for protocol conformance to optional methods.
++ (BOOL)object:(id)object respondsToSelector:(SEL)selector {
+    Class middlewareClass = object_getClass(object);
+    if (middlewareClass) {
+        return class_respondsToSelector(middlewareClass, selector);
+    }
+    return NO;
 }
 
 @end

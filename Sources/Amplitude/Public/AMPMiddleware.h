@@ -23,6 +23,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class Amplitude;
+
 /**
  * AMPMiddlewarePayload
  */
@@ -44,6 +46,11 @@ typedef void (^AMPMiddlewareNext)(AMPMiddlewarePayload *_Nullable newPayload);
 
 - (void)run:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next;
 
+@optional
+
+- (void)amplitudeDidFinishInitializing:(nonnull Amplitude *)amplitude;
+- (void)amplitude:(nonnull Amplitude *)amplitude didUploadEventsManually:(BOOL)manually;
+
 @end
 
 /**
@@ -55,6 +62,9 @@ typedef void (^AMPMiddlewareBlock)(AMPMiddlewarePayload *_Nonnull payload, AMPMi
 
 @property (nonnull, nonatomic, readonly) AMPMiddlewareBlock block;
 
-- (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock _Nonnull)block;
+@property (nonatomic, copy, nullable) void (^didFinishInitializing)(Amplitude * _Nonnull amplitude);
+@property (nonatomic, copy, nullable) void (^didUploadEventsManually)(Amplitude * _Nonnull amplitude, BOOL isManualUpload);
+
+- (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock _Nonnull)block NS_DESIGNATED_INITIALIZER;
 
 @end

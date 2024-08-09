@@ -1246,6 +1246,82 @@
     XCTAssertEqualObjects(middlewareExtra[@"description"], event[@"description"]);
 }
 
+- (void)testMiddlewareInitializeEvents {
+    const Amplitude *client = [Amplitude instanceWithName:@"middleware_lifecyle_support"];
+
+    const XCTestExpectation *preInitMiddlewareExpectation = [self expectationWithDescription:@"calls intialized"];
+    const AMPBlockMiddleware *preInitMiddleware = [[AMPBlockMiddleware alloc] init];
+    preInitMiddleware.didFinishInitializing = ^(Amplitude *amplitude) {
+        [preInitMiddlewareExpectation fulfill];
+    };
+    [client addEventMiddleware:preInitMiddleware];
+
+    [client initializeApiKey:@"aaa"];
+    [client flushQueue];
+
+    const XCTestExpectation *postInitMiddlewareExpectation = [self expectationWithDescription:@"calls intialized"];
+    const AMPBlockMiddleware *postInitMiddleware = [[AMPBlockMiddleware alloc] init];
+    postInitMiddleware.didFinishInitializing = ^(Amplitude *amplitude) {
+        [postInitMiddlewareExpectation fulfill];
+    };
+    [client addEventMiddleware:postInitMiddleware];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
+- (void)testMiddlewareManualFlush {
+    const Amplitude *client = [Amplitude instanceWithName:@"middleware_manual_flush"];
+    // prevent automatic flushes from parallel tests
+    [client removeObservers];
+    [client initializeApiKey:@"aaa"];
+    [client flushQueue];
+
+    const XCTestExpectation *manualFlushMiddlewareExpectation = [self expectationWithDescription:@"calls flush"];
+    const AMPBlockMiddleware *manualFlushMiddleware = [[AMPBlockMiddleware alloc] init];
+    manualFlushMiddleware.didUploadEventsManually = ^(Amplitude * _Nonnull amplitude, BOOL isManualUpload) {
+        XCTAssertTrue(isManualUpload);
+        [manualFlushMiddlewareExpectation fulfill];
+    };
+    [client addEventMiddleware:manualFlushMiddleware];
+
+    [client uploadEvents];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
+- (void)testMiddlewareAutomaticFlush {
+    const Amplitude *client = [Amplitude instanceWithName:@"middleware_automatic_flush"];
+    // prevent automatic flushes from parallel tests
+    [client removeObservers];
+    [client initializeApiKey:@"aaa"];
+    [client flushQueue];
+
+    const XCTestExpectation *automaticFlushMiddlewareExpectation = [self expectationWithDescription:@"calls flush"];
+    const AMPBlockMiddleware *automaticFlushMiddleware = [[AMPBlockMiddleware alloc] init];
+    automaticFlushMiddleware.didUploadEventsManually = ^(Amplitude * _Nonnull amplitude, BOOL isManualUpload) {
+        XCTAssertFalse(isManualUpload);
+        [automaticFlushMiddlewareExpectation fulfill];
+    };
+    [client addEventMiddleware:automaticFlushMiddleware];
+
+    client.eventUploadThreshold = 1;
+    [client logEvent:@"test"];
+
+    [self waitForExpectationsWithTimeout:10.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
 - (void)testSwallowMiddleware {
     AMPBlockMiddleware *swallowMiddleware = [[AMPBlockMiddleware alloc] initWithBlock: ^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext _Nonnull next) {
     }];
