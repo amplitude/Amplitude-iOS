@@ -1,3 +1,10 @@
+# [8.20.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.3...v8.20.0) (2024-08-12)
+
+
+### Features
+
+* extend middleware for session replay ([#501](https://github.com/amplitude/Amplitude-iOS/issues/501)) ([051890f](https://github.com/amplitude/Amplitude-iOS/commit/051890fa8e3fc605acd0277935ecbe16fe2073c6))
+
 ## [8.19.3](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.2...v8.19.3) (2024-08-05)
 
 
