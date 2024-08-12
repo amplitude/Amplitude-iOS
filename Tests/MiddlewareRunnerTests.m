@@ -7,6 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "Amplitude/Amplitude.h"
 #import "AMPMiddleware.h"
 #import "AMPMiddlewareRunner.h"
 
@@ -85,6 +86,56 @@
     
     XCTAssertEqual(middlewareCompleted, NO);
     XCTAssertEqualObjects([event objectForKey:@"event_type"], eventType);
+}
+
+- (void)testSendsAmplitudeInitialized {
+    const XCTestExpectation *didSendDidFinishInitializingExpectation = [self expectationWithDescription:@"didSendFinishInitializing"];
+    const AMPBlockMiddleware *middleware = [[AMPBlockMiddleware alloc] init];
+    middleware.didFinishInitializing = ^(Amplitude *amplitude) {
+        [didSendDidFinishInitializingExpectation fulfill];
+    };
+    [self.middlewareRunner add:middleware];
+    [self.middlewareRunner dispatchAmplitudeInitialized:[[Amplitude alloc] init]];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
+- (void)testSendsAmplitudeInitializedToMiddleware {
+    const XCTestExpectation *didSendDidFinishInitializingExpectation = [self expectationWithDescription:@"didSendFinishInitializing"];
+    const AMPBlockMiddleware *middleware = [[AMPBlockMiddleware alloc] init];
+    middleware.didFinishInitializing = ^(Amplitude *amplitude) {
+        [didSendDidFinishInitializingExpectation fulfill];
+    };
+    [self.middlewareRunner add:middleware];
+    [self.middlewareRunner dispatchAmplitudeInitialized:[[Amplitude alloc] init] toMiddleware:middleware];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
+- (void)testSendsAmplitudeDidSendFlush {
+    const BOOL manualUpload = YES;
+    const XCTestExpectation *didSendFlushExpectation = [self expectationWithDescription:@"didSendFlush"];
+    const AMPBlockMiddleware *middleware = [[AMPBlockMiddleware alloc] init];
+    middleware.didUploadEventsManually = ^(Amplitude *amplitude, BOOL isManualUpload) {
+        XCTAssertEqual(isManualUpload, manualUpload);
+        [didSendFlushExpectation fulfill];
+    };
+    [self.middlewareRunner add:middleware];
+    [self.middlewareRunner dispatchAmplitude:[[Amplitude alloc] init] didUploadEventsManually:manualUpload];
+
+    [self waitForExpectationsWithTimeout:1.0 handler:^(NSError *error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
 }
 
 @end

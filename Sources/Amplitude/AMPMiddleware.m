@@ -38,6 +38,12 @@
 
 @implementation AMPBlockMiddleware
 
+- (instancetype)init {
+    return [self initWithBlock:^(AMPMiddlewarePayload *payload, AMPMiddlewareNext next) {
+        next(payload);
+    }];
+}
+
 - (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock)block {
     if (self = [super init]) {
         _block = block;
@@ -47,6 +53,18 @@
 
 - (void)run:(AMPMiddlewarePayload *)payload next:(AMPMiddlewareNext)next {
     self.block(payload, next);
+}
+
+- (void)amplitudeDidFinishInitializing:(Amplitude *)amplitude {
+    if (self.didFinishInitializing) {
+        self.didFinishInitializing(amplitude);
+    }
+}
+
+- (void)amplitude:(Amplitude *)amplitude didUploadEventsManually:(BOOL)manually {
+    if (self.didUploadEventsManually) {
+        self.didUploadEventsManually(amplitude, manually);
+    }
 }
 
 @end
