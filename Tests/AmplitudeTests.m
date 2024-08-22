@@ -1322,6 +1322,107 @@
     }];
 }
 
+- (void)testMiddlewareDeviceIdChanged {
+    const Amplitude *client = [Amplitude instanceWithName:@"middleware_device_id_changed"];
+    [client setDeviceId:@"old_id"];
+    [client initializeApiKey:@"aaa"];
+    [client flushQueue];
+
+    NSString *expectedDeviceId = @"updated_device_id";
+
+    const XCTestExpectation *deviceIdChangedExpectation = [self expectationWithDescription:@"changed device id"];
+    const AMPBlockMiddleware *deviceIdChangedMiddleware = [[AMPBlockMiddleware alloc] init];
+    deviceIdChangedMiddleware.didChangeDeviceId = ^(Amplitude *amplitude, NSString *deviceId) {
+        XCTAssertEqual(amplitude.deviceId, expectedDeviceId);
+        XCTAssertEqual(deviceId, expectedDeviceId);
+        [deviceIdChangedExpectation fulfill];
+    };
+    [client addEventMiddleware:deviceIdChangedMiddleware];
+
+    [client setDeviceId:expectedDeviceId];
+
+    [self waitForExpectationsWithTimeout:10.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
+- (void)testMiddlewareSessionIdChanged {
+    const Amplitude *client = [Amplitude instanceWithName:@"middleware_session_id_changed"];
+    [client setSessionId:1];
+    [client initializeApiKey:@"aaa"];
+    [client flushQueue];
+
+    long long expectedSessionId = [NSDate date].timeIntervalSince1970 * 1000;
+
+    const XCTestExpectation *sessionIdChangedExpectation = [self expectationWithDescription:@"changed session id"];
+    const AMPBlockMiddleware *userIdChangedMiddleware = [[AMPBlockMiddleware alloc] init];
+    userIdChangedMiddleware.didChangeSessionId = ^(Amplitude *amplitude, long long sessionId) {
+        XCTAssertEqual(amplitude.sessionId, expectedSessionId);
+        XCTAssertEqual(sessionId, expectedSessionId);
+        [sessionIdChangedExpectation fulfill];
+    };
+    [client addEventMiddleware:userIdChangedMiddleware];
+
+    [client setSessionId:expectedSessionId];
+
+    [self waitForExpectationsWithTimeout:10.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
+- (void)testMiddlewareUserIdChanged {
+    const Amplitude *client = [Amplitude instanceWithName:@"middleware_user_id_changed"];
+    [client initializeApiKey:@"aaa" userId:@"old_user_id"];
+    [client flushQueue];
+
+    NSString *expectedUserId = @"updated_user_id";
+
+    const XCTestExpectation *userIdChangedExpectation = [self expectationWithDescription:@"changed user id"];
+    const AMPBlockMiddleware *userIdChangedMiddleware = [[AMPBlockMiddleware alloc] init];
+    userIdChangedMiddleware.didChangeUserId = ^(Amplitude *amplitude, NSString *userId) {
+        XCTAssertEqual(amplitude.userId, expectedUserId);
+        XCTAssertEqual(userId, expectedUserId);
+        [userIdChangedExpectation fulfill];
+    };
+    [client addEventMiddleware:userIdChangedMiddleware];
+
+    [client setUserId:expectedUserId];
+
+    [self waitForExpectationsWithTimeout:10.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
+- (void)testMiddlewareOptOutChanged {
+    const Amplitude *client = [Amplitude instanceWithName:@"middleware_opt_out_changed"];
+    client.optOut = NO;
+    [client initializeApiKey:@"aaa"];
+    [client flushQueue];
+
+    const XCTestExpectation *optOutChangedExpectation = [self expectationWithDescription:@"changed user id"];
+    const AMPBlockMiddleware *optOutChangedMiddleware = [[AMPBlockMiddleware alloc] init];
+    optOutChangedMiddleware.didOptOut = ^(Amplitude *amplitude, BOOL optOut) {
+        XCTAssertTrue(optOut);
+        XCTAssertTrue(amplitude.optOut);
+        [optOutChangedExpectation fulfill];
+    };
+    [client addEventMiddleware:optOutChangedMiddleware];
+
+    client.optOut = YES;
+
+    [self waitForExpectationsWithTimeout:10.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
+}
+
 - (void)testSwallowMiddleware {
     AMPBlockMiddleware *swallowMiddleware = [[AMPBlockMiddleware alloc] initWithBlock: ^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext _Nonnull next) {
     }];
@@ -1332,6 +1433,34 @@
     [client flushQueue];
 
     XCTAssertNil([client getLastEventFromInstanceName:@"middleware_swallow"]);
+}
+
+- (void)testRemoveMiddleware {
+    Amplitude *client = [Amplitude instanceWithName:@"remove_middleware"];
+    [client initializeApiKey:@"remove_middleware_api_key"];
+
+    const XCTestExpectation *receivedEventExpectation = [self expectationWithDescription:@"Received event"];
+    const AMPBlockMiddleware *middleware = [[AMPBlockMiddleware alloc] initWithBlock:^(AMPMiddlewarePayload * _Nonnull payload, AMPMiddlewareNext  _Nonnull next) {
+        [receivedEventExpectation fulfill];
+        next(payload);
+    }];
+    [client addEventMiddleware:middleware];
+
+    [client logEvent:@"test"];
+
+    [client flushQueue];
+
+    [client removeEventMiddleware:middleware];
+
+    [client logEvent:@"test2" ];
+
+    [client flushQueue];
+
+    [self waitForExpectationsWithTimeout:10.0 handler:^(NSError * _Nullable error) {
+        if (error) {
+            XCTFail(@"Timeout");
+        }
+    }];
 }
 
 -(void)testLogEventWithUserProperties {

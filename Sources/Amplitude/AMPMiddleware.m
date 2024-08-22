@@ -67,4 +67,28 @@
     }
 }
 
+- (void)amplitude:(Amplitude *)amplitude didChangeDeviceId:(NSString *)deviceId {
+    if (self.didChangeDeviceId) {
+        self.didChangeDeviceId(amplitude, deviceId);
+    }
+}
+
+- (void)amplitude:(Amplitude *)amplitude didChangeSessionId:(long long)sessionId {
+    if (self.didChangeSessionId) {
+        self.didChangeSessionId(amplitude, sessionId);
+    }
+}
+
+- (void)amplitude:(Amplitude *)amplitude didChangeUserId:(NSString *)userId {
+    if (self.didChangeUserId) {
+        self.didChangeUserId(amplitude, userId);
+    }
+}
+
+- (void)amplitude:(Amplitude *)amplitude didOptOut:(BOOL)optOut {
+    if (self.didOptOut) {
+        self.didOptOut(amplitude, optOut);
+    }
+}
+
 @end

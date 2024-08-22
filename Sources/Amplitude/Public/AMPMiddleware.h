@@ -50,6 +50,10 @@ typedef void (^AMPMiddlewareNext)(AMPMiddlewarePayload *_Nullable newPayload);
 
 - (void)amplitudeDidFinishInitializing:(nonnull Amplitude *)amplitude;
 - (void)amplitude:(nonnull Amplitude *)amplitude didUploadEventsManually:(BOOL)manually;
+- (void)amplitude:(nonnull Amplitude *)amplitude didChangeDeviceId:(nonnull NSString *)deviceId;
+- (void)amplitude:(nonnull Amplitude *)amplitude didChangeSessionId:(long long)sessionId;
+- (void)amplitude:(nonnull Amplitude *)amplitude didChangeUserId:(nonnull NSString *)userId;
+- (void)amplitude:(nonnull Amplitude *)amplitude didOptOut:(BOOL)optOut;
 
 @end
 
@@ -64,6 +68,10 @@ typedef void (^AMPMiddlewareBlock)(AMPMiddlewarePayload *_Nonnull payload, AMPMi
 
 @property (nonatomic, copy, nullable) void (^didFinishInitializing)(Amplitude * _Nonnull amplitude);
 @property (nonatomic, copy, nullable) void (^didUploadEventsManually)(Amplitude * _Nonnull amplitude, BOOL isManualUpload);
+@property (nonatomic, copy, nullable) void (^didChangeDeviceId)(Amplitude * _Nonnull amplitude, NSString * _Nonnull deviceId);
+@property (nonatomic, copy, nullable) void (^didChangeSessionId)(Amplitude * _Nonnull amplitude, long long sessionId);
+@property (nonatomic, copy, nullable) void (^didChangeUserId)(Amplitude * _Nonnull amplitude, NSString * _Nonnull userId);
+@property (nonatomic, copy, nullable) void (^didOptOut)(Amplitude * _Nonnull amplitude, BOOL optOut);
 
 - (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock _Nonnull)block NS_DESIGNATED_INITIALIZER;
 
