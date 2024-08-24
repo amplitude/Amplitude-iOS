@@ -1384,6 +1384,7 @@ static NSString *const APP_BUILD = @"app_build";
 - (void)setSessionId:(long long)timestamp {
     _sessionId = timestamp;
     [self setPreviousSessionId:_sessionId];
+    [_middlewareRunner dispatchAmplitude:self didChangeSessionId:timestamp];
 }
 
 /**
@@ -1548,6 +1549,7 @@ static NSString *const APP_BUILD = @"app_build";
         // between Analytics and Experiment SDKs.
         id<IdentityStoreEditor> identityStoreEditor = [[[AnalyticsConnector getInstance:self.instanceName] identityStore] editIdentity];
         [[identityStoreEditor setUserId:self.userId] commit];
+        [self->_middlewareRunner dispatchAmplitude:self didChangeUserId:self.userId];
 
         if (startNewSession) {
             NSNumber *timestamp = [NSNumber numberWithLongLong:[[self currentTime] timeIntervalSince1970] * 1000];
@@ -1564,6 +1566,7 @@ static NSString *const APP_BUILD = @"app_build";
     [self runOnBackgroundQueue:^{
         NSNumber *value = [NSNumber numberWithBool:enabled];
         (void) [self.dbHelper insertOrReplaceKeyLongValue:OPT_OUT value:value];
+        [self->_middlewareRunner dispatchAmplitude:self didOptOut:enabled];
     }];
 }
 
@@ -1620,6 +1623,7 @@ static NSString *const APP_BUILD = @"app_build";
         // between Analytics and Experiment SDKs.
         id<IdentityStoreEditor> identityStoreEditor = [[[AnalyticsConnector getInstance:self.instanceName] identityStore] editIdentity];
         [[identityStoreEditor setDeviceId:self.deviceId] commit];
+        [self->_middlewareRunner dispatchAmplitude:self didChangeDeviceId:self.deviceId];
     }];
 }
 
@@ -1661,6 +1665,10 @@ static NSString *const APP_BUILD = @"app_build";
     if (_initialized) {
         [_middlewareRunner dispatchAmplitudeInitialized:self toMiddleware:middleware];
     }
+}
+
+- (void)removeEventMiddleware:(id<AMPMiddleware>)middleware {
+    [_middlewareRunner remove:middleware];
 }
 
 /**

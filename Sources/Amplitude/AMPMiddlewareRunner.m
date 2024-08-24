@@ -43,6 +43,10 @@
     [self.middlewares addObject:middleware];
 }
 
+- (void)remove:(id<AMPMiddleware>)middleware {
+    [self.middlewares removeObject:middleware];
+}
+
 - (void) run:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next {
     [self runMiddlewares:self.middlewares payload:payload callback:next];
 }
@@ -82,6 +86,42 @@
         if ([AMPMiddlewareRunner object:middleware
                      respondsToSelector:@selector(amplitude:didUploadEventsManually:)]) {
             [middleware amplitude:amplitude didUploadEventsManually:isManualUpload];
+        }
+    }
+}
+
+- (void)dispatchAmplitude:(Amplitude *)amplitude didChangeDeviceId:(NSString *)deviceId {
+    for (id<AMPMiddleware> middleware in self.middlewares) {
+        if ([AMPMiddlewareRunner object:middleware
+                     respondsToSelector:@selector(amplitude:didChangeDeviceId:)]) {
+            [middleware amplitude:amplitude didChangeDeviceId:deviceId];
+        }
+    }
+}
+
+- (void)dispatchAmplitude:(Amplitude *)amplitude didChangeSessionId:(long long)sessionId {
+    for (id<AMPMiddleware> middleware in self.middlewares) {
+        if ([AMPMiddlewareRunner object:middleware
+                     respondsToSelector:@selector(amplitude:didChangeSessionId:)]) {
+            [middleware amplitude:amplitude didChangeSessionId:sessionId];
+        }
+    }
+}
+
+- (void)dispatchAmplitude:(Amplitude *)amplitude didChangeUserId:(NSString *)userId {
+    for (id<AMPMiddleware> middleware in self.middlewares) {
+        if ([AMPMiddlewareRunner object:middleware
+                     respondsToSelector:@selector(amplitude:didChangeUserId:)]) {
+            [middleware amplitude:amplitude didChangeUserId:userId];
+        }
+    }
+}
+
+- (void)dispatchAmplitude:(Amplitude *)amplitude didOptOut:(BOOL)optOut {
+    for (id<AMPMiddleware> middleware in self.middlewares) {
+        if ([AMPMiddlewareRunner object:middleware
+                     respondsToSelector:@selector(amplitude:didOptOut:)]) {
+            [middleware amplitude:amplitude didOptOut:optOut];
         }
     }
 }

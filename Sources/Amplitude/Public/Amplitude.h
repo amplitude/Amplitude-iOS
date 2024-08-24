@@ -699,6 +699,11 @@ typedef void (^AMPInitCompletionBlock)(void);
 - (void)addEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware;
 
 /**
+ * Removes an existing middleware function to run on each logEvent() call prior to sending to Amplitude.
+ */
+- (void)removeEventMiddleware:(id<AMPMiddleware> _Nonnull)middleware;
+
+/**
  * The amount of time after an identify is logged that identify events will be batched before being uploaded to the server.
  * The default is 30 seconds.
  */

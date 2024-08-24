@@ -33,13 +33,18 @@
 
 - (void) add:(id<AMPMiddleware> _Nonnull)middleware;
 
+- (void)remove:(nonnull id<AMPMiddleware>)middleware;
+
 - (void) run:(AMPMiddlewarePayload *_Nonnull)payload next:(AMPMiddlewareNext _Nonnull)next;
 
 - (void)dispatchAmplitudeInitialized:(nonnull Amplitude *)amplitude;
 - (void)dispatchAmplitudeInitialized:(nonnull Amplitude *)amplitude
                         toMiddleware:(nonnull id<AMPMiddleware>)middleware;
 
-- (void)dispatchAmplitude:(nonnull Amplitude *)amplitude
-  didUploadEventsManually:(BOOL)isManualUpload;
+- (void)dispatchAmplitude:(nonnull Amplitude *)amplitude didUploadEventsManually:(BOOL)isManualUpload;
+- (void)dispatchAmplitude:(nonnull Amplitude *)amplitude didChangeDeviceId:(nonnull NSString *)deviceId;
+- (void)dispatchAmplitude:(nonnull Amplitude *)amplitude didChangeSessionId:(long long)sessionId;
+- (void)dispatchAmplitude:(nonnull Amplitude *)amplitude didChangeUserId:(nonnull NSString *)userId;
+- (void)dispatchAmplitude:(nonnull Amplitude *)amplitude didOptOut:(BOOL)optOut;
 
 @end
