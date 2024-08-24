@@ -1,3 +1,10 @@
+# [8.21.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.20.0...v8.21.0) (2024-08-24)
+
+
+### Features
+
+* Add more functionality to middleware ([#502](https://github.com/amplitude/Amplitude-iOS/issues/502)) ([5748e96](https://github.com/amplitude/Amplitude-iOS/commit/5748e962f14ba4b0343ddf526f233391f7c5a663))
+
 # [8.20.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.19.3...v8.20.0) (2024-08-12)
 
 
