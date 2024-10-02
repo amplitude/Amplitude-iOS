@@ -91,4 +91,10 @@
     }
 }
 
+- (void)amplitudeDidRemoveMiddleware:(Amplitude *)amplitude {
+    if (self.didRemoveMiddleware) {
+        self.didRemoveMiddleware(amplitude);
+    }
+}
+
 @end

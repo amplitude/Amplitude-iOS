@@ -126,6 +126,14 @@
     }
 }
 
+- (void)dispatchAmplitudeDidRemoveMiddleware:(Amplitude *)amplitude
+                                toMiddleware:(id<AMPMiddleware>)middleware {
+    if ([AMPMiddlewareRunner object:middleware
+                 respondsToSelector:@selector(amplitudeDidRemoveMiddleware:)]) {
+        [middleware amplitudeDidRemoveMiddleware:amplitude];
+    }
+}
+
 // AMPMiddleware never conformed to NSObject, which means we can't use the standard
 // [object respondsToSelector:] syntax to check for protocol conformance to optional methods.
 + (BOOL)object:(id)object respondsToSelector:(SEL)selector {
