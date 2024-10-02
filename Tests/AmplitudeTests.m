@@ -1444,6 +1444,12 @@
         [receivedEventExpectation fulfill];
         next(payload);
     }];
+
+    const XCTestExpectation *didRemoveExpectation = [self expectationWithDescription:@"Removed middleware"];
+    middleware.didRemoveMiddleware = ^(Amplitude *amplitude) {
+        [didRemoveExpectation fulfill];
+    };
+
     [client addEventMiddleware:middleware];
 
     [client logEvent:@"test"];

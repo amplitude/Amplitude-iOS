@@ -54,6 +54,7 @@ typedef void (^AMPMiddlewareNext)(AMPMiddlewarePayload *_Nullable newPayload);
 - (void)amplitude:(nonnull Amplitude *)amplitude didChangeSessionId:(long long)sessionId;
 - (void)amplitude:(nonnull Amplitude *)amplitude didChangeUserId:(nonnull NSString *)userId;
 - (void)amplitude:(nonnull Amplitude *)amplitude didOptOut:(BOOL)optOut;
+- (void)amplitudeDidRemoveMiddleware:(nonnull Amplitude *)amplitude;
 
 @end
 
@@ -72,6 +73,7 @@ typedef void (^AMPMiddlewareBlock)(AMPMiddlewarePayload *_Nonnull payload, AMPMi
 @property (nonatomic, copy, nullable) void (^didChangeSessionId)(Amplitude * _Nonnull amplitude, long long sessionId);
 @property (nonatomic, copy, nullable) void (^didChangeUserId)(Amplitude * _Nonnull amplitude, NSString * _Nonnull userId);
 @property (nonatomic, copy, nullable) void (^didOptOut)(Amplitude * _Nonnull amplitude, BOOL optOut);
+@property (nonatomic, copy, nullable) void (^didRemoveMiddleware)(Amplitude * _Nonnull amplitude);
 
 - (instancetype _Nonnull)initWithBlock:(AMPMiddlewareBlock _Nonnull)block NS_DESIGNATED_INITIALIZER;
 

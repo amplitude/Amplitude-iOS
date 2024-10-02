@@ -47,4 +47,7 @@
 - (void)dispatchAmplitude:(nonnull Amplitude *)amplitude didChangeUserId:(nonnull NSString *)userId;
 - (void)dispatchAmplitude:(nonnull Amplitude *)amplitude didOptOut:(BOOL)optOut;
 
+- (void)dispatchAmplitudeDidRemoveMiddleware:(nonnull Amplitude *)amplitude
+                                toMiddleware:(nonnull id<AMPMiddleware>)middleware;
+
 @end

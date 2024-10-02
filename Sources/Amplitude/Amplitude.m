@@ -1668,6 +1668,7 @@ static NSString *const APP_BUILD = @"app_build";
 }
 
 - (void)removeEventMiddleware:(id<AMPMiddleware>)middleware {
+    [_middlewareRunner dispatchAmplitudeDidRemoveMiddleware:self toMiddleware:middleware];
     [_middlewareRunner remove:middleware];
 }
 
