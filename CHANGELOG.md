@@ -1,3 +1,10 @@
+# [8.22.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.21.0...v8.22.0) (2024-10-02)
+
+
+### Features
+
+* add middleware removed callback ([#506](https://github.com/amplitude/Amplitude-iOS/issues/506)) ([b1b001a](https://github.com/amplitude/Amplitude-iOS/commit/b1b001a3b41e2bc3ea542411f48e2ae552986fc3))
+
 # [8.21.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.20.0...v8.21.0) (2024-08-24)
 
 
