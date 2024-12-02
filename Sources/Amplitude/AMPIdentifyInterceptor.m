@@ -112,7 +112,7 @@
     return (id1 == nil ? id2 == nil : [id1 isEqualToString:id2]);
 }
 
-- (NSMutableDictionary *)intercept:(NSMutableDictionary *_Nonnull)event {
+- (NSMutableDictionary *_Nullable)intercept:(NSMutableDictionary *_Nonnull)event {
     if (_disabled) {
         return event;
     }
