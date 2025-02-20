@@ -19,7 +19,7 @@
 - (void)testInit {
     AMPDefaultTrackingOptions *instance = [[AMPDefaultTrackingOptions alloc] init];
     
-    XCTAssertFalse(instance.sessions);
+    XCTAssertTrue(instance.sessions);
     XCTAssertFalse(instance.appLifecycles);
     XCTAssertFalse(instance.deepLinks);
     XCTAssertFalse(instance.screenViews);

@@ -30,7 +30,7 @@
  */
 - (instancetype)init {
     if (self = [super init]) {
-        self.sessions = NO;
+        self.sessions = YES;
         self.appLifecycles = NO;
         self.deepLinks = NO;
         self.screenViews = NO;
