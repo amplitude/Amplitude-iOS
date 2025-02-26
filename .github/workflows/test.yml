@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: macos-12
+    runs-on: macos-latest
     strategy:
       matrix:
         ruby-version: ["2.7"]
@@ -17,12 +17,14 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v2
 
-      - name: Set Xcode 14
+      - name: Set Xcode 16
         run: |
-          sudo xcode-select -switch /Applications/Xcode_14.1.app
+          sudo xcode-select -switch /Applications/Xcode_16.1.app
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -42,7 +44,7 @@ jobs:
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14'
+            -destination 'platform=iOS Simulator,name=iPhone 16'
 
       # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
       #   run: |
