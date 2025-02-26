@@ -29,7 +29,7 @@
 @interface AMPDefaultTrackingOptions : NSObject
 
 /**
- Enables/disables session tracking. Default to enabled.
+ Enables/disables session tracking. Default to disabled.
  */
 @property (nonatomic, assign) BOOL sessions;
 
