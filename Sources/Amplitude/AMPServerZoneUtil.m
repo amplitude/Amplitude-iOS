@@ -31,10 +31,10 @@
 + (NSString *)getEventLogApi:(AMPServerZone)serverZone {
     NSString *eventLogUrl = kAMPEventLogUrl;
     switch (serverZone) {
-        case EU:
+        case AMPServerZoneEU:
             eventLogUrl = kAMPEventLogEuUrl;
             break;
-        case US:
+        case AMPServerZoneUS:
             eventLogUrl = kAMPEventLogUrl;
             break;
             
@@ -47,10 +47,10 @@
 + (NSString *)getDynamicConfigApi:(AMPServerZone)serverZone {
     NSString *dynamicConfigUrl = kAMPDyanmicConfigUrl;
     switch (serverZone) {
-        case EU:
+        case AMPServerZoneEU:
             dynamicConfigUrl = kAMPDyanmicConfigEuUrl;
             break;
-        case US:
+        case AMPServerZoneUS:
             dynamicConfigUrl = kAMPDyanmicConfigUrl;
             break;
             
