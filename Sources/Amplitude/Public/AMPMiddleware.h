@@ -30,8 +30,8 @@
  */
 @interface AMPMiddlewarePayload: NSObject
 
-@property NSMutableDictionary *_Nonnull event;
-@property NSMutableDictionary *_Nullable extra;
+@property (nonatomic, strong) NSMutableDictionary *_Nonnull event;
+@property (nonatomic, strong) NSMutableDictionary *_Nullable extra;
 
 - (instancetype _Nonnull)initWithEvent:(NSMutableDictionary *_Nonnull) event withExtra:(NSMutableDictionary *_Nullable) extra;
 

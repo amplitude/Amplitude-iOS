@@ -32,8 +32,24 @@ typedef NS_ENUM(NSInteger, AMPServerZone);
 
 #ifndef AMPServerZone_h
 #define AMPServerZone_h
+
+#ifdef AMPLITUDE_USE_PREFIXED_SERVERZONE
+
+typedef NS_ENUM(NSInteger, AMPServerZone) {
+    AMPServerZoneUS,
+    AMPServerZoneEU
+};
+
+#else
+
 typedef NS_ENUM(NSInteger, AMPServerZone) {
     US,
     EU
 };
+
+#define AMPServerZoneUS US
+#define AMPServerZoneEU EU
+
+#endif
+
 #endif
