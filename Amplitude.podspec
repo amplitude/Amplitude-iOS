@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.tvos.source_files      = 'Sources/Amplitude/**/*.{h,m}'
   s.tvos.resource_bundle    = { 'Amplitude_Amplitude': ['Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'] }
 
-  s.osx.deployment_target  = '10.10'
+  s.osx.deployment_target  = '10.13'
   s.osx.source_files       = 'Sources/Amplitude/**/*.{h,m}'
   s.osx.resource_bundle    = { 'Amplitude_Amplitude': ['Sources/Resources/*.{der}', 'Sources/PrivacyInfo.xcprivacy'] }
 

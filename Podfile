@@ -13,7 +13,7 @@ abstract_target 'shared' do
   end
 
   target 'Amplitude_macOSTests' do
-      platform :osx, '10.10'
+      platform :osx, '10.13'
   end
   
 end
