@@ -1,3 +1,12 @@
+## [8.22.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.22.0...v8.22.1) (2025-07-15)
+
+
+### Bug Fixes
+
+* correct documentation for sessions default value ([#512](https://github.com/amplitude/Amplitude-iOS/issues/512)) ([5154b75](https://github.com/amplitude/Amplitude-iOS/commit/5154b757d91b683d018ba2a12e6fbcb8a53a1bb9))
+* Empty Commit to Trigger a Build ([ca2bf8e](https://github.com/amplitude/Amplitude-iOS/commit/ca2bf8e6c8581dc181156f250e19a75fffef3d7c))
+* use correct cocoapods dependency ([#518](https://github.com/amplitude/Amplitude-iOS/issues/518)) ([c08534b](https://github.com/amplitude/Amplitude-iOS/commit/c08534b354288d2305b946e74e06addff814c3c2))
+
 # [8.22.0](https://github.com/amplitude/Amplitude-iOS/compare/v8.21.0...v8.22.0) (2024-10-02)
 
 
