@@ -11,7 +11,7 @@ on:
 jobs:
   authorize:
     name: Authorize
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: ${{ github.actor }} permission check to do a release
         uses: octokit/request-action@v2.1.9
@@ -23,7 +23,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: macos-latest
+    runs-on: macos-13
     needs: [authorize]
     strategy:
       matrix:
@@ -33,9 +33,9 @@ jobs:
       - name: Checkout Amplitude-iOS
         uses: actions/checkout@v2
 
-      - name: Set Xcode 16
+      - name: Set Xcode 14.2
         run: |
-          sudo xcode-select -switch /Applications/Xcode_16.1.app
+          sudo xcode-select -switch /Applications/Xcode_14.2.app
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -58,7 +58,7 @@ jobs:
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16'
+            -destination 'platform=iOS Simulator,name=iPhone 14'
 
       # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
       #   run: |
@@ -79,7 +79,7 @@ jobs:
             test
 
       - name: Validate Podfile
-        run: pod lib lint
+        run: pod lib lint --verbose
 
       - name: Setup Node.js
         uses: actions/setup-node@v1
