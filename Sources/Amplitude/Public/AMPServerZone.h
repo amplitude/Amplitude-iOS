@@ -33,7 +33,10 @@ typedef NS_ENUM(NSInteger, AMPServerZone);
 #ifndef AMPServerZone_h
 #define AMPServerZone_h
 typedef NS_ENUM(NSInteger, AMPServerZone) {
-    US,
-    EU
+    AMPServerZoneUS = 0,
+    AMPServerZoneEU = 1,
 };
+
+static const AMPServerZone US = AMPServerZoneUS;
+static const AMPServerZone EU = AMPServerZoneEU;
 #endif
