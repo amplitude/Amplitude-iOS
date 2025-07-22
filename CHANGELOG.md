@@ -1,3 +1,10 @@
+## [8.22.2](https://github.com/amplitude/Amplitude-iOS/compare/v8.22.1...v8.22.2) (2025-07-22)
+
+
+### Bug Fixes
+
+* prefix server zone constants ([#521](https://github.com/amplitude/Amplitude-iOS/issues/521)) ([7fc962f](https://github.com/amplitude/Amplitude-iOS/commit/7fc962f34d0b2e6f12142fa8a8eba36ca2e84e40))
+
 ## [8.22.1](https://github.com/amplitude/Amplitude-iOS/compare/v8.22.0...v8.22.1) (2025-07-15)
 
 
