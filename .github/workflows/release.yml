@@ -11,7 +11,7 @@ on:
 jobs:
   authorize:
     name: Authorize
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
       - name: ${{ github.actor }} permission check to do a release
         uses: octokit/request-action@v2.1.9
@@ -23,7 +23,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: macos-13
+    runs-on: macos-15
     needs: [authorize]
     strategy:
       matrix:
@@ -33,9 +33,19 @@ jobs:
       - name: Checkout Amplitude-iOS
         uses: actions/checkout@v2
 
-      - name: Set Xcode 14.2
+      - name: Set Xcode 16.1
         run: |
-          sudo xcode-select -switch /Applications/Xcode_14.2.app
+          sudo xcode-select -switch /Applications/Xcode_16.1.app
+
+      - name: Install Apple platform SDKs
+        run: |
+          # Warm up CoreSimulator to avoid "Unable to connect to simulator":
+          # https://github.com/actions/runner-images/issues/12862#issuecomment-3239326872
+          xcrun simctl list > /dev/null
+          sudo xcodebuild -downloadPlatform iOS
+          sudo xcodebuild -downloadPlatform tvOS
+          sudo xcodebuild -downloadPlatform watchOS
+          sudo xcodebuild -downloadPlatform visionOS
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -58,7 +68,7 @@ jobs:
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14'
+            -destination 'platform=iOS Simulator,name=iPhone 16'
 
       # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
       #   run: |
