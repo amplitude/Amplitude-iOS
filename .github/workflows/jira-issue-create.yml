@@ -11,7 +11,7 @@ on:
 
 jobs:
   call-workflow-passing-data:
-    uses: amplitude/Amplitude-TypeScript/.github/workflows/jira-issue-create-template.yml@main
+    uses: amplitude/Amplitude-TypeScript/.github/workflows/jira-issue-create-template.yml@8dadabbe62161729e3aa83c0d664e106b748c8cc # @amplitude/plugin-session-replay-react-native@0.4.9
     with:
       label: "iOS"
       subcomponent: "dx_ios_sdk"
