@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-13
     steps:
       - name: ${{ github.actor }} permission check to do a release
-        uses: octokit/request-action@v2.1.9
+        uses: octokit/request-action@89697eb6635e52c6e1e5559f15b5c91ba5100cb0 # v2.1.9
         with:
           route: GET /repos/:repository/collaborators/${{ github.actor }}
           repository: ${{ github.repository }}
@@ -31,7 +31,7 @@ jobs:
         node-version: ["16.x"]
     steps:
       - name: Checkout Amplitude-iOS
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
 
       - name: Set Xcode 14.2
         run: |
@@ -41,7 +41,7 @@ jobs:
         run: carthage bootstrap --use-xcframeworks
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
 
@@ -82,12 +82,12 @@ jobs:
         run: pod lib lint --verbose
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Checkout Amplitude-iOS gh-pages for building docs
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           ref: "gh-pages"
           path: "Amplitude-iOS-gh-pages"
