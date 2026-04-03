@@ -29,3 +29,6 @@ DerivedData/
 
 ## Gcc Patch
 /*.gcno
+
+## JS
+node_modules/
