@@ -106,6 +106,10 @@
         _carrier = @"Unknown";
     }
 
+#if TARGET_OS_SIMULATOR
+    return _carrier;
+#endif
+
     Class CTTelephonyNetworkInfo = NSClassFromString(@"CTTelephonyNetworkInfo");
     if (!CTTelephonyNetworkInfo) {
         return _carrier;
