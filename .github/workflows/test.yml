@@ -9,7 +9,8 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: macos-latest
+    # Keep the legacy SDK on an image that includes Xcode 16.
+    runs-on: macos-15-intel
     strategy:
       matrix:
         ruby-version: ["2.7"]
@@ -17,9 +18,9 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
 
-      - name: Set Xcode 16
+      - name: Set Xcode 16.4
         run: |
-          sudo xcode-select -switch /Applications/Xcode_16.1.app
+          sudo xcode-select -switch /Applications/Xcode_16.4.app
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -44,7 +45,7 @@ jobs:
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16'
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
 
       # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
       #   run: |
