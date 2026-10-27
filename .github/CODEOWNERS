@@ -1,0 +1,4 @@
+# The DX team maintains this legacy SDK.
+# This rule covers all files, including GitHub Actions workflows, release and
+# signing automation, build and package metadata, and CODEOWNERS itself.
+* @amplitude/dx
