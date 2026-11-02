@@ -110,14 +110,8 @@ jobs:
           GIT_COMMITTER_NAME: amplitude-sdk-bot
           GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
         run: |
-          npx \
-          -p lodash \
-          -p semantic-release@17 \
-          -p @semantic-release/changelog@5 \
-          -p @semantic-release/git@9 \
-          -p @google/semantic-release-replace-plugin@1.2.0 \
-          -p @semantic-release/exec@5 \
-          semantic-release --dry-run
+          npm ci
+          npm exec semantic-release -- --dry-run
 
       - name: Semantic Release
         if: ${{ github.event.inputs.dryRun == 'false'}}
@@ -129,11 +123,5 @@ jobs:
           GIT_COMMITTER_NAME: amplitude-sdk-bot
           GIT_COMMITTER_EMAIL: amplitude-sdk-bot@users.noreply.github.com
         run: |
-          npx \
-          -p lodash \
-          -p semantic-release@17 \
-          -p @semantic-release/changelog@5 \
-          -p @semantic-release/git@9 \
-          -p @google/semantic-release-replace-plugin@1.2.0 \
-          -p @semantic-release/exec@5 \
-          semantic-release
+          npm ci
+          npm exec semantic-release
