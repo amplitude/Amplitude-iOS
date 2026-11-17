@@ -87,6 +87,12 @@
     XCTAssertEqualObjects(@"English", _deviceInfo.language);
 }
 
+- (void)testCarrier {
+#if TARGET_OS_SIMULATOR
+    XCTAssertEqualObjects(@"Unknown", _deviceInfo.carrier);
+#endif
+}
+
 
 #if TARGET_OS_IPHONE
 - (void)testVendorID {
