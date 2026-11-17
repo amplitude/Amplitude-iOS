@@ -1283,11 +1283,9 @@ static NSString *const APP_BUILD = @"app_build";
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
     if (_uploadTaskID != UIBackgroundTaskInvalid) {
         UIApplication *app = [AMPUtils getSharedApplication];
-        if (app == nil) {
-            return;
+        if (app != nil) {
+            [app endBackgroundTask:_uploadTaskID];
         }
-
-        [app endBackgroundTask:_uploadTaskID];
         self->_uploadTaskID = UIBackgroundTaskInvalid;
     }
 #endif
