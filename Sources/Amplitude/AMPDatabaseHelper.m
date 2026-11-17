@@ -139,6 +139,10 @@ static int const OPEN_DB_FLAGS = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQ
 }
 
 - (void)dealloc {
+    if (_database) {
+        sqlite3_close(_database);
+        _database = NULL;
+    }
     if (_queue) {
         _queue = NULL;
     }
@@ -161,14 +165,16 @@ static int const OPEN_DB_FLAGS = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQ
         __block BOOL success = YES;
 
         dispatch_sync(_queue, ^{
-            if (sqlite3_open_v2(self->_databasePath.UTF8String, &self->_database, OPEN_DB_FLAGS, NULL) != SQLITE_OK) {
-                AMPLITUDE_LOG(@"Failed to open database");
-                sqlite3_close(self->_database);
-                success = NO;
-                return;
+            if (self->_database == NULL) {
+                if (sqlite3_open_v2(self->_databasePath.UTF8String, &self->_database, OPEN_DB_FLAGS, NULL) != SQLITE_OK) {
+                    AMPLITUDE_LOG(@"Failed to open database");
+                    sqlite3_close(self->_database);
+                    self->_database = NULL;
+                    success = NO;
+                    return;
+                }
             }
             block(self->_database);
-            sqlite3_close(self->_database);
         });
 
         return success;
@@ -197,24 +203,25 @@ static int const OPEN_DB_FLAGS = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQ
         __block BOOL success = YES;
 
         dispatch_sync(_queue, ^{
-            if (sqlite3_open_v2(self->_databasePath.UTF8String, &self->_database, OPEN_DB_FLAGS, NULL) != SQLITE_OK) {
-                AMPLITUDE_LOG(@"Failed to open database");
-                sqlite3_close(self->_database);
-                success = NO;
-                return;
+            if (self->_database == NULL) {
+                if (sqlite3_open_v2(self->_databasePath.UTF8String, &self->_database, OPEN_DB_FLAGS, NULL) != SQLITE_OK) {
+                    AMPLITUDE_LOG(@"Failed to open database");
+                    sqlite3_close(self->_database);
+                    self->_database = NULL;
+                    success = NO;
+                    return;
+                }
             }
 
             sqlite3_stmt *stmt;
             if (sqlite3_prepare_v2(self->_database, [SQLString UTF8String], -1, &stmt, NULL) != SQLITE_OK) {
                 AMPLITUDE_LOG(@"Failed to prepare statement for query %@", SQLString);
-                sqlite3_close(self->_database);
                 success = NO;
                 return;
             }
 
             block(stmt);
             sqlite3_finalize(stmt);
-            sqlite3_close(self->_database);
         });
 
         return success;
@@ -340,6 +347,10 @@ static int const OPEN_DB_FLAGS = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQ
 }
 
 - (BOOL)deleteDB {
+    if (_database) {
+        sqlite3_close(_database);
+        _database = NULL;
+    }
     if ([[NSFileManager defaultManager] fileExistsAtPath:_databasePath] == YES) {
         return [[NSFileManager defaultManager] removeItemAtPath:_databasePath error:NULL];
     }
