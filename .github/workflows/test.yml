@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        ruby-version: ["2.7"]
+        ruby-version: ["3.3"]
     steps:
       - name: Check out Git repository
         uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
@@ -33,10 +33,9 @@ jobs:
 
       - name: Install Cocoapods
         run: |
-          gem install bundler -v 2.4.22
-          bundle config path vendor/bundle
-          bundle install
-          pod install
+          bundle config set --local path vendor/bundle
+          BUNDLE_FROZEN=true bundle install
+          bundle exec pod install
 
       - name: iOS Tests
         run: |
