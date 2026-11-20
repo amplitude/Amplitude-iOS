@@ -9,17 +9,36 @@ on:
 jobs:
   test:
     name: Test
-    runs-on: macos-latest
+    # The legacy SDK test targets need a runner with Xcode 16.
+    runs-on: macos-15-intel
     strategy:
       matrix:
-        ruby-version: ["2.7"]
+        ruby-version: ["3.3"]
     steps:
       - name: Check out Git repository
         uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
 
-      - name: Set Xcode 16
+      - name: Set Xcode 16.4
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
+
+      - name: Prepare iOS 18.5 simulator
+        id: ios-simulator
+        shell: bash
         run: |
-          sudo xcode-select -switch /Applications/Xcode_16.1.app
+          # Initialize CoreSimulator before selecting a device.
+          xcrun simctl list
+          runtime=com.apple.CoreSimulator.SimRuntime.iOS-18-5
+          if ! xcrun simctl list -j runtimes | jq -e --arg runtime "$runtime" \
+            'any(.runtimes[]; .identifier == $runtime and .isAvailable)' >/dev/null; then
+            xcodebuild -downloadPlatform iOS -buildVersion 18.5
+          fi
+
+          udid=$(xcrun simctl list -j devices available | jq -r --arg runtime "$runtime" \
+            '[.devices[$runtime][]? | select(.name == "iPhone 16") | .udid][0] // empty')
+          if [[ -z "$udid" ]]; then
+            udid=$(xcrun simctl create "iPhone 16" com.apple.CoreSimulator.SimDeviceType.iPhone-16 "$runtime")
+          fi
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
 
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
@@ -33,18 +52,19 @@ jobs:
 
       - name: Install Cocoapods
         run: |
-          gem install bundler -v 2.4.22
-          bundle config path vendor/bundle
-          bundle install
-          pod install
+          bundle config set --local path vendor/bundle
+          BUNDLE_FROZEN=true bundle install
+          bundle exec pod install
 
       - name: iOS Tests
+        env:
+          IOS_SIMULATOR_UDID: ${{ steps.ios-simulator.outputs.udid }}
         run: |
           xcodebuild test \
             -workspace Amplitude.xcworkspace \
             -scheme Amplitude_iOSTests \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16'
+            -destination "platform=iOS Simulator,id=$IOS_SIMULATOR_UDID"
 
       # - name: macOS Tests @TODO Fix flaky macOS tests and re-enable
       #   run: |
