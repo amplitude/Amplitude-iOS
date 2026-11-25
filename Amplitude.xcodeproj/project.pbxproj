@@ -218,7 +218,6 @@
 		58E4B1C0287F6FD6007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		58E4B1C1287F6FD7007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
 		58E4B1C2287F6FD7007AC408 /* SSLPinningTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12C9731024108DFF00E9CDDB /* SSLPinningTests.m */; };
-		6B5494D6E33DC145D9B649D8 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91DADF8ED86FAA2D6B9D2E6B /* libPods-shared-Amplitude_tvOSTests.a */; };
 		759E939025FBF3DC00BF7C3D /* AMPConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8C525244D78003DCE07 /* AMPConfigManager.m */; };
 		759E939125FBF3DC00BF7C3D /* AMPConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8E625244D78003DCE07 /* AMPConstants.m */; };
 		759E939225FBF3DC00BF7C3D /* AMPDatabaseHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1279F8D425244D78003DCE07 /* AMPDatabaseHelper.m */; };
@@ -277,8 +276,9 @@
 		DC927E972616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
 		DC927E982616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
 		DC927E992616400800A708B0 /* ComodoRsaDomainValidationCA.der in Resources */ = {isa = PBXBuildFile; fileRef = DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */; };
-		E94A3006F3D46C0C8F44DC94 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E2467100EE86AF0108A37E87 /* libPods-shared-Amplitude_iOSTests.a */; };
-		E9A3F8AEAC5FC48FC69F9A94 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34AEC32F041BAE8D221ED0B3 /* libPods-shared-Amplitude_macOSTests.a */; };
+		D6925AEBAA265F4AB8DAF75C /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 7A280BC6C21B52C2BBA91B0F /* OCMock */; };
+		6B13AFAE72145CBAA8A9BD91 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 9E93DEC456E95BF4B3CBBB92 /* OCMock */; };
+		17E4A07A25A157489810B207 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = E22FEC1A11065E4B91CBB7A1 /* OCMock */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -306,14 +306,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E5E27777EE3748AD590817 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		09EB6B3E86B6394014048162 /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		1213D80B2416F3EA00300E98 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		1213D89824176E4700300E98 /* AmplitudeFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmplitudeFramework.h; sourceTree = "<group>"; };
 		1213D89924176E4700300E98 /* Amplitude.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = Amplitude.modulemap; sourceTree = "<group>"; };
 		1213D89A24176E4700300E98 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		124CDD7923EFD2C5004C7B27 /* Podfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile.lock; sourceTree = "<group>"; };
-		124CDD7A23EFD2C5004C7B27 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		124CDD7B23EFD2D4004C7B27 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		1279F8C125244D78003DCE07 /* AMPIdentify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPIdentify.h; sourceTree = "<group>"; };
 		1279F8C225244D78003DCE07 /* AMPDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPDeviceInfo.h; sourceTree = "<group>"; };
@@ -364,14 +360,12 @@
 		12C9731E24108DFF00E9CDDB /* BaseTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTestCase.m; sourceTree = "<group>"; };
 		12C9731F24108DFF00E9CDDB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		12C9732024108DFF00E9CDDB /* AmplitudeTVOSTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AmplitudeTVOSTests.m; sourceTree = "<group>"; };
-		12D0A22B241A0A960072CB4C /* Amplitude.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Amplitude.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		12D0A22D241A134D0072CB4C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		12D0A22E241A13950072CB4C /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		207C960827AB0F65008EE143 /* AnalyticsConnector.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AnalyticsConnector.xcframework; path = Carthage/Build/AnalyticsConnector.xcframework; sourceTree = "<group>"; };
 		20C6C0EC278D1EEF00B39CBE /* libAmplitudeCore-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libAmplitudeCore-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20C6C0EE278D1F6400B39CBE /* libAmplitudeCore-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libAmplitudeCore-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AmplitudeCore.xcframework; path = Carthage/Build/AmplitudeCore.xcframework; sourceTree = "<group>"; };
-		34AEC32F041BAE8D221ED0B3 /* libPods-shared-Amplitude_macOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_macOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E2411E626F9A40100793829 /* AMPPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPPlan.h; sourceTree = "<group>"; };
 		3E2411EB26F9A46500793829 /* AMPPlan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPPlan.m; sourceTree = "<group>"; };
 		3E2411F026F9A4C600793829 /* PlanTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlanTests.m; sourceTree = "<group>"; };
@@ -386,8 +380,6 @@
 		3EF608EE2726256800133703 /* AMPMiddlewareRunner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPMiddlewareRunner.m; sourceTree = "<group>"; };
 		3EF608FD272666E300133703 /* MiddlewareRunnerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MiddlewareRunnerTests.m; sourceTree = "<group>"; };
 		3EF6090127267C9800133703 /* AMPMiddleware.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPMiddleware.m; sourceTree = "<group>"; };
-		3F7002FB71B21CB2ABA065F1 /* Pods-shared-Amplitude_macOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_macOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_macOSTests/Pods-shared-Amplitude_macOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		4D8EA610D8DF8BD11DB40E7A /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_tvOSTests/Pods-shared-Amplitude_tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		581FCD8D2A4D2A5C00AB0626 /* UIViewController+AMPScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+AMPScreen.h"; sourceTree = "<group>"; };
 		581FCD8E2A4D2A5C00AB0626 /* UIViewController+AMPScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+AMPScreen.m"; sourceTree = "<group>"; };
 		582516E128C048D600ECAD0D /* AMPIngestionMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPIngestionMetadata.h; sourceTree = "<group>"; };
@@ -398,19 +390,15 @@
 		58B7FAD42A3D0D5500CC5BB4 /* DefaultTrackingOptionsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DefaultTrackingOptionsTests.m; sourceTree = "<group>"; };
 		58D45C312A4CDC7C00A090A3 /* ScreenViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScreenViewTests.m; sourceTree = "<group>"; };
 		58E4B1BB287F62C3007AC408 /* AmazonRootCA1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AmazonRootCA1.cer; sourceTree = "<group>"; };
-		6C55E7B2C7CB09D0EDC07910 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.release.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		70CE71E7AEFA4FE3E4F565AD /* Pods-shared-Amplitude_iOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-shared-Amplitude_iOSTests.debug.xcconfig"; path = "Target Support Files/Pods-shared-Amplitude_iOSTests/Pods-shared-Amplitude_iOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		759E937A25FBF2BB00BF7C3D /* Amplitude.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amplitude.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		759E93DA25FBF6F700BF7C3D /* AMPBackgroundNotifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMPBackgroundNotifier.h; sourceTree = "<group>"; };
 		759E93DB25FBF6F700BF7C3D /* AMPBackgroundNotifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AMPBackgroundNotifier.m; sourceTree = "<group>"; };
-		91DADF8ED86FAA2D6B9D2E6B /* libPods-shared-Amplitude_tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00A34D7298DA0EB00BA484F /* AMPIdentifyInterceptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPIdentifyInterceptor.h; sourceTree = "<group>"; };
 		D00A34D8298DA0EB00BA484F /* AMPEventUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMPEventUtils.h; sourceTree = "<group>"; };
 		D00A34D9298DA0EB00BA484F /* AMPIdentifyInterceptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPIdentifyInterceptor.m; sourceTree = "<group>"; };
 		D00A34DA298DA0EB00BA484F /* AMPEventUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMPEventUtils.m; sourceTree = "<group>"; };
 		D00A34EB2991EBE300BA484F /* IdentifyInterceptorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IdentifyInterceptorTests.m; sourceTree = "<group>"; };
 		DC927E952616400800A708B0 /* ComodoRsaDomainValidationCA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = ComodoRsaDomainValidationCA.der; sourceTree = "<group>"; };
-		E2467100EE86AF0108A37E87 /* libPods-shared-Amplitude_iOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-shared-Amplitude_iOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -426,8 +414,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B13AFAE72145CBAA8A9BD91 /* OCMock in Frameworks */,
 				12C972B824105B2C00E9CDDB /* Amplitude.framework in Frameworks */,
-				6B5494D6E33DC145D9B649D8 /* libPods-shared-Amplitude_tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,8 +431,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6925AEBAA265F4AB8DAF75C /* OCMock in Frameworks */,
 				12C972D424105C3600E9CDDB /* Amplitude.framework in Frameworks */,
-				E94A3006F3D46C0C8F44DC94 /* libPods-shared-Amplitude_iOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -460,8 +448,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17E4A07A25A157489810B207 /* OCMock in Frameworks */,
 				12C972F024105C6500E9CDDB /* Amplitude.framework in Frameworks */,
-				E9A3F8AEAC5FC48FC69F9A94 /* libPods-shared-Amplitude_macOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,19 +464,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		06E8DCECB8F2131A0DDB73E3 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				70CE71E7AEFA4FE3E4F565AD /* Pods-shared-Amplitude_iOSTests.debug.xcconfig */,
-				6C55E7B2C7CB09D0EDC07910 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */,
-				3F7002FB71B21CB2ABA065F1 /* Pods-shared-Amplitude_macOSTests.debug.xcconfig */,
-				01E5E27777EE3748AD590817 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */,
-				4D8EA610D8DF8BD11DB40E7A /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */,
-				09EB6B3E86B6394014048162 /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		0D939DD532132231667B2325 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -496,9 +471,6 @@
 				20D7ED6D278F82E8006DB118 /* AmplitudeCore.xcframework */,
 				20C6C0EE278D1F6400B39CBE /* libAmplitudeCore-iOS.a */,
 				20C6C0EC278D1EEF00B39CBE /* libAmplitudeCore-iOS.a */,
-				E2467100EE86AF0108A37E87 /* libPods-shared-Amplitude_iOSTests.a */,
-				34AEC32F041BAE8D221ED0B3 /* libPods-shared-Amplitude_macOSTests.a */,
-				91DADF8ED86FAA2D6B9D2E6B /* libPods-shared-Amplitude_tvOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -572,7 +544,6 @@
 		12C973012410758400E9CDDB /* Deployment */ = {
 			isa = PBXGroup;
 			children = (
-				12D0A22B241A0A960072CB4C /* Amplitude.podspec */,
 				1213D80B2416F3EA00300E98 /* Package.swift */,
 				124CDD7B23EFD2D4004C7B27 /* LICENSE */,
 				12D0A22D241A134D0072CB4C /* README.md */,
@@ -661,9 +632,6 @@
 				12C9730F24108DFF00E9CDDB /* Tests */,
 				1213D89724176E4700300E98 /* Framework */,
 				E98C05241A48E7FE00800C63 /* Products */,
-				124CDD7A23EFD2C5004C7B27 /* Podfile */,
-				124CDD7923EFD2C5004C7B27 /* Podfile.lock */,
-				06E8DCECB8F2131A0DDB73E3 /* Pods */,
 				12DF9415251B09FF008B2C25 /* Recovered References */,
 				0D939DD532132231667B2325 /* Frameworks */,
 			);
@@ -843,7 +811,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 12C972C324105B2D00E9CDDB /* Build configuration list for PBXNativeTarget "Amplitude_tvOSTests" */;
 			buildPhases = (
-				1C49508448E694B480BADCCC /* [CP] Check Pods Manifest.lock */,
 				12C972B324105B2C00E9CDDB /* Sources */,
 				12C972B424105B2C00E9CDDB /* Frameworks */,
 				12C972B524105B2C00E9CDDB /* Resources */,
@@ -854,6 +821,9 @@
 				12C972BA24105B2C00E9CDDB /* PBXTargetDependency */,
 			);
 			name = Amplitude_tvOSTests;
+			packageProductDependencies = (
+				9E93DEC456E95BF4B3CBBB92 /* OCMock */,
+			);
 			productName = Amplitude_tvOSTests;
 			productReference = 12C972B724105B2C00E9CDDB /* Amplitude_tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -882,7 +852,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 12C972DF24105C3600E9CDDB /* Build configuration list for PBXNativeTarget "Amplitude_iOSTests" */;
 			buildPhases = (
-				366FB9AD6C9C6115D485E04D /* [CP] Check Pods Manifest.lock */,
 				12C972CF24105C3600E9CDDB /* Sources */,
 				12C972D024105C3600E9CDDB /* Frameworks */,
 				12C972D124105C3600E9CDDB /* Resources */,
@@ -893,6 +862,9 @@
 				12C972D624105C3600E9CDDB /* PBXTargetDependency */,
 			);
 			name = Amplitude_iOSTests;
+			packageProductDependencies = (
+				7A280BC6C21B52C2BBA91B0F /* OCMock */,
+			);
 			productName = Amplitude_iOSTests;
 			productReference = 12C972D324105C3600E9CDDB /* Amplitude_iOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -919,7 +891,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 12C972FB24105C6500E9CDDB /* Build configuration list for PBXNativeTarget "Amplitude_macOSTests" */;
 			buildPhases = (
-				302251E571E2112125175A67 /* [CP] Check Pods Manifest.lock */,
 				12C972EB24105C6500E9CDDB /* Sources */,
 				12C972EC24105C6500E9CDDB /* Frameworks */,
 				12C972ED24105C6500E9CDDB /* Resources */,
@@ -930,6 +901,9 @@
 				12C972F224105C6500E9CDDB /* PBXTargetDependency */,
 			);
 			name = Amplitude_macOSTests;
+			packageProductDependencies = (
+				E22FEC1A11065E4B91CBB7A1 /* OCMock */,
+			);
 			productName = Amplitude_macOSTests;
 			productReference = 12C972EF24105C6500E9CDDB /* Amplitude_macOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -1007,6 +981,7 @@
 			);
 			mainGroup = E98C051A1A48E7FE00800C63;
 			packageReferences = (
+				675381FB52215942B700683C /* XCRemoteSwiftPackageReference "ocmock" */,
 			);
 			productRefGroup = E98C05241A48E7FE00800C63 /* Products */;
 			projectDirPath = "";
@@ -1082,75 +1057,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		1C49508448E694B480BADCCC /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-shared-Amplitude_tvOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		302251E571E2112125175A67 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-shared-Amplitude_macOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		366FB9AD6C9C6115D485E04D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-shared-Amplitude_iOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		12C972AB24105B2C00E9CDDB /* Sources */ = {
@@ -1458,7 +1364,6 @@
 		};
 		12C972C424105B2D00E9CDDB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4D8EA610D8DF8BD11DB40E7A /* Pods-shared-Amplitude_tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1471,6 +1376,7 @@
 				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1488,7 +1394,6 @@
 		};
 		12C972C524105B2D00E9CDDB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09EB6B3E86B6394014048162 /* Pods-shared-Amplitude_tvOSTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1502,6 +1407,7 @@
 				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1601,7 +1507,6 @@
 		};
 		12C972E024105C3600E9CDDB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 70CE71E7AEFA4FE3E4F565AD /* Pods-shared-Amplitude_iOSTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1616,6 +1521,7 @@
 				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1635,7 +1541,6 @@
 		};
 		12C972E124105C3600E9CDDB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6C55E7B2C7CB09D0EDC07910 /* Pods-shared-Amplitude_iOSTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1651,6 +1556,7 @@
 				DEVELOPMENT_TEAM = 58E7PCQE77;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1754,7 +1660,6 @@
 		};
 		12C972FC24105C6500E9CDDB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3F7002FB71B21CB2ABA065F1 /* Pods-shared-Amplitude_macOSTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1768,6 +1673,7 @@
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1784,7 +1690,6 @@
 		};
 		12C972FD24105C6500E9CDDB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01E5E27777EE3748AD590817 /* Pods-shared-Amplitude_macOSTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1799,6 +1704,7 @@
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = Tests/Info.plist;
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -2099,6 +2005,34 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+/* Begin XCRemoteSwiftPackageReference section */
+		675381FB52215942B700683C /* XCRemoteSwiftPackageReference "ocmock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/erikdoe/ocmock.git";
+			requirement = {
+				kind = revision;
+				revision = 2c0bfd373289f4a7716db5d6db471640f91a6507; /* v3.9.4 */
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7A280BC6C21B52C2BBA91B0F /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 675381FB52215942B700683C /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+		9E93DEC456E95BF4B3CBBB92 /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 675381FB52215942B700683C /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+		E22FEC1A11065E4B91CBB7A1 /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 675381FB52215942B700683C /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E98C051B1A48E7FE00800C63 /* Project object */;
 }

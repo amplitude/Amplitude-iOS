@@ -11,9 +11,6 @@ jobs:
     name: Test
     # The legacy SDK test targets need a runner with Xcode 16.
     runs-on: macos-15-intel
-    strategy:
-      matrix:
-        ruby-version: ["3.3"]
     steps:
       - name: Check out Git repository
         uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
@@ -45,24 +42,13 @@ jobs:
         env:
           GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-
-      - name: Install Cocoapods
-        run: |
-          bundle config set --local path vendor/bundle
-          BUNDLE_FROZEN=true bundle install
-          bundle exec pod install
-
       - name: iOS Tests
         env:
           IOS_SIMULATOR_UDID: ${{ steps.ios-simulator.outputs.udid }}
         run: |
           xcodebuild test \
             -workspace Amplitude.xcworkspace \
-            -scheme Amplitude_iOSTests \
+            -scheme Amplitude_iOS \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$IOS_SIMULATOR_UDID"
 

@@ -6,7 +6,6 @@
 </p>
 
 [![Legacy SDK](https://img.shields.io/badge/state-legacy-yellow)](https://github.com/amplitude/Amplitude-Swift)
-[![CocoaPods](https://img.shields.io/cocoapods/v/Amplitude)](https://cocoapods.org/pods/Amplitude)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat)](#contributors-)
 
@@ -31,7 +30,6 @@ iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.am
 * For developing the SDK, please visit our [CONTRIBUTING.md](https://github.com/amplitude/Amplitude-iOS/blob/main/CONTRIBUTING.md).
 
 ## Demo Applications
-* A [demo application](https://github.com/amplitude/iOS-Demo) showing the integration of our SDK using Cocoapods.
 * A [demo application](https://github.com/amplitude/iOS-Demo-Carthage) showing the integration of our SDK using Carthage.
 * A [demo application](https://github.com/amplitude/Segment-iOS-Demo) showing the integration of our SDK via [Segment's](https://segment.com/) iOS SDK.
 * A [demo application](https://github.com/amplitude/iOS-Extension-Demo) showing an integration in an iOS extension.
@@ -40,17 +38,13 @@ iOS/tvOS/macOS SDK for tracking events and revenue to [Amplitude](https://www.am
 ## Developing
 
 Prerequisites
- * [Cocoapods](https://cocoapods.org/)
  * [Carthage](https://github.com/Carthage/Carthage)
 
 1. Install Dependencies via Carthage
     ```
     carthage update --use-xcframeworks
     ```
-2. Install Test Dependencies via CocoaPods
-    ```
-    pod install
-    ```
+2. Open `Amplitude.xcworkspace`. Xcode resolves OCMock for the test targets through Swift Package Manager.
 
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
