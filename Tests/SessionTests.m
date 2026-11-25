@@ -29,20 +29,21 @@
 
 @implementation SessionTests { }
 
-- (void)setUp {
-    [super setUp];
+#if !TARGET_OS_OSX
+- (void)stubApplicationState:(UIApplicationState)state {
+    id application = OCMClassMock([UIApplication class]);
+    OCMStub([application sharedApplication]).andReturn(application);
+    OCMStub([application applicationState]).andReturn(state);
+    [self addTeardownBlock:^{
+        [application stopMocking];
+    }];
 }
-
-- (void)tearDown {
-    [super tearDown];
-}
+#endif
 
 - (void)testSessionAutoStartedBackground {
     // mock application state
 #if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateBackground);
+    [self stubApplicationState:UIApplicationStateBackground];
 #endif
     // mock amplitude object and verify enterForeground not called
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
@@ -58,9 +59,7 @@
 
 - (void)testSessionAutoStartedInactive {
 #if !TARGET_OS_OSX
-    id mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-    OCMStub([mockApplication applicationState]).andReturn(UIApplicationStateInactive);
+    [self stubApplicationState:UIApplicationStateInactive];
 #endif
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     [mockAmplitude initializeApiKey:apiKey];
@@ -72,6 +71,9 @@
 }
 
 - (void)testSessionHandling {
+#if !TARGET_OS_OSX
+    [self stubApplicationState:UIApplicationStateActive];
+#endif
 
     // start new session on initializeApiKey
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
@@ -181,6 +183,9 @@
 }
 
 - (void)testTrackSessionEvents {
+#if !TARGET_OS_OSX
+    [self stubApplicationState:UIApplicationStateActive];
+#endif
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
@@ -244,6 +249,9 @@
 }
 
 - (void)testSessionEventsOn32BitDevices {
+#if !TARGET_OS_OSX
+    [self stubApplicationState:UIApplicationStateActive];
+#endif
     id mockAmplitude = [OCMockObject partialMockForObject:self.amplitude];
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:21474836470];
     [(Amplitude *)[[mockAmplitude expect] andReturnValue:OCMOCK_VALUE(date)] currentTime];
@@ -283,11 +291,17 @@
 }
 
 - (void)testSkipSessionCheckWhenLoggingSessionEvents {
+#if !TARGET_OS_OSX
+    [self stubApplicationState:UIApplicationStateActive];
+#endif
     AMPDatabaseHelper *dbHelper = [AMPDatabaseHelper getDatabaseHelper];
 
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:1000];
     NSNumber *timestamp = [NSNumber numberWithLongLong:[date timeIntervalSince1970] * 1000];
     [dbHelper insertOrReplaceKeyLongValue:@"previous_session_id" value:timestamp];
+    // The client restores the previous session from storage during init.
+    self.amplitude = [[Amplitude alloc] init];
+    [self.amplitude flushQueueWithQueue:self.amplitude.initializerQueue];
 
     AMPDefaultTrackingOptions *defaultTracking = [AMPDefaultTrackingOptions initWithNoneEnabled];
     defaultTracking.sessions = YES;

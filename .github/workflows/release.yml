@@ -27,7 +27,6 @@ jobs:
     needs: [authorize]
     strategy:
       matrix:
-        ruby-version: ["3.3"]
         node-version: ["16.x"]
     steps:
       - name: Checkout Amplitude-iOS
@@ -40,22 +39,11 @@ jobs:
       - name: Carthage Bootstrap
         run: carthage bootstrap --use-xcframeworks
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-
-      - name: Install Cocoapods
-        run: |
-          bundle config set --local path vendor/bundle
-          BUNDLE_FROZEN=true bundle install
-          bundle exec pod install
-
       - name: iOS Tests
         run: |
           xcodebuild test \
             -workspace Amplitude.xcworkspace \
-            -scheme Amplitude_iOSTests \
+            -scheme Amplitude_iOS \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 14'
 
@@ -76,9 +64,6 @@ jobs:
             -sdk appletvsimulator \
             -destination 'platform=tvOS Simulator,name=Apple TV' \
             test
-
-      - name: Validate Podfile
-        run: bundle exec pod lib lint --verbose
 
       - name: Setup Node.js
         uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1
@@ -103,7 +88,6 @@ jobs:
         if: ${{ github.event.inputs.dryRun == 'true'}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
           GIT_AUTHOR_NAME: amplitude-sdk-bot
           GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
           GIT_COMMITTER_NAME: amplitude-sdk-bot
@@ -122,7 +106,6 @@ jobs:
         if: ${{ github.event.inputs.dryRun == 'false'}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
           GIT_AUTHOR_NAME: amplitude-sdk-bot
           GIT_AUTHOR_EMAIL: amplitude-sdk-bot@users.noreply.github.com
           GIT_COMMITTER_NAME: amplitude-sdk-bot
